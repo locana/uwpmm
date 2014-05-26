@@ -1,0 +1,527 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="DescriptionHeader.Text" xml:space="preserve">
+    <value>Description text:</value>
+  </data>
+  <data name="Group1Subtitle" xml:space="preserve">
+    <value>Group Subtitle: 1</value>
+  </data>
+  <data name="Group1Title" xml:space="preserve">
+    <value>Group Title: 1</value>
+  </data>
+  <data name="Group2Subtitle" xml:space="preserve">
+    <value>Group Subtitle: 2</value>
+  </data>
+  <data name="Group2Title" xml:space="preserve">
+    <value>Group Title: 2</value>
+  </data>
+  <data name="Group3Subtitle" xml:space="preserve">
+    <value>Group Subtitle: 3</value>
+  </data>
+  <data name="Group3Title" xml:space="preserve">
+    <value>Group Title: 3</value>
+  </data>
+  <data name="Group4Subtitle" xml:space="preserve">
+    <value>Group Subtitle: 4</value>
+  </data>
+  <data name="Group4Title" xml:space="preserve">
+    <value>Group Title: 4</value>
+  </data>
+  <data name="Group5Subtitle" xml:space="preserve">
+    <value>Group Subtitle: 5</value>
+  </data>
+  <data name="Group5Title" xml:space="preserve">
+    <value>Group Title: 5</value>
+  </data>
+  <data name="Group6Subtitle" xml:space="preserve">
+    <value>Group Subtitle: 6</value>
+  </data>
+  <data name="Group6Title" xml:space="preserve">
+    <value>Group Title: 6</value>
+  </data>
+  <data name="GroupDescription" xml:space="preserve">
+    <value>Group Description: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus tempor scelerisque lorem in vehicula. Aliquam tincidunt, lacus ut sagittis tristique, turpis massa volutpat augue, eu rutrum ligula ante a ante</value>
+  </data>
+  <data name="Item1Subtitle" xml:space="preserve">
+    <value>Item Subtitle: 1</value>
+  </data>
+  <data name="Item1Title" xml:space="preserve">
+    <value>Item Title: 1</value>
+  </data>
+  <data name="Item2Subtitle" xml:space="preserve">
+    <value>Item Subtitle: 2</value>
+  </data>
+  <data name="Item2Title" xml:space="preserve">
+    <value>Item Title: 2</value>
+  </data>
+  <data name="Item3Subtitle" xml:space="preserve">
+    <value>Item Subtitle: 3</value>
+  </data>
+  <data name="Item3Title" xml:space="preserve">
+    <value>Item Title: 3</value>
+  </data>
+  <data name="Item4Subtitle" xml:space="preserve">
+    <value>Item Subtitle: 4</value>
+  </data>
+  <data name="Item4Title" xml:space="preserve">
+    <value>Item Title: 4</value>
+  </data>
+  <data name="Item5Subtitle" xml:space="preserve">
+    <value>Item Subtitle: 5</value>
+  </data>
+  <data name="Item5Title" xml:space="preserve">
+    <value>Item Title: 5</value>
+  </data>
+  <data name="Item6Subtitle" xml:space="preserve">
+    <value>Item Subtitle: 6</value>
+  </data>
+  <data name="Item6Title" xml:space="preserve">
+    <value>Item Title: 6</value>
+  </data>
+  <data name="Item7Subtitle" xml:space="preserve">
+    <value>Item Subtitle: 7</value>
+  </data>
+  <data name="Item7Title" xml:space="preserve">
+    <value>Item Title: 7</value>
+  </data>
+  <data name="Item8Subtitle" xml:space="preserve">
+    <value>Item Subtitle: 8</value>
+  </data>
+  <data name="Item8Title" xml:space="preserve">
+    <value>Item Title: 8</value>
+  </data>
+  <data name="ItemContent" xml:space="preserve">
+    <value>Curabitur class aliquam vestibulum nam curae maecenas sed integer cras phasellus suspendisse quisque donec dis praesent accumsan bibendum pellentesque condimentum adipiscing etiam consequat vivamus dictumst aliquam duis convallis scelerisque est parturient ullamcorper aliquet fusce suspendisse nunc hac eleifend amet blandit facilisi condimentum commodo scelerisque faucibus aenean ullamcorper ante mauris dignissim consectetuer nullam lorem vestibulum habitant conubia elementum pellentesque morbi facilisis arcu sollicitudin diam cubilia aptent vestibulum auctor eget dapibus pellentesque inceptos leo egestas interdum nulla consectetuer suspendisse adipiscing pellentesque proin lobortis sollicitudin augue elit mus congue fermentum parturient fringilla euismod feugiat</value>
+  </data>
+  <data name="ItemContentFormat" xml:space="preserve">
+    <value>Item Content: {0}\n\n{0}\n\n{0}\n\n{0}\n\n{0}\n\n{0}\n\n{0}</value>
+  </data>
+  <data name="ItemDescription" xml:space="preserve">
+    <value>Item Description: Pellentesque porta, mauris quis interdum vehicula, urna sapien ultrices velit, nec venenatis dui odio in augue. Cras posuere, enim a cursus convallis, neque turpis malesuada erat, ut adipiscing neque tortor ac erat.</value>
+  </data>
+  <data name="ItemSubTitle.Text" xml:space="preserve">
+    <value>Item Sub Title</value>
+  </data>
+  <data name="ItemTitle.Text" xml:space="preserve">
+    <value>Item Title</value>
+  </data>
+  <data name="LongText.Text" xml:space="preserve">
+    <value>Lorem ipsum dolor sit amet, consectetuer ising elit, sed diam nonummy nibh uismod tincidunt ut laoreet suscipit lobortis ni ut wisi quipexerci quis consequat minim veniam, quis nostrud exerci tation ullam corper. Lorem ipsum dolor sit amet, consectetuer ising elit, sed diam nonummy nibh uismod tincidunt ut laoreet suscipit lobortis ni ut wisi quipexerci quis consequat minim veniam, quis nostrud exerci tation ullam corper. Lorem ipsum dolor sit amet, consectetuer ising elit, sed diam nonummy nibh uismod tincidunt ut laoreet suscipit lobortis ni ut wisi quipexerci quis consequat minim veniam, quis nostrud exerci tation ullam corper. Lorem ipsum dolor sit amet, consectetuer ising elit, sed diam nonummy nibh uismod tincidunt ut laoreet suscipit lobortis ni ut wisi quipexerci quis consequat minim veniam, quis nostrud exerci tation ullam corper. Lorem ipsum dolor sit amet, consectetuer ising elit, sed diam nonummy nibh uismod tincidunt ut laoreet suscipit lobortis ni ut wisi quipexerci quis consequat minim veniam, quis nostrud exerci tation ullam corper. Lorem ipsum dolor sit amet, consectetuer ising elit, sed diam nonummy nibh uismod tincidunt ut laoreet suscipit lobortis ni ut wisi quipexerci quis consequat minim veniam, quis nostrud exerci tation ullam corper.</value>
+    <comment>"Section1DescriptionText" duplicated three times.</comment>
+  </data>
+  <data name="Section1DescriptionText.Text" xml:space="preserve">
+    <value>Lorem ipsum dolor sit amet, consectetuer ising elit, sed diam nonummy nibh uismod tincidunt ut laoreet suscipit lobortis ni ut wisi quipexerci quis consequat minim veniam, quis nostrud exerci tation ullam corper. Lorem ipsum dolor sit amet, consectetuer ising elit, sed diam nonummy nibh uismod tincidunt ut laoreet suscipit lobortis ni ut wisi quipexerci quis consequat minim veniam, quis nostrud exerci tation ullam corper.</value>
+  </data>
+  <data name="Section1Header.Header" xml:space="preserve">
+    <value>Section 1</value>
+  </data>
+  <data name="Section1Subtitle.Text" xml:space="preserve">
+    <value>Lorem ipsum dolor sit nonumy sed consectetuer ising elit, sed diam</value>
+  </data>
+  <data name="Section2Header.Header" xml:space="preserve">
+    <value>Section 2</value>
+  </data>
+  <data name="Section3Header.Header" xml:space="preserve">
+    <value>Section 3</value>
+  </data>
+  <data name="Section3Subtitle.Text" xml:space="preserve">
+    <value>Section subtitle</value>
+  </data>
+  <data name="Section4Header.Header" xml:space="preserve">
+    <value>Section 4</value>
+  </data>
+  <data name="Section2UnderTitle.Text" xml:space="preserve">
+    <value>Quisque in porta lorem dolor amet sed consectetuer ising elit, sed diam non my nibh uis mod wisi quip.</value>
+  </data>
+  <data name="Header.Text" xml:space="preserve">
+    <value>application name</value>
+  </data>
+  <data name="Hub.Header" xml:space="preserve">
+    <value>application name</value>
+  </data>
+  <data name="HubSection1" xml:space="preserve">
+    <value>SECTION 1</value>
+  </data>
+  <data name="HubSection2" xml:space="preserve">
+    <value>SECTION 2</value>
+  </data>
+  <data name="HubSection3" xml:space="preserve">
+    <value>SECTION 3</value>
+  </data>
+  <data name="HubSection4" xml:space="preserve">
+    <value>SECTION 4</value>
+  </data>
+  <data name="HubSection5" xml:space="preserve">
+    <value>SECTION 5</value>
+  </data>
+  <data name="NavigationFailedExceptionMessage" xml:space="preserve">
+    <value>Navigation failed.</value>
+  </data>
+    <data name="WifiSettingLauncherButtonText" xml:space="preserve">
+    <value>Wi-Fi</value>
+  </data>
+  <data name="Guide_CantFindDevice" xml:space="preserve">
+    <value>Couldn't find the devide. Make sure that SSID of connected access point is that of your camera device's.</value>
+  </data>
+  <data name="Guide_WiFiNotEnabled" xml:space="preserve">
+    <value>Go to Wi-Fi settings and connect to your camera device.</value>
+  </data>
+  <data name="OSSText" xml:space="preserve">
+    <value>Open source licenses</value>
+  </data>
+  <data name="ContainsLicense" xml:space="preserve">
+    <value>This application contains the following open source softwares.</value>
+  </data>
+  <data name="About" xml:space="preserve">
+    <value>about</value>
+  </data>
+  <data name="CopyRight" xml:space="preserve">
+    <value>Copyright</value>
+  </data>
+  <data name="RepoURL" xml:space="preserve">
+    <value>https://github.com/kazyx/WPPMM</value>
+  </data>
+  <data name="SourceCode" xml:space="preserve">
+    <value>Source code</value>
+  </data>
+  <data name="Version" xml:space="preserve">
+    <value>Version</value>
+  </data>
+  <data name="DevelopedBy" xml:space="preserve">
+    <value>Developed by</value>
+  </data>
+  <data name="ErrorMessage_ImageDL_Network" xml:space="preserve">
+    <value>Network error has occured while downloading your picture.</value>
+  </data>
+  <data name="ErrorMessage_ImageDL_Other" xml:space="preserve">
+    <value>Unexpected error has occured.</value>
+  </data>
+  <data name="ErrorMessage_ImageDL_Saving" xml:space="preserve">
+    <value>Failed to save the picture.</value>
+  </data>
+  <data name="ErrorMessage_ImageDL_OtherOriginal" xml:space="preserve">
+    <value>Unexpected error has occured. Please try again with smaller image size to transfer.</value>
+  </data>
+  <data name="ErrorMessage_ImageDL_SavingOriginal" xml:space="preserve">
+    <value>Failed to save the picture. Please try again with smaller image size to transfer.</value>
+  </data>
+  <data name="Message_ImageDL_Succeed" xml:space="preserve">
+    <value>The picture has been saved successfully!</value>
+  </data>
+  <data name="Setting_PostViewImageSize" xml:space="preserve">
+    <value>Image size to receive</value>
+  </data>
+  <data name="Guide_StartLiveView" xml:space="preserve">
+    <value>Swipe to start remote control.</value>
+  </data>
+  <data name="Switch" xml:space="preserve">
+    <value>Switch</value>
+  </data>
+  <data name="SelfTimer" xml:space="preserve">
+    <value>Self timer</value>
+  </data>
+  <data name="ControlPanel" xml:space="preserve">
+    <value>Control Panel</value>
+  </data>
+  <data name="Off" xml:space="preserve">
+    <value>OFF</value>
+  </data>
+  <data name="Seconds" xml:space="preserve">
+    <value> seconds</value>
+  </data>
+  <data name="ShootMode" xml:space="preserve">
+    <value>Operation mode</value>
+  </data>
+  <data name="ShootModeMovie" xml:space="preserve">
+    <value>Movie rec</value>
+  </data>
+  <data name="ShootModeStill" xml:space="preserve">
+    <value>Still image rec</value>
+  </data>
+  <data name="Size2M" xml:space="preserve">
+    <value>2M pixels</value>
+  </data>
+  <data name="SizeOriginal" xml:space="preserve">
+    <value>Original</value>
+  </data>
+  <data name="Disabled" xml:space="preserve">
+    <value> - - - </value>
+  </data>
+  <data name="On" xml:space="preserve">
+    <value>ON</value>
+  </data>
+  <data name="PostviewTransferSetting" xml:space="preserve">
+    <value>Receive captured pictures</value>
+  </data>
+  <data name="ShootModeAudio" xml:space="preserve">
+    <value>Audio rec</value>
+  </data>
+  <data name="Message_ImageCapture_Succeed" xml:space="preserve">
+    <value>The picture has been captured successfully!</value>
+  </data>
+  <data name="IntervalSetting" xml:space="preserve">
+    <value>Interval shooting</value>
+  </data>
+  <data name="IntervalTime" xml:space="preserve">
+    <value>Interval (sec.)</value>
+  </data>
+  <data name="ErrorMessage_Interval" xml:space="preserve">
+    <value>An error has occured. Stopped interval shooting.</value>
+  </data>
+  <data name="IntervalCountPrefix" xml:space="preserve">
+    <value>Count</value>
+  </data>
+  <data name="IntervalTimePrefix" xml:space="preserve">
+    <value>Interval</value>
+  </data>
+  <data name="Guide_NFC" xml:space="preserve">
+    <value>You can touch your NFC enabled camera to find password.</value>
+  </data>
+  <data name="ErrorMessage_cameraNotReady" xml:space="preserve">
+    <value>Camera is under processing. Try again after a while.</value>
+  </data>
+  <data name="ErrorMessage_fatal" xml:space="preserve">
+    <value>Remote request failed.</value>
+  </data>
+  <data name="ErrorMessage_shootingFailure" xml:space="preserve">
+    <value>Failed to shoot or start recording. Make sure of the camera device's status.</value>
+  </data>
+  <data name="ErrorMessage_timeout" xml:space="preserve">
+    <value>Request timeout. Make sure of the Wi-Fi connection and try again.</value>
+  </data>
+  <data name="ErrorMessage_CantFindSonyRecord" xml:space="preserve">
+    <value>Couldn't find SSID or Password from the NFC tag.</value>
+  </data>
+  <data name="ErrorMessage_ParseNFC" xml:space="preserve">
+    <value>Failed to read data from the NFC tag.</value>
+  </data>
+  <data name="ErrorMessage_Dsconnected" xml:space="preserve">
+    <value>Connection has been lost.</value>
+  </data>
+  <data name="Message_NFC_succeed" xml:space="preserve">
+    <value>Wi-Fi password of your camera device has been saved to the clipboard!</value>
+  </data>
+  <data name="ConnectedDevice" xml:space="preserve">
+    <value>Connected to _ssid_</value>
+  </data>
+  <data name="NFC_iiwake" xml:space="preserve">
+    <value>Please ignore incorrect system prompt!!</value>
+  </data>
+  <data name="MessageCaption_NFC_Succeed" xml:space="preserve">
+    <value>Opened successfully!</value>
+  </data>
+  <data name="MessageCaption_error" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="ApplicationSettings" xml:space="preserve">
+    <value>Application settings</value>
+  </data>
+  <data name="DisplayTakeImageButtonSetting" xml:space="preserve">
+    <value>Display shutter button on the screen.</value>
+  </data>
+  <data name="Guide_DisplayTakeImageButtonSetting" xml:space="preserve">
+    <value>You can invoke remote shutter with your phone's hardware shutter key.</value>
+  </data>
+  <data name="AppBar_AppSetting" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="AppBar_CancelTouchAf" xml:space="preserve">
+    <value>Unlock AF</value>
+  </data>
+  <data name="AppBar_CameraRoll" xml:space="preserve">
+    <value>Camera Roll</value>
+  </data>
+  <data name="Error_Message_FailedToGetInfo" xml:space="preserve">
+    <value>Failed to retrieve information.
+Please check internet connection status</value>
+  </data>
+  <data name="Message_Caution" xml:space="preserve">
+    <value>Please acknowledge that NO secret function is unlocked by purchasing these in-app items.</value>
+  </data>
+  <data name="Message_Encourage" xml:space="preserve">
+    <value>Donation will encourage our development for continuous update!</value>
+  </data>
+  <data name="Retry" xml:space="preserve">
+    <value>Retry</value>
+  </data>
+  <data name="Donation" xml:space="preserve">
+    <value>Donation</value>
+  </data>
+  <data name="AppBar_Exit" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="Guide_ReceiveCapturedImage" xml:space="preserve">
+    <value>Recieve pictures soon after taken and register them to Camera Roll. (Disabled while interval recording is going on.)</value>
+  </data>
+  <data name="AppBar_ControlPanel" xml:space="preserve">
+    <value>Ctrl Panel</value>
+  </data>
+  <data name="ExposureMode" xml:space="preserve">
+    <value>Exposure mode</value>
+  </data>
+  <data name="ExposureMode_A" xml:space="preserve">
+    <value>Aperture priority</value>
+  </data>
+  <data name="ExposureMode_iA" xml:space="preserve">
+    <value>Intelligent auto</value>
+  </data>
+  <data name="ExposureMode_P" xml:space="preserve">
+    <value>Program auto</value>
+  </data>
+  <data name="ExposureMode_S" xml:space="preserve">
+    <value>Shutter priority</value>
+  </data>
+  <data name="ExposureMode_sA" xml:space="preserve">
+    <value>Superior auto</value>
+  </data>
+  <data name="ExposureCompensation" xml:space="preserve">
+    <value>Exposure compensation</value>
+  </data>
+  <data name="Aperture" xml:space="preserve">
+    <value>Aperture</value>
+  </data>
+  <data name="ISO" xml:space="preserve">
+    <value>ISO</value>
+  </data>
+  <data name="ShutterSpeed" xml:space="preserve">
+    <value>SS</value>
+  </data>
+  <data name="BeepMode" xml:space="preserve">
+    <value>System sound</value>
+  </data>
+  <data name="BeepModeShutterOnly" xml:space="preserve">
+    <value>Shutter tone only</value>
+  </data>
+  <data name="ShootModeIntervalStill" xml:space="preserve">
+    <value>Interval rec.</value>
+  </data>
+  <data name="SteadyShot" xml:space="preserve">
+    <value>Steady shot</value>
+  </data>
+  <data name="ViewAngle" xml:space="preserve">
+    <value>View angle</value>
+  </data>
+  <data name="ViewAngleUnit" xml:space="preserve">
+    <value>deg.</value>
+  </data>
+  <data name="MovieQuality" xml:space="preserve">
+    <value>Movie quality</value>
+  </data>
+</root>
