@@ -1,5 +1,6 @@
 ﻿using Kazyx.RemoteApi;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using Windows.ApplicationModel.Resources;
 
@@ -13,11 +14,26 @@ namespace Kazyx.Uwpmm.Utility
             {
                 return 0;
             }
-            for (int i = 0; i < info.candidates.Length; i++)
+            if (typeof(T) == typeof(string) || typeof(T) == typeof(int))
             {
-                if (info.candidates[i].Equals(info.current))
+                for (int i = 0; i < info.candidates.Length; i++)
                 {
-                    return i;
+                    if (info.candidates[i].Equals(info.current))
+                    {
+                        return i;
+                    }
+                }
+            }
+            else if (typeof(T) == typeof(StillImageSize))
+            {
+                var size = info as Capability<StillImageSize>;
+                for (int i = 0; i < info.candidates.Length; i++)
+                {
+                    if (size.candidates[i].AspectRatio == size.current.AspectRatio
+                        && size.candidates[i].SizeDefinition == size.current.SizeDefinition)
+                    {
+                        return i;
+                    }
                 }
             }
             return 0;
@@ -34,14 +50,10 @@ namespace Kazyx.Uwpmm.Utility
 
         public static Capability<string> FromSelfTimer(Capability<int> info)
         {
-            if (info == null || info.candidates == null || info.candidates.Length == 0)
-            {
-                return new Capability<string>
-                {
-                    candidates = new string[] { ResourceLoader.GetForCurrentView().GetString("Disabled") },
-                    current = ResourceLoader.GetForCurrentView().GetString("Disabled")
-                };
-            }
+            var res = AsDisabledCapability(info);
+            if (res != null)
+                return res;
+
             var mCandidates = new string[info.candidates.Length];
             for (int i = 0; i < info.candidates.Length; i++)
             {
@@ -62,14 +74,10 @@ namespace Kazyx.Uwpmm.Utility
 
         public static Capability<string> FromPostViewSize(Capability<string> info)
         {
-            if (info == null || info.candidates == null || info.candidates.Length == 0)
-            {
-                return new Capability<string>
-                {
-                    candidates = new string[] { ResourceLoader.GetForCurrentView().GetString("Disabled") },
-                    current = ResourceLoader.GetForCurrentView().GetString("Disabled")
-                };
-            }
+            var res = AsDisabledCapability(info);
+            if (res != null)
+                return res;
+
             var mCandidates = new string[info.candidates.Length];
             for (int i = 0; i < info.candidates.Length; i++)
             {
@@ -97,14 +105,10 @@ namespace Kazyx.Uwpmm.Utility
 
         public static Capability<string> FromShootMode(Capability<string> info)
         {
-            if (info == null || info.candidates == null || info.candidates.Length == 0)
-            {
-                return new Capability<string>
-                {
-                    candidates = new string[] { ResourceLoader.GetForCurrentView().GetString("Disabled") },
-                    current = ResourceLoader.GetForCurrentView().GetString("Disabled")
-                };
-            }
+            var res = AsDisabledCapability(info);
+            if (res != null)
+                return res;
+
             var mCandidates = new string[info.candidates.Length];
             for (int i = 0; i < info.candidates.Length; i++)
             {
@@ -136,14 +140,9 @@ namespace Kazyx.Uwpmm.Utility
 
         public static Capability<string> FromExposureMode(Capability<string> info)
         {
-            if (info == null || info.candidates == null || info.candidates.Length == 0)
-            {
-                return new Capability<string>
-                {
-                    candidates = new string[] { ResourceLoader.GetForCurrentView().GetString("") },
-                    current = ResourceLoader.GetForCurrentView().GetString("Disabled")
-                };
-            }
+            var res = AsDisabledCapability(info);
+            if (res != null)
+                return res;
 
             var mCandidates = new string[info.candidates.Length];
             for (int i = 0; i < info.candidates.Length; i++)
@@ -178,14 +177,9 @@ namespace Kazyx.Uwpmm.Utility
 
         public static Capability<string> FromSteadyMode(Capability<string> info)
         {
-            if (info == null || info.candidates == null || info.candidates.Length == 0)
-            {
-                return new Capability<string>
-                {
-                    candidates = new string[] { ResourceLoader.GetForCurrentView().GetString("Disabled") },
-                    current = ResourceLoader.GetForCurrentView().GetString("Disabled")
-                };
-            }
+            var res = AsDisabledCapability(info);
+            if (res != null)
+                return res;
 
             var mCandidates = new string[info.candidates.Length];
             for (int i = 0; i < info.candidates.Length; i++)
@@ -214,14 +208,9 @@ namespace Kazyx.Uwpmm.Utility
 
         public static Capability<string> FromBeepMode(Capability<string> info)
         {
-            if (info == null || info.candidates == null || info.candidates.Length == 0)
-            {
-                return new Capability<string>
-                {
-                    candidates = new string[] { ResourceLoader.GetForCurrentView().GetString("Disabled") },
-                    current = ResourceLoader.GetForCurrentView().GetString("Disabled")
-                };
-            }
+            var res = AsDisabledCapability(info);
+            if (res != null)
+                return res;
 
             var mCandidates = new string[info.candidates.Length];
             for (int i = 0; i < info.candidates.Length; i++)
@@ -252,14 +241,10 @@ namespace Kazyx.Uwpmm.Utility
 
         public static Capability<string> FromViewAngle(Capability<int> info)
         {
-            if (info == null || info.candidates == null || info.candidates.Length == 0)
-            {
-                return new Capability<string>
-                {
-                    candidates = new string[] { ResourceLoader.GetForCurrentView().GetString("Disabled") },
-                    current = ResourceLoader.GetForCurrentView().GetString("Disabled")
-                };
-            }
+            var res = AsDisabledCapability(info);
+            if (res != null)
+                return res;
+
             var mCandidates = new string[info.candidates.Length];
             for (int i = 0; i < info.candidates.Length; i++)
             {
@@ -279,14 +264,9 @@ namespace Kazyx.Uwpmm.Utility
 
         public static Capability<string> FromMovieQuality(Capability<string> info)
         {
-            if (info == null || info.candidates == null || info.candidates.Length == 0)
-            {
-                return new Capability<string>
-                {
-                    candidates = new string[] { ResourceLoader.GetForCurrentView().GetString("Disabled") },
-                    current = ResourceLoader.GetForCurrentView().GetString("Disabled")
-                };
-            }
+            var res = AsDisabledCapability(info);
+            if (res != null)
+                return res;
 
             var mCandidates = new string[info.candidates.Length];
             for (int i = 0; i < info.candidates.Length; i++)
@@ -303,6 +283,107 @@ namespace Kazyx.Uwpmm.Utility
         private static string FromMovieQuality(string p)
         {
             return p;
+        }
+
+        public static Capability<string> FromStillImageSize(Capability<StillImageSize> info)
+        {
+            var res = AsDisabledCapability(info);
+            if (res != null)
+                return res;
+
+            Debug.WriteLine("StillImageSize length: " + info.candidates.Length);
+
+            var mCandidates = new List<string>();
+            foreach (var val in info.candidates)
+            {
+                mCandidates.Add(FromStillImageSize(val));
+            }
+            return new Capability<string>
+            {
+                current = FromStillImageSize(info.current),
+                candidates = mCandidates.ToArray()
+            };
+        }
+
+        private static string FromStillImageSize(StillImageSize val)
+        {
+            return val.SizeDefinition + " (" + val.AspectRatio + ")";
+        }
+
+        private static readonly char[] StillImageSizeIndicators = { '(', ')' };
+
+        public static StillImageSize ToStillImageSize(string val)
+        {
+            var array = val.Split(StillImageSizeIndicators);
+            if (array == null || array.Length != 2)
+            {
+                throw new ArgumentException("Failed to convert " + val + " to StillImageSize");
+            }
+            return new StillImageSize
+            {
+                AspectRatio = array[1].Trim(),
+                SizeDefinition = array[2].Trim()
+            };
+        }
+
+        public static Capability<string> FromWhiteBalance(Capability<string> info)
+        {
+            var res = AsDisabledCapability(info);
+            if (res != null)
+                return res;
+
+            var mCandidates = new string[info.candidates.Length];
+            for (int i = 0; i < info.candidates.Length; i++)
+            {
+                mCandidates[i] = FromWhiteBalance(info.candidates[i]);
+            }
+            return new Capability<string>
+            {
+                current = FromWhiteBalance(info.current),
+                candidates = mCandidates
+            };
+        }
+
+        private static string FromWhiteBalance(string val)
+        {
+            switch (val)
+            {
+                case WhiteBalanceMode.Fluorescent_WarmWhite:
+                    return ResourceLoader.GetForCurrentView().GetString("WB_Fluorescent_WarmWhite");
+                case WhiteBalanceMode.Fluorescent_CoolWhite:
+                    return ResourceLoader.GetForCurrentView().GetString("WB_Fluorescent_CoolWhite");
+                case WhiteBalanceMode.Fluorescent_DayLight:
+                    return ResourceLoader.GetForCurrentView().GetString("WB_Fluorescent_DayLight");
+                case WhiteBalanceMode.Fluorescent_DayWhite:
+                    return ResourceLoader.GetForCurrentView().GetString("WB_Fluorescent_DayWhite");
+                case WhiteBalanceMode.Incandescent:
+                    return ResourceLoader.GetForCurrentView().GetString("WB_Incandescent");
+                case WhiteBalanceMode.Shade:
+                    return ResourceLoader.GetForCurrentView().GetString("WB_Shade");
+                case WhiteBalanceMode.Auto:
+                    return ResourceLoader.GetForCurrentView().GetString("WB_Auto");
+                case WhiteBalanceMode.Cloudy:
+                    return ResourceLoader.GetForCurrentView().GetString("WB_Cloudy");
+                case WhiteBalanceMode.DayLight:
+                    return ResourceLoader.GetForCurrentView().GetString("WB_DayLight");
+                case WhiteBalanceMode.Manual:
+                    return ResourceLoader.GetForCurrentView().GetString("WB_ColorTemperture");
+            }
+            return val;
+        }
+
+        private static Capability<string> AsDisabledCapability<T>(Capability<T> info)
+        {
+            if (info == null || info.candidates == null || info.candidates.Length == 0)
+            {
+                var disabled = ResourceLoader.GetForCurrentView().GetString("Disabled");
+                return new Capability<string>
+                {
+                    candidates = new string[] { disabled },
+                    current = disabled
+                };
+            }
+            return null;
         }
 
         public static string[] FromExposureCompensation(EvCapability info)

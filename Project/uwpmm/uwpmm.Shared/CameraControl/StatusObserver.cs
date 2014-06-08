@@ -8,11 +8,11 @@ namespace Kazyx.Uwpmm.CameraControl
 {
     public class StatusObserver
     {
-        private readonly CameraApiClient camera;
+        private readonly DeviceApiHolder api;
 
-        public StatusObserver(CameraApiClient camera)
+        public StatusObserver(DeviceApiHolder api)
         {
-            this.camera = camera;
+            this.api = api;
         }
 
         private CameraStatus target = null;
@@ -39,6 +39,8 @@ namespace Kazyx.Uwpmm.CameraControl
             }
 
             this.version = version;
+            this.target = status;
+
             failure_count = 0;
             if (!await Refresh())
             {
@@ -46,7 +48,6 @@ namespace Kazyx.Uwpmm.CameraControl
                 return false;
             }
 
-            this.target = status;
             PollingLoop();
             return true;
         }
@@ -62,7 +63,7 @@ namespace Kazyx.Uwpmm.CameraControl
             Debug.WriteLine("StatusObserver: Refresh");
             try
             {
-                Update(await camera.GetEventAsync(false, version));
+                await Update(await api.Camera.GetEventAsync(false, version));
             }
             catch (RemoteApiException e)
             {
@@ -72,9 +73,55 @@ namespace Kazyx.Uwpmm.CameraControl
             return true;
         }
 
-        private void Update(Event status)
+        private async Task Update(Event status)
         {
             // TODO update target
+            if (status.AvailableApis != null)
+            {
+                api.Capability.AvailableApis = status.AvailableApis;
+            }
+
+            if (status.ShootModeInfo != null)
+            {
+                target.ShootMode = status.ShootModeInfo;
+            }
+            if (status.ExposureMode != null)
+            {
+                target.ExposureMode = status.ExposureMode;
+            }
+            if (status.PostviewSizeInfo != null)
+            {
+                target.PostviewSize = status.PostviewSizeInfo;
+            }
+            if (status.SelfTimerInfo != null)
+            {
+                target.SelfTimer = status.SelfTimerInfo;
+            }
+            if (status.BeepMode != null)
+            {
+                target.BeepMode = status.BeepMode;
+            }
+            if (status.StillImageSize != null)
+            {
+                if (status.StillImageSize.CapabilityChanged)
+                {
+                    try
+                    {
+                        var size = await api.Camera.GetAvailableStillSizeAsync();
+                        Array.Sort(size.candidates, CompareStillSize);
+                        target.StillImageSize = size;
+                    }
+                    catch (RemoteApiException)
+                    {
+                        Debug.WriteLine("Failed to get still image size capability");
+                    }
+                }
+                else
+                {
+                    target.StillImageSize.current = status.StillImageSize.Current;
+                    target.StillImageSize = target.StillImageSize;
+                }
+            }
         }
 
         private async void PollingLoop()
@@ -86,7 +133,7 @@ namespace Kazyx.Uwpmm.CameraControl
 
             try
             {
-                OnSuccess(await camera.GetEventAsync(true, version));
+                OnSuccess(await api.Camera.GetEventAsync(true, version));
             }
             catch (RemoteApiException e)
             {
@@ -94,10 +141,10 @@ namespace Kazyx.Uwpmm.CameraControl
             }
         }
 
-        private void OnSuccess(Event @event)
+        private async void OnSuccess(Event @event)
         {
             failure_count = 0;
-            Update(@event);
+            await Update(@event);
             PollingLoop();
         }
 
@@ -139,6 +186,47 @@ namespace Kazyx.Uwpmm.CameraControl
                 {
                     EndByError.Invoke();
                 }
+            }
+        }
+
+        private static int CompareStillSize(StillImageSize x, StillImageSize y)
+        {
+            if (x == null && y == null)
+            {
+                return 0;
+            }
+            if (x == null)
+            {
+                return -1;
+            }
+            if (y == null)
+            {
+                return 1;
+            }
+
+            if (!x.SizeDefinition.EndsWith("M") || !y.SizeDefinition.EndsWith("M"))
+            {
+                var comp = x.SizeDefinition.CompareTo(y.SizeDefinition);
+                if (comp == 0)
+                {
+                    return x.AspectRatio.CompareTo(y.AspectRatio);
+                }
+                else
+                {
+                    return comp;
+                }
+            }
+
+            var xv = (int)double.Parse(x.SizeDefinition.Substring(0, x.SizeDefinition.Length - 1)) * 100;
+            var yv = (int)double.Parse(y.SizeDefinition.Substring(0, y.SizeDefinition.Length - 1)) * 100;
+
+            if (xv == yv)
+            {
+                return x.AspectRatio.CompareTo(y.AspectRatio);
+            }
+            else
+            {
+                return xv < yv ? 1 : -1;
             }
         }
     }

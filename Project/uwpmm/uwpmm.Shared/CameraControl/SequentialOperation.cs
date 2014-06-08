@@ -4,12 +4,13 @@ using Kazyx.Uwpmm.Utility;
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using Windows.Storage;
 
 namespace Kazyx.Uwpmm.CameraControl
 {
     public class SequentialOperation
     {
-        public static async Task<bool> SetUp(DeviceApiHolder api, LvStreamProcessor liveview)
+        public static async Task<ServerDevice> SetUp(DeviceApiHolder api, LvStreamProcessor liveview)
         {
             Debug.WriteLine("Set up control");
             try
@@ -29,7 +30,7 @@ namespace Kazyx.Uwpmm.CameraControl
                     if (!res)
                     {
                         Debug.WriteLine("Failed to open liveview connection.");
-                        return false;
+                        throw new Exception();
                     }
                 }
 
@@ -37,14 +38,16 @@ namespace Kazyx.Uwpmm.CameraControl
                 {
                     await api.System.SetCurrentTimeAsync(DateTimeOffset.Now);
                 }
+                var camera = new ServerDevice(api);
+                var version = api.Capability.IsSupported("getEvent", "1.1") ? ApiVersion.V1_1 : ApiVersion.V1_0;
+                await camera.Observer.Start(camera.Status, version);
+                return camera;
             }
             catch (RemoteApiException e)
             {
                 Debug.WriteLine("Failed setup: " + e.code);
-                return false;
+                throw e;
             }
-
-            return true;
         }
 
         public static async Task<bool> OpenLiveviewStream(DeviceApiHolder api, LvStreamProcessor liveview)
@@ -86,13 +89,18 @@ namespace Kazyx.Uwpmm.CameraControl
             return await OpenLiveviewStream(api, liveview);
         }
 
-        public static async Task<bool> TakePicture(DeviceApiHolder api, bool awaiting = false)
+        public static async Task<bool> TakePicture(DeviceApiHolder api, Action<StorageFile> ImageSaved, bool awaiting = false)
         {
             Debug.WriteLine("Taking picture sequence");
             try
             {
                 var urls = awaiting ? await api.Camera.AwaitTakePictureAsync() : await api.Camera.ActTakePictureAsync();
                 Debug.WriteLine("Success taking picture");
+
+                if (ImageSaved == null)
+                {
+                    return true;
+                }
 
                 if (App.Settings.GetIsDownloadPostviewEnabled())
                 {
@@ -101,7 +109,9 @@ namespace Kazyx.Uwpmm.CameraControl
                         try
                         {
                             var uri = new Uri(url);
-                            return await PictureDownloader.DownloadToSave(uri);
+                            var file = await PictureDownloader.DownloadToSave(uri);
+                            ImageSaved.Invoke(file);
+                            return true;
                         }
                         catch (Exception e)
                         {
@@ -126,7 +136,7 @@ namespace Kazyx.Uwpmm.CameraControl
                 }
             }
             Debug.WriteLine("Take picture timeout: await for completion");
-            return await TakePicture(api, true);
+            return await TakePicture(api, ImageSaved, true);
         }
     }
 }

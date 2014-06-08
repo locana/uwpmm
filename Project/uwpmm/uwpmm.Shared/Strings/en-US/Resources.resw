@@ -274,7 +274,7 @@
   <data name="NavigationFailedExceptionMessage" xml:space="preserve">
     <value>Navigation failed.</value>
   </data>
-    <data name="WifiSettingLauncherButtonText" xml:space="preserve">
+  <data name="WifiSettingLauncherButtonText" xml:space="preserve">
     <value>Wi-Fi</value>
   </data>
   <data name="Guide_CantFindDevice" xml:space="preserve">
@@ -377,10 +377,10 @@
     <value>The picture has been captured successfully!</value>
   </data>
   <data name="IntervalSetting" xml:space="preserve">
-    <value>Interval shooting</value>
+    <value>Interval shooting mode</value>
   </data>
   <data name="IntervalTime" xml:space="preserve">
-    <value>Interval (sec.)</value>
+    <value>Interval time</value>
   </data>
   <data name="ErrorMessage_Interval" xml:space="preserve">
     <value>An error has occured. Stopped interval shooting.</value>
@@ -523,5 +523,41 @@ Please check internet connection status</value>
   </data>
   <data name="MovieQuality" xml:space="preserve">
     <value>Movie quality</value>
+  </data>
+  <data name="StillImageSize" xml:space="preserve">
+    <value>Picture resolution</value>
+  </data>
+  <data name="WB_Auto" xml:space="preserve">
+    <value>Auto</value>
+  </data>
+  <data name="WB_Cloudy" xml:space="preserve">
+    <value>Cloudy</value>
+  </data>
+  <data name="WB_ColorTemperture" xml:space="preserve">
+    <value>Color temperture</value>
+  </data>
+  <data name="WB_DayLight" xml:space="preserve">
+    <value>Daylight</value>
+  </data>
+  <data name="WB_Fluorescent_CoolWhite" xml:space="preserve">
+    <value>Fluor. Cool white</value>
+  </data>
+  <data name="WB_Fluorescent_DayLight" xml:space="preserve">
+    <value>Fluor. Daylight</value>
+  </data>
+  <data name="WB_Fluorescent_DayWhite" xml:space="preserve">
+    <value>Fluor. Day white</value>
+  </data>
+  <data name="WB_Fluorescent_WarmWhite" xml:space="preserve">
+    <value>Fluor. Warm white</value>
+  </data>
+  <data name="WB_Incandescent" xml:space="preserve">
+    <value>Incandescent</value>
+  </data>
+  <data name="WB_Shade" xml:space="preserve">
+    <value>Shade</value>
+  </data>
+  <data name="WhiteBalance" xml:space="preserve">
+    <value>White balance</value>
   </data>
 </root>

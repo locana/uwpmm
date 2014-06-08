@@ -14,7 +14,7 @@ namespace Kazyx.Uwpmm.Utility
 
         private const int BUFFER_SIZE = 2048;
 
-        public static async Task<bool> DownloadToSave(Uri uri)
+        public static async Task<StorageFile> DownloadToSave(Uri uri)
         {
             Debug.WriteLine("Download picture: " + uri.OriginalString);
             try
@@ -24,7 +24,7 @@ namespace Kazyx.Uwpmm.Utility
                     var res = await http.GetAsync(uri, HttpCompletionOption.ResponseContentRead);
                     if (res.StatusCode != HttpStatusCode.OK)
                     {
-                        return false;
+                        return null;
                     }
 
                     using (var resStream = await res.Content.ReadAsStreamAsync())
@@ -42,26 +42,27 @@ namespace Kazyx.Uwpmm.Utility
                         Debug.WriteLine("Create file: " + filename);
 
                         var file = await folder.CreateFileAsync(filename, CreationCollisionOption.GenerateUniqueName);
-                        var stream = await file.OpenAsync(FileAccessMode.ReadWrite);
-
-                        var buffer = new byte[BUFFER_SIZE];
-                        using (var os = stream.GetOutputStreamAt(0))
+                        using (var stream = await file.OpenAsync(FileAccessMode.ReadWrite))
                         {
-                            int read = 0;
-                            while ((read = resStream.Read(buffer, 0, BUFFER_SIZE)) != 0)
+                            var buffer = new byte[BUFFER_SIZE];
+                            using (var os = stream.GetOutputStreamAt(0))
                             {
-                                await os.WriteAsync(buffer.AsBuffer(0, read));
+                                int read = 0;
+                                while ((read = resStream.Read(buffer, 0, BUFFER_SIZE)) != 0)
+                                {
+                                    await os.WriteAsync(buffer.AsBuffer(0, read));
+                                }
                             }
                         }
+                        return file;
                     }
                 }
-                return true;
             }
             catch (Exception e)
             {
                 Debug.WriteLine(e.Message);
                 Debug.WriteLine(e.StackTrace);
-                return false;
+                return null;
             }
         }
     }
