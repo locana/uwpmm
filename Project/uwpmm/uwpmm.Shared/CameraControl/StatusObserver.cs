@@ -76,7 +76,6 @@ namespace Kazyx.Uwpmm.CameraControl
 
         private async Task Update(Event status)
         {
-            // TODO update target
             if (status.AvailableApis != null)
             {
                 api.Capability.AvailableApis = status.AvailableApis;

@@ -1,6 +1,7 @@
 ﻿using Kazyx.RemoteApi;
 using Kazyx.Uwpmm.CameraControl;
 using Kazyx.Uwpmm.Utility;
+using System.Diagnostics;
 
 namespace Kazyx.Uwpmm.DataModel
 {
@@ -9,7 +10,11 @@ namespace Kazyx.Uwpmm.DataModel
         private ServerDevice _Device;
         public ServerDevice Device
         {
-            set { _Device = value; }
+            set
+            {
+                _Device = value;
+                NotifyChangedOnUI(""); // Notify all properties are changed.
+            }
             get { return _Device; }
         }
 
@@ -39,6 +44,7 @@ namespace Kazyx.Uwpmm.DataModel
 
         private void GenericPropertyChanged(string name)
         {
+            Debug.WriteLine("PropertyChanged: " + name);
             NotifyChanged("Candidates" + name);
             NotifyChanged("SelectedIndex" + name);
             NotifyChanged("IsAvailable" + name);
@@ -74,7 +80,7 @@ namespace Kazyx.Uwpmm.DataModel
             }
             set
             {
-                SetSelectedAsCurrent(Device.Status.ExposureMode, value);
+                ParameterUtil.SetSelectedAsCurrent(Device.Status.ExposureMode, value);
             }
         }
 
@@ -103,7 +109,7 @@ namespace Kazyx.Uwpmm.DataModel
             }
             set
             {
-                SetSelectedAsCurrent(Device.Status.ShootMode, value);
+                ParameterUtil.SetSelectedAsCurrent(Device.Status.ShootMode, value);
             }
         }
 
@@ -132,7 +138,7 @@ namespace Kazyx.Uwpmm.DataModel
             }
             set
             {
-                SetSelectedAsCurrent(Device.Status.BeepMode, value);
+                ParameterUtil.SetSelectedAsCurrent(Device.Status.BeepMode, value);
             }
         }
 
@@ -161,7 +167,7 @@ namespace Kazyx.Uwpmm.DataModel
             }
             set
             {
-                SetSelectedAsCurrent(Device.Status.PostviewSize, value);
+                ParameterUtil.SetSelectedAsCurrent(Device.Status.PostviewSize, value);
             }
         }
 
@@ -190,7 +196,7 @@ namespace Kazyx.Uwpmm.DataModel
             }
             set
             {
-                SetSelectedAsCurrent(Device.Status.SelfTimer, value);
+                ParameterUtil.SetSelectedAsCurrent(Device.Status.SelfTimer, value);
             }
         }
 
@@ -219,10 +225,9 @@ namespace Kazyx.Uwpmm.DataModel
             }
             set
             {
-                SetSelectedAsCurrent(Device.Status.StillImageSize, value);
+                ParameterUtil.SetSelectedAsCurrent(Device.Status.StillImageSize, value);
             }
         }
-
 
         public int SelectedIndexWhiteBalance
         {
@@ -232,7 +237,7 @@ namespace Kazyx.Uwpmm.DataModel
             }
             set
             {
-                SetSelectedAsCurrent(Device.Status.WhiteBalance, value);
+                ParameterUtil.SetSelectedAsCurrent(Device.Status.WhiteBalance, value);
             }
         }
 
@@ -262,26 +267,6 @@ namespace Kazyx.Uwpmm.DataModel
                     status.ColorTempertureCandidates.ContainsKey(status.WhiteBalance.current) &&
                     status.ColorTempertureCandidates[status.WhiteBalance.current].Length != 0 &&
                     status.ColorTemperture != -1;
-            }
-        }
-
-        private static void SetSelectedAsCurrent<T>(Capability<T> capability, int index)
-        {
-            if (index == -1)
-            {
-                return;
-            }
-
-            if (capability != null)
-            {
-                if (capability.candidates.Length > index)
-                {
-                    capability.current = capability.candidates[index];
-                }
-                else
-                {
-                    capability.current = default(T);
-                }
             }
         }
     }

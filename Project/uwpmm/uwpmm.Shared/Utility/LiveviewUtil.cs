@@ -10,7 +10,7 @@ namespace Kazyx.Uwpmm.Utility
 {
     public class LiveviewUtil
     {
-        public static async Task SetAsBitmap(byte[] data, LiveviewImage target, CoreDispatcher Dispatcher)
+        public static async Task SetAsBitmap(byte[] data, ImageDataSource target, CoreDispatcher Dispatcher)
         {
             var stream = new InMemoryRandomAccessStream();
             await stream.WriteAsync(data.AsBuffer());

@@ -112,8 +112,8 @@ namespace Kazyx.Uwpmm
         private ServerDevice camera;
         private SoDiscovery discovery = new SoDiscovery();
         private LvStreamProcessor liveview = new LvStreamProcessor();
-        private LiveviewImage liveview_data = new LiveviewImage();
-        private LiveviewImage postview_data = new LiveviewImage();
+        private ImageDataSource liveview_data = new ImageDataSource();
+        private ImageDataSource postview_data = new ImageDataSource();
 
         async void discovery_ScalarDeviceDiscovered(object sender, ScalarDeviceEventArgs e)
         {

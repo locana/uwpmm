@@ -15,13 +15,13 @@ namespace Kazyx.Uwpmm.Settings
 {
     class SettingPanels
     {
-        private readonly ControlPanelDataSource Source;
+        private readonly ControlPanelDataSource DataSource;
 
         private Dictionary<string, StackPanel> Panels = new Dictionary<string, StackPanel>();
 
         public SettingPanels(ControlPanelDataSource source)
         {
-            this.Source = source;
+            this.DataSource = source;
             Panels.Add("setShootMode", GetComboBoxPanel("ShootMode", "ShootMode", OnShootModeChanged));
             Panels.Add("setExposureMode", GetComboBoxPanel("ExposureMode", "ExposureMode", OnExposureModeChanged));
             Panels.Add("setWhiteBalance", GetComboBoxPanel("WhiteBalance", "WhiteBalance", OnWhiteBalanceChanged));
@@ -47,15 +47,15 @@ namespace Kazyx.Uwpmm.Settings
         {
             var list = new List<StackPanel>();
 
-            Source.Device = device;
+            DataSource.Device = device;
             foreach (var key in Panels.Keys)
             {
-                if (Source.Device.Api.Capability.IsSupported(key) ||
-                    (key == "ColorTemperture" && Source.Device.Api.Capability.IsSupported("setWhiteBalance")))
+                if (DataSource.Device.Api.Capability.IsSupported(key) ||
+                    (key == "ColorTemperture" && DataSource.Device.Api.Capability.IsSupported("setWhiteBalance")))
                 {
                     list.Add(Panels[key]);
                 }
-                if (Source.Device.Api.Capability.IsRestrictedApi(key))
+                if (DataSource.Device.Api.Capability.IsRestrictedApi(key))
                 {
                     Panels[key].SetBinding(StackPanel.VisibilityProperty, VisibilityBinding);
                 }
@@ -66,61 +66,61 @@ namespace Kazyx.Uwpmm.Settings
 
         private async void OnShootModeChanged(object sender, SelectionChangedEventArgs e)
         {
-            await OnComboBoxChanged<string>(sender, Source.Device.Status.ShootMode,
-                async (selected) => { await Source.Device.Api.Camera.SetShootModeAsync(selected); });
+            await OnComboBoxChanged<string>(sender, DataSource.Device.Status.ShootMode,
+                async (selected) => { await DataSource.Device.Api.Camera.SetShootModeAsync(selected); });
         }
 
         private async void OnExposureModeChanged(object sender, SelectionChangedEventArgs e)
         {
-            await OnComboBoxChanged<string>(sender, Source.Device.Status.ExposureMode,
-                async (selected) => { await Source.Device.Api.Camera.SetExposureModeAsync(selected); });
+            await OnComboBoxChanged<string>(sender, DataSource.Device.Status.ExposureMode,
+                async (selected) => { await DataSource.Device.Api.Camera.SetExposureModeAsync(selected); });
         }
 
         private async void OnSelfTimerChanged(object sender, SelectionChangedEventArgs e)
         {
-            await OnComboBoxChanged<int>(sender, Source.Device.Status.SelfTimer,
-                async (selected) => { await Source.Device.Api.Camera.SetSelfTimerAsync(selected); });
+            await OnComboBoxChanged<int>(sender, DataSource.Device.Status.SelfTimer,
+                async (selected) => { await DataSource.Device.Api.Camera.SetSelfTimerAsync(selected); });
         }
 
         private async void OnPostviewSizeChanged(object sender, SelectionChangedEventArgs e)
         {
-            await OnComboBoxChanged<string>(sender, Source.Device.Status.PostviewSize,
-                async (selected) => { await Source.Device.Api.Camera.SetPostviewImageSizeAsync(selected); });
+            await OnComboBoxChanged<string>(sender, DataSource.Device.Status.PostviewSize,
+                async (selected) => { await DataSource.Device.Api.Camera.SetPostviewImageSizeAsync(selected); });
         }
 
         private async void OnBeepModeChanged(object sender, SelectionChangedEventArgs e)
         {
-            await OnComboBoxChanged<string>(sender, Source.Device.Status.BeepMode,
-                async (selected) => { await Source.Device.Api.Camera.SetBeepModeAsync(selected); });
+            await OnComboBoxChanged<string>(sender, DataSource.Device.Status.BeepMode,
+                async (selected) => { await DataSource.Device.Api.Camera.SetBeepModeAsync(selected); });
         }
 
         private async void OnStillImageSizeChanged(object sender, SelectionChangedEventArgs e)
         {
-            await OnComboBoxChanged<StillImageSize>(sender, Source.Device.Status.StillImageSize,
-                async (selected) => { await Source.Device.Api.Camera.SetStillImageSizeAsync(selected); });
+            await OnComboBoxChanged<StillImageSize>(sender, DataSource.Device.Status.StillImageSize,
+                async (selected) => { await DataSource.Device.Api.Camera.SetStillImageSizeAsync(selected); });
         }
 
         private async void OnWhiteBalanceChanged(object sender, SelectionChangedEventArgs e)
         {
-            await OnComboBoxChanged<string>(sender, Source.Device.Status.WhiteBalance,
+            await OnComboBoxChanged<string>(sender, DataSource.Device.Status.WhiteBalance,
                 async (selected) =>
                 {
                     if (selected != WhiteBalanceMode.Manual)
                     {
-                        Source.Device.Status.ColorTemperture = -1;
-                        await Source.Device.Api.Camera.SetWhiteBalanceAsync(new WhiteBalance { Mode = selected, ColorTemperature = -1 }, false);
+                        DataSource.Device.Status.ColorTemperture = -1;
+                        await DataSource.Device.Api.Camera.SetWhiteBalanceAsync(new WhiteBalance { Mode = selected, ColorTemperature = -1 }, false);
                     }
                     else
                     {
-                        var min = Source.Device.Status.ColorTempertureCandidates[WhiteBalanceMode.Manual][0];
-                        await Source.Device.Api.Camera.SetWhiteBalanceAsync(new WhiteBalance { Mode = selected, ColorTemperature = min }, true);
-                        Source.Device.Status.ColorTemperture = min;
+                        var min = DataSource.Device.Status.ColorTempertureCandidates[WhiteBalanceMode.Manual][0];
+                        await DataSource.Device.Api.Camera.SetWhiteBalanceAsync(new WhiteBalance { Mode = selected, ColorTemperature = min }, true);
+                        DataSource.Device.Status.ColorTemperture = min;
                         if (ColorTempertureSlider != null)
                         {
-                            var val = Source.Device.Status.ColorTempertureCandidates[selected];
+                            var val = DataSource.Device.Status.ColorTempertureCandidates[selected];
                             ColorTempertureSlider.Maximum = val[val.Length - 1];
                             ColorTempertureSlider.Minimum = val[0];
-                            ColorTempertureSlider.Value = Source.Device.Status.ColorTemperture;
+                            ColorTempertureSlider.Value = DataSource.Device.Status.ColorTemperture;
                         }
                     }
                 });
@@ -156,7 +156,7 @@ namespace Kazyx.Uwpmm.Settings
             {
                 Debug.WriteLine("Failed to set parameter: " + e.Message);
             }
-            await Source.Device.Observer.Refresh();
+            await DataSource.Device.Observer.Refresh();
         }
 
         private StackPanel GetComboBoxPanel(string key, string title_key, SelectionChangedEventHandler handler)
@@ -167,19 +167,19 @@ namespace Kazyx.Uwpmm.Settings
             };
             box.SetBinding(ComboBox.IsEnabledProperty, new Binding
             {
-                Source = Source,
+                Source = DataSource,
                 Path = new PropertyPath("IsAvailable" + key),
                 Mode = BindingMode.OneWay
             });
             box.SetBinding(ComboBox.ItemsSourceProperty, new Binding
             {
-                Source = Source,
+                Source = DataSource,
                 Path = new PropertyPath("Candidates" + key),
                 Mode = BindingMode.OneWay
             });
             box.SetBinding(ComboBox.SelectedIndexProperty, new Binding
             {
-                Source = Source,
+                Source = DataSource,
                 Path = new PropertyPath("SelectedIndex" + key),
                 Mode = BindingMode.TwoWay
             });
@@ -199,11 +199,11 @@ namespace Kazyx.Uwpmm.Settings
 
             slider.ManipulationCompleted += async (sender, e) =>
             {
-                var target = ParameterUtil.AsValidColorTemperture((int)slider.Value, Source.Device.Status);
+                var target = ParameterUtil.AsValidColorTemperture((int)slider.Value, DataSource.Device.Status);
                 slider.Value = target;
                 try
                 {
-                    await Source.Device.Api.Camera.SetWhiteBalanceAsync(new WhiteBalance { Mode = Source.Device.Status.WhiteBalance.current, ColorTemperature = target }, true);
+                    await DataSource.Device.Api.Camera.SetWhiteBalanceAsync(new WhiteBalance { Mode = DataSource.Device.Status.WhiteBalance.current, ColorTemperature = target }, true);
                 }
                 catch (RemoteApiException ex)
                 {
@@ -224,14 +224,14 @@ namespace Kazyx.Uwpmm.Settings
 
             indicator.SetBinding(TextBlock.TextProperty, new Binding()
             {
-                Source = Source.Device.Status,
+                Source = DataSource.Device.Status,
                 Path = new PropertyPath("ColorTemperture"),
                 Mode = BindingMode.OneWay,
             });
 
             slider.SetBinding(Slider.ValueProperty, new Binding()
             {
-                Source = Source.Device.Status,
+                Source = DataSource.Device.Status,
                 Path = new PropertyPath("ColorTemperture"),
                 Mode = BindingMode.TwoWay
             });
@@ -243,7 +243,7 @@ namespace Kazyx.Uwpmm.Settings
             parent.Children.Add(slider);
             parent.SetBinding(StackPanel.VisibilityProperty, new Binding()
             {
-                Source = Source,
+                Source = DataSource,
                 Path = new PropertyPath("IsAvailableColorTemperture"),
                 Mode = BindingMode.OneWay,
                 Converter = new BoolToVisibilityConverter()

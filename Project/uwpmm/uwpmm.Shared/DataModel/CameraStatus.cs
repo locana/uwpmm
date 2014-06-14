@@ -1,5 +1,4 @@
-﻿
-using Kazyx.RemoteApi;
+﻿using Kazyx.RemoteApi;
 using System.Collections.Generic;
 
 namespace Kazyx.Uwpmm.DataModel

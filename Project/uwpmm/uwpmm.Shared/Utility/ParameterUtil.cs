@@ -1,4 +1,5 @@
-﻿using Kazyx.Uwpmm.DataModel;
+﻿using Kazyx.RemoteApi;
+using Kazyx.Uwpmm.DataModel;
 
 namespace Kazyx.Uwpmm.Utility
 {
@@ -28,6 +29,26 @@ namespace Kazyx.Uwpmm.Utility
             var diff_above = candidates[index_below + 1] - source;
 
             return diff_below < diff_above ? candidates[index_below] : candidates[index_below + 1];
+        }
+
+        public static void SetSelectedAsCurrent<T>(Capability<T> capability, int index)
+        {
+            if (index == -1)
+            {
+                return;
+            }
+
+            if (capability != null)
+            {
+                if (capability.candidates.Length > index)
+                {
+                    capability.current = capability.candidates[index];
+                }
+                else
+                {
+                    capability.current = default(T);
+                }
+            }
         }
     }
 }

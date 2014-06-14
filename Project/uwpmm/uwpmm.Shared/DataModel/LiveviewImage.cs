@@ -3,7 +3,7 @@ using Windows.UI.Xaml.Media.Imaging;
 
 namespace Kazyx.Uwpmm.DataModel
 {
-    public class LiveviewImage : ObservableBase
+    public class ImageDataSource : ObservableBase
     {
         private BitmapImage _Image = null;
         public BitmapImage Image
