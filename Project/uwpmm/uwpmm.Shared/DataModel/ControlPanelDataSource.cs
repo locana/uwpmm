@@ -1,23 +1,26 @@
 ﻿using Kazyx.RemoteApi;
 using Kazyx.Uwpmm.CameraControl;
 using Kazyx.Uwpmm.Utility;
-using System.Diagnostics;
-using Windows.UI.Xaml;
 
 namespace Kazyx.Uwpmm.DataModel
 {
     class ControlPanelDataSource : ObservableBase
     {
-        private readonly ServerDevice Camera;
+        private ServerDevice _Device;
+        public ServerDevice Device
+        {
+            set { _Device = value; }
+            get { return _Device; }
+        }
 
         public ControlPanelDataSource(ServerDevice camera)
         {
-            this.Camera = camera;
-            Camera.Status.PropertyChanged += (sender, e) =>
+            this.Device = camera;
+            Device.Status.PropertyChanged += (sender, e) =>
             {
                 GenericPropertyChanged(e.PropertyName);
             };
-            Camera.Api.AvailiableApisUpdated += (sender, e) =>
+            Device.Api.AvailiableApisUpdated += (sender, e) =>
             {
                 NotifyChangedOnUI("IsAvailableExposureMode");
                 NotifyChangedOnUI("IsAvailableShootMode");
@@ -25,8 +28,10 @@ namespace Kazyx.Uwpmm.DataModel
                 NotifyChangedOnUI("IsAvailableSelfTimer");
                 NotifyChangedOnUI("IsAvailablePostviewSize");
                 NotifyChangedOnUI("IsAvailableStillImageSize");
+                NotifyChangedOnUI("IsAvailableWhiteBalance");
+                NotifyChangedOnUI("IsAvailableColorTemperture");
             };
-            Camera.Api.ServerVersionDetected += (sender, e) =>
+            Device.Api.ServerVersionDetected += (sender, e) =>
             {
                 NotifyChangedOnUI("IsRestrictedApiVisible");
             };
@@ -39,17 +44,17 @@ namespace Kazyx.Uwpmm.DataModel
             NotifyChanged("IsAvailable" + name);
         }
 
-        public Visibility IsRestrictedApiVisible
+        public bool IsRestrictedApiAvailable
         {
-            get { return Camera.Api.Capability.Version.IsLiberated ? Visibility.Visible : Visibility.Collapsed; }
+            get { return Device.Api.Capability.Version.IsLiberated; }
         }
 
         public bool IsAvailableExposureMode
         {
             get
             {
-                return Camera.Api.Capability.IsAvailable("setExposureMode") &&
-                    Camera.Status.ExposureMode != null;
+                return Device.Api.Capability.IsAvailable("setExposureMode") &&
+                    Device.Status.ExposureMode != null;
             }
         }
 
@@ -57,7 +62,7 @@ namespace Kazyx.Uwpmm.DataModel
         {
             get
             {
-                return SettingValueConverter.FromExposureMode(Camera.Status.ExposureMode).candidates;
+                return SettingValueConverter.FromExposureMode(Device.Status.ExposureMode).candidates;
             }
         }
 
@@ -65,11 +70,11 @@ namespace Kazyx.Uwpmm.DataModel
         {
             get
             {
-                return SettingValueConverter.GetSelectedIndex(Camera.Status.ExposureMode);
+                return SettingValueConverter.GetSelectedIndex(Device.Status.ExposureMode);
             }
             set
             {
-                SetSelectedAsCurrent(Camera.Status.ExposureMode, value);
+                SetSelectedAsCurrent(Device.Status.ExposureMode, value);
             }
         }
 
@@ -77,8 +82,8 @@ namespace Kazyx.Uwpmm.DataModel
         {
             get
             {
-                return Camera.Api.Capability.IsAvailable("setShootMode") &&
-                    Camera.Status.ShootMode != null;
+                return Device.Api.Capability.IsAvailable("setShootMode") &&
+                    Device.Status.ShootMode != null;
             }
         }
 
@@ -86,7 +91,7 @@ namespace Kazyx.Uwpmm.DataModel
         {
             get
             {
-                return SettingValueConverter.FromShootMode(Camera.Status.ShootMode).candidates;
+                return SettingValueConverter.FromShootMode(Device.Status.ShootMode).candidates;
             }
         }
 
@@ -94,11 +99,11 @@ namespace Kazyx.Uwpmm.DataModel
         {
             get
             {
-                return SettingValueConverter.GetSelectedIndex(Camera.Status.ShootMode);
+                return SettingValueConverter.GetSelectedIndex(Device.Status.ShootMode);
             }
             set
             {
-                SetSelectedAsCurrent(Camera.Status.ShootMode, value);
+                SetSelectedAsCurrent(Device.Status.ShootMode, value);
             }
         }
 
@@ -106,8 +111,8 @@ namespace Kazyx.Uwpmm.DataModel
         {
             get
             {
-                return Camera.Api.Capability.IsAvailable("setBeepMode") &&
-                    Camera.Status.BeepMode != null;
+                return Device.Api.Capability.IsAvailable("setBeepMode") &&
+                    Device.Status.BeepMode != null;
             }
         }
 
@@ -115,7 +120,7 @@ namespace Kazyx.Uwpmm.DataModel
         {
             get
             {
-                return SettingValueConverter.FromBeepMode(Camera.Status.BeepMode).candidates;
+                return SettingValueConverter.FromBeepMode(Device.Status.BeepMode).candidates;
             }
         }
 
@@ -123,11 +128,11 @@ namespace Kazyx.Uwpmm.DataModel
         {
             get
             {
-                return SettingValueConverter.GetSelectedIndex(Camera.Status.BeepMode);
+                return SettingValueConverter.GetSelectedIndex(Device.Status.BeepMode);
             }
             set
             {
-                SetSelectedAsCurrent(Camera.Status.BeepMode, value);
+                SetSelectedAsCurrent(Device.Status.BeepMode, value);
             }
         }
 
@@ -135,8 +140,8 @@ namespace Kazyx.Uwpmm.DataModel
         {
             get
             {
-                return Camera.Api.Capability.IsAvailable("setPostviewImageSize") &&
-                    Camera.Status.PostviewSize != null;
+                return Device.Api.Capability.IsAvailable("setPostviewImageSize") &&
+                    Device.Status.PostviewSize != null;
             }
         }
 
@@ -144,7 +149,7 @@ namespace Kazyx.Uwpmm.DataModel
         {
             get
             {
-                return SettingValueConverter.FromPostViewSize(Camera.Status.PostviewSize).candidates;
+                return SettingValueConverter.FromPostViewSize(Device.Status.PostviewSize).candidates;
             }
         }
 
@@ -152,11 +157,11 @@ namespace Kazyx.Uwpmm.DataModel
         {
             get
             {
-                return SettingValueConverter.GetSelectedIndex(Camera.Status.PostviewSize);
+                return SettingValueConverter.GetSelectedIndex(Device.Status.PostviewSize);
             }
             set
             {
-                SetSelectedAsCurrent(Camera.Status.PostviewSize, value);
+                SetSelectedAsCurrent(Device.Status.PostviewSize, value);
             }
         }
 
@@ -164,8 +169,8 @@ namespace Kazyx.Uwpmm.DataModel
         {
             get
             {
-                return Camera.Api.Capability.IsAvailable("setSelfTimer") &&
-                    Camera.Status.SelfTimer != null;
+                return Device.Api.Capability.IsAvailable("setSelfTimer") &&
+                    Device.Status.SelfTimer != null;
             }
         }
 
@@ -173,7 +178,7 @@ namespace Kazyx.Uwpmm.DataModel
         {
             get
             {
-                return SettingValueConverter.FromSelfTimer(Camera.Status.SelfTimer).candidates;
+                return SettingValueConverter.FromSelfTimer(Device.Status.SelfTimer).candidates;
             }
         }
 
@@ -181,11 +186,11 @@ namespace Kazyx.Uwpmm.DataModel
         {
             get
             {
-                return SettingValueConverter.GetSelectedIndex(Camera.Status.SelfTimer);
+                return SettingValueConverter.GetSelectedIndex(Device.Status.SelfTimer);
             }
             set
             {
-                SetSelectedAsCurrent(Camera.Status.SelfTimer, value);
+                SetSelectedAsCurrent(Device.Status.SelfTimer, value);
             }
         }
 
@@ -193,8 +198,8 @@ namespace Kazyx.Uwpmm.DataModel
         {
             get
             {
-                return Camera.Api.Capability.IsAvailable("setStillSize") &&
-                    Camera.Status.StillImageSize != null;
+                return Device.Api.Capability.IsAvailable("setStillSize") &&
+                    Device.Status.StillImageSize != null;
             }
         }
 
@@ -202,7 +207,7 @@ namespace Kazyx.Uwpmm.DataModel
         {
             get
             {
-                return SettingValueConverter.FromStillImageSize(Camera.Status.StillImageSize).candidates;
+                return SettingValueConverter.FromStillImageSize(Device.Status.StillImageSize).candidates;
             }
         }
 
@@ -210,11 +215,53 @@ namespace Kazyx.Uwpmm.DataModel
         {
             get
             {
-                return SettingValueConverter.GetSelectedIndex(Camera.Status.StillImageSize);
+                return SettingValueConverter.GetSelectedIndex(Device.Status.StillImageSize);
             }
             set
             {
-                SetSelectedAsCurrent(Camera.Status.StillImageSize, value);
+                SetSelectedAsCurrent(Device.Status.StillImageSize, value);
+            }
+        }
+
+
+        public int SelectedIndexWhiteBalance
+        {
+            get
+            {
+                return SettingValueConverter.GetSelectedIndex(Device.Status.WhiteBalance);
+            }
+            set
+            {
+                SetSelectedAsCurrent(Device.Status.WhiteBalance, value);
+            }
+        }
+
+        public string[] CandidatesWhiteBalance
+        {
+            get
+            {
+                return SettingValueConverter.FromWhiteBalance(Device.Status.WhiteBalance).candidates;
+            }
+        }
+
+        public bool IsAvailableWhiteBalance
+        {
+            get
+            {
+                return Device.Api.Capability.IsAvailable("setWhiteBalance") &&
+                    Device.Status.WhiteBalance != null;
+            }
+        }
+
+        public bool IsAvailableColorTemperture
+        {
+            get
+            {
+                var status = Device.Status;
+                return IsAvailableWhiteBalance &&
+                    status.ColorTempertureCandidates.ContainsKey(status.WhiteBalance.current) &&
+                    status.ColorTempertureCandidates[status.WhiteBalance.current].Length != 0 &&
+                    status.ColorTemperture != -1;
             }
         }
 

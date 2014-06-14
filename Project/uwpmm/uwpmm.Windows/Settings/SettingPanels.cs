@@ -1,57 +1,61 @@
 ﻿using Kazyx.RemoteApi;
 using Kazyx.Uwpmm.CameraControl;
 using Kazyx.Uwpmm.DataModel;
+using Kazyx.Uwpmm.Utility;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using Windows.ApplicationModel.Resources;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Data;
+using Windows.UI.Xaml.Media;
 
 namespace Kazyx.Uwpmm.Settings
 {
     class SettingPanels
     {
-        private readonly ControlPanelDataSource source;
+        private readonly ControlPanelDataSource Source;
 
         private Dictionary<string, StackPanel> Panels = new Dictionary<string, StackPanel>();
 
-        private ServerDevice Camera;
-
         public SettingPanels(ControlPanelDataSource source)
         {
-            this.source = source;
-            Panels.Add("setShootMode", GetComboBoxPanel("ShootMode", ResourceLoader.GetForCurrentView().GetString("ShootMode"), OnShootModeChanged));
-            Panels.Add("setExposureMode", GetComboBoxPanel("ExposureMode", ResourceLoader.GetForCurrentView().GetString("ExposureMode"), OnExposureModeChanged));
-            Panels.Add("setSelfTimer", GetComboBoxPanel("SelfTimer", ResourceLoader.GetForCurrentView().GetString("SelfTimer"), OnSelfTimerChanged));
-            Panels.Add("setStillSize", GetComboBoxPanel("StillImageSize", ResourceLoader.GetForCurrentView().GetString("StillImageSize"), OnStillImageSizeChanged));
-            Panels.Add("setPostviewImageSize", GetComboBoxPanel("PostviewSize", ResourceLoader.GetForCurrentView().GetString("Setting_PostViewImageSize"), OnPostviewSizeChanged));
-            Panels.Add("setBeepMode", GetComboBoxPanel("BeepMode", ResourceLoader.GetForCurrentView().GetString("BeepMode"), OnBeepModeChanged));
-        }
+            this.Source = source;
+            Panels.Add("setShootMode", GetComboBoxPanel("ShootMode", "ShootMode", OnShootModeChanged));
+            Panels.Add("setExposureMode", GetComboBoxPanel("ExposureMode", "ExposureMode", OnExposureModeChanged));
+            Panels.Add("setWhiteBalance", GetComboBoxPanel("WhiteBalance", "WhiteBalance", OnWhiteBalanceChanged));
+            Panels.Add("ColorTemperture", GetColorTemperturePanel());
+            Panels.Add("setSelfTimer", GetComboBoxPanel("SelfTimer", "SelfTimer", OnSelfTimerChanged));
+            Panels.Add("setStillSize", GetComboBoxPanel("StillImageSize", "StillImageSize", OnStillImageSizeChanged));
+            Panels.Add("setPostviewImageSize", GetComboBoxPanel("PostviewSize", "Setting_PostViewImageSize", OnPostviewSizeChanged));
+            Panels.Add("setBeepMode", GetComboBoxPanel("BeepMode", "BeepMode", OnBeepModeChanged));
 
-        public List<StackPanel> SwitchDevice(ServerDevice camera)
-        {
-            this.Camera = camera;
-
-            var list = new List<StackPanel>();
-
-            Binding VisibilityBinding = new Binding()
+            VisibilityBinding = new Binding()
             {
                 Source = source,
-                Path = new PropertyPath("IsRestrictedApiVisible"),
+                Path = new PropertyPath("IsRestrictedApiAvailable"),
                 Mode = BindingMode.OneWay,
+                Converter = new BoolToVisibilityConverter(),
                 FallbackValue = Visibility.Collapsed
             };
+        }
 
+        private readonly Binding VisibilityBinding;
+
+        public List<StackPanel> SwitchDevice(ServerDevice device)
+        {
+            var list = new List<StackPanel>();
+
+            Source.Device = device;
             foreach (var key in Panels.Keys)
             {
-                if (Camera.Api.Capability.IsSupported(key))
+                if (Source.Device.Api.Capability.IsSupported(key) ||
+                    (key == "ColorTemperture" && Source.Device.Api.Capability.IsSupported("setWhiteBalance")))
                 {
                     list.Add(Panels[key]);
                 }
-                if (Camera.Api.Capability.IsRestrictedApi(key))
+                if (Source.Device.Api.Capability.IsRestrictedApi(key))
                 {
                     Panels[key].SetBinding(StackPanel.VisibilityProperty, VisibilityBinding);
                 }
@@ -62,38 +66,64 @@ namespace Kazyx.Uwpmm.Settings
 
         private async void OnShootModeChanged(object sender, SelectionChangedEventArgs e)
         {
-            await OnComboBoxChanged<string>(sender, Camera.Status.ShootMode,
-                async (selected) => { await Camera.Api.Camera.SetShootModeAsync(selected); });
+            await OnComboBoxChanged<string>(sender, Source.Device.Status.ShootMode,
+                async (selected) => { await Source.Device.Api.Camera.SetShootModeAsync(selected); });
         }
 
         private async void OnExposureModeChanged(object sender, SelectionChangedEventArgs e)
         {
-            await OnComboBoxChanged<string>(sender, Camera.Status.ExposureMode,
-                async (selected) => { await Camera.Api.Camera.SetExposureModeAsync(selected); });
+            await OnComboBoxChanged<string>(sender, Source.Device.Status.ExposureMode,
+                async (selected) => { await Source.Device.Api.Camera.SetExposureModeAsync(selected); });
         }
 
         private async void OnSelfTimerChanged(object sender, SelectionChangedEventArgs e)
         {
-            await OnComboBoxChanged<int>(sender, Camera.Status.SelfTimer,
-                async (selected) => { await Camera.Api.Camera.SetSelfTimerAsync(selected); });
+            await OnComboBoxChanged<int>(sender, Source.Device.Status.SelfTimer,
+                async (selected) => { await Source.Device.Api.Camera.SetSelfTimerAsync(selected); });
         }
 
         private async void OnPostviewSizeChanged(object sender, SelectionChangedEventArgs e)
         {
-            await OnComboBoxChanged<string>(sender, Camera.Status.PostviewSize,
-                async (selected) => { await Camera.Api.Camera.SetPostviewImageSizeAsync(selected); });
+            await OnComboBoxChanged<string>(sender, Source.Device.Status.PostviewSize,
+                async (selected) => { await Source.Device.Api.Camera.SetPostviewImageSizeAsync(selected); });
         }
 
         private async void OnBeepModeChanged(object sender, SelectionChangedEventArgs e)
         {
-            await OnComboBoxChanged<string>(sender, Camera.Status.BeepMode,
-                async (selected) => { await Camera.Api.Camera.SetBeepModeAsync(selected); });
+            await OnComboBoxChanged<string>(sender, Source.Device.Status.BeepMode,
+                async (selected) => { await Source.Device.Api.Camera.SetBeepModeAsync(selected); });
         }
 
         private async void OnStillImageSizeChanged(object sender, SelectionChangedEventArgs e)
         {
-            await OnComboBoxChanged<StillImageSize>(sender, Camera.Status.StillImageSize,
-                async (selected) => { await Camera.Api.Camera.SetStillImageSizeAsync(selected); });
+            await OnComboBoxChanged<StillImageSize>(sender, Source.Device.Status.StillImageSize,
+                async (selected) => { await Source.Device.Api.Camera.SetStillImageSizeAsync(selected); });
+        }
+
+        private async void OnWhiteBalanceChanged(object sender, SelectionChangedEventArgs e)
+        {
+            await OnComboBoxChanged<string>(sender, Source.Device.Status.WhiteBalance,
+                async (selected) =>
+                {
+                    if (selected != WhiteBalanceMode.Manual)
+                    {
+                        Source.Device.Status.ColorTemperture = -1;
+                        await Source.Device.Api.Camera.SetWhiteBalanceAsync(new WhiteBalance { Mode = selected, ColorTemperature = -1 }, false);
+                    }
+                    else
+                    {
+                        var min = Source.Device.Status.ColorTempertureCandidates[WhiteBalanceMode.Manual][0];
+                        await Source.Device.Api.Camera.SetWhiteBalanceAsync(new WhiteBalance { Mode = selected, ColorTemperature = min }, true);
+                        Source.Device.Status.ColorTemperture = min;
+                        if (ColorTempertureSlider != null)
+                        {
+                            var val = Source.Device.Status.ColorTempertureCandidates[selected];
+                            ColorTempertureSlider.Maximum = val[val.Length - 1];
+                            ColorTempertureSlider.Minimum = val[0];
+                            ColorTempertureSlider.Value = Source.Device.Status.ColorTemperture;
+                        }
+                    }
+                });
         }
 
         private delegate Task AsyncAction<T>(T arg);
@@ -126,39 +156,114 @@ namespace Kazyx.Uwpmm.Settings
             {
                 Debug.WriteLine("Failed to set parameter: " + e.Message);
             }
-            await Camera.Observer.Refresh();
+            await Source.Device.Observer.Refresh();
         }
 
-        private StackPanel GetComboBoxPanel(string key, string title, SelectionChangedEventHandler handler)
+        private StackPanel GetComboBoxPanel(string key, string title_key, SelectionChangedEventHandler handler)
         {
-
             var box = new ComboBox
             {
                 Margin = new Thickness(4, 0, 0, 0)
             };
             box.SetBinding(ComboBox.IsEnabledProperty, new Binding
             {
-                Source = source,
+                Source = Source,
                 Path = new PropertyPath("IsAvailable" + key),
                 Mode = BindingMode.OneWay
             });
             box.SetBinding(ComboBox.ItemsSourceProperty, new Binding
             {
-                Source = source,
+                Source = Source,
                 Path = new PropertyPath("Candidates" + key),
                 Mode = BindingMode.OneWay
             });
             box.SetBinding(ComboBox.SelectedIndexProperty, new Binding
             {
-                Source = source,
+                Source = Source,
                 Path = new PropertyPath("SelectedIndex" + key),
                 Mode = BindingMode.TwoWay
             });
             box.SelectionChanged += handler;
 
-            var parent = GetBasicPanel(title);
+            var parent = GetBasicPanel(SystemUtil.GetStringResource(title_key));
             parent.Children.Add(box);
             return parent;
+        }
+
+        private Slider ColorTempertureSlider = null;
+
+        private StackPanel GetColorTemperturePanel()
+        {
+            var slider = CreateSlider(null, null);
+            slider.Value = 0;
+
+            slider.ManipulationCompleted += async (sender, e) =>
+            {
+                var target = ParameterUtil.AsValidColorTemperture((int)slider.Value, Source.Device.Status);
+                slider.Value = target;
+                try
+                {
+                    await Source.Device.Api.Camera.SetWhiteBalanceAsync(new WhiteBalance { Mode = Source.Device.Status.WhiteBalance.current, ColorTemperature = target }, true);
+                }
+                catch (RemoteApiException ex)
+                {
+                    Debug.WriteLine("Failed to set color temperture: " + ex.code);
+                }
+                catch (NullReferenceException ex)
+                {
+                    Debug.WriteLine("Failed to set color temperture: " + ex.Message);
+                }
+            };
+
+            var indicator = new TextBlock
+            {
+                HorizontalAlignment = HorizontalAlignment.Left,
+                Style = Application.Current.Resources["BaseTextBlockStyle"] as Style,
+                Margin = new Thickness(10, 22, 0, 0),
+            };
+
+            indicator.SetBinding(TextBlock.TextProperty, new Binding()
+            {
+                Source = Source.Device.Status,
+                Path = new PropertyPath("ColorTemperture"),
+                Mode = BindingMode.OneWay,
+            });
+
+            slider.SetBinding(Slider.ValueProperty, new Binding()
+            {
+                Source = Source.Device.Status,
+                Path = new PropertyPath("ColorTemperture"),
+                Mode = BindingMode.TwoWay
+            });
+
+            ColorTempertureSlider = slider;
+
+            var parent = GetBasicPanel(SystemUtil.GetStringResource("WB_ColorTemperture"));
+            (parent.Children[0] as StackPanel).Children.Add(indicator);
+            parent.Children.Add(slider);
+            parent.SetBinding(StackPanel.VisibilityProperty, new Binding()
+            {
+                Source = Source,
+                Path = new PropertyPath("IsAvailableColorTemperture"),
+                Mode = BindingMode.OneWay,
+                Converter = new BoolToVisibilityConverter()
+            });
+
+            return parent;
+        }
+
+        private static Slider CreateSlider(int? min, int? max)
+        {
+            return new Slider
+            {
+                Maximum = max != null ? max.Value : 1,
+                Minimum = min != null ? min.Value : 0,
+                Margin = new Thickness(4, 0, 0, 0),
+                Width = double.NaN,
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                VerticalAlignment = VerticalAlignment.Top,
+                Background = Application.Current.Resources["ProgressBarBackgroundThemeBrush"] as Brush
+            };
         }
 
         private static StackPanel GetBasicPanel(string title)

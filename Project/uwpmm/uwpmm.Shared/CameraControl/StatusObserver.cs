@@ -1,6 +1,7 @@
 ﻿using Kazyx.RemoteApi;
 using Kazyx.Uwpmm.DataModel;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
 
@@ -120,6 +121,53 @@ namespace Kazyx.Uwpmm.CameraControl
                 {
                     target.StillImageSize.current = status.StillImageSize.Current;
                     target.StillImageSize = target.StillImageSize;
+                }
+            }
+            if (status.WhiteBalance != null)
+            {
+                if (status.WhiteBalance.CapabilityChanged)
+                {
+                    try
+                    {
+                        var wb = await api.Camera.GetAvailableWhiteBalanceAsync();
+                        var candidates = new List<string>();
+                        var tmpCandidates = new Dictionary<string, int[]>();
+                        foreach (var mode in wb.candidates)
+                        {
+                            candidates.Add(mode.WhiteBalanceMode);
+                            var tmpList = new List<int>();
+                            if (mode.Candidates.Length == 3)
+                            {
+                                for (int i = mode.Candidates[1]; i <= mode.Candidates[0]; i += mode.Candidates[2])
+                                {
+                                    tmpList.Add(i);
+                                }
+                            }
+                            tmpCandidates.Add(mode.WhiteBalanceMode, tmpList.ToArray());
+
+                            var builder = new System.Text.StringBuilder();
+                            foreach (var val in mode.Candidates)
+                            {
+                                builder.Append(val).Append(", ");
+                            }
+                        }
+
+                        target.WhiteBalance = new Capability<string> { candidates = candidates.ToArray(), current = wb.current.Mode };
+                        target.ColorTempertureCandidates = tmpCandidates;
+                        target.ColorTemperture = wb.current.ColorTemperature;
+                    }
+                    catch (RemoteApiException)
+                    {
+                        Debug.WriteLine("Failed to get white balance capability");
+                    }
+                }
+                else
+                {
+                    if (status.WhiteBalance != null)
+                    {
+                        target.WhiteBalance.current = status.WhiteBalance.Current.Mode;
+                    }
+                    target.ColorTemperture = status.WhiteBalance.Current.ColorTemperature;
                 }
             }
         }

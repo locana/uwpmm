@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using Windows.ApplicationModel.Resources;
 
 namespace Kazyx.Uwpmm.Utility
 {
@@ -68,8 +67,8 @@ namespace Kazyx.Uwpmm.Utility
 
         private static string FromSelfTimer(int val)
         {
-            if (val == 0) { return ResourceLoader.GetForCurrentView().GetString("Off"); }
-            else { return val + ResourceLoader.GetForCurrentView().GetString("Seconds"); }
+            if (val == 0) { return SystemUtil.GetStringResource("Off"); }
+            else { return val + SystemUtil.GetStringResource("Seconds"); }
         }
 
         public static Capability<string> FromPostViewSize(Capability<string> info)
@@ -95,9 +94,9 @@ namespace Kazyx.Uwpmm.Utility
             switch (val)
             {
                 case PostviewSizeParam.Px2M:
-                    return ResourceLoader.GetForCurrentView().GetString("Size2M");
+                    return SystemUtil.GetStringResource("Size2M");
                 case PostviewSizeParam.Original:
-                    return ResourceLoader.GetForCurrentView().GetString("SizeOriginal");
+                    return SystemUtil.GetStringResource("SizeOriginal");
                 default:
                     return val;
             }
@@ -126,13 +125,13 @@ namespace Kazyx.Uwpmm.Utility
             switch (val)
             {
                 case ShootModeParam.Movie:
-                    return ResourceLoader.GetForCurrentView().GetString("ShootModeMovie");
+                    return SystemUtil.GetStringResource("ShootModeMovie");
                 case ShootModeParam.Still:
-                    return ResourceLoader.GetForCurrentView().GetString("ShootModeStill");
+                    return SystemUtil.GetStringResource("ShootModeStill");
                 case ShootModeParam.Audio:
-                    return ResourceLoader.GetForCurrentView().GetString("ShootModeAudio");
+                    return SystemUtil.GetStringResource("ShootModeAudio");
                 case ShootModeParam.Interval:
-                    return ResourceLoader.GetForCurrentView().GetString("ShootModeIntervalStill");
+                    return SystemUtil.GetStringResource("ShootModeIntervalStill");
                 default:
                     return val;
             }
@@ -161,15 +160,15 @@ namespace Kazyx.Uwpmm.Utility
             switch (val)
             {
                 case ExposureMode.Aperture:
-                    return ResourceLoader.GetForCurrentView().GetString("ExposureMode_A");
+                    return SystemUtil.GetStringResource("ExposureMode_A");
                 case ExposureMode.SS:
-                    return ResourceLoader.GetForCurrentView().GetString("ExposureMode_S");
+                    return SystemUtil.GetStringResource("ExposureMode_S");
                 case ExposureMode.Program:
-                    return ResourceLoader.GetForCurrentView().GetString("ExposureMode_P");
+                    return SystemUtil.GetStringResource("ExposureMode_P");
                 case ExposureMode.Superior:
-                    return ResourceLoader.GetForCurrentView().GetString("ExposureMode_sA");
+                    return SystemUtil.GetStringResource("ExposureMode_sA");
                 case ExposureMode.Intelligent:
-                    return ResourceLoader.GetForCurrentView().GetString("ExposureMode_iA");
+                    return SystemUtil.GetStringResource("ExposureMode_iA");
                 default:
                     return val;
             }
@@ -198,9 +197,9 @@ namespace Kazyx.Uwpmm.Utility
             switch (val)
             {
                 case SteadyMode.On:
-                    return ResourceLoader.GetForCurrentView().GetString("On");
+                    return SystemUtil.GetStringResource("On");
                 case SteadyMode.Off:
-                    return ResourceLoader.GetForCurrentView().GetString("Off");
+                    return SystemUtil.GetStringResource("Off");
                 default:
                     return val;
             }
@@ -229,11 +228,11 @@ namespace Kazyx.Uwpmm.Utility
             switch (val)
             {
                 case BeepMode.On:
-                    return ResourceLoader.GetForCurrentView().GetString("On");
+                    return SystemUtil.GetStringResource("On");
                 case BeepMode.Silent:
-                    return ResourceLoader.GetForCurrentView().GetString("Off");
+                    return SystemUtil.GetStringResource("Off");
                 case BeepMode.Shutter:
-                    return ResourceLoader.GetForCurrentView().GetString("BeepModeShutterOnly");
+                    return SystemUtil.GetStringResource("BeepModeShutterOnly");
                 default:
                     return val;
             }
@@ -259,7 +258,7 @@ namespace Kazyx.Uwpmm.Utility
 
         private static string FromViewAngle(int val)
         {
-            return val + ResourceLoader.GetForCurrentView().GetString("ViewAngleUnit");
+            return val + SystemUtil.GetStringResource("ViewAngleUnit");
         }
 
         public static Capability<string> FromMovieQuality(Capability<string> info)
@@ -349,25 +348,25 @@ namespace Kazyx.Uwpmm.Utility
             switch (val)
             {
                 case WhiteBalanceMode.Fluorescent_WarmWhite:
-                    return ResourceLoader.GetForCurrentView().GetString("WB_Fluorescent_WarmWhite");
+                    return SystemUtil.GetStringResource("WB_Fluorescent_WarmWhite");
                 case WhiteBalanceMode.Fluorescent_CoolWhite:
-                    return ResourceLoader.GetForCurrentView().GetString("WB_Fluorescent_CoolWhite");
+                    return SystemUtil.GetStringResource("WB_Fluorescent_CoolWhite");
                 case WhiteBalanceMode.Fluorescent_DayLight:
-                    return ResourceLoader.GetForCurrentView().GetString("WB_Fluorescent_DayLight");
+                    return SystemUtil.GetStringResource("WB_Fluorescent_DayLight");
                 case WhiteBalanceMode.Fluorescent_DayWhite:
-                    return ResourceLoader.GetForCurrentView().GetString("WB_Fluorescent_DayWhite");
+                    return SystemUtil.GetStringResource("WB_Fluorescent_DayWhite");
                 case WhiteBalanceMode.Incandescent:
-                    return ResourceLoader.GetForCurrentView().GetString("WB_Incandescent");
+                    return SystemUtil.GetStringResource("WB_Incandescent");
                 case WhiteBalanceMode.Shade:
-                    return ResourceLoader.GetForCurrentView().GetString("WB_Shade");
+                    return SystemUtil.GetStringResource("WB_Shade");
                 case WhiteBalanceMode.Auto:
-                    return ResourceLoader.GetForCurrentView().GetString("WB_Auto");
+                    return SystemUtil.GetStringResource("WB_Auto");
                 case WhiteBalanceMode.Cloudy:
-                    return ResourceLoader.GetForCurrentView().GetString("WB_Cloudy");
+                    return SystemUtil.GetStringResource("WB_Cloudy");
                 case WhiteBalanceMode.DayLight:
-                    return ResourceLoader.GetForCurrentView().GetString("WB_DayLight");
+                    return SystemUtil.GetStringResource("WB_DayLight");
                 case WhiteBalanceMode.Manual:
-                    return ResourceLoader.GetForCurrentView().GetString("WB_ColorTemperture");
+                    return SystemUtil.GetStringResource("WB_ColorTemperture");
             }
             return val;
         }
@@ -376,7 +375,7 @@ namespace Kazyx.Uwpmm.Utility
         {
             if (info == null || info.candidates == null || info.candidates.Length == 0)
             {
-                var disabled = ResourceLoader.GetForCurrentView().GetString("Disabled");
+                var disabled = SystemUtil.GetStringResource("Disabled");
                 return new Capability<string>
                 {
                     candidates = new string[] { disabled },
@@ -390,7 +389,7 @@ namespace Kazyx.Uwpmm.Utility
         {
             if (info == null)
             {
-                return new string[] { ResourceLoader.GetForCurrentView().GetString("Disabled") };
+                return new string[] { SystemUtil.GetStringResource("Disabled") };
             }
 
             int num = info.Candidate.MaxIndex + Math.Abs(info.Candidate.MinIndex) + 1;

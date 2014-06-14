@@ -26,10 +26,13 @@
     <Compile Include="$(MSBuildThisFileDirectory)DataModel\LiveviewImage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataModel\ObservableBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataModel\SampleDataSource.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utility\BoolToVisibilityConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\LiveviewUtil.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utility\ParameterUtil.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\PictureDownloader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\Preference.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\SettingValueConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utility\SystemUtil.cs" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\Camera.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\ZoomIn.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\ZoomOut.png" />

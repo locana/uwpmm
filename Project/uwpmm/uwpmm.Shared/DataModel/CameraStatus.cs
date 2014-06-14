@@ -1,5 +1,6 @@
 ﻿
 using Kazyx.RemoteApi;
+using System.Collections.Generic;
 
 namespace Kazyx.Uwpmm.DataModel
 {
@@ -69,6 +70,98 @@ namespace Kazyx.Uwpmm.DataModel
                 NotifyChangedOnUI("StillImageSize");
             }
             get { return _StillImageSize; }
+        }
+
+        private Capability<string> _WhiteBalance;
+        public Capability<string> WhiteBalance
+        {
+            set
+            {
+                _WhiteBalance = value;
+                NotifyChangedOnUI("WhiteBalance");
+                NotifyChangedOnUI("ColorTemperture");
+            }
+            get { return _WhiteBalance; }
+        }
+
+        private int _ColorTemperture = -1;
+        public int ColorTemperture
+        {
+            set
+            {
+                _ColorTemperture = value;
+                NotifyChangedOnUI("ColorTemperture");
+            }
+            get { return _ColorTemperture; }
+        }
+
+        private Dictionary<string, int[]> _ColorTempertureCandidates;
+        public Dictionary<string, int[]> ColorTempertureCandidates
+        {
+            set
+            {
+                _ColorTempertureCandidates = value;
+                NotifyChangedOnUI("ColorTemperture");
+            }
+            get { return _ColorTempertureCandidates; }
+        }
+
+        private Capability<string> _ShutterSpeed;
+        public Capability<string> ShutterSpeed
+        {
+            set
+            {
+                _ShutterSpeed = value;
+                NotifyChangedOnUI("ShutterSpeed");
+            }
+            get { return _ShutterSpeed; }
+        }
+
+        private Capability<string> _ISOSpeedRate;
+        public Capability<string> ISOSpeedRate
+        {
+            set
+            {
+                _ISOSpeedRate = value;
+                NotifyChangedOnUI("ISOSpeedRate");
+            }
+            get { return _ISOSpeedRate; }
+        }
+
+        private Capability<string> _FNumber;
+        public Capability<string> FNumber
+        {
+            set
+            {
+                _FNumber = value;
+                NotifyChangedOnUI("FNumber");
+            }
+            get { return _FNumber; }
+        }
+
+        private string _Status = EventParam.NotReady;
+        public string Status
+        {
+            set
+            {
+                if (value != _Status)
+                {
+                    _Status = value;
+                    NotifyChangedOnUI("Status");
+                }
+            }
+            get { return _Status; }
+        }
+
+        private ZoomInfo _ZoomInfo = null;
+        public ZoomInfo ZoomInfo
+        {
+            set
+            {
+                _ZoomInfo = value;
+                NotifyChangedOnUI("ZoomInfo");
+            }
+            get { return _ZoomInfo; }
         }
     }
 }
