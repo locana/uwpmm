@@ -76,31 +76,29 @@ namespace Kazyx.Uwpmm.CameraControl
 
         private async Task Update(Event status)
         {
-            if (status.AvailableApis != null)
-            {
-                api.Capability.AvailableApis = status.AvailableApis;
-            }
+            if (status.AvailableApis != null) { api.Capability.AvailableApis = status.AvailableApis; }
+            target.IsLiveviewAvailable = status.LiveviewAvailable;
+            if (status.ShootModeInfo != null) { target.ShootMode = status.ShootModeInfo; }
+            if (status.ExposureMode != null) { target.ExposureMode = status.ExposureMode; }
+            if (status.ISOSpeedRate != null) { target.ISOSpeedRate = status.ISOSpeedRate; }
+            if (status.ShutterSpeed != null) { target.ShutterSpeed = status.ShutterSpeed; }
+            if (status.FNumber != null) { target.FNumber = status.FNumber; }
+            if (status.ZoomInfo != null) { target.ZoomInfo = status.ZoomInfo; }
+            if (status.PostviewSizeInfo != null) { target.PostviewSize = status.PostviewSizeInfo; }
+            if (status.SelfTimerInfo != null) { target.SelfTimer = status.SelfTimerInfo; }
+            if (status.BeepMode != null) { target.BeepMode = status.BeepMode; }
+            if (status.FlashMode != null) { target.FlashMode = status.FlashMode; }
+            if (status.FocusMode != null) { target.FocusMode = status.FocusMode; }
+            if (status.ViewAngle != null) { target.ViewAngle = status.ViewAngle; }
+            if (status.SteadyMode != null) { target.SteadyMode = status.SteadyMode; }
+            if (status.MovieQuality != null) { target.MovieQuality = status.MovieQuality; }
+            if (status.TouchAFStatus != null) { target.TouchFocusStatus = status.TouchAFStatus; }
+            if (status.ProgramShiftActivated != null) { target.ProgramShiftActivated = status.ProgramShiftActivated.Value; }
+            if (status.PictureUrls != null) { target.PictureUrls = status.PictureUrls; }
+            if (status.LiveviewOrientation != null) { target.LiveviewOrientation = status.LiveviewOrientation; }
+            if (status.EvInfo != null) { target.EvInfo = status.EvInfo; }
+            if (status.CameraStatus != null) { target.Status = status.CameraStatus; }
 
-            if (status.ShootModeInfo != null)
-            {
-                target.ShootMode = status.ShootModeInfo;
-            }
-            if (status.ExposureMode != null)
-            {
-                target.ExposureMode = status.ExposureMode;
-            }
-            if (status.PostviewSizeInfo != null)
-            {
-                target.PostviewSize = status.PostviewSizeInfo;
-            }
-            if (status.SelfTimerInfo != null)
-            {
-                target.SelfTimer = status.SelfTimerInfo;
-            }
-            if (status.BeepMode != null)
-            {
-                target.BeepMode = status.BeepMode;
-            }
             if (status.StillImageSize != null)
             {
                 if (status.StillImageSize.CapabilityChanged)
@@ -122,6 +120,7 @@ namespace Kazyx.Uwpmm.CameraControl
                     target.StillImageSize = target.StillImageSize;
                 }
             }
+
             if (status.WhiteBalance != null)
             {
                 if (status.WhiteBalance.CapabilityChanged)

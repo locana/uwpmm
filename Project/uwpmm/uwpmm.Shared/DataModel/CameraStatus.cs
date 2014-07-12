@@ -218,5 +218,116 @@ namespace Kazyx.Uwpmm.DataModel
             }
             get { return _FlashMode; }
         }
+
+        private TouchFocusStatus _TouchFocusStatus;
+        public TouchFocusStatus TouchFocusStatus
+        {
+            set
+            {
+                _TouchFocusStatus = value;
+                NotifyChangedOnUI("TouchFocusStatus");
+            }
+            get
+            {
+                return _TouchFocusStatus;
+            }
+        }
+
+        private EvCapability _EvInfo;
+        public EvCapability EvInfo
+        {
+            set
+            {
+                _EvInfo = value;
+                NotifyChangedOnUI("EvInfo");
+            }
+            get { return _EvInfo; }
+        }
+
+        private StorageInfo[] _Storages;
+        public StorageInfo[] Storages
+        {
+            set
+            {
+                _Storages = value;
+                NotifyChangedOnUI("Storages");
+            }
+            get { return _Storages; }
+        }
+
+        private string _LiveviewOrientation;
+        public string LiveviewOrientation
+        {
+            set
+            {
+                _LiveviewOrientation = value;
+                NotifyChangedOnUI("LiveviewOrientation");
+            }
+            get { return _LiveviewOrientation == null ? Orientation.Straight : _LiveviewOrientation; }
+        }
+
+        private string[] _PictureUrls;
+        public string[] PictureUrls
+        {
+            set
+            {
+                _PictureUrls = value;
+                NotifyChangedOnUI("PictureUrls");
+            }
+            get { return _PictureUrls; }
+        }
+
+        private bool _ProgramShiftActivated = false;
+        public bool ProgramShiftActivated
+        {
+            set
+            {
+                _ProgramShiftActivated = value;
+                NotifyChangedOnUI("ProgramShiftActivated");
+            }
+            get { return _ProgramShiftActivated; }
+        }
+
+        private ProgramShiftRange _ProgramShiftRange;
+        public ProgramShiftRange ProgramShiftRange
+        {
+            set
+            {
+                _ProgramShiftRange = value;
+                NotifyChangedOnUI("ProgramShiftRange");
+            }
+            get
+            {
+                return _ProgramShiftRange;
+            }
+        }
+
+        private string _FocusStatus;
+        public string FocusStatus
+        {
+            set
+            {
+                _FocusStatus = value;
+                NotifyChangedOnUI("FocusStatus");
+            }
+            get { return _FocusStatus; }
+        }
+
+        private bool _IsLiveviewAvailable = false;
+        public bool IsLiveviewAvailable
+        {
+            set
+            {
+                if (_IsLiveviewAvailable != value)
+                {
+                    _IsLiveviewAvailable = value;
+                    NotifyChangedOnUI("IsLiveviewAvailable");
+                }
+            }
+            get
+            {
+                return _IsLiveviewAvailable;
+            }
+        }
     }
 }
