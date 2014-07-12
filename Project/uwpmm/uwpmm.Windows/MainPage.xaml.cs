@@ -109,7 +109,7 @@ namespace Kazyx.Uwpmm
             discovery.SearchScalarDevices();
         }
 
-        private ServerDevice camera;
+        private TargetDevice camera;
         private SoDiscovery discovery = new SoDiscovery();
         private LvStreamProcessor liveview = new LvStreamProcessor();
         private ImageDataSource liveview_data = new ImageDataSource();
@@ -118,10 +118,10 @@ namespace Kazyx.Uwpmm
         async void discovery_ScalarDeviceDiscovered(object sender, ScalarDeviceEventArgs e)
         {
             var api = new DeviceApiHolder(e.ScalarDevice);
-            ServerDevice camera = null;
+            TargetDevice target = null;
             try
             {
-                camera = await SequentialOperation.SetUp(api, liveview);
+                target = await SequentialOperation.SetUp(api, liveview);
             }
             catch (Exception ex)
             {
@@ -129,12 +129,12 @@ namespace Kazyx.Uwpmm
                 return;
             }
 
-            this.camera = camera;
-            var controldata = new ControlPanelDataSource(camera);
+            this.camera = target;
+            var controldata = new ControlPanelDataSource(target);
             await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
                 var panels = new SettingPanels(controldata);
-                var pn = panels.SwitchDevice(camera);
+                var pn = panels.SwitchDevice(target);
                 foreach (var panel in pn)
                 {
                     ControlPanel.Children.Add(panel);

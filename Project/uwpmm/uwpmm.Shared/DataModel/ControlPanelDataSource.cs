@@ -7,8 +7,8 @@ namespace Kazyx.Uwpmm.DataModel
 {
     class ControlPanelDataSource : ObservableBase
     {
-        private ServerDevice _Device;
-        public ServerDevice Device
+        private TargetDevice _Device;
+        public TargetDevice Device
         {
             set
             {
@@ -18,7 +18,7 @@ namespace Kazyx.Uwpmm.DataModel
             get { return _Device; }
         }
 
-        public ControlPanelDataSource(ServerDevice camera)
+        public ControlPanelDataSource(TargetDevice camera)
         {
             this.Device = camera;
             Device.Status.PropertyChanged += (sender, e) =>

@@ -16,7 +16,7 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)CameraControl\ProductType.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)CameraControl\ServerDevice.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CameraControl\TargetDevice.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CameraControl\DeviceApiHolder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CameraControl\SequentialOperation.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CameraControl\ServerVersion.cs" />
@@ -24,7 +24,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)DataModel\ApiCapabilityContainer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataModel\CameraStatus.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataModel\ControlPanelDataSource.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)DataModel\LiveviewImage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DataModel\ImageDataSource.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataModel\ObservableBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\BoolToVisibilityConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\LiveviewUtil.cs" />

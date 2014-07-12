@@ -52,7 +52,7 @@ namespace Kazyx.Uwpmm.Settings
 
         private readonly Binding VisibilityBinding;
 
-        public List<StackPanel> SwitchDevice(ServerDevice device)
+        public List<StackPanel> SwitchDevice(TargetDevice device)
         {
             var list = new List<StackPanel>();
 

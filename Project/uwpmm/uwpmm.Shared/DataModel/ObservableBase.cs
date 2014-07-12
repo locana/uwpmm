@@ -29,7 +29,7 @@ namespace Kazyx.Uwpmm.DataModel
                 }
                 catch (COMException)
                 {
-                    Debug.WriteLine("Caught COMException: LiveviewData");
+                    Debug.WriteLine("Caught COMException: ObservableBase#PropertyChanged");
                 }
             }
         }

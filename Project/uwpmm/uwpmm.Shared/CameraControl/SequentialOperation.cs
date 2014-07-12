@@ -10,7 +10,7 @@ namespace Kazyx.Uwpmm.CameraControl
 {
     public class SequentialOperation
     {
-        public static async Task<ServerDevice> SetUp(DeviceApiHolder api, LvStreamProcessor liveview)
+        public static async Task<TargetDevice> SetUp(DeviceApiHolder api, LvStreamProcessor liveview)
         {
             Debug.WriteLine("Set up control");
             try
@@ -38,10 +38,10 @@ namespace Kazyx.Uwpmm.CameraControl
                 {
                     await api.System.SetCurrentTimeAsync(DateTimeOffset.Now);
                 }
-                var camera = new ServerDevice(api);
+                var target = new TargetDevice(api);
                 var version = api.Capability.IsSupported("getEvent", "1.1") ? ApiVersion.V1_1 : ApiVersion.V1_0;
-                await camera.Observer.Start(camera.Status, version);
-                return camera;
+                await target.Observer.Start(target.Status, version);
+                return target;
             }
             catch (RemoteApiException e)
             {
