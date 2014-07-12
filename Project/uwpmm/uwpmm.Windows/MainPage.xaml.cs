@@ -109,7 +109,7 @@ namespace Kazyx.Uwpmm
             discovery.SearchScalarDevices();
         }
 
-        private TargetDevice camera;
+        private TargetDevice target;
         private SoDiscovery discovery = new SoDiscovery();
         private LvStreamProcessor liveview = new LvStreamProcessor();
         private ImageDataSource liveview_data = new ImageDataSource();
@@ -129,12 +129,11 @@ namespace Kazyx.Uwpmm
                 return;
             }
 
-            this.camera = target;
-            var controldata = new ControlPanelDataSource(target);
+            this.target = target;
             await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
-                var panels = new SettingPanels(controldata);
-                var pn = panels.SwitchDevice(target);
+                var panels = SettingPanelBuilder.CreateNew(target);
+                var pn = panels.GetPanelsToShow();
                 foreach (var panel in pn)
                 {
                     ControlPanel.Children.Add(panel);
@@ -170,8 +169,8 @@ namespace Kazyx.Uwpmm
 
         private async void Button_Click(object sender, RoutedEventArgs e)
         {
-            if (camera == null) return;
-            await SequentialOperation.TakePicture(camera.Api, async (file) =>
+            if (target == null) return;
+            await SequentialOperation.TakePicture(target.Api, async (file) =>
             {
                 var stream = await file.OpenReadAsync();
                 await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>

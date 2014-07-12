@@ -13,9 +13,11 @@ using Windows.UI.Xaml.Media;
 
 namespace Kazyx.Uwpmm.Settings
 {
-    class SettingPanels
+    class SettingPanelBuilder
     {
         private readonly ControlPanelDataSource DataSource;
+
+        private readonly Binding VisibilityBinding;
 
         private DeviceApiHolder Api { get { return DataSource.Device.Api; } }
 
@@ -23,9 +25,15 @@ namespace Kazyx.Uwpmm.Settings
 
         private Dictionary<string, StackPanel> Panels = new Dictionary<string, StackPanel>();
 
-        public SettingPanels(ControlPanelDataSource source)
+        public static SettingPanelBuilder CreateNew(TargetDevice device)
         {
-            this.DataSource = source;
+            return new SettingPanelBuilder(device);
+        }
+
+        private SettingPanelBuilder(TargetDevice device)
+        {
+            DataSource = new ControlPanelDataSource(device);
+
             Panels.Add("setShootMode", BuildComboBoxPanel("ShootMode", "ShootMode", OnShootModeChanged));
             Panels.Add("setExposureMode", BuildComboBoxPanel("ExposureMode", "ExposureMode", OnExposureModeChanged));
             Panels.Add("setFocusMode", BuildComboBoxPanel("FocusMode", "FocusMode", OnFocusModeChanged));
@@ -42,7 +50,7 @@ namespace Kazyx.Uwpmm.Settings
 
             VisibilityBinding = new Binding()
             {
-                Source = source,
+                Source = DataSource,
                 Path = new PropertyPath("IsRestrictedApiAvailable"),
                 Mode = BindingMode.OneWay,
                 Converter = new BoolToVisibilityConverter(),
@@ -50,13 +58,10 @@ namespace Kazyx.Uwpmm.Settings
             };
         }
 
-        private readonly Binding VisibilityBinding;
-
-        public List<StackPanel> SwitchDevice(TargetDevice device)
+        public List<StackPanel> GetPanelsToShow()
         {
             var list = new List<StackPanel>();
 
-            DataSource.Device = device;
             foreach (var key in Panels.Keys)
             {
                 if (Api.Capability.IsSupported(key) ||
@@ -75,73 +80,62 @@ namespace Kazyx.Uwpmm.Settings
 
         private async void OnFocusModeChanged(object sender, SelectionChangedEventArgs e)
         {
-            await OnComboBoxChanged<string>(sender, Status.FocusMode,
-                async (selected) => { await Api.Camera.SetFocusModeAsync(selected); });
+            await OnSelectionChanged(sender, Status.FocusMode, Api.Camera.SetFocusModeAsync);
         }
 
         private async void OnMovieQualityChanged(object sender, SelectionChangedEventArgs e)
         {
-            await OnComboBoxChanged<string>(sender, Status.MovieQuality,
-                async (selected) => { await Api.Camera.SetMovieQualityAsync(selected); });
+            await OnSelectionChanged(sender, Status.MovieQuality, Api.Camera.SetMovieQualityAsync);
         }
 
         private async void OnSteadyModeChanged(object sender, SelectionChangedEventArgs e)
         {
-            await OnComboBoxChanged<string>(sender, Status.SteadyMode,
-                async (selected) => { await Api.Camera.SetSteadyModeAsync(selected); });
+            await OnSelectionChanged(sender, Status.SteadyMode, Api.Camera.SetSteadyModeAsync);
         }
 
         private async void OnViewAngleChanged(object sender, SelectionChangedEventArgs e)
         {
-            await OnComboBoxChanged<int>(sender, Status.ViewAngle,
-                async (selected) => { await Api.Camera.SetViewAngleAsync(selected); });
+            await OnSelectionChanged(sender, Status.ViewAngle, Api.Camera.SetViewAngleAsync);
         }
 
         private async void OnFlashModeChanged(object sender, SelectionChangedEventArgs e)
         {
-            await OnComboBoxChanged<string>(sender, Status.FlashMode,
-                async (selected) => { await Api.Camera.SetFlashModeAsync(selected); });
+            await OnSelectionChanged(sender, Status.FlashMode, Api.Camera.SetFlashModeAsync);
         }
 
         private async void OnShootModeChanged(object sender, SelectionChangedEventArgs e)
         {
-            await OnComboBoxChanged<string>(sender, Status.ShootMode,
-                async (selected) => { await Api.Camera.SetShootModeAsync(selected); });
+            await OnSelectionChanged(sender, Status.ShootMode, Api.Camera.SetShootModeAsync);
         }
 
         private async void OnExposureModeChanged(object sender, SelectionChangedEventArgs e)
         {
-            await OnComboBoxChanged<string>(sender, Status.ExposureMode,
-                async (selected) => { await Api.Camera.SetExposureModeAsync(selected); });
+            await OnSelectionChanged(sender, Status.ExposureMode, Api.Camera.SetExposureModeAsync);
         }
 
         private async void OnSelfTimerChanged(object sender, SelectionChangedEventArgs e)
         {
-            await OnComboBoxChanged<int>(sender, Status.SelfTimer,
-                async (selected) => { await Api.Camera.SetSelfTimerAsync(selected); });
+            await OnSelectionChanged(sender, Status.SelfTimer, Api.Camera.SetSelfTimerAsync);
         }
 
         private async void OnPostviewSizeChanged(object sender, SelectionChangedEventArgs e)
         {
-            await OnComboBoxChanged<string>(sender, Status.PostviewSize,
-                async (selected) => { await Api.Camera.SetPostviewImageSizeAsync(selected); });
+            await OnSelectionChanged(sender, Status.PostviewSize, Api.Camera.SetPostviewImageSizeAsync);
         }
 
         private async void OnBeepModeChanged(object sender, SelectionChangedEventArgs e)
         {
-            await OnComboBoxChanged<string>(sender, Status.BeepMode,
-                async (selected) => { await Api.Camera.SetBeepModeAsync(selected); });
+            await OnSelectionChanged(sender, Status.BeepMode, Api.Camera.SetBeepModeAsync);
         }
 
         private async void OnStillImageSizeChanged(object sender, SelectionChangedEventArgs e)
         {
-            await OnComboBoxChanged<StillImageSize>(sender, Status.StillImageSize,
-                async (selected) => { await Api.Camera.SetStillImageSizeAsync(selected); });
+            await OnSelectionChanged(sender, Status.StillImageSize, Api.Camera.SetStillImageSizeAsync);
         }
 
         private async void OnWhiteBalanceChanged(object sender, SelectionChangedEventArgs e)
         {
-            await OnComboBoxChanged<string>(sender, Status.WhiteBalance,
+            await OnComboBoxChanged(sender, Status.WhiteBalance,
                 async (selected) =>
                 {
                     if (selected != WhiteBalanceMode.Manual)
@@ -166,6 +160,11 @@ namespace Kazyx.Uwpmm.Settings
         }
 
         private delegate Task AsyncAction<T>(T arg);
+
+        private async Task OnSelectionChanged<T>(object sender, Capability<T> param, AsyncAction<T> action)
+        {
+            await OnComboBoxChanged(sender, param, async (selected) => { await action.Invoke(selected); });
+        }
 
         private async Task OnComboBoxChanged<T>(object sender, Capability<T> param, AsyncAction<T> action)
         {

@@ -10,7 +10,7 @@ namespace Kazyx.Uwpmm.DataModel
         private TargetDevice _Device;
         public TargetDevice Device
         {
-            set
+           private set
             {
                 _Device = value;
                 NotifyChangedOnUI(""); // Notify all properties are changed.
@@ -18,9 +18,9 @@ namespace Kazyx.Uwpmm.DataModel
             get { return _Device; }
         }
 
-        public ControlPanelDataSource(TargetDevice camera)
+        public ControlPanelDataSource(TargetDevice target)
         {
-            this.Device = camera;
+            this.Device = target;
             Device.Status.PropertyChanged += (sender, e) =>
             {
                 GenericPropertyChanged(e.PropertyName);
