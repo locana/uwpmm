@@ -17,7 +17,7 @@ namespace Kazyx.Uwpmm.CameraControl
             {
                 await api.RetrieveApiList();
                 var info = await api.Camera.GetApplicationInfoAsync();
-                api.Capability.Version = new ServerVersion(info.version);
+                api.Capability.Version = new ServerVersion(info.Version);
                 api.Capability.AvailableApis = await api.Camera.GetAvailableApiListAsync();
 
                 if (api.Capability.IsSupported("startRecMode"))

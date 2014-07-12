@@ -162,5 +162,61 @@ namespace Kazyx.Uwpmm.DataModel
             }
             get { return _ZoomInfo; }
         }
+
+
+        private Capability<string> _FocusMode;
+        public Capability<string> FocusMode
+        {
+            set
+            {
+                _FocusMode = value;
+                NotifyChangedOnUI("FocusMode");
+            }
+            get { return _FocusMode; }
+        }
+
+        private Capability<string> _MovieQuality;
+        public Capability<string> MovieQuality
+        {
+            set
+            {
+                _MovieQuality = value;
+                NotifyChangedOnUI("MovieQuality");
+            }
+            get { return _MovieQuality; }
+        }
+
+        private Capability<string> _SteadyMode;
+        public Capability<string> SteadyMode
+        {
+            set
+            {
+                _SteadyMode = value;
+                NotifyChangedOnUI("SteadyMode");
+            }
+            get { return _SteadyMode; }
+        }
+
+        private Capability<int> _ViewAngle;
+        public Capability<int> ViewAngle
+        {
+            set
+            {
+                _ViewAngle = value;
+                NotifyChangedOnUI("ViewAngle");
+            }
+            get { return _ViewAngle; }
+        }
+
+        private Capability<string> _FlashMode;
+        public Capability<string> FlashMode
+        {
+            set
+            {
+                _FlashMode = value;
+                NotifyChangedOnUI("FlashMode");
+            }
+            get { return _FlashMode; }
+        }
     }
 }

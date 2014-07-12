@@ -12,7 +12,7 @@ namespace Kazyx.Uwpmm.Utility
         /// <returns></returns>
         public static int AsValidColorTemperture(int source, CameraStatus status)
         {
-            var candidates = status.ColorTempertureCandidates[status.WhiteBalance.current];
+            var candidates = status.ColorTempertureCandidates[status.WhiteBalance.Current];
             if (candidates.Length < 2)
             {
                 return -1;
@@ -40,13 +40,13 @@ namespace Kazyx.Uwpmm.Utility
 
             if (capability != null)
             {
-                if (capability.candidates.Length > index)
+                if (capability.Candidates.Length > index)
                 {
-                    capability.current = capability.candidates[index];
+                    capability.Current = capability.Candidates[index];
                 }
                 else
                 {
-                    capability.current = default(T);
+                    capability.Current = default(T);
                 }
             }
         }

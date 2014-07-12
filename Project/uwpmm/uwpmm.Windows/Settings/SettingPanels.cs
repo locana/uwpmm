@@ -22,14 +22,19 @@ namespace Kazyx.Uwpmm.Settings
         public SettingPanels(ControlPanelDataSource source)
         {
             this.DataSource = source;
-            Panels.Add("setShootMode", GetComboBoxPanel("ShootMode", "ShootMode", OnShootModeChanged));
-            Panels.Add("setExposureMode", GetComboBoxPanel("ExposureMode", "ExposureMode", OnExposureModeChanged));
-            Panels.Add("setWhiteBalance", GetComboBoxPanel("WhiteBalance", "WhiteBalance", OnWhiteBalanceChanged));
-            Panels.Add("ColorTemperture", GetColorTemperturePanel());
-            Panels.Add("setSelfTimer", GetComboBoxPanel("SelfTimer", "SelfTimer", OnSelfTimerChanged));
-            Panels.Add("setStillSize", GetComboBoxPanel("StillImageSize", "StillImageSize", OnStillImageSizeChanged));
-            Panels.Add("setPostviewImageSize", GetComboBoxPanel("PostviewSize", "Setting_PostViewImageSize", OnPostviewSizeChanged));
-            Panels.Add("setBeepMode", GetComboBoxPanel("BeepMode", "BeepMode", OnBeepModeChanged));
+            Panels.Add("setShootMode", BuildComboBoxPanel("ShootMode", "ShootMode", OnShootModeChanged));
+            Panels.Add("setExposureMode", BuildComboBoxPanel("ExposureMode", "ExposureMode", OnExposureModeChanged));
+            Panels.Add("setFocusMode", BuildComboBoxPanel("FocusMode", "FocusMode", OnFocusModeChanged));
+            Panels.Add("setWhiteBalance", BuildComboBoxPanel("WhiteBalance", "WhiteBalance", OnWhiteBalanceChanged));
+            Panels.Add("ColorTemperture", BuildColorTemperturePanel());
+            Panels.Add("setMovieQuality", BuildComboBoxPanel("MovieQuality", "MovieQuality", OnMovieQualityChanged));
+            Panels.Add("setSteadyMode", BuildComboBoxPanel("SteadyMode", "SteadyMode", OnSteadyModeChanged));
+            Panels.Add("setSelfTimer", BuildComboBoxPanel("SelfTimer", "SelfTimer", OnSelfTimerChanged));
+            Panels.Add("setStillSize", BuildComboBoxPanel("StillImageSize", "StillImageSize", OnStillImageSizeChanged));
+            Panels.Add("setPostviewImageSize", BuildComboBoxPanel("PostviewSize", "Setting_PostViewImageSize", OnPostviewSizeChanged));
+            Panels.Add("setViewAngle", BuildComboBoxPanel("ViewAngle", "ViewAngle", OnViewAngleChanged));
+            Panels.Add("setBeepMode", BuildComboBoxPanel("BeepMode", "BeepMode", OnBeepModeChanged));
+            Panels.Add("setFlashMode", BuildComboBoxPanel("FlashMode", "FlashMode", OnFlashModeChanged));
 
             VisibilityBinding = new Binding()
             {
@@ -62,6 +67,36 @@ namespace Kazyx.Uwpmm.Settings
             }
 
             return list;
+        }
+
+        private async void OnFocusModeChanged(object sender, SelectionChangedEventArgs e)
+        {
+            await OnComboBoxChanged<string>(sender, DataSource.Device.Status.FocusMode,
+                async (selected) => { await DataSource.Device.Api.Camera.SetFocusModeAsync(selected); });
+        }
+
+        private async void OnMovieQualityChanged(object sender, SelectionChangedEventArgs e)
+        {
+            await OnComboBoxChanged<string>(sender, DataSource.Device.Status.MovieQuality,
+                async (selected) => { await DataSource.Device.Api.Camera.SetMovieQualityAsync(selected); });
+        }
+
+        private async void OnSteadyModeChanged(object sender, SelectionChangedEventArgs e)
+        {
+            await OnComboBoxChanged<string>(sender, DataSource.Device.Status.SteadyMode,
+                async (selected) => { await DataSource.Device.Api.Camera.SetSteadyModeAsync(selected); });
+        }
+
+        private async void OnViewAngleChanged(object sender, SelectionChangedEventArgs e)
+        {
+            await OnComboBoxChanged<int>(sender, DataSource.Device.Status.ViewAngle,
+                async (selected) => { await DataSource.Device.Api.Camera.SetViewAngleAsync(selected); });
+        }
+
+        private async void OnFlashModeChanged(object sender, SelectionChangedEventArgs e)
+        {
+            await OnComboBoxChanged<string>(sender, DataSource.Device.Status.FlashMode,
+                async (selected) => { await DataSource.Device.Api.Camera.SetFlashModeAsync(selected); });
         }
 
         private async void OnShootModeChanged(object sender, SelectionChangedEventArgs e)
@@ -108,12 +143,12 @@ namespace Kazyx.Uwpmm.Settings
                     if (selected != WhiteBalanceMode.Manual)
                     {
                         DataSource.Device.Status.ColorTemperture = -1;
-                        await DataSource.Device.Api.Camera.SetWhiteBalanceAsync(new WhiteBalance { Mode = selected, ColorTemperature = -1 }, false);
+                        await DataSource.Device.Api.Camera.SetWhiteBalanceAsync(new WhiteBalance { Mode = selected });
                     }
                     else
                     {
                         var min = DataSource.Device.Status.ColorTempertureCandidates[WhiteBalanceMode.Manual][0];
-                        await DataSource.Device.Api.Camera.SetWhiteBalanceAsync(new WhiteBalance { Mode = selected, ColorTemperature = min }, true);
+                        await DataSource.Device.Api.Camera.SetWhiteBalanceAsync(new WhiteBalance { Mode = selected, ColorTemperature = min });
                         DataSource.Device.Status.ColorTemperture = min;
                         if (ColorTempertureSlider != null)
                         {
@@ -130,14 +165,14 @@ namespace Kazyx.Uwpmm.Settings
 
         private async Task OnComboBoxChanged<T>(object sender, Capability<T> param, AsyncAction<T> action)
         {
-            if (param == null || param.candidates == null || param.candidates.Length == 0)
+            if (param == null || param.Candidates == null || param.Candidates.Length == 0)
             {
                 return;
             }
 
             var selected = (sender as ComboBox).SelectedIndex;
 
-            if (selected < 0 || param.candidates.Length <= selected)
+            if (selected < 0 || param.Candidates.Length <= selected)
             {
                 Debug.WriteLine("ignore out of range");
                 return;
@@ -145,7 +180,7 @@ namespace Kazyx.Uwpmm.Settings
 
             try
             {
-                await action.Invoke(param.candidates[selected]);
+                await action.Invoke(param.Candidates[selected]);
                 return;
             }
             catch (RemoteApiException e)
@@ -159,7 +194,7 @@ namespace Kazyx.Uwpmm.Settings
             await DataSource.Device.Observer.Refresh();
         }
 
-        private StackPanel GetComboBoxPanel(string key, string title_key, SelectionChangedEventHandler handler)
+        private StackPanel BuildComboBoxPanel(string key, string title_key, SelectionChangedEventHandler handler)
         {
             var box = new ComboBox
             {
@@ -185,16 +220,16 @@ namespace Kazyx.Uwpmm.Settings
             });
             box.SelectionChanged += handler;
 
-            var parent = GetBasicPanel(SystemUtil.GetStringResource(title_key));
+            var parent = BuildBasicPanel(SystemUtil.GetStringResource(title_key));
             parent.Children.Add(box);
             return parent;
         }
 
         private Slider ColorTempertureSlider = null;
 
-        private StackPanel GetColorTemperturePanel()
+        private StackPanel BuildColorTemperturePanel()
         {
-            var slider = CreateSlider(null, null);
+            var slider = BuildSlider(null, null);
             slider.Value = 0;
 
             slider.ManipulationCompleted += async (sender, e) =>
@@ -203,7 +238,7 @@ namespace Kazyx.Uwpmm.Settings
                 slider.Value = target;
                 try
                 {
-                    await DataSource.Device.Api.Camera.SetWhiteBalanceAsync(new WhiteBalance { Mode = DataSource.Device.Status.WhiteBalance.current, ColorTemperature = target }, true);
+                    await DataSource.Device.Api.Camera.SetWhiteBalanceAsync(new WhiteBalance { Mode = DataSource.Device.Status.WhiteBalance.Current, ColorTemperature = target });
                 }
                 catch (RemoteApiException ex)
                 {
@@ -238,7 +273,7 @@ namespace Kazyx.Uwpmm.Settings
 
             ColorTempertureSlider = slider;
 
-            var parent = GetBasicPanel(SystemUtil.GetStringResource("WB_ColorTemperture"));
+            var parent = BuildBasicPanel(SystemUtil.GetStringResource("WB_ColorTemperture"));
             (parent.Children[0] as StackPanel).Children.Add(indicator);
             parent.Children.Add(slider);
             parent.SetBinding(StackPanel.VisibilityProperty, new Binding()
@@ -252,7 +287,7 @@ namespace Kazyx.Uwpmm.Settings
             return parent;
         }
 
-        private static Slider CreateSlider(int? min, int? max)
+        private static Slider BuildSlider(int? min, int? max)
         {
             return new Slider
             {
@@ -266,7 +301,7 @@ namespace Kazyx.Uwpmm.Settings
             };
         }
 
-        private static StackPanel GetBasicPanel(string title)
+        private static StackPanel BuildBasicPanel(string title)
         {
             var panel = new StackPanel
             {

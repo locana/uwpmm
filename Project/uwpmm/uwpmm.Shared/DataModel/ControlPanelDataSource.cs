@@ -35,6 +35,11 @@ namespace Kazyx.Uwpmm.DataModel
                 NotifyChangedOnUI("IsAvailableStillImageSize");
                 NotifyChangedOnUI("IsAvailableWhiteBalance");
                 NotifyChangedOnUI("IsAvailableColorTemperture");
+                NotifyChangedOnUI("IsAvailableFocusMode");
+                NotifyChangedOnUI("IsAvailableMovieQuality");
+                NotifyChangedOnUI("IsAvailableFlashMode");
+                NotifyChangedOnUI("IsAvailableSteadyMode");
+                NotifyChangedOnUI("IsAvailableViewAngle");
             };
             Device.Api.ServerVersionDetected += (sender, e) =>
             {
@@ -68,7 +73,7 @@ namespace Kazyx.Uwpmm.DataModel
         {
             get
             {
-                return SettingValueConverter.FromExposureMode(Device.Status.ExposureMode).candidates;
+                return SettingValueConverter.FromExposureMode(Device.Status.ExposureMode).Candidates;
             }
         }
 
@@ -97,7 +102,7 @@ namespace Kazyx.Uwpmm.DataModel
         {
             get
             {
-                return SettingValueConverter.FromShootMode(Device.Status.ShootMode).candidates;
+                return SettingValueConverter.FromShootMode(Device.Status.ShootMode).Candidates;
             }
         }
 
@@ -126,7 +131,7 @@ namespace Kazyx.Uwpmm.DataModel
         {
             get
             {
-                return SettingValueConverter.FromBeepMode(Device.Status.BeepMode).candidates;
+                return SettingValueConverter.FromBeepMode(Device.Status.BeepMode).Candidates;
             }
         }
 
@@ -155,7 +160,7 @@ namespace Kazyx.Uwpmm.DataModel
         {
             get
             {
-                return SettingValueConverter.FromPostViewSize(Device.Status.PostviewSize).candidates;
+                return SettingValueConverter.FromPostViewSize(Device.Status.PostviewSize).Candidates;
             }
         }
 
@@ -184,7 +189,7 @@ namespace Kazyx.Uwpmm.DataModel
         {
             get
             {
-                return SettingValueConverter.FromSelfTimer(Device.Status.SelfTimer).candidates;
+                return SettingValueConverter.FromSelfTimer(Device.Status.SelfTimer).Candidates;
             }
         }
 
@@ -213,7 +218,7 @@ namespace Kazyx.Uwpmm.DataModel
         {
             get
             {
-                return SettingValueConverter.FromStillImageSize(Device.Status.StillImageSize).candidates;
+                return SettingValueConverter.FromStillImageSize(Device.Status.StillImageSize).Candidates;
             }
         }
 
@@ -245,7 +250,7 @@ namespace Kazyx.Uwpmm.DataModel
         {
             get
             {
-                return SettingValueConverter.FromWhiteBalance(Device.Status.WhiteBalance).candidates;
+                return SettingValueConverter.FromWhiteBalance(Device.Status.WhiteBalance).Candidates;
             }
         }
 
@@ -264,9 +269,157 @@ namespace Kazyx.Uwpmm.DataModel
             {
                 var status = Device.Status;
                 return IsAvailableWhiteBalance &&
-                    status.ColorTempertureCandidates.ContainsKey(status.WhiteBalance.current) &&
-                    status.ColorTempertureCandidates[status.WhiteBalance.current].Length != 0 &&
+                    status.ColorTempertureCandidates != null &&
+                    status.WhiteBalance.Current != null &&
+                    status.ColorTempertureCandidates.ContainsKey(status.WhiteBalance.Current) &&
+                    status.ColorTempertureCandidates[status.WhiteBalance.Current].Length != 0 &&
                     status.ColorTemperture != -1;
+            }
+        }
+
+
+        public int CpSelectedIndexViewAngle
+        {
+            get
+            {
+                return SettingValueConverter.GetSelectedIndex(Device.Status.ViewAngle);
+            }
+            set
+            {
+                ParameterUtil.SetSelectedAsCurrent(Device.Status.ViewAngle, value);
+            }
+        }
+
+        public string[] CpCandidatesViewAngle
+        {
+            get
+            {
+                return SettingValueConverter.FromViewAngle(Device.Status.ViewAngle).Candidates;
+            }
+        }
+
+        public bool CpIsAvailableViewAngle
+        {
+            get
+            {
+                return Device.Api.Capability.IsAvailable("setViewAngle") &&
+                    Device.Status.BeepMode != null;
+            }
+        }
+
+        public int CpSelectedIndexSteadyMode
+        {
+            get
+            {
+                return SettingValueConverter.GetSelectedIndex(Device.Status.SteadyMode);
+            }
+            set
+            {
+                ParameterUtil.SetSelectedAsCurrent(Device.Status.SteadyMode, value);
+            }
+        }
+
+        public string[] CpCandidatesSteadyMode
+        {
+            get
+            {
+                return SettingValueConverter.FromSteadyMode(Device.Status.SteadyMode).Candidates;
+            }
+        }
+
+        public bool CpIsAvailableSteadyMode
+        {
+            get
+            {
+                return Device.Api.Capability.IsAvailable("setSteadyMode") &&
+                    Device.Status.SteadyMode != null;
+            }
+        }
+
+        public int CpSelectedIndexMovieQuality
+        {
+            get
+            {
+                return SettingValueConverter.GetSelectedIndex(Device.Status.MovieQuality);
+            }
+            set
+            {
+                ParameterUtil.SetSelectedAsCurrent(Device.Status.MovieQuality, value);
+            }
+        }
+
+        public string[] CpCandidatesMovieQuality
+        {
+            get
+            {
+                return SettingValueConverter.FromMovieQuality(Device.Status.MovieQuality).Candidates;
+            }
+        }
+
+        public bool CpIsAvailableMovieQuality
+        {
+            get
+            {
+                return Device.Api.Capability.IsAvailable("setMovieQuality") &&
+                    Device.Status.MovieQuality != null;
+            }
+        }
+
+        public int CpSelectedIndexFlashMode
+        {
+            get
+            {
+                return SettingValueConverter.GetSelectedIndex(Device.Status.FlashMode);
+            }
+            set
+            {
+                ParameterUtil.SetSelectedAsCurrent(Device.Status.FlashMode, value);
+            }
+        }
+
+        public string[] CpCandidatesFlashMode
+        {
+            get
+            {
+                return SettingValueConverter.FromFlashMode(Device.Status.FlashMode).Candidates;
+            }
+        }
+
+        public bool CpIsAvailableFlashMode
+        {
+            get
+            {
+                return Device.Api.Capability.IsAvailable("setFlashMode") &&
+                    Device.Status.FlashMode != null;
+            }
+        }
+
+        public int CpSelectedIndexFocusMode
+        {
+            get
+            {
+                return SettingValueConverter.GetSelectedIndex(Device.Status.FocusMode);
+            }
+            set
+            {
+                ParameterUtil.SetSelectedAsCurrent(Device.Status.FocusMode, value);
+            }
+        }
+
+        public string[] CpCandidatesFocusMode
+        {
+            get
+            {
+                return SettingValueConverter.FromFocusMode(Device.Status.FocusMode).Candidates;
+            }
+        }
+
+        public bool CpIsAvailableFocusMode
+        {
+            get
+            {
+                return Device.Api.Capability.IsAvailable("setFocusMode") &&
+                    Device.Status.FocusMode != null;
             }
         }
     }

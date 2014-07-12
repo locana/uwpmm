@@ -18,15 +18,15 @@ namespace Kazyx.Uwpmm.DataModel
 
         public void AddSupported(MethodType method)
         {
-            if (SupportedApis.ContainsKey(method.name))
+            if (SupportedApis.ContainsKey(method.Name))
             {
-                SupportedApis[method.name].Add(method.version);
+                SupportedApis[method.Name].Add(method.Version);
             }
             else
             {
                 var list = new List<string>();
-                list.Add(method.version);
-                SupportedApis.Add(method.name, list);
+                list.Add(method.Version);
+                SupportedApis.Add(method.Name, list);
             }
             NotifyChanged("SupportedApis");
         }

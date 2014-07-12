@@ -108,7 +108,7 @@ namespace Kazyx.Uwpmm.CameraControl
                     try
                     {
                         var size = await api.Camera.GetAvailableStillSizeAsync();
-                        Array.Sort(size.candidates, CompareStillSize);
+                        Array.Sort(size.Candidates, CompareStillSize);
                         target.StillImageSize = size;
                     }
                     catch (RemoteApiException)
@@ -118,7 +118,7 @@ namespace Kazyx.Uwpmm.CameraControl
                 }
                 else
                 {
-                    target.StillImageSize.current = status.StillImageSize.Current;
+                    target.StillImageSize.Current = status.StillImageSize.Current;
                     target.StillImageSize = target.StillImageSize;
                 }
             }
@@ -131,7 +131,7 @@ namespace Kazyx.Uwpmm.CameraControl
                         var wb = await api.Camera.GetAvailableWhiteBalanceAsync();
                         var candidates = new List<string>();
                         var tmpCandidates = new Dictionary<string, int[]>();
-                        foreach (var mode in wb.candidates)
+                        foreach (var mode in wb.Candidates)
                         {
                             candidates.Add(mode.WhiteBalanceMode);
                             var tmpList = new List<int>();
@@ -151,9 +151,9 @@ namespace Kazyx.Uwpmm.CameraControl
                             }
                         }
 
-                        target.WhiteBalance = new Capability<string> { candidates = candidates.ToArray(), current = wb.current.Mode };
+                        target.WhiteBalance = new Capability<string> { Candidates = candidates.ToArray(), Current = wb.Current.Mode };
                         target.ColorTempertureCandidates = tmpCandidates;
-                        target.ColorTemperture = wb.current.ColorTemperature;
+                        target.ColorTemperture = wb.Current.ColorTemperature;
                     }
                     catch (RemoteApiException)
                     {
@@ -164,7 +164,7 @@ namespace Kazyx.Uwpmm.CameraControl
                 {
                     if (status.WhiteBalance != null)
                     {
-                        target.WhiteBalance.current = status.WhiteBalance.Current.Mode;
+                        target.WhiteBalance.Current = status.WhiteBalance.Current.Mode;
                     }
                     target.ColorTemperture = status.WhiteBalance.Current.ColorTemperature;
                 }
