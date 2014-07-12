@@ -12,7 +12,7 @@
 
     <Page.Resources>
         <!-- TODO: Delete this line if the key AppName is declared in App.xaml -->
-        <x:String x:Key="AppName">My Application</x:String>
+        <x:String x:Key="AppName">UWPMM</x:String>
     </Page.Resources>
 
     <!--
@@ -48,17 +48,19 @@
         </Grid>
         <Grid Grid.Row="1" Margin="24,0,0,0">
             <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="880" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <Grid Grid.Column="0">
+            <Grid Grid.Column="1" Margin="0,-90,0,16">
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
                     <RowDefinition Height="495" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
-                <Border Background="Black" />
-                <Image x:Name="LiveviewImage" Source="{Binding Image, Mode=OneWay}" Loaded="LiveviewImage_Loaded" Unloaded="LiveviewImage_Unloaded" />
-                <Grid Grid.Row="1">
+                <Border Background="Black" Grid.Row="1" Grid.Column="1" />
+                <Image x:Name="LiveviewImage" Source="{Binding Image, Mode=OneWay}" Loaded="LiveviewImage_Loaded" Unloaded="LiveviewImage_Unloaded" Grid.Column="1" Grid.Row="1" />
+                <Grid Grid.Row="2" Grid.Column="1">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="240" />
                         <ColumnDefinition Width="*" />
@@ -85,16 +87,14 @@
                         </Grid>
                         <Image x:Name="PostviewImage"></Image>
                     </StackPanel>
-                    <Button Grid.Column="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Padding="12" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch" Height="96" Click="Button_Click" >
+                    <Button Grid.Column="2" VerticalAlignment="Top" HorizontalAlignment="Stretch" Padding="12" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch" Height="96" Click="Button_Click" Grid.Row="1" Margin="0,16,0,0" >
                         <Button.Background>
                             <ImageBrush ImageSource="Assets/Camera.png" Stretch="Uniform" />
                         </Button.Background>
                     </Button>
                 </Grid>
             </Grid>
-            <StackPanel x:Name="ControlPanel" Grid.Column="1" HorizontalAlignment="Left" Margin="8,0">
-
-            </StackPanel>
+            <StackPanel x:Name="ControlPanel" Grid.Column="2" HorizontalAlignment="Left" Margin="28,0,8,0" Grid.Row="1" VerticalAlignment="Center"/>
         </Grid>
     </Grid>
 </Page>
