@@ -47,22 +47,43 @@ namespace Kazyx.Uwpmm.Utility
             return info.CurrentIndex;
         }
 
-        public static Capability<string> FromSelfTimer(Capability<int> info)
+        private delegate string NameConverter<T>(T source);
+
+        private static Capability<string> AsDisplayNames<T>(Capability<T> info, NameConverter<T> converter)
         {
             var res = AsDisabledCapability(info);
             if (res != null)
                 return res;
 
-            var mCandidates = new string[info.Candidates.Length];
-            for (int i = 0; i < info.Candidates.Length; i++)
+            var mCandidates = new List<string>();
+            foreach (T val in info.Candidates)
             {
-                mCandidates[i] = FromSelfTimer(info.Candidates[i]);
+                mCandidates.Add(converter.Invoke(val));
             }
             return new Capability<string>
             {
-                Current = FromSelfTimer(info.Current),
-                Candidates = mCandidates
+                Current = converter.Invoke(info.Current),
+                Candidates = mCandidates.ToArray()
             };
+        }
+
+        private static Capability<string> AsDisabledCapability<T>(Capability<T> info)
+        {
+            if (info == null || info.Candidates == null || info.Candidates.Length == 0)
+            {
+                var disabled = SystemUtil.GetStringResource("Disabled");
+                return new Capability<string>
+                {
+                    Candidates = new string[] { disabled },
+                    Current = disabled
+                };
+            }
+            return null;
+        }
+
+        public static Capability<string> FromSelfTimer(Capability<int> info)
+        {
+            return AsDisplayNames<int>(info, FromSelfTimer);
         }
 
         private static string FromSelfTimer(int val)
@@ -73,20 +94,7 @@ namespace Kazyx.Uwpmm.Utility
 
         public static Capability<string> FromPostViewSize(Capability<string> info)
         {
-            var res = AsDisabledCapability(info);
-            if (res != null)
-                return res;
-
-            var mCandidates = new string[info.Candidates.Length];
-            for (int i = 0; i < info.Candidates.Length; i++)
-            {
-                mCandidates[i] = FromPostViewSize(info.Candidates[i]);
-            }
-            return new Capability<string>
-            {
-                Current = FromPostViewSize(info.Current),
-                Candidates = mCandidates
-            };
+            return AsDisplayNames<string>(info, FromPostViewSize);
         }
 
         private static string FromPostViewSize(string val)
@@ -104,20 +112,7 @@ namespace Kazyx.Uwpmm.Utility
 
         public static Capability<string> FromShootMode(Capability<string> info)
         {
-            var res = AsDisabledCapability(info);
-            if (res != null)
-                return res;
-
-            var mCandidates = new string[info.Candidates.Length];
-            for (int i = 0; i < info.Candidates.Length; i++)
-            {
-                mCandidates[i] = FromShootMode(info.Candidates[i]);
-            }
-            return new Capability<string>
-            {
-                Current = FromShootMode(info.Current),
-                Candidates = mCandidates
-            };
+            return AsDisplayNames<string>(info, FromShootMode);
         }
 
         private static string FromShootMode(string val)
@@ -139,20 +134,7 @@ namespace Kazyx.Uwpmm.Utility
 
         public static Capability<string> FromExposureMode(Capability<string> info)
         {
-            var res = AsDisabledCapability(info);
-            if (res != null)
-                return res;
-
-            var mCandidates = new string[info.Candidates.Length];
-            for (int i = 0; i < info.Candidates.Length; i++)
-            {
-                mCandidates[i] = FromExposureMode(info.Candidates[i]);
-            }
-            return new Capability<string>
-            {
-                Current = FromExposureMode(info.Current),
-                Candidates = mCandidates
-            };
+            return AsDisplayNames<string>(info, FromExposureMode);
         }
 
         private static string FromExposureMode(string val)
@@ -178,20 +160,7 @@ namespace Kazyx.Uwpmm.Utility
 
         public static Capability<string> FromSteadyMode(Capability<string> info)
         {
-            var res = AsDisabledCapability(info);
-            if (res != null)
-                return res;
-
-            var mCandidates = new string[info.Candidates.Length];
-            for (int i = 0; i < info.Candidates.Length; i++)
-            {
-                mCandidates[i] = FromSteadyMode(info.Candidates[i]);
-            }
-            return new Capability<string>
-            {
-                Current = FromSteadyMode(info.Current),
-                Candidates = mCandidates
-            };
+            return AsDisplayNames<string>(info, FromSteadyMode);
         }
 
         private static string FromSteadyMode(string val)
@@ -209,20 +178,7 @@ namespace Kazyx.Uwpmm.Utility
 
         public static Capability<string> FromBeepMode(Capability<string> info)
         {
-            var res = AsDisabledCapability(info);
-            if (res != null)
-                return res;
-
-            var mCandidates = new string[info.Candidates.Length];
-            for (int i = 0; i < info.Candidates.Length; i++)
-            {
-                mCandidates[i] = FromBeepMode(info.Candidates[i]);
-            }
-            return new Capability<string>
-            {
-                Current = FromBeepMode(info.Current),
-                Candidates = mCandidates
-            };
+            return AsDisplayNames<string>(info, FromBeepMode);
         }
 
         private static string FromBeepMode(string val)
@@ -242,20 +198,7 @@ namespace Kazyx.Uwpmm.Utility
 
         public static Capability<string> FromViewAngle(Capability<int> info)
         {
-            var res = AsDisabledCapability(info);
-            if (res != null)
-                return res;
-
-            var mCandidates = new string[info.Candidates.Length];
-            for (int i = 0; i < info.Candidates.Length; i++)
-            {
-                mCandidates[i] = FromViewAngle(info.Candidates[i]);
-            }
-            return new Capability<string>
-            {
-                Current = FromViewAngle(info.Current),
-                Candidates = mCandidates
-            };
+            return AsDisplayNames<int>(info, FromViewAngle);
         }
 
         private static string FromViewAngle(int val)
@@ -265,20 +208,7 @@ namespace Kazyx.Uwpmm.Utility
 
         public static Capability<string> FromMovieQuality(Capability<string> info)
         {
-            var res = AsDisabledCapability(info);
-            if (res != null)
-                return res;
-
-            var mCandidates = new string[info.Candidates.Length];
-            for (int i = 0; i < info.Candidates.Length; i++)
-            {
-                mCandidates[i] = FromMovieQuality(info.Candidates[i]);
-            }
-            return new Capability<string>
-            {
-                Current = FromMovieQuality(info.Current),
-                Candidates = mCandidates
-            };
+            return AsDisplayNames<string>(info, FromMovieQuality);
         }
 
         private static string FromMovieQuality(string p)
@@ -288,22 +218,7 @@ namespace Kazyx.Uwpmm.Utility
 
         public static Capability<string> FromStillImageSize(Capability<StillImageSize> info)
         {
-            var res = AsDisabledCapability(info);
-            if (res != null)
-                return res;
-
-            Debug.WriteLine("StillImageSize length: " + info.Candidates.Length);
-
-            var mCandidates = new List<string>();
-            foreach (var val in info.Candidates)
-            {
-                mCandidates.Add(FromStillImageSize(val));
-            }
-            return new Capability<string>
-            {
-                Current = FromStillImageSize(info.Current),
-                Candidates = mCandidates.ToArray()
-            };
+            return AsDisplayNames<StillImageSize>(info, FromStillImageSize);
         }
 
         private static string FromStillImageSize(StillImageSize val)
@@ -329,20 +244,7 @@ namespace Kazyx.Uwpmm.Utility
 
         public static Capability<string> FromWhiteBalance(Capability<string> info)
         {
-            var res = AsDisabledCapability(info);
-            if (res != null)
-                return res;
-
-            var mCandidates = new string[info.Candidates.Length];
-            for (int i = 0; i < info.Candidates.Length; i++)
-            {
-                mCandidates[i] = FromWhiteBalance(info.Candidates[i]);
-            }
-            return new Capability<string>
-            {
-                Current = FromWhiteBalance(info.Current),
-                Candidates = mCandidates
-            };
+            return AsDisplayNames<string>(info, FromWhiteBalance);
         }
 
         private static string FromWhiteBalance(string val)
@@ -371,20 +273,6 @@ namespace Kazyx.Uwpmm.Utility
                     return SystemUtil.GetStringResource("WB_ColorTemperture");
             }
             return val;
-        }
-
-        private static Capability<string> AsDisabledCapability<T>(Capability<T> info)
-        {
-            if (info == null || info.Candidates == null || info.Candidates.Length == 0)
-            {
-                var disabled = SystemUtil.GetStringResource("Disabled");
-                return new Capability<string>
-                {
-                    Candidates = new string[] { disabled },
-                    Current = disabled
-                };
-            }
-            return null;
         }
 
         public static string[] FromExposureCompensation(EvCapability info)
@@ -422,20 +310,7 @@ namespace Kazyx.Uwpmm.Utility
 
         public static Capability<string> FromFlashMode(Capability<string> info)
         {
-            var res = AsDisabledCapability(info);
-            if (res != null)
-                return res;
-
-            var mCandidates = new string[info.Candidates.Length];
-            for (int i = 0; i < info.Candidates.Length; i++)
-            {
-                mCandidates[i] = FromFlashMode(info.Candidates[i]);
-            }
-            return new Capability<string>
-            {
-                Current = FromFlashMode(info.Current),
-                Candidates = mCandidates
-            };
+            return AsDisplayNames<string>(info, FromFlashMode);
         }
 
         private static string FromFlashMode(string val)
@@ -460,20 +335,7 @@ namespace Kazyx.Uwpmm.Utility
 
         public static Capability<string> FromFocusMode(Capability<string> info)
         {
-            var res = AsDisabledCapability(info);
-            if (res != null)
-                return res;
-
-            var mCandidates = new string[info.Candidates.Length];
-            for (int i = 0; i < info.Candidates.Length; i++)
-            {
-                mCandidates[i] = FromFocusMode(info.Candidates[i]);
-            }
-            return new Capability<string>
-            {
-                Current = FromFocusMode(info.Current),
-                Candidates = mCandidates
-            };
+            return AsDisplayNames<string>(info, FromFocusMode);
         }
 
         private static string FromFocusMode(string val)
