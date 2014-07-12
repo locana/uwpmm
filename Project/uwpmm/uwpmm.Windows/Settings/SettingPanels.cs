@@ -17,6 +17,10 @@ namespace Kazyx.Uwpmm.Settings
     {
         private readonly ControlPanelDataSource DataSource;
 
+        private DeviceApiHolder Api { get { return DataSource.Device.Api; } }
+
+        private CameraStatus Status { get { return DataSource.Device.Status; } }
+
         private Dictionary<string, StackPanel> Panels = new Dictionary<string, StackPanel>();
 
         public SettingPanels(ControlPanelDataSource source)
@@ -55,12 +59,12 @@ namespace Kazyx.Uwpmm.Settings
             DataSource.Device = device;
             foreach (var key in Panels.Keys)
             {
-                if (DataSource.Device.Api.Capability.IsSupported(key) ||
-                    (key == "ColorTemperture" && DataSource.Device.Api.Capability.IsSupported("setWhiteBalance")))
+                if (Api.Capability.IsSupported(key) ||
+                    (key == "ColorTemperture" && Api.Capability.IsSupported("setWhiteBalance")))
                 {
                     list.Add(Panels[key]);
                 }
-                if (DataSource.Device.Api.Capability.IsRestrictedApi(key))
+                if (Api.Capability.IsRestrictedApi(key))
                 {
                     Panels[key].SetBinding(StackPanel.VisibilityProperty, VisibilityBinding);
                 }
@@ -71,91 +75,91 @@ namespace Kazyx.Uwpmm.Settings
 
         private async void OnFocusModeChanged(object sender, SelectionChangedEventArgs e)
         {
-            await OnComboBoxChanged<string>(sender, DataSource.Device.Status.FocusMode,
-                async (selected) => { await DataSource.Device.Api.Camera.SetFocusModeAsync(selected); });
+            await OnComboBoxChanged<string>(sender, Status.FocusMode,
+                async (selected) => { await Api.Camera.SetFocusModeAsync(selected); });
         }
 
         private async void OnMovieQualityChanged(object sender, SelectionChangedEventArgs e)
         {
-            await OnComboBoxChanged<string>(sender, DataSource.Device.Status.MovieQuality,
-                async (selected) => { await DataSource.Device.Api.Camera.SetMovieQualityAsync(selected); });
+            await OnComboBoxChanged<string>(sender, Status.MovieQuality,
+                async (selected) => { await Api.Camera.SetMovieQualityAsync(selected); });
         }
 
         private async void OnSteadyModeChanged(object sender, SelectionChangedEventArgs e)
         {
-            await OnComboBoxChanged<string>(sender, DataSource.Device.Status.SteadyMode,
-                async (selected) => { await DataSource.Device.Api.Camera.SetSteadyModeAsync(selected); });
+            await OnComboBoxChanged<string>(sender, Status.SteadyMode,
+                async (selected) => { await Api.Camera.SetSteadyModeAsync(selected); });
         }
 
         private async void OnViewAngleChanged(object sender, SelectionChangedEventArgs e)
         {
-            await OnComboBoxChanged<int>(sender, DataSource.Device.Status.ViewAngle,
-                async (selected) => { await DataSource.Device.Api.Camera.SetViewAngleAsync(selected); });
+            await OnComboBoxChanged<int>(sender, Status.ViewAngle,
+                async (selected) => { await Api.Camera.SetViewAngleAsync(selected); });
         }
 
         private async void OnFlashModeChanged(object sender, SelectionChangedEventArgs e)
         {
-            await OnComboBoxChanged<string>(sender, DataSource.Device.Status.FlashMode,
-                async (selected) => { await DataSource.Device.Api.Camera.SetFlashModeAsync(selected); });
+            await OnComboBoxChanged<string>(sender, Status.FlashMode,
+                async (selected) => { await Api.Camera.SetFlashModeAsync(selected); });
         }
 
         private async void OnShootModeChanged(object sender, SelectionChangedEventArgs e)
         {
-            await OnComboBoxChanged<string>(sender, DataSource.Device.Status.ShootMode,
-                async (selected) => { await DataSource.Device.Api.Camera.SetShootModeAsync(selected); });
+            await OnComboBoxChanged<string>(sender, Status.ShootMode,
+                async (selected) => { await Api.Camera.SetShootModeAsync(selected); });
         }
 
         private async void OnExposureModeChanged(object sender, SelectionChangedEventArgs e)
         {
-            await OnComboBoxChanged<string>(sender, DataSource.Device.Status.ExposureMode,
-                async (selected) => { await DataSource.Device.Api.Camera.SetExposureModeAsync(selected); });
+            await OnComboBoxChanged<string>(sender, Status.ExposureMode,
+                async (selected) => { await Api.Camera.SetExposureModeAsync(selected); });
         }
 
         private async void OnSelfTimerChanged(object sender, SelectionChangedEventArgs e)
         {
-            await OnComboBoxChanged<int>(sender, DataSource.Device.Status.SelfTimer,
-                async (selected) => { await DataSource.Device.Api.Camera.SetSelfTimerAsync(selected); });
+            await OnComboBoxChanged<int>(sender, Status.SelfTimer,
+                async (selected) => { await Api.Camera.SetSelfTimerAsync(selected); });
         }
 
         private async void OnPostviewSizeChanged(object sender, SelectionChangedEventArgs e)
         {
-            await OnComboBoxChanged<string>(sender, DataSource.Device.Status.PostviewSize,
-                async (selected) => { await DataSource.Device.Api.Camera.SetPostviewImageSizeAsync(selected); });
+            await OnComboBoxChanged<string>(sender, Status.PostviewSize,
+                async (selected) => { await Api.Camera.SetPostviewImageSizeAsync(selected); });
         }
 
         private async void OnBeepModeChanged(object sender, SelectionChangedEventArgs e)
         {
-            await OnComboBoxChanged<string>(sender, DataSource.Device.Status.BeepMode,
-                async (selected) => { await DataSource.Device.Api.Camera.SetBeepModeAsync(selected); });
+            await OnComboBoxChanged<string>(sender, Status.BeepMode,
+                async (selected) => { await Api.Camera.SetBeepModeAsync(selected); });
         }
 
         private async void OnStillImageSizeChanged(object sender, SelectionChangedEventArgs e)
         {
-            await OnComboBoxChanged<StillImageSize>(sender, DataSource.Device.Status.StillImageSize,
-                async (selected) => { await DataSource.Device.Api.Camera.SetStillImageSizeAsync(selected); });
+            await OnComboBoxChanged<StillImageSize>(sender, Status.StillImageSize,
+                async (selected) => { await Api.Camera.SetStillImageSizeAsync(selected); });
         }
 
         private async void OnWhiteBalanceChanged(object sender, SelectionChangedEventArgs e)
         {
-            await OnComboBoxChanged<string>(sender, DataSource.Device.Status.WhiteBalance,
+            await OnComboBoxChanged<string>(sender, Status.WhiteBalance,
                 async (selected) =>
                 {
                     if (selected != WhiteBalanceMode.Manual)
                     {
-                        DataSource.Device.Status.ColorTemperture = -1;
-                        await DataSource.Device.Api.Camera.SetWhiteBalanceAsync(new WhiteBalance { Mode = selected });
+                        Status.ColorTemperture = -1;
+                        await Api.Camera.SetWhiteBalanceAsync(new WhiteBalance { Mode = selected });
                     }
                     else
                     {
-                        var min = DataSource.Device.Status.ColorTempertureCandidates[WhiteBalanceMode.Manual][0];
-                        await DataSource.Device.Api.Camera.SetWhiteBalanceAsync(new WhiteBalance { Mode = selected, ColorTemperature = min });
-                        DataSource.Device.Status.ColorTemperture = min;
+                        var min = Status.ColorTempertureCandidates[WhiteBalanceMode.Manual][0];
+                        await Api.Camera.SetWhiteBalanceAsync(new WhiteBalance { Mode = selected, ColorTemperature = min });
+                        Status.ColorTemperture = min;
                         if (ColorTempertureSlider != null)
                         {
-                            var val = DataSource.Device.Status.ColorTempertureCandidates[selected];
+                            var val = Status.ColorTempertureCandidates[selected];
                             ColorTempertureSlider.Maximum = val[val.Length - 1];
                             ColorTempertureSlider.Minimum = val[0];
-                            ColorTempertureSlider.Value = DataSource.Device.Status.ColorTemperture;
+                            ColorTempertureSlider.Value = Status.ColorTemperture;
                         }
                     }
                 });
@@ -234,11 +238,11 @@ namespace Kazyx.Uwpmm.Settings
 
             slider.ManipulationCompleted += async (sender, e) =>
             {
-                var target = ParameterUtil.AsValidColorTemperture((int)slider.Value, DataSource.Device.Status);
+                var target = ParameterUtil.AsValidColorTemperture((int)slider.Value, Status);
                 slider.Value = target;
                 try
                 {
-                    await DataSource.Device.Api.Camera.SetWhiteBalanceAsync(new WhiteBalance { Mode = DataSource.Device.Status.WhiteBalance.Current, ColorTemperature = target });
+                    await Api.Camera.SetWhiteBalanceAsync(new WhiteBalance { Mode = Status.WhiteBalance.Current, ColorTemperature = target });
                 }
                 catch (RemoteApiException ex)
                 {
@@ -259,14 +263,14 @@ namespace Kazyx.Uwpmm.Settings
 
             indicator.SetBinding(TextBlock.TextProperty, new Binding()
             {
-                Source = DataSource.Device.Status,
+                Source = Status,
                 Path = new PropertyPath("ColorTemperture"),
                 Mode = BindingMode.OneWay,
             });
 
             slider.SetBinding(Slider.ValueProperty, new Binding()
             {
-                Source = DataSource.Device.Status,
+                Source = Status,
                 Path = new PropertyPath("ColorTemperture"),
                 Mode = BindingMode.TwoWay
             });

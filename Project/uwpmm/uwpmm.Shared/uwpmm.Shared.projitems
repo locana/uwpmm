@@ -15,6 +15,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)CameraControl\ProductType.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CameraControl\ServerDevice.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CameraControl\DeviceApiHolder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CameraControl\SequentialOperation.cs" />

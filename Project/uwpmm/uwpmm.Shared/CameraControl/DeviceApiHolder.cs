@@ -35,6 +35,12 @@ namespace Kazyx.Uwpmm.CameraControl
             {
                 _System = new SystemApiClient(info.Endpoints["system"]);
             }
+
+            if (FriendlyName == "DSC-QX10")
+            {
+                ProductType = ProductType.DSC_QX10;
+            }
+
             capability.PropertyChanged += api_PropertyChanged;
         }
 
@@ -62,12 +68,23 @@ namespace Kazyx.Uwpmm.CameraControl
             get { return capability; }
         }
 
+        private ProductType _Type = ProductType.UNDEFINED;
+        public ProductType ProductType
+        {
+            get { return _Type; }
+            internal set { _Type = value; }
+        }
+
         internal async Task RetrieveApiList()
         {
             if (Camera != null)
             {
                 foreach (var method in await Camera.GetMethodTypesAsync())
                 {
+                    if (method.Name == "setFocusMode" && ProductType == ProductType.DSC_QX10)
+                    {
+                        continue; // DSC-QX10 firmware v3.00 has a bug in the response of getMethodTypes
+                    }
                     Capability.AddSupported(method);
                 }
             }
