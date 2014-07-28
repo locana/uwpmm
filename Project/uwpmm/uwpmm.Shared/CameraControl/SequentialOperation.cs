@@ -102,7 +102,7 @@ namespace Kazyx.Uwpmm.CameraControl
                     return true;
                 }
 
-                if (App.Settings.GetIsDownloadPostviewEnabled())
+                if (App.Settings.PostviewSyncEnabled)
                 {
                     foreach (var url in urls)
                     {
