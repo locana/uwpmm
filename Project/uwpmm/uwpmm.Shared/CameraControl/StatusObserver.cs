@@ -9,16 +9,22 @@ namespace Kazyx.Uwpmm.CameraControl
 {
     public class StatusObserver
     {
-        private readonly DeviceApiHolder api;
-
-        public StatusObserver(DeviceApiHolder api)
+        public StatusObserver(TargetDevice device)
         {
-            this.api = api;
+            this.api = device.Api;
+            this.target = device.Status;
         }
 
-        private CameraStatus target = null;
+        private readonly DeviceApiHolder api;
 
-        public bool IsProcessing { get { return target != null; } }
+        private readonly CameraStatus target;
+
+        private bool _IsProcessing = false;
+        public bool IsProcessing
+        {
+            private set { _IsProcessing = value; }
+            get { return _IsProcessing; }
+        }
 
         private int failure_count = 0;
 
@@ -30,7 +36,7 @@ namespace Kazyx.Uwpmm.CameraControl
 
         private ApiVersion version = ApiVersion.V1_0;
 
-        public async Task<bool> Start(CameraStatus status, ApiVersion version = ApiVersion.V1_0)
+        public async Task<bool> Start()
         {
             Debug.WriteLine("StatusObserver: Start");
             if (IsProcessing)
@@ -39,8 +45,7 @@ namespace Kazyx.Uwpmm.CameraControl
                 return false;
             }
 
-            this.version = version;
-            this.target = status;
+            version = api.Capability.IsSupported("getEvent", "1.1") ? ApiVersion.V1_1 : ApiVersion.V1_0;
 
             failure_count = 0;
             if (!await Refresh())
@@ -49,6 +54,7 @@ namespace Kazyx.Uwpmm.CameraControl
                 return false;
             }
 
+            IsProcessing = true;
             PollingLoop();
             return true;
         }
@@ -56,7 +62,7 @@ namespace Kazyx.Uwpmm.CameraControl
         public void Stop()
         {
             Debug.WriteLine("StatusObserver: Stop");
-            target = null;
+            IsProcessing = false;
         }
 
         public async Task<bool> Refresh()

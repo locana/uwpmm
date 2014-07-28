@@ -7,8 +7,8 @@ namespace Kazyx.Uwpmm.CameraControl
         public TargetDevice(DeviceApiHolder api)
         {
             _Api = api;
-            _Observer = new StatusObserver(api);
             _Status = new CameraStatus();
+            _Observer = new StatusObserver(this);
         }
 
         private readonly DeviceApiHolder _Api;

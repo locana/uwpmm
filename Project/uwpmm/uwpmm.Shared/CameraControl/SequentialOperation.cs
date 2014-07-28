@@ -39,8 +39,7 @@ namespace Kazyx.Uwpmm.CameraControl
                     await api.System.SetCurrentTimeAsync(DateTimeOffset.Now);
                 }
                 var target = new TargetDevice(api);
-                var version = api.Capability.IsSupported("getEvent", "1.1") ? ApiVersion.V1_1 : ApiVersion.V1_0;
-                await target.Observer.Start(target.Status, version);
+                await target.Observer.Start();
                 return target;
             }
             catch (RemoteApiException e)
