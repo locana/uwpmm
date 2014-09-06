@@ -52,6 +52,7 @@
                 <ColumnDefinition Width="880" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
+            <StackPanel x:Name="InformationPanel" Grid.Column="0" HorizontalAlignment="Left" Margin="0,0,0,0" Grid.Row="1" VerticalAlignment="Center"/>
             <Grid Grid.Column="1" Margin="0,-90,0,16">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*" />
@@ -74,12 +75,12 @@
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="48" />
                             </Grid.ColumnDefinitions>
-                            <Button Grid.Column="0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Padding="12,16" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch" >
+                            <Button x:Name="ZoomOut" Grid.Column="0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Padding="12,16" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch" Tapped="ZoomOut_Tapped" Click="ZoomOut_Click" Holding="ZoomOut_Holding" PointerEntered="ZoomOut_PointerEntered" PointerExited="ZoomOut_PointerExited" >
                                 <Button.Background>
                                     <ImageBrush ImageSource="Assets/ZoomOut.png" Stretch="Uniform" />
                                 </Button.Background>
                             </Button>
-                            <Button Grid.Column="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Padding="12,16" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch" >
+                            <Button x:Name="ZoomIn" Grid.Column="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Padding="12,16" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch" Tapped="ZoomIn_Tapped" Click="ZoomIn_Click" Holding="ZoomIn_Holding" PointerEntered="ZoomIn_PointerEntered" PointerExited="ZoomIn_PointerExited" >
                                 <Button.Background>
                                     <ImageBrush ImageSource="Assets/ZoomIn.png" Stretch="Uniform" />
                                 </Button.Background>

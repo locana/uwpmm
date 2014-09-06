@@ -1,5 +1,5 @@
 ﻿using Kazyx.DeviceDiscovery;
-using Kazyx.Liveview;
+using Kazyx.ImageStream;
 using Kazyx.Uwpmm.CameraControl;
 using Kazyx.Uwpmm.Common;
 using Kazyx.Uwpmm.DataModel;
@@ -10,6 +10,7 @@ using System.Diagnostics;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 
@@ -111,7 +112,7 @@ namespace Kazyx.Uwpmm
 
         private TargetDevice target;
         private SoDiscovery discovery = new SoDiscovery();
-        private LvStreamProcessor liveview = new LvStreamProcessor();
+        private StreamProcessor liveview = new StreamProcessor();
         private ImageDataSource liveview_data = new ImageDataSource();
         private ImageDataSource postview_data = new ImageDataSource();
 
@@ -143,7 +144,7 @@ namespace Kazyx.Uwpmm
 
         async void liveview_JpegRetrieved(object sender, JpegEventArgs e)
         {
-            await LiveviewUtil.SetAsBitmap(e.JpegData, liveview_data, Dispatcher);
+            await LiveviewUtil.SetAsBitmap(e.Packet.ImageData, liveview_data, Dispatcher);
         }
 
         void liveview_Closed(object sender, EventArgs e)
@@ -181,6 +182,56 @@ namespace Kazyx.Uwpmm
                     stream.Dispose();
                 });
             });
+        }
+
+        private async void ZoomOut_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            await ZoomOperation.ZoomOut(target.Api.Camera);
+        }
+
+        private async void ZoomOut_Click(object sender, RoutedEventArgs e)
+        {
+            await ZoomOperation.StopZoomOut(target.Api.Camera);
+        }
+
+        private async void ZoomOut_Holding(object sender, HoldingRoutedEventArgs e)
+        {
+            await ZoomOperation.StartZoomOut(target.Api.Camera);
+        }
+
+        private async void ZoomOut_PointerEntered(object sender, PointerRoutedEventArgs e)
+        {
+            //await ZoomOperation.StartZoomOut(target.Api.Camera);
+        }
+
+        private async void ZoomOut_PointerExited(object sender, PointerRoutedEventArgs e)
+        {
+            //await ZoomOperation.StopZoomOut(target.Api.Camera);
+        }
+
+        private async void ZoomIn_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            await ZoomOperation.ZoomIn(target.Api.Camera);
+        }
+
+        private async void ZoomIn_Click(object sender, RoutedEventArgs e)
+        {
+            await ZoomOperation.StopZoomIn(target.Api.Camera);
+        }
+
+        private async void ZoomIn_Holding(object sender, HoldingRoutedEventArgs e)
+        {
+            await ZoomOperation.StartZoomIn(target.Api.Camera);
+        }
+
+        private async void ZoomIn_PointerEntered(object sender, PointerRoutedEventArgs e)
+        {
+            //await ZoomOperation.StartZoomIn(target.Api.Camera);
+        }
+
+        private async void ZoomIn_PointerExited(object sender, PointerRoutedEventArgs e)
+        {
+           // await ZoomOperation.StopZoomIn(target.Api.Camera);
         }
     }
 }

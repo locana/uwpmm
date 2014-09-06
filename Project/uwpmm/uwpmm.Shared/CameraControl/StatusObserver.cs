@@ -1,4 +1,5 @@
 ﻿using Kazyx.RemoteApi;
+using Kazyx.RemoteApi.Camera;
 using Kazyx.Uwpmm.DataModel;
 using System;
 using System.Collections.Generic;
@@ -112,7 +113,7 @@ namespace Kazyx.Uwpmm.CameraControl
                     try
                     {
                         var size = await api.Camera.GetAvailableStillSizeAsync();
-                        Array.Sort(size.Candidates, CompareStillSize);
+                        size.Candidates.Sort(CompareStillSize);
                         target.StillImageSize = size;
                     }
                     catch (RemoteApiException)
@@ -140,7 +141,7 @@ namespace Kazyx.Uwpmm.CameraControl
                         {
                             candidates.Add(mode.WhiteBalanceMode);
                             var tmpList = new List<int>();
-                            if (mode.Candidates.Length == 3)
+                            if (mode.Candidates.Count == 3)
                             {
                                 for (int i = mode.Candidates[1]; i <= mode.Candidates[0]; i += mode.Candidates[2])
                                 {
@@ -156,7 +157,7 @@ namespace Kazyx.Uwpmm.CameraControl
                             }
                         }
 
-                        target.WhiteBalance = new Capability<string> { Candidates = candidates.ToArray(), Current = wb.Current.Mode };
+                        target.WhiteBalance = new Capability<string> { Candidates = candidates, Current = wb.Current.Mode };
                         target.ColorTempertureCandidates = tmpCandidates;
                         target.ColorTemperture = wb.Current.ColorTemperature;
                     }

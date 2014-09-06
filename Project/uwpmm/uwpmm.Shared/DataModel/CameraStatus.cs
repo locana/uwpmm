@@ -1,4 +1,5 @@
 ﻿using Kazyx.RemoteApi;
+using Kazyx.RemoteApi.Camera;
 using System.Collections.Generic;
 
 namespace Kazyx.Uwpmm.DataModel
@@ -266,8 +267,8 @@ namespace Kazyx.Uwpmm.DataModel
             get { return _LiveviewOrientation == null ? Orientation.Straight : _LiveviewOrientation; }
         }
 
-        private string[] _PictureUrls;
-        public string[] PictureUrls
+        private List<string> _PictureUrls;
+        public List<string> PictureUrls
         {
             set
             {

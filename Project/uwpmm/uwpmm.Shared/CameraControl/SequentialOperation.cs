@@ -1,4 +1,4 @@
-﻿using Kazyx.Liveview;
+﻿using Kazyx.ImageStream;
 using Kazyx.RemoteApi;
 using Kazyx.Uwpmm.Utility;
 using System;
@@ -10,7 +10,7 @@ namespace Kazyx.Uwpmm.CameraControl
 {
     public class SequentialOperation
     {
-        public static async Task<TargetDevice> SetUp(DeviceApiHolder api, LvStreamProcessor liveview)
+        public static async Task<TargetDevice> SetUp(DeviceApiHolder api, StreamProcessor liveview)
         {
             Debug.WriteLine("Set up control");
             try
@@ -49,13 +49,13 @@ namespace Kazyx.Uwpmm.CameraControl
             }
         }
 
-        public static async Task<bool> OpenLiveviewStream(DeviceApiHolder api, LvStreamProcessor liveview)
+        public static async Task<bool> OpenLiveviewStream(DeviceApiHolder api, StreamProcessor liveview)
         {
             Debug.WriteLine("Open liveview stream");
             try
             {
                 var url = await api.Camera.StartLiveviewAsync();
-                return await liveview.OpenConnection(url);
+                return await liveview.OpenConnection(new Uri(url));
             }
             catch (RemoteApiException e)
             {
@@ -64,7 +64,7 @@ namespace Kazyx.Uwpmm.CameraControl
             }
         }
 
-        public static async Task<bool> CloseLiveviewStream(DeviceApiHolder api, LvStreamProcessor liveview)
+        public static async Task<bool> CloseLiveviewStream(DeviceApiHolder api, StreamProcessor liveview)
         {
             Debug.WriteLine("Close liveview stream");
             try
@@ -80,7 +80,7 @@ namespace Kazyx.Uwpmm.CameraControl
             }
         }
 
-        public static async Task<bool> ReOpenLiveviewStream(DeviceApiHolder api, LvStreamProcessor liveview)
+        public static async Task<bool> ReOpenLiveviewStream(DeviceApiHolder api, StreamProcessor liveview)
         {
             Debug.WriteLine("Reopen liveview stream");
             liveview.CloseConnection();

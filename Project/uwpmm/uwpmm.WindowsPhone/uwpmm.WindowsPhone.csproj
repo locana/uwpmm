@@ -81,15 +81,15 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
-    <ProjectReference Include="..\..\..\modules\KzLiveview\Project\KzLiveviewUniversal.csproj">
+    <ProjectReference Include="..\..\..\modules\kz-image-stream\Project\KzImageStreamUniversal.csproj">
       <Project>{8dd38a89-02aa-4009-a476-fe4f7e1c2344}</Project>
-      <Name>KzLiveviewUniversal</Name>
+      <Name>KzImageStreamUniversal</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\modules\KzRemoteApi\Project\KzRemoteApiUniversal.csproj">
+    <ProjectReference Include="..\..\..\modules\kz-remote-api\Project\KzRemoteApiUniversal.csproj">
       <Project>{415bafeb-dfd7-4af9-974c-eec2e9efd930}</Project>
       <Name>KzRemoteApiUniversal</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\modules\KzSoDiscovery\Project\KzSoDiscoveryUniversal.csproj">
+    <ProjectReference Include="..\..\..\modules\kz-ssdp-discovery\Project\KzSoDiscoveryUniversal.csproj">
       <Project>{a1246c04-298d-4189-8ac8-2105288d2ec6}</Project>
       <Name>KzSoDiscoveryUniversal</Name>
     </ProjectReference>

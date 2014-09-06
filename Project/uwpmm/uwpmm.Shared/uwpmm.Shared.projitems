@@ -21,6 +21,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)CameraControl\SequentialOperation.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CameraControl\ServerVersion.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CameraControl\StatusObserver.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CameraControl\ZoomOperation.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataModel\ApiCapabilityContainer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataModel\CameraStatus.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataModel\ControlPanelDataSource.cs" />

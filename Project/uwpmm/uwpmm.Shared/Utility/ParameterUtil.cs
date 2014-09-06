@@ -40,7 +40,7 @@ namespace Kazyx.Uwpmm.Utility
 
             if (capability != null)
             {
-                if (capability.Candidates.Length > index)
+                if (capability.Candidates.Count > index)
                 {
                     capability.Current = capability.Candidates[index];
                 }

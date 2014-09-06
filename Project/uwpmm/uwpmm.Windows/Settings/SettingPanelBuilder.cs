@@ -1,4 +1,5 @@
 ﻿using Kazyx.RemoteApi;
+using Kazyx.RemoteApi.Camera;
 using Kazyx.Uwpmm.CameraControl;
 using Kazyx.Uwpmm.DataModel;
 using Kazyx.Uwpmm.Utility;
@@ -168,14 +169,14 @@ namespace Kazyx.Uwpmm.Settings
 
         private async Task OnComboBoxChanged<T>(object sender, Capability<T> param, AsyncAction<T> action)
         {
-            if (param == null || param.Candidates == null || param.Candidates.Length == 0)
+            if (param == null || param.Candidates == null || param.Candidates.Count == 0)
             {
                 return;
             }
 
             var selected = (sender as ComboBox).SelectedIndex;
 
-            if (selected < 0 || param.Candidates.Length <= selected)
+            if (selected < 0 || param.Candidates.Count <= selected)
             {
                 Debug.WriteLine("ignore out of range");
                 return;

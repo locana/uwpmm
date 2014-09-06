@@ -90,8 +90,8 @@ namespace Kazyx.Uwpmm.DataModel
             return false;
         }
 
-        private string[] _AvailableApis;
-        public string[] AvailableApis
+        private List<string> _AvailableApis;
+        public List<string> AvailableApis
         {
             set
             {

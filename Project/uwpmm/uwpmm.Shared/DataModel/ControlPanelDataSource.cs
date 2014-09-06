@@ -1,6 +1,7 @@
 ﻿using Kazyx.RemoteApi;
 using Kazyx.Uwpmm.CameraControl;
 using Kazyx.Uwpmm.Utility;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace Kazyx.Uwpmm.DataModel
@@ -69,7 +70,7 @@ namespace Kazyx.Uwpmm.DataModel
             }
         }
 
-        public string[] CandidatesExposureMode
+        public List<string> CandidatesExposureMode
         {
             get
             {
@@ -98,7 +99,7 @@ namespace Kazyx.Uwpmm.DataModel
             }
         }
 
-        public string[] CandidatesShootMode
+        public List<string> CandidatesShootMode
         {
             get
             {
@@ -127,7 +128,7 @@ namespace Kazyx.Uwpmm.DataModel
             }
         }
 
-        public string[] CandidatesBeepMode
+        public List<string> CandidatesBeepMode
         {
             get
             {
@@ -156,7 +157,7 @@ namespace Kazyx.Uwpmm.DataModel
             }
         }
 
-        public string[] CandidatesPostviewSize
+        public List<string> CandidatesPostviewSize
         {
             get
             {
@@ -185,7 +186,7 @@ namespace Kazyx.Uwpmm.DataModel
             }
         }
 
-        public string[] CandidatesSelfTimer
+        public List<string> CandidatesSelfTimer
         {
             get
             {
@@ -214,7 +215,7 @@ namespace Kazyx.Uwpmm.DataModel
             }
         }
 
-        public string[] CandidatesStillImageSize
+        public List<string> CandidatesStillImageSize
         {
             get
             {
@@ -246,7 +247,7 @@ namespace Kazyx.Uwpmm.DataModel
             }
         }
 
-        public string[] CandidatesWhiteBalance
+        public List<string> CandidatesWhiteBalance
         {
             get
             {
@@ -290,7 +291,7 @@ namespace Kazyx.Uwpmm.DataModel
             }
         }
 
-        public string[] CpCandidatesViewAngle
+        public List<string> CpCandidatesViewAngle
         {
             get
             {
@@ -319,7 +320,7 @@ namespace Kazyx.Uwpmm.DataModel
             }
         }
 
-        public string[] CpCandidatesSteadyMode
+        public List<string> CpCandidatesSteadyMode
         {
             get
             {
@@ -348,7 +349,7 @@ namespace Kazyx.Uwpmm.DataModel
             }
         }
 
-        public string[] CpCandidatesMovieQuality
+        public List<string> CpCandidatesMovieQuality
         {
             get
             {
@@ -377,7 +378,7 @@ namespace Kazyx.Uwpmm.DataModel
             }
         }
 
-        public string[] CpCandidatesFlashMode
+        public List<string> CpCandidatesFlashMode
         {
             get
             {
@@ -406,7 +407,7 @@ namespace Kazyx.Uwpmm.DataModel
             }
         }
 
-        public string[] CpCandidatesFocusMode
+        public List<string> CpCandidatesFocusMode
         {
             get
             {

@@ -1,5 +1,7 @@
 ﻿using Kazyx.DeviceDiscovery;
 using Kazyx.RemoteApi;
+using Kazyx.RemoteApi.Camera;
+using Kazyx.RemoteApi.System;
 using Kazyx.Uwpmm.DataModel;
 using System;
 using System.Collections.Generic;
@@ -29,11 +31,11 @@ namespace Kazyx.Uwpmm.CameraControl
 
             if (info.Endpoints.ContainsKey("camera"))
             {
-                _Camera = new CameraApiClient(info.Endpoints["camera"]);
+                _Camera = new CameraApiClient(new Uri(info.Endpoints["camera"]));
             }
             if (info.Endpoints.ContainsKey("system"))
             {
-                _System = new SystemApiClient(info.Endpoints["system"]);
+                _System = new SystemApiClient(new Uri(info.Endpoints["system"]));
             }
 
             if (FriendlyName == "DSC-QX10")
@@ -171,14 +173,14 @@ namespace Kazyx.Uwpmm.CameraControl
 
     public class AvailableApiEventArgs : EventArgs
     {
-        private readonly string[] apis;
+        private readonly List<string> apis;
 
-        internal AvailableApiEventArgs(string[] apis)
+        internal AvailableApiEventArgs(List<string> apis)
         {
             this.apis = apis;
         }
 
-        public string[] AvailableApis
+        public List<string> AvailableApis
         {
             get { return apis; }
         }

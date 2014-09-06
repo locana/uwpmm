@@ -1,4 +1,5 @@
 ﻿using Kazyx.RemoteApi;
+using Kazyx.RemoteApi.Camera;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -9,13 +10,13 @@ namespace Kazyx.Uwpmm.Utility
     {
         public static int GetSelectedIndex<T>(Capability<T> info)
         {
-            if (info == null || info.Candidates == null || info.Candidates.Length == 0)
+            if (info == null || info.Candidates == null || info.Candidates.Count == 0)
             {
                 return 0;
             }
             if (typeof(T) == typeof(string) || typeof(T) == typeof(int))
             {
-                for (int i = 0; i < info.Candidates.Length; i++)
+                for (int i = 0; i < info.Candidates.Count; i++)
                 {
                     if (info.Candidates[i].Equals(info.Current))
                     {
@@ -26,7 +27,7 @@ namespace Kazyx.Uwpmm.Utility
             else if (typeof(T) == typeof(StillImageSize))
             {
                 var size = info as Capability<StillImageSize>;
-                for (int i = 0; i < info.Candidates.Length; i++)
+                for (int i = 0; i < info.Candidates.Count; i++)
                 {
                     if (size.Candidates[i].AspectRatio == size.Current.AspectRatio
                         && size.Candidates[i].SizeDefinition == size.Current.SizeDefinition)
@@ -63,18 +64,20 @@ namespace Kazyx.Uwpmm.Utility
             return new Capability<string>
             {
                 Current = converter.Invoke(info.Current),
-                Candidates = mCandidates.ToArray()
+                Candidates = mCandidates
             };
         }
 
         private static Capability<string> AsDisabledCapability<T>(Capability<T> info)
         {
-            if (info == null || info.Candidates == null || info.Candidates.Length == 0)
+            if (info == null || info.Candidates == null || info.Candidates.Count == 0)
             {
                 var disabled = SystemUtil.GetStringResource("Disabled");
+                var list = new List<string>();
+                list.Add(disabled);
                 return new Capability<string>
                 {
-                    Candidates = new string[] { disabled },
+                    Candidates = list,
                     Current = disabled
                 };
             }
@@ -275,19 +278,22 @@ namespace Kazyx.Uwpmm.Utility
             return val;
         }
 
-        public static string[] FromExposureCompensation(EvCapability info)
+        public static List<string> FromExposureCompensation(EvCapability info)
         {
             if (info == null)
             {
-                return new string[] { SystemUtil.GetStringResource("Disabled") };
+                var disabled = SystemUtil.GetStringResource("Disabled");
+                var list = new List<string>();
+                list.Add(disabled);
+                return list;
             }
 
             int num = info.Candidate.MaxIndex + Math.Abs(info.Candidate.MinIndex) + 1;
-            var mCandidates = new string[num];
+            var mCandidates = new List<string>(num);
             for (int i = 0; i < num; i++)
             {
                 Debug.WriteLine("ev: " + i);
-                mCandidates[i] = FromExposureCompensation(i + info.Candidate.MinIndex, info.Candidate.IndexStep);
+                mCandidates.Add(FromExposureCompensation(i + info.Candidate.MinIndex, info.Candidate.IndexStep));
             }
 
             return mCandidates;

@@ -11,11 +11,18 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "uwpmm.Windows", "uwpmm\uwpm
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "uwpmm.WindowsPhone", "uwpmm\uwpmm.WindowsPhone\uwpmm.WindowsPhone.csproj", "{5A7FF0E5-6025-43F2-B4CA-5F699FC591DB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KzLiveviewUniversal", "..\modules\KzLiveview\Project\KzLiveviewUniversal.csproj", "{8DD38A89-02AA-4009-A476-FE4F7E1C2344}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KzImageStreamUniversal", "..\modules\kz-image-stream\Project\KzImageStreamUniversal.csproj", "{8DD38A89-02AA-4009-A476-FE4F7E1C2344}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KzRemoteApiUniversal", "..\modules\KzRemoteApi\Project\KzRemoteApiUniversal.csproj", "{415BAFEB-DFD7-4AF9-974C-EEC2E9EFD930}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KzRemoteApiUniversal", "..\modules\kz-remote-api\Project\KzRemoteApiUniversal.csproj", "{415BAFEB-DFD7-4AF9-974C-EEC2E9EFD930}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KzSoDiscoveryUniversal", "..\modules\KzSoDiscovery\Project\KzSoDiscoveryUniversal.csproj", "{A1246C04-298D-4189-8AC8-2105288D2EC6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KzSoDiscoveryUniversal", "..\modules\kz-ssdp-discovery\Project\KzSoDiscoveryUniversal.csproj", "{A1246C04-298D-4189-8AC8-2105288D2EC6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{A9C1789D-0989-47FE-B8CC-02844962C0AF}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\NuGet.Config = .nuget\NuGet.Config
+		.nuget\NuGet.exe = .nuget\NuGet.exe
+		.nuget\NuGet.targets = .nuget\NuGet.targets
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
