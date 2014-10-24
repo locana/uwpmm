@@ -36,7 +36,7 @@ namespace Kazyx.Uwpmm.CameraControl
 
                 if (api.Capability.IsSupported("setCurrentTime"))
                 {
-                    await api.System.SetCurrentTimeAsync(DateTimeOffset.Now);
+                    await api.System.SetCurrentTimeAsync(DateTimeOffset.UtcNow, (int)DateTimeOffset.Now.Offset.TotalMinutes);
                 }
                 var target = new TargetDevice(api);
                 await target.Observer.Start();

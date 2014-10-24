@@ -23,7 +23,7 @@ namespace Kazyx.Uwpmm.CameraControl
         private readonly SystemApiClient _System;
         public SystemApiClient System { get { return _System; } }
 
-        public DeviceApiHolder(ScalarDeviceInfo info)
+        public DeviceApiHolder(SonyCameraDeviceInfo info)
         {
             UDN = info.UDN;
             DeviceName = info.ModelName;

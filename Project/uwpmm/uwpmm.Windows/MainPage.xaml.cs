@@ -105,20 +105,20 @@ namespace Kazyx.Uwpmm
 
         private void pageRoot_Loaded(object sender, RoutedEventArgs e)
         {
-            var discovery = new SoDiscovery();
-            discovery.ScalarDeviceDiscovered += discovery_ScalarDeviceDiscovered;
-            discovery.SearchScalarDevices();
+            var discovery = new SsdpDiscovery();
+            discovery.SonyCameraDeviceDiscovered += discovery_ScalarDeviceDiscovered;
+            discovery.SearchSonyCameraDevices();
         }
 
         private TargetDevice target;
-        private SoDiscovery discovery = new SoDiscovery();
+        private SsdpDiscovery discovery = new SsdpDiscovery();
         private StreamProcessor liveview = new StreamProcessor();
         private ImageDataSource liveview_data = new ImageDataSource();
         private ImageDataSource postview_data = new ImageDataSource();
 
-        async void discovery_ScalarDeviceDiscovered(object sender, ScalarDeviceEventArgs e)
+        async void discovery_ScalarDeviceDiscovered(object sender, SonyCameraDeviceEventArgs e)
         {
-            var api = new DeviceApiHolder(e.ScalarDevice);
+            var api = new DeviceApiHolder(e.SonyCameraDevice);
             TargetDevice target = null;
             try
             {
