@@ -11,7 +11,6 @@ namespace Kazyx.Uwpmm.DataModel
             set
             {
                 _Image = value;
-                //NotifyChangedOnUI("Image", CoreDispatcherPriority.High);
                 NotifyChanged("Image");
             }
             get

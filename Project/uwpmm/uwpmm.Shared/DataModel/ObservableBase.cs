@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Kazyx.Uwpmm.Utility;
+using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using Windows.ApplicationModel.Core;
 using Windows.UI.Core;
 
 namespace Kazyx.Uwpmm.DataModel
@@ -13,7 +13,10 @@ namespace Kazyx.Uwpmm.DataModel
 
         protected async void NotifyChangedOnUI(string name, CoreDispatcherPriority priority = CoreDispatcherPriority.Normal)
         {
-            await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(priority, () =>
+            var dispatcher = SystemUtil.GetCurrentDispatcher();
+            if (dispatcher == null) { return; }
+
+            await dispatcher.RunAsync(priority, () =>
             {
                 NotifyChanged(name);
             });

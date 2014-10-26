@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Kazyx.Uwpmm.CameraControl
 {
-    class ZoomOperation
+    public class ZoomOperation
     {
         public static async Task ZoomOut(CameraApiClient camera)
         {

@@ -15,6 +15,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)CameraControl\MovieStreamHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CameraControl\PlaybackModeSequence.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CameraControl\ProductType.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CameraControl\TargetDevice.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CameraControl\DeviceApiHolder.cs" />
@@ -24,16 +26,23 @@
     <Compile Include="$(MSBuildThisFileDirectory)CameraControl\ZoomOperation.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataModel\ApiCapabilityContainer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataModel\CameraStatus.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DataModel\ContentPlaybackData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataModel\ControlPanelDataSource.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataModel\ImageDataSource.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DataModel\MoviePlaybackData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataModel\ObservableBase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DataModel\RemoteThumbnailData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\BoolToVisibilityConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utility\DebugUtil.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utility\DummyContentsGenerator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\LiveviewUtil.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\ParameterUtil.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\PictureDownloader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\Preference.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\SettingValueConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utility\StorageUtil.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\SystemUtil.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utility\ThumbnailCacheLoader.cs" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\Camera.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\ZoomIn.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\ZoomOut.png" />

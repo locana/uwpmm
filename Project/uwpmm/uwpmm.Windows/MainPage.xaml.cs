@@ -142,9 +142,15 @@ namespace Kazyx.Uwpmm
             });
         }
 
+        private bool IsRendering = false;
+
         async void liveview_JpegRetrieved(object sender, JpegEventArgs e)
         {
+            if (IsRendering) { return; }
+
+            IsRendering = true;
             await LiveviewUtil.SetAsBitmap(e.Packet.ImageData, liveview_data, Dispatcher);
+            IsRendering = false;
         }
 
         void liveview_Closed(object sender, EventArgs e)
@@ -231,7 +237,7 @@ namespace Kazyx.Uwpmm
 
         private async void ZoomIn_PointerExited(object sender, PointerRoutedEventArgs e)
         {
-           // await ZoomOperation.StopZoomIn(target.Api.Camera);
+            // await ZoomOperation.StopZoomIn(target.Api.Camera);
         }
     }
 }
