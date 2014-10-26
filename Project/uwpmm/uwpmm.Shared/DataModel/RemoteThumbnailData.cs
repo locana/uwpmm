@@ -107,42 +107,7 @@ namespace Kazyx.Uwpmm.DataModel
             set
             {
                 _CachePath = value;
-
-                ConverterTask = Task.Run(async () =>
-                {
-                    try
-                    {
-                        if (string.IsNullOrEmpty(value))
-                        {
-                            return null;
-                        }
-
-                        var bmp = new BitmapImage();
-                        bmp.CreateOptions = BitmapCreateOptions.None;
-
-                        var file = await ApplicationData.Current.TemporaryFolder.GetFileAsync(value);
-                        using (var stream = await file.OpenStreamForReadAsync())
-                        {
-                            bmp.SetSource(stream.AsRandomAccessStream());
-                        }
-
-                        return bmp;
-                    }
-                    catch (Exception e)
-                    {
-                        DebugUtil.Log(e.StackTrace);
-                        return null;
-                    }
-                });
-
-                var scheduler = (SynchronizationContext.Current == null) ? TaskScheduler.Current : TaskScheduler.FromCurrentSynchronizationContext();
-                ConverterTask.ContinueWith((t) =>
-                {
-                    if (!t.IsCanceled && !t.IsFaulted)
-                    {
-                        NotifyChangedOnUI("ThumbnailImage");
-                    }
-                }, CancellationToken.None, TaskContinuationOptions.ExecuteSynchronously, scheduler);
+                NotifyChangedOnUI("ThumbnailImage");
             }
             get
             {
@@ -150,18 +115,69 @@ namespace Kazyx.Uwpmm.DataModel
             }
         }
 
-        private Task<BitmapImage> ConverterTask { get; set; }
+        private void LoadCachedThumbnailImageAsync()
+        {
+            var path = CachePath;
+
+            LoaderTask = Task.Run(async () =>
+            {
+                try
+                {
+                    if (string.IsNullOrEmpty(path))
+                    {
+                        return null;
+                    }
+
+                    var bmp = new BitmapImage();
+                    bmp.CreateOptions = BitmapCreateOptions.None;
+
+                    var file = await ApplicationData.Current.TemporaryFolder.GetFileAsync(path);
+                    using (var stream = await file.OpenStreamForReadAsync())
+                    {
+                        bmp.SetSource(stream.AsRandomAccessStream());
+                    }
+
+                    return bmp;
+                }
+                catch (Exception e)
+                {
+                    DebugUtil.Log(e.StackTrace);
+                    return null;
+                }
+            });
+
+            var scheduler = (SynchronizationContext.Current == null) ? TaskScheduler.Current : TaskScheduler.FromCurrentSynchronizationContext();
+            LoaderTask.ContinueWith((t) =>
+            {
+                if (!t.IsCanceled && !t.IsFaulted)
+                {
+                    NotifyChangedOnUI("ThumbnailImage");
+                }
+            }, CancellationToken.None, TaskContinuationOptions.ExecuteSynchronously, scheduler);
+        }
+
+        private Task<BitmapImage> LoaderTask { get; set; }
 
         public BitmapImage ThumbnailImage
         {
             get
             {
-                if (ConverterTask != null)
+                if (LoaderTask != null)
                 {
-                    return (ConverterTask.Status == TaskStatus.RanToCompletion) ? ConverterTask.Result : null;
+                    if (LoaderTask.Status == TaskStatus.RanToCompletion)
+                    {
+                        var image = LoaderTask.Result;
+                        LoaderTask = null;
+                        return image;
+                    }
+                    else
+                    {
+                        return null;
+                    }
                 }
                 else
                 {
+                    LoadCachedThumbnailImageAsync();
                     return null;
                 }
             }
