@@ -7,3 +7,6 @@
 [submodule "modules/kz-image-stream"]
 	path = modules/kz-image-stream
 	url = git@github.com:kazyx/kz-image-stream.git
+[submodule "modules/NtNfcLib"]
+	path = modules/NtNfcLib
+	url = git@github.com:naotaco/NtNfcLib.git
