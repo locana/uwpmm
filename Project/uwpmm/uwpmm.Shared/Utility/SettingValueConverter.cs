@@ -274,6 +274,16 @@ namespace Kazyx.Uwpmm.Utility
                     return SystemUtil.GetStringResource("WB_DayLight");
                 case WhiteBalanceMode.Manual:
                     return SystemUtil.GetStringResource("WB_ColorTemperture");
+                case WhiteBalanceMode.Flash:
+                    return SystemUtil.GetStringResource("WB_Flash");
+                case WhiteBalanceMode.Custom:
+                    return SystemUtil.GetStringResource("WB_Custom");
+                case WhiteBalanceMode.Custom_1:
+                    return SystemUtil.GetStringResource("WB_Custom1");
+                case WhiteBalanceMode.Custom_2:
+                    return SystemUtil.GetStringResource("WB_Custom2");
+                case WhiteBalanceMode.Custom_3:
+                    return SystemUtil.GetStringResource("WB_Custom3");
             }
             return val;
         }
@@ -357,5 +367,322 @@ namespace Kazyx.Uwpmm.Utility
             }
             return val;
         }
+
+        internal static Capability<string> FromZoomSetting(Capability<string> info)
+        {
+            return AsDisplayNames<string>(info, FromZoomSetting);
+        }
+
+        private static string FromZoomSetting(string val)
+        {
+            switch (val)
+            {
+                case ZoomMode.ClearImageDigital:
+                    return SystemUtil.GetStringResource("ZoomMode_ClearImageDigital");
+                case ZoomMode.Optical:
+                    return SystemUtil.GetStringResource("ZoomMode_Optical");
+            }
+            return val;
+        }
+
+        internal static Capability<string> FromStillQuality(Capability<string> info)
+        {
+            return AsDisplayNames<string>(info, FromStillQuality);
+        }
+
+        private static string FromStillQuality(string val)
+        {
+            switch (val)
+            {
+                case ImageQuality.RawAndJpeg:
+                    return SystemUtil.GetStringResource("StillQuality_RawAndJpeg");
+                case ImageQuality.Fine:
+                    return SystemUtil.GetStringResource("StillQuality_Fine");
+                case ImageQuality.Standard:
+                    return SystemUtil.GetStringResource("StillQuality_Standard");
+            }
+            return val;
+        }
+
+        internal static Capability<string> FromContShootingMode(Capability<string> info)
+        {
+            return AsDisplayNames<string>(info, FromContShootingMode);
+        }
+
+        private static string FromContShootingMode(string val)
+        {
+            switch (val)
+            {
+                case ContinuousShootMode.Single:
+                    return SystemUtil.GetStringResource("ContinuousShootMode_Single");
+                case ContinuousShootMode.Cont:
+                    return SystemUtil.GetStringResource("ContinuousShootMode_Cont");
+                case ContinuousShootMode.SpeedPriority:
+                    return SystemUtil.GetStringResource("ContinuousShootMode_SpeedPriority");
+                case ContinuousShootMode.Burst:
+                    return SystemUtil.GetStringResource("ContinuousShootMode_Burst");
+                case ContinuousShootMode.MotionShot:
+                    return SystemUtil.GetStringResource("ContinuousShootMode_MotionShot");
+            }
+            return val;
+        }
+
+        internal static Capability<string> FromContShootingSpeed(Capability<string> info)
+        {
+            return AsDisplayNames<string>(info, FromContShootingSpeed);
+        }
+
+        private static string FromContShootingSpeed(string val)
+        {
+            switch (val)
+            {
+                case ContinuousShootSpeed.FixedFrames_10_In_1_25Sec:
+                    return SystemUtil.GetStringResource("ContinuousShootSpeed_FixedFrames_10_In_1_25Sec");
+                case ContinuousShootSpeed.FixedFrames_10_In_2Sec:
+                    return SystemUtil.GetStringResource("ContinuousShootSpeed_FixedFrames_10_In_2Sec");
+                case ContinuousShootSpeed.FixedFrames_10_In_5Sec:
+                    return SystemUtil.GetStringResource("ContinuousShootSpeed_FixedFrames_10_In_5Sec");
+                case ContinuousShootSpeed.High:
+                    return SystemUtil.GetStringResource("ContinuousShootSpeed_High");
+                case ContinuousShootSpeed.Low:
+                    return SystemUtil.GetStringResource("ContinuousShootSpeed_Low");
+            }
+            return val;
+        }
+
+        internal static Capability<string> FromFlipMode(Capability<string> info)
+        {
+            return AsDisplayNames<string>(info, FromFlipMode);
+        }
+
+        private static string FromFlipMode(string val)
+        {
+            switch (val)
+            {
+                case FlipMode.On:
+                    return SystemUtil.GetStringResource("On");
+                case FlipMode.Off:
+                    return SystemUtil.GetStringResource("Off");
+            }
+            return val;
+        }
+
+        internal static Capability<string> FromSceneSelection(Capability<string> info)
+        {
+            return AsDisplayNames<string>(info, FromSceneSelection);
+        }
+
+        private static string FromSceneSelection(string val)
+        {
+            switch (val)
+            {
+                case Scene.Normal:
+                    return SystemUtil.GetStringResource("Scene_Normal");
+                case Scene.UnderWater:
+                    return SystemUtil.GetStringResource("Scene_UnderWater");
+            }
+            return val;
+        }
+
+        internal static Capability<string> FromIntervalTime(Capability<string> info)
+        {
+            return AsDisplayNames<string>(info, FromIntervalTime);
+        }
+
+        private static string FromIntervalTime(string val)
+        {
+            return val + " " + SystemUtil.GetStringResource("Seconds");
+        }
+
+        internal static Capability<string> FromColorSetting(Capability<string> info)
+        {
+            return AsDisplayNames<string>(info, FromColorSetting);
+        }
+
+        private static string FromColorSetting(string val)
+        {
+            switch (val)
+            {
+                case ColorMode.Neutral:
+                    return SystemUtil.GetStringResource("ColorMode_Neutral");
+                case ColorMode.Vivid:
+                    return SystemUtil.GetStringResource("ColorMode_Vivid");
+            }
+            return val;
+        }
+
+        internal static Capability<string> FromMovieFormat(Capability<string> info)
+        {
+            return AsDisplayNames<string>(info, FromMovieFormat);
+        }
+
+        private static string FromMovieFormat(string val)
+        {
+            switch (val)
+            {
+                case MovieFormatMode.MP4:
+                    return SystemUtil.GetStringResource("MovieFormatMode_MP4");
+                case MovieFormatMode.XAVCS:
+                    return SystemUtil.GetStringResource("MovieFormatMode_XAVCS");
+            }
+            return val;
+        }
+
+        internal static Capability<string> FromInfraredRemoteControl(Capability<string> info)
+        {
+            return AsDisplayNames<string>(info, FromInfraredRemoteControl);
+        }
+
+        private static string FromInfraredRemoteControl(string val)
+        {
+            switch (val)
+            {
+                case IrRemoteSetting.On:
+                    return SystemUtil.GetStringResource("On");
+                case IrRemoteSetting.Off:
+                    return SystemUtil.GetStringResource("Off");
+            }
+            return val;
+        }
+
+        internal static Capability<string> FromTvColorSystem(Capability<string> info)
+        {
+            return AsDisplayNames<string>(info, FromTvColorSystem);
+        }
+
+        private static string FromTvColorSystem(string val)
+        {
+            switch (val)
+            {
+                case TvColorSystemMode.NTSC:
+                    return SystemUtil.GetStringResource("TvColorSystemMode_NTSC");
+                case TvColorSystemMode.PAL:
+                    return SystemUtil.GetStringResource("TvColorSystemMode_PAL");
+            }
+            return val;
+        }
+
+        internal static Capability<string> FromTrackingFocus(Capability<string> info)
+        {
+            return AsDisplayNames<string>(info, FromTrackingFocus);
+        }
+
+        private static string FromTrackingFocus(string val)
+        {
+            switch (val)
+            {
+                case TrackingFocusMode.On:
+                    return SystemUtil.GetStringResource("On");
+                case TrackingFocusMode.Off:
+                    return SystemUtil.GetStringResource("Off");
+            }
+            return val;
+        }
+
+        internal static Capability<string> FromAutoPowerOff(Capability<int> info)
+        {
+            return AsDisplayNames<int>(info, FromAutoPowerOff);
+        }
+
+        private static string FromAutoPowerOff(int val)
+        {
+            if (val == 0) { return SystemUtil.GetStringResource("AutoPowerOff_Never"); }
+            return val + " " + SystemUtil.GetStringResource("Seconds");
+        }
+
+        /*
+        internal static string[] FromFramingGrid(string[] keys)
+        {
+            string[] names = new string[keys.Length];
+            for (int i = 0; i < keys.Length; i++)
+            {
+                switch (keys[i])
+                {
+                    case FramingGridTypes.Off:
+                        names[i] = SystemUtil.GetStringResource("Off;
+                        break;
+                    case FramingGridTypes.RuleOfThirds:
+                        names[i] = SystemUtil.GetStringResource("Grid_RuleOfThirds;
+                        break;
+                    case FramingGridTypes.Diagonal:
+                        names[i] = SystemUtil.GetStringResource("Grid_Diagonal;
+                        break;
+                    case FramingGridTypes.Square:
+                        names[i] = SystemUtil.GetStringResource("Grid_Square;
+                        break;
+                    case FramingGridTypes.Crosshairs:
+                        names[i] = SystemUtil.GetStringResource("Grid_Crosshairs;
+                        break;
+                    case FramingGridTypes.Fibonacci:
+                        names[i] = SystemUtil.GetStringResource("Grid_Fibonacci;
+                        break;
+                    case FramingGridTypes.GoldenRatio:
+                        names[i] = SystemUtil.GetStringResource("Grid_GoldenRatio;
+                        break;
+                    default:
+                        names[i] = keys[i];
+                        break;
+                }
+            }
+            return names;
+        }
+
+        internal static string[] FromFramingGridColor(string[] keys)
+        {
+            string[] names = new string[keys.Length];
+            for (int i = 0; i < keys.Length; i++)
+            {
+                switch (keys[i])
+                {
+                    case FramingGridColor.White:
+                        names[i] = SystemUtil.GetStringResource("White;
+                        break;
+                    case FramingGridColor.Black:
+                        names[i] = SystemUtil.GetStringResource("Black;
+                        break;
+                    case FramingGridColor.Red:
+                        names[i] = SystemUtil.GetStringResource("Red;
+                        break;
+                    case FramingGridColor.Green:
+                        names[i] = SystemUtil.GetStringResource("Green;
+                        break;
+                    case FramingGridColor.Blue:
+                        names[i] = SystemUtil.GetStringResource("Blue;
+                        break;
+                    default:
+                        names[i] = keys[i];
+                        break;
+                }
+            }
+            return names;
+        }
+
+        internal static string[] FromFibonacciLineOrigin(string[] keys)
+        {
+            string[] names = new string[keys.Length];
+            for (int i = 0; i < keys.Length; i++)
+            {
+                switch (keys[i])
+                {
+                    case FibonacciLineOrigins.UpperLeft:
+                        names[i] = SystemUtil.GetStringResource("UpperLeft;
+                        break;
+                    case FibonacciLineOrigins.UpperRight:
+                        names[i] = SystemUtil.GetStringResource("UpperRight;
+                        break;
+                    case FibonacciLineOrigins.BottomLeft:
+                        names[i] = SystemUtil.GetStringResource("BottomLeft;
+                        break;
+                    case FibonacciLineOrigins.BottomRight:
+                        names[i] = SystemUtil.GetStringResource("BottomRight;
+                        break;
+                    default:
+                        names[i] = keys[i];
+                        break;
+                }
+            }
+            return names;
+        }
+         * */
     }
 }

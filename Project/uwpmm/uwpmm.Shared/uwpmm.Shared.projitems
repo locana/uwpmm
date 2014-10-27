@@ -31,11 +31,14 @@
     <Compile Include="$(MSBuildThisFileDirectory)DataModel\ImageDataSource.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataModel\MoviePlaybackData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataModel\ObservableBase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DataModel\PhotoPlaybackData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataModel\RemoteThumbnailData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\BoolToVisibilityConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\DebugUtil.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\DummyContentsGenerator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utility\GeoPositionManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\LiveviewUtil.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utility\MetaDataValueConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\ParameterUtil.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\PictureDownloader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\Preference.cs" />
