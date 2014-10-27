@@ -93,6 +93,14 @@
       <Project>{a1246c04-298d-4189-8ac8-2105288d2ec6}</Project>
       <Name>KzSoDiscoveryUniversal</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\modules\NtImageLib\NtImageProcessor\NtImageProcessorUniversal.csproj">
+      <Project>{81167eaf-409d-457e-a8c6-77c830340773}</Project>
+      <Name>NtImageProcessorUniversal</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\modules\NtNfcLib\NtNfcLib\NtNfcLibUniversal.csproj">
+      <Project>{7ed7f13a-227a-4837-8a1e-561cff5926cd}</Project>
+      <Name>NtNfcLibUniversal</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MainPage.xaml.cs">
