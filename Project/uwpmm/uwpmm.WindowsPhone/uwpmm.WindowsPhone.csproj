@@ -22,7 +22,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE;NETFX_CORE;WINDOWS_PHONE_APP</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;WINDOWS_PHONE_APP</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>

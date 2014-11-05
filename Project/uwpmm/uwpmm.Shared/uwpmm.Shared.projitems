@@ -33,6 +33,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)DataModel\ObservableBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataModel\PhotoPlaybackData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataModel\RemoteThumbnailData.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Settings\SettingPanelBuilder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\BoolToVisibilityConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\DebugUtil.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\DummyContentsGenerator.cs" />

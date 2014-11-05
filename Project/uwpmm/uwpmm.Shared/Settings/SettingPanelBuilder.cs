@@ -160,8 +160,6 @@ namespace Kazyx.Uwpmm.Settings
                 });
         }
 
-        private delegate Task AsyncAction<T>(T arg);
-
         private async Task OnSelectionChanged<T>(object sender, Capability<T> param, AsyncAction<T> action)
         {
             await OnComboBoxChanged(sender, param, async (selected) => { await action.Invoke(selected); });
@@ -333,4 +331,6 @@ namespace Kazyx.Uwpmm.Settings
             return panel;
         }
     }
+
+    delegate Task AsyncAction<T>(T arg);
 }
