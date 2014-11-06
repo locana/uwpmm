@@ -1,12 +1,20 @@
-﻿using Kazyx.Uwpmm.Common;
+﻿using Kazyx.DeviceDiscovery;
+using Kazyx.ImageStream;
+using Kazyx.Uwpmm.CameraControl;
+using Kazyx.Uwpmm.Common;
+using Kazyx.Uwpmm.DataModel;
+using Kazyx.Uwpmm.Settings;
+using Kazyx.Uwpmm.Utility;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Graphics.Display;
+using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -107,5 +115,76 @@ namespace Kazyx.Uwpmm
         }
 
         #endregion
+
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            var discovery = new SsdpDiscovery();
+            discovery.SonyCameraDeviceDiscovered += discovery_ScalarDeviceDiscovered;
+            discovery.SearchSonyCameraDevices();
+        }
+
+        private TargetDevice target;
+        private SsdpDiscovery discovery = new SsdpDiscovery();
+        private StreamProcessor liveview = new StreamProcessor();
+        private ImageDataSource liveview_data = new ImageDataSource();
+        private ImageDataSource postview_data = new ImageDataSource();
+
+        async void discovery_ScalarDeviceDiscovered(object sender, SonyCameraDeviceEventArgs e)
+        {
+            var api = new DeviceApiHolder(e.SonyCameraDevice);
+            TargetDevice target = null;
+            try
+            {
+                target = await SequentialOperation.SetUp(api, liveview);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("Failed setup: " + ex.Message);
+                return;
+            }
+
+            this.target = target;
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                var panels = SettingPanelBuilder.CreateNew(target);
+                var pn = panels.GetPanelsToShow();
+                foreach (var panel in pn)
+                {
+                    ControlPanel.Children.Add(panel);
+                }
+            });
+        }
+
+        private bool IsRendering = false;
+
+        async void liveview_JpegRetrieved(object sender, JpegEventArgs e)
+        {
+            if (IsRendering) { return; }
+
+            IsRendering = true;
+            await LiveviewUtil.SetAsBitmap(e.Packet.ImageData, liveview_data, Dispatcher);
+            IsRendering = false;
+        }
+
+        void liveview_Closed(object sender, EventArgs e)
+        {
+            Debug.WriteLine("Liveview connection closed");
+        }
+
+        private void LiveviewImage_Loaded(object sender, RoutedEventArgs e)
+        {
+            var image = sender as Image;
+            image.DataContext = liveview_data;
+            liveview.JpegRetrieved += liveview_JpegRetrieved;
+            liveview.Closed += liveview_Closed;
+        }
+
+        private void LiveviewImage_Unloaded(object sender, RoutedEventArgs e)
+        {
+            var image = sender as Image;
+            image.DataContext = null;
+            liveview.JpegRetrieved -= liveview_JpegRetrieved;
+            liveview.Closed -= liveview_Closed;
+        }
     }
 }
