@@ -115,15 +115,14 @@ namespace Kazyx.Uwpmm.Utility
             }
         }
 
-        private Task<string> GetResizedCachePathAsync(string path, string resizedPath)
+        private async Task<string> GetResizedCachePathAsync(string path, string resizedPath)
         {
             var tcs = new TaskCompletionSource<string>();
 
             var dispatcher = SystemUtil.GetCurrentDispatcher();
             if (dispatcher == null) { throw new InvalidOperationException("Failed to obtain dispatcher"); }
 
-            // [Note] Don't await here to return async result as Task<string>.
-            dispatcher.RunAsync(CoreDispatcherPriority.Low, async () =>
+            await dispatcher.RunAsync(CoreDispatcherPriority.Low, async () =>
             {
                 try
                 {
@@ -169,7 +168,7 @@ namespace Kazyx.Uwpmm.Utility
                 }
             });
 
-            return tcs.Task;
+            return await tcs.Task;
         }
     }
 }
