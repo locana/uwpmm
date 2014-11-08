@@ -1,27 +1,17 @@
 ﻿using Kazyx.DeviceDiscovery;
 using Kazyx.ImageStream;
+using Kazyx.RemoteApi.Camera;
 using Kazyx.Uwpmm.CameraControl;
 using Kazyx.Uwpmm.Common;
 using Kazyx.Uwpmm.DataModel;
 using Kazyx.Uwpmm.Settings;
 using Kazyx.Uwpmm.Utility;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.Graphics.Display;
 using Windows.UI.Core;
-using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
 // The Basic Page item template is documented at http://go.microsoft.com/fwlink/?LinkID=390556
@@ -35,6 +25,7 @@ namespace Kazyx.Uwpmm
     {
         private NavigationHelper navigationHelper;
         private ObservableDictionary defaultViewModel = new ObservableDictionary();
+        private LiveviewScreenViewData screenViewData;
 
         public MainPage()
         {
@@ -150,9 +141,13 @@ namespace Kazyx.Uwpmm
                 var pn = panels.GetPanelsToShow();
                 foreach (var panel in pn)
                 {
-                    ControlPanel.Children.Add(panel);
+                    // ControlPanel.Children.Add(panel);
                 }
+                screenViewData = new LiveviewScreenViewData(target);
+                Bottom.DataContext = screenViewData;
             });
+
+
         }
 
         private bool IsRendering = false;
@@ -185,6 +180,38 @@ namespace Kazyx.Uwpmm
             image.DataContext = null;
             liveview.JpegRetrieved -= liveview_JpegRetrieved;
             liveview.Closed -= liveview_Closed;
+        }
+
+        private void ZoomOutButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private async void ZoomOutButton_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            try { await target.Api.Camera.ActZoomAsync(ZoomParam.DirectionOut, ZoomParam.Action1Shot); }
+            catch (RemoteApi.RemoteApiException ex) { Debug.WriteLine(ex.StackTrace); }
+        }
+
+        private void ZoomOutButton_Holding(object sender, HoldingRoutedEventArgs e)
+        {
+
+        }
+
+        private void ZoomInButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private async void ZoomInButton_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            try { await target.Api.Camera.ActZoomAsync(ZoomParam.DirectionIn, ZoomParam.Action1Shot); }
+            catch (RemoteApi.RemoteApiException ex) { Debug.WriteLine(ex.StackTrace); }
+        }
+
+        private void ZoomInButton_Holding(object sender, HoldingRoutedEventArgs e)
+        {
+
         }
     }
 }

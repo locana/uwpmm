@@ -1,5 +1,6 @@
 ﻿<Page
-    x:Class="Kazyx.Uwpmm.MainPage"
+    xmlns:controls="using:Kazyx.Uwpmm.Control" 
+    x:Class="Kazyx.Uwpmm.MainPage"    
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Kazyx.Uwpmm"
@@ -29,12 +30,36 @@
 
         <!--TODO: Content should be placed within the following grid-->
         <Grid Grid.Row="1" x:Name="ContentRoot" Margin="19,9.5,19,0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
             <Image x:Name="LiveviewImage" Source="{Binding Image, Mode=OneWay}" Loaded="LiveviewImage_Loaded" Unloaded="LiveviewImage_Unloaded" />
-            <StackPanel x:Name="ControlPanel" HorizontalAlignment="Left" Margin="28,0,8,0" Grid.Row="1" VerticalAlignment="Center"/>
+            <StackPanel x:Name="ControlPanel" Margin="28,0,8,0" Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Right" Width="200"/>
+
+            <Grid Name="Bottom" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Margin="20, 60">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="8*"/>
+                    <ColumnDefinition Width="7*"/>
+                </Grid.ColumnDefinitions>
+                <controls:ZoomBar Grid.Column="0" Grid.Row="0" Height="13" Margin="4"  VerticalAlignment="Top" Visibility="{Binding ZoomInterfacesVisibility}"
+                              PositionInCurrentBox="{Binding ZoomPositionInCurrentBox, Mode=OneWay, FallbackValue=0}" CurrentBoxIndex="{Binding ZoomBoxIndex, Mode=OneWay, FallbackValue=0}"
+                              TotalBoxNum="{Binding ZoomBoxNum, Mode=OneWay, FallbackValue=1}" />
+                <Grid  Grid.Column="0" Grid.Row="1" Height="60" Visibility="{Binding ZoomInterfacesVisibility}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Button Name="ZoomOutButton" BorderThickness="1" Grid.Column="0" Background="Black" Opacity="0.8" Margin="3" HorizontalAlignment="Left" 
+                            Click="ZoomOutButton_Click" Tapped="ZoomOutButton_Tapped" Holding="ZoomOutButton_Holding" >
+                        <Image Source="/Assets/LiveviewScreen/ZoomOut.png" Margin="0" />
+                    </Button>
+                    <Button Name="ZoomInButton" BorderThickness="1" Grid.Column="1" Background="Black" Opacity="0.8" Margin="3" HorizontalAlignment="Center"
+                            Click="ZoomInButton_Click" Tapped="ZoomInButton_Tapped" Holding="ZoomInButton_Holding">
+                        <Image Source="/Assets/LiveviewScreen/ZoomIn.png" Margin="0"  />
+                    </Button>
+                </Grid>
+            </Grid>
         </Grid>
     </Grid>
 </Page>

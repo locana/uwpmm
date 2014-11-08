@@ -29,6 +29,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)DataModel\ContentPlaybackData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataModel\ControlPanelDataSource.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataModel\ImageDataSource.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DataModel\LiveviewScreenViewData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataModel\MoviePlaybackData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataModel\ObservableBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataModel\PhotoPlaybackData.cs" />
@@ -48,8 +49,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Utility\SystemUtil.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\ThumbnailCacheLoader.cs" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\Camera.png" />
-    <Content Include="$(MSBuildThisFileDirectory)Assets\ZoomIn.png" />
-    <Content Include="$(MSBuildThisFileDirectory)Assets\ZoomOut.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\LiveviewScreen\ZoomIn.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\LiveviewScreen\ZoomOut.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\LightGray.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\MediumGray.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\DarkGray.png" />
