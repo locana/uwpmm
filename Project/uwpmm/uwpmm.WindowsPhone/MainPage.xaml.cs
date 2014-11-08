@@ -146,8 +146,6 @@ namespace Kazyx.Uwpmm
                 screenViewData = new LiveviewScreenViewData(target);
                 Bottom.DataContext = screenViewData;
             });
-
-
         }
 
         private bool IsRendering = false;
