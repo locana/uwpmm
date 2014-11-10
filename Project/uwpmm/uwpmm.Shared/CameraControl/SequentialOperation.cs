@@ -33,7 +33,7 @@ namespace Kazyx.Uwpmm.CameraControl
                         throw new Exception();
                     }
                 }
-                
+
                 if (api.Capability.IsSupported("setCurrentTime"))
                 {
                     try

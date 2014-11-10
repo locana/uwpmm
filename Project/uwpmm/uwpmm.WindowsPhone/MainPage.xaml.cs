@@ -180,8 +180,10 @@ namespace Kazyx.Uwpmm
             liveview.Closed -= liveview_Closed;
         }
 
-        private void ZoomOutButton_Click(object sender, RoutedEventArgs e)
+        private async void ZoomOutButton_Click(object sender, RoutedEventArgs e)
         {
+            try { await target.Api.Camera.ActZoomAsync(ZoomParam.DirectionOut, ZoomParam.ActionStop); }
+            catch (RemoteApi.RemoteApiException ex) { Debug.WriteLine(ex.StackTrace); }
 
         }
 
@@ -191,13 +193,17 @@ namespace Kazyx.Uwpmm
             catch (RemoteApi.RemoteApiException ex) { Debug.WriteLine(ex.StackTrace); }
         }
 
-        private void ZoomOutButton_Holding(object sender, HoldingRoutedEventArgs e)
+        private async void ZoomOutButton_Holding(object sender, HoldingRoutedEventArgs e)
         {
+            try { await target.Api.Camera.ActZoomAsync(ZoomParam.DirectionOut, ZoomParam.ActionStart); }
+            catch (RemoteApi.RemoteApiException ex) { Debug.WriteLine(ex.StackTrace); }
 
         }
 
-        private void ZoomInButton_Click(object sender, RoutedEventArgs e)
+        private async void ZoomInButton_Click(object sender, RoutedEventArgs e)
         {
+            try { await target.Api.Camera.ActZoomAsync(ZoomParam.DirectionIn, ZoomParam.ActionStop); }
+            catch (RemoteApi.RemoteApiException ex) { Debug.WriteLine(ex.StackTrace); }
 
         }
 
@@ -207,9 +213,10 @@ namespace Kazyx.Uwpmm
             catch (RemoteApi.RemoteApiException ex) { Debug.WriteLine(ex.StackTrace); }
         }
 
-        private void ZoomInButton_Holding(object sender, HoldingRoutedEventArgs e)
+        private async void ZoomInButton_Holding(object sender, HoldingRoutedEventArgs e)
         {
-
+            try { await target.Api.Camera.ActZoomAsync(ZoomParam.DirectionIn, ZoomParam.ActionStart); }
+            catch (RemoteApi.RemoteApiException ex) { Debug.WriteLine(ex.StackTrace); }
         }
     }
 }
