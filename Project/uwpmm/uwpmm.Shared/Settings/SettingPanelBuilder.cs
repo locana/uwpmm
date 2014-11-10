@@ -79,62 +79,62 @@ namespace Kazyx.Uwpmm.Settings
             return list;
         }
 
-        private async void OnFocusModeChanged(object sender, SelectionChangedEventArgs e)
+        private async void OnFocusModeChanged(object sender, object e)
         {
             await OnSelectionChanged(sender, Status.FocusMode, Api.Camera.SetFocusModeAsync);
         }
 
-        private async void OnMovieQualityChanged(object sender, SelectionChangedEventArgs e)
+        private async void OnMovieQualityChanged(object sender, object e)
         {
             await OnSelectionChanged(sender, Status.MovieQuality, Api.Camera.SetMovieQualityAsync);
         }
 
-        private async void OnSteadyModeChanged(object sender, SelectionChangedEventArgs e)
+        private async void OnSteadyModeChanged(object sender, object e)
         {
             await OnSelectionChanged(sender, Status.SteadyMode, Api.Camera.SetSteadyModeAsync);
         }
 
-        private async void OnViewAngleChanged(object sender, SelectionChangedEventArgs e)
+        private async void OnViewAngleChanged(object sender, object e)
         {
             await OnSelectionChanged(sender, Status.ViewAngle, Api.Camera.SetViewAngleAsync);
         }
 
-        private async void OnFlashModeChanged(object sender, SelectionChangedEventArgs e)
+        private async void OnFlashModeChanged(object sender, object e)
         {
             await OnSelectionChanged(sender, Status.FlashMode, Api.Camera.SetFlashModeAsync);
         }
 
-        private async void OnShootModeChanged(object sender, SelectionChangedEventArgs e)
+        private async void OnShootModeChanged(object sender, object e)
         {
             await OnSelectionChanged(sender, Status.ShootMode, Api.Camera.SetShootModeAsync);
         }
 
-        private async void OnExposureModeChanged(object sender, SelectionChangedEventArgs e)
+        private async void OnExposureModeChanged(object sender, object e)
         {
             await OnSelectionChanged(sender, Status.ExposureMode, Api.Camera.SetExposureModeAsync);
         }
 
-        private async void OnSelfTimerChanged(object sender, SelectionChangedEventArgs e)
+        private async void OnSelfTimerChanged(object sender, object e)
         {
             await OnSelectionChanged(sender, Status.SelfTimer, Api.Camera.SetSelfTimerAsync);
         }
 
-        private async void OnPostviewSizeChanged(object sender, SelectionChangedEventArgs e)
+        private async void OnPostviewSizeChanged(object sender, object e)
         {
             await OnSelectionChanged(sender, Status.PostviewSize, Api.Camera.SetPostviewImageSizeAsync);
         }
 
-        private async void OnBeepModeChanged(object sender, SelectionChangedEventArgs e)
+        private async void OnBeepModeChanged(object sender, object e)
         {
             await OnSelectionChanged(sender, Status.BeepMode, Api.Camera.SetBeepModeAsync);
         }
 
-        private async void OnStillImageSizeChanged(object sender, SelectionChangedEventArgs e)
+        private async void OnStillImageSizeChanged(object sender, object e)
         {
             await OnSelectionChanged(sender, Status.StillImageSize, Api.Camera.SetStillImageSizeAsync);
         }
 
-        private async void OnWhiteBalanceChanged(object sender, SelectionChangedEventArgs e)
+        private async void OnWhiteBalanceChanged(object sender, object e)
         {
             await OnComboBoxChanged(sender, Status.WhiteBalance,
                 async (selected) =>
@@ -173,6 +173,11 @@ namespace Kazyx.Uwpmm.Settings
             }
 
             var selected = (sender as ComboBox).SelectedIndex;
+            var currentSetting = SettingValueConverter.GetSelectedIndex(param);
+            if (selected != currentSetting)
+            {
+                return;
+            }
 
             if (selected < 0 || param.Candidates.Count <= selected)
             {
@@ -196,7 +201,38 @@ namespace Kazyx.Uwpmm.Settings
             await DataSource.Device.Observer.Refresh();
         }
 
-        private StackPanel BuildComboBoxPanel(string key, string title_key, SelectionChangedEventHandler handler)
+        //private StackPanel BuildComboBoxPanel(string key, string title_key, SelectionChangedEventHandler handler)
+        //{
+        //    var box = new ComboBox
+        //    {
+        //        Margin = new Thickness(4, 0, 0, 0)
+        //    };
+        //    box.SetBinding(ComboBox.IsEnabledProperty, new Binding
+        //    {
+        //        Source = DataSource,
+        //        Path = new PropertyPath("IsAvailable" + key),
+        //        Mode = BindingMode.OneWay
+        //    });
+        //    box.SetBinding(ComboBox.ItemsSourceProperty, new Binding
+        //    {
+        //        Source = DataSource,
+        //        Path = new PropertyPath("Candidates" + key),
+        //        Mode = BindingMode.OneWay
+        //    });
+        //    box.SetBinding(ComboBox.SelectedIndexProperty, new Binding
+        //    {
+        //        Source = DataSource,
+        //        Path = new PropertyPath("SelectedIndex" + key),
+        //        Mode = BindingMode.TwoWay
+        //    });
+        //    box.SelectionChanged += handler;
+
+        //    var parent = BuildBasicPanel(SystemUtil.GetStringResource(title_key));
+        //    parent.Children.Add(box);
+        //    return parent;
+        //}
+
+        private StackPanel BuildComboBoxPanel(string key, string title_key, EventHandler<object> handler)
         {
             var box = new ComboBox
             {
@@ -220,7 +256,7 @@ namespace Kazyx.Uwpmm.Settings
                 Path = new PropertyPath("SelectedIndex" + key),
                 Mode = BindingMode.TwoWay
             });
-            box.SelectionChanged += handler;
+            box.DropDownClosed += handler;
 
             var parent = BuildBasicPanel(SystemUtil.GetStringResource(title_key));
             parent.Children.Add(box);

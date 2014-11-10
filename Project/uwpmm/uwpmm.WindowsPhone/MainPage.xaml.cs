@@ -141,7 +141,7 @@ namespace Kazyx.Uwpmm
                 var pn = panels.GetPanelsToShow();
                 foreach (var panel in pn)
                 {
-                    // ControlPanel.Children.Add(panel);
+                    ControlPanel.Children.Add(panel);
                 }
                 screenViewData = new LiveviewScreenViewData(target);
                 Bottom.DataContext = screenViewData;
