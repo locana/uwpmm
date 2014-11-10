@@ -135,8 +135,10 @@ namespace Kazyx.Uwpmm
             }
 
             this.target = target;
+            
             await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
+                GoToLiveviewScreen();
                 var panels = SettingPanelBuilder.CreateNew(target);
                 var pn = panels.GetPanelsToShow();
                 foreach (var panel in pn)
@@ -146,6 +148,11 @@ namespace Kazyx.Uwpmm
                 screenViewData = new LiveviewScreenViewData(target);
                 Bottom.DataContext = screenViewData;
             });
+        }
+
+        private void GoToLiveviewScreen()
+        {
+            PivotRoot.SelectedIndex = 1;
         }
 
         private bool IsRendering = false;
