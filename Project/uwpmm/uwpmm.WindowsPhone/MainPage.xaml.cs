@@ -135,7 +135,7 @@ namespace Kazyx.Uwpmm
             }
 
             this.target = target;
-            
+
             await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
                 GoToLiveviewScreen();
