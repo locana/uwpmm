@@ -236,7 +236,8 @@ namespace Kazyx.Uwpmm.Settings
         {
             var box = new ComboBox
             {
-                Margin = new Thickness(4, 0, 0, 0)
+                Margin = new Thickness(4, 0, 0, 0),
+                BorderThickness = new Thickness(1),
             };
             box.SetBinding(ComboBox.IsEnabledProperty, new Binding
             {
@@ -331,7 +332,7 @@ namespace Kazyx.Uwpmm.Settings
             {
                 Maximum = max != null ? max.Value : 1,
                 Minimum = min != null ? min.Value : 0,
-                Margin = new Thickness(4, 0, 0, 0),
+                Margin = new Thickness(16, 0, 0, 0),
                 Width = double.NaN,
                 HorizontalAlignment = HorizontalAlignment.Stretch,
                 VerticalAlignment = VerticalAlignment.Top,
@@ -344,22 +345,23 @@ namespace Kazyx.Uwpmm.Settings
             var panel = new StackPanel
             {
                 HorizontalAlignment = HorizontalAlignment.Stretch,
-                MaxWidth = 480
+                MaxWidth = 200
             };
 
             var titlePanel = new StackPanel
             {
                 HorizontalAlignment = HorizontalAlignment.Left,
                 Orientation = Windows.UI.Xaml.Controls.Orientation.Horizontal,
-                Margin = new Thickness(0, 8, 0, 8)
+                Margin = new Thickness(0, 4, 0, 2)
             };
 
             titlePanel.Children.Add(new TextBlock
             {
                 Text = title,
                 HorizontalAlignment = HorizontalAlignment.Left,
-                Margin = new Thickness(0, 0, 0, 0),
+                Margin = new Thickness(8, 0, 0, 0),
                 Style = Application.Current.Resources["SubheaderTextBlockStyle"] as Style,
+                FontSize = 20,
             });
 
             panel.Children.Add(titlePanel);

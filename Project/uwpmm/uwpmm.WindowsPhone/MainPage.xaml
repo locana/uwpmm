@@ -31,7 +31,6 @@
         <!--TODO: Content should be placed within the following grid-->
         <Grid Grid.Row="1" x:Name="ContentRoot" Margin="19,9.5,19,0">
             <Image x:Name="LiveviewImage" Source="{Binding Image, Mode=OneWay}" Loaded="LiveviewImage_Loaded" Unloaded="LiveviewImage_Unloaded" />
-            <StackPanel x:Name="ControlPanel" Margin="28,0,8,0" Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Right" Width="200"/>
 
             <Grid Name="Bottom" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Margin="20, 60">
                 <Grid.RowDefinitions>
@@ -60,6 +59,12 @@
                     </Button>
                 </Grid>
             </Grid>
+
+            <ScrollViewer Name="ControlPanelScrollViewer" Margin="28,0,-8,0" Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Right" Width="200"
+                        Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Opacity="0.8">
+                <StackPanel x:Name="ControlPanel" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+            </ScrollViewer>
+
         </Grid>
     </Grid>
 </Page>
