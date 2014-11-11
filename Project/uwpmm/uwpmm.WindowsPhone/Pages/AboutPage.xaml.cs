@@ -1,6 +1,7 @@
 ﻿using Kazyx.Uwpmm.Utility;
 using System;
 using System.IO;
+using System.Reflection;
 using Windows.ApplicationModel;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
@@ -57,6 +58,9 @@ namespace Kazyx.Uwpmm.Pages
 
         private static void LoadManifestXmlValues()
         {
+            var assembly = (typeof(App)).GetTypeInfo().Assembly;
+            version = assembly.GetName().Version.ToString();
+
             //var element = XDocument.Load("Package.appxmanifest").Root.Element("App");
             //version = element.Attribute("Version").Value;
         }

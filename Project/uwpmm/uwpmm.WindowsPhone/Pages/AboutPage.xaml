@@ -15,13 +15,13 @@
         <Pivot Title="{Binding [ApplicationTitle], Source={StaticResource LocalizedStrings}}">
             <PivotItem Margin="12,14,12,0">
                 <PivotItem.Header>
-                    <TextBlock Text="{Binding [About], Source={StaticResource LocalizedStrings}}" Margin="0,8,0,0" Style="{StaticResource SubheaderTextBlockStyle}" FontWeight="Bold"/>
+                    <TextBlock Text="{Binding [AppInfo], Source={StaticResource LocalizedStrings}}" Margin="0,8,0,0" Style="{StaticResource SubheaderTextBlockStyle}" FontWeight="Bold"/>
                 </PivotItem.Header>
                 <StackPanel>
                     <TextBlock Text="{Binding [Version], Source={StaticResource LocalizedStrings}}" Grid.Row="0" TextWrapping="Wrap" Margin="9,0" Style="{StaticResource GroupHeaderTextBlockStyle}"/>
                     <StackPanel Orientation="Horizontal" Margin="20,0,0,0">
                         <TextBlock Text="{Binding [ApplicationTitle], Source={StaticResource LocalizedStrings}}" Grid.Row="0" TextWrapping="Wrap" Margin="0,0,9,0" />
-                        <TextBlock Text="ver. " />
+                        <TextBlock Text="ver. " Margin="0,0,9,0" />
                         <TextBlock x:Name="VERSION_STR"/>
                     </StackPanel>
                     <TextBlock Text="{Binding [CopyRight], Source={StaticResource LocalizedStrings}}" Grid.Row="0" TextWrapping="Wrap" Margin="9,20,9,0" Style="{StaticResource GroupHeaderTextBlockStyle}"/>
@@ -29,7 +29,7 @@
                     <TextBlock Text="{Binding [DevelopedBy], Source={StaticResource LocalizedStrings}}" Grid.Row="0" TextWrapping="Wrap" Margin="9,20,9,0" Style="{StaticResource GroupHeaderTextBlockStyle}"/>
                     <TextBlock x:Name="DEV_BY" Margin="20,0,0,0" />
                     <TextBlock Text="{Binding [SourceCode], Source={StaticResource LocalizedStrings}}" Grid.Row="0" TextWrapping="Wrap" Margin="9,20,9,0" Style="{StaticResource GroupHeaderTextBlockStyle}"/>
-                    <RichTextBlock VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10,0,0,0">
+                    <RichTextBlock VerticalAlignment="Top" HorizontalAlignment="Left" Margin="20,0,0,0">
                         <Paragraph x:Name="Repository" />
                     </RichTextBlock>
                     <TextBlock Text="{Binding [Support], Source={StaticResource LocalizedStrings}}" Grid.Row="0" TextWrapping="Wrap" Margin="9,20,9,0" Style="{StaticResource GroupHeaderTextBlockStyle}"/>

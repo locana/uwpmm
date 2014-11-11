@@ -1031,4 +1031,7 @@ Please update to the latest at PlayMemories Camera Apps store.</value>
   <data name="ApplicationTitle" xml:space="preserve">
     <value>UWPMM</value>
   </data>
+  <data name="AppInfo" xml:space="preserve">
+    <value>Application info</value>
+  </data>
 </root>
