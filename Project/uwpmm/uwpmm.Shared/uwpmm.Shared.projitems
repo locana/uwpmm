@@ -24,6 +24,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)CameraControl\ServerVersion.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CameraControl\StatusObserver.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CameraControl\ZoomOperation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Control\AppBarContent.xaml.cs">
+      <DependentUpon>AppBarContent.xaml</DependentUpon>
+    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Control\Histogram.xaml.cs">
       <DependentUpon>Histogram.xaml</DependentUpon>
     </Compile>
@@ -54,6 +57,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Utility\StorageUtil.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\SystemUtil.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\ThumbnailCacheLoader.cs" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppBar\appbar_cameraSetting.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\Camera.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\LiveviewScreen\ZoomIn.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\LiveviewScreen\ZoomOut.png" />
@@ -67,6 +71,10 @@
     <PRIResource Include="$(MSBuildThisFileDirectory)Strings\en-US\Resources.resw" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="$(MSBuildThisFileDirectory)Control\AppBarContent.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="$(MSBuildThisFileDirectory)Control\Histogram.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

@@ -3,15 +3,18 @@ using Kazyx.ImageStream;
 using Kazyx.RemoteApi.Camera;
 using Kazyx.Uwpmm.CameraControl;
 using Kazyx.Uwpmm.Common;
+using Kazyx.Uwpmm.Control;
 using Kazyx.Uwpmm.DataModel;
 using Kazyx.Uwpmm.Settings;
 using Kazyx.Uwpmm.Utility;
 using System;
 using System.Diagnostics;
+using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
 // The Basic Page item template is documented at http://go.microsoft.com/fwlink/?LinkID=390556
@@ -112,6 +115,8 @@ namespace Kazyx.Uwpmm.Pages
             var discovery = new SsdpDiscovery();
             discovery.SonyCameraDeviceDiscovered += discovery_ScalarDeviceDiscovered;
             discovery.SearchSonyCameraDevices();
+            var abm = new CommandBarManager();
+            this.BottomAppBar = abm.bar;
         }
 
         private TargetDevice target;
@@ -148,6 +153,8 @@ namespace Kazyx.Uwpmm.Pages
                 screenViewData = new LiveviewScreenViewData(target);
                 Bottom.DataContext = screenViewData;
             });
+
+
         }
 
         private void GoToLiveviewScreen()
