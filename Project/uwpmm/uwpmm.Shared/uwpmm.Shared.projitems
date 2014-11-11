@@ -43,6 +43,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)DataModel\ObservableBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataModel\PhotoPlaybackData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataModel\RemoteThumbnailData.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)LocalizedStrings.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Settings\SettingPanelBuilder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\BoolToVisibilityConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\DebugUtil.cs" />
@@ -59,6 +60,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Utility\ThumbnailCacheLoader.cs" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\AppBar\appbar_cameraSetting.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\Camera.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\License.txt" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\LiveviewScreen\ZoomIn.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\LiveviewScreen\ZoomOut.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\LightGray.png" />
