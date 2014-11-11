@@ -10,13 +10,8 @@ using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-// The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkID=390556
-
 namespace Kazyx.Uwpmm.Pages
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
     public sealed partial class AboutPage : Page
     {
         public AboutPage()
@@ -36,14 +31,14 @@ namespace Kazyx.Uwpmm.Pages
         private static bool IsManifestLoaded = false;
         private static string version = "";
         private static string license = "";
-        private static string copyright = "Copyright (c) 2015 kazyx";
+        private static string copyright = "";
         private const string developer = "kazyx and naotaco (@naotaco_dev)";
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             if (!IsManifestLoaded)
             {
-                LoadManifestXmlValues();
+                LoadAssemblyInformation();
             }
             VERSION_STR.Text = version;
 
@@ -56,13 +51,18 @@ namespace Kazyx.Uwpmm.Pages
             LoadLicenseFile();
         }
 
-        private static void LoadManifestXmlValues()
+        private static void LoadAssemblyInformation()
         {
             var assembly = (typeof(App)).GetTypeInfo().Assembly;
             version = assembly.GetName().Version.ToString();
-
-            //var element = XDocument.Load("Package.appxmanifest").Root.Element("App");
-            //version = element.Attribute("Version").Value;
+            foreach (var attr in assembly.CustomAttributes)
+            {
+                if (attr.AttributeType == typeof(AssemblyCopyrightAttribute))
+                {
+                    copyright = attr.ConstructorArguments[0].Value.ToString();
+                    break;
+                }
+            }
         }
 
         private async void LoadLicenseFile()
