@@ -1028,4 +1028,7 @@ Please update to the latest at PlayMemories Camera Apps store.</value>
   <data name="On_LCC" xml:space="preserve">
     <value>On</value>
   </data>
+  <data name="ApplicationTitle" xml:space="preserve">
+    <value>UWPMM</value>
+  </data>
 </root>

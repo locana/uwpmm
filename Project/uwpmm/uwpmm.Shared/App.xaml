@@ -3,4 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Kazyx.Uwpmm">
+    <Application.Resources>
+        <local:LocalizedStrings x:Key="LocalizedStrings" />
+    </Application.Resources>
 </Application>
