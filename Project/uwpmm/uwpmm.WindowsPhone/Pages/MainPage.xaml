@@ -64,7 +64,6 @@
                                 </Button>
                             </Grid>
                         </Grid>
-
                         <ScrollViewer Name="ControlPanelScrollViewer" Margin="28,0,-8,0" Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Right" Width="200"
                         Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Opacity="0.8">
                             <StackPanel x:Name="ControlPanel" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
