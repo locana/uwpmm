@@ -1,4 +1,5 @@
 ﻿using Kazyx.Uwpmm.Common;
+using Kazyx.Uwpmm.Pages;
 using Kazyx.Uwpmm.Utility;
 using System;
 using Windows.ApplicationModel;
