@@ -81,7 +81,7 @@ namespace Kazyx.Uwpmm.CameraControl
                     return true;
                 }
             }
-            catch (RemoteApiException e)
+            catch (RemoteApiException)
             {
                 DebugUtil.Log("Failed to get current state");
                 return false;

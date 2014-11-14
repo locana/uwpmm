@@ -135,7 +135,7 @@ namespace Kazyx.Uwpmm.Pages
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("Failed setup: " + ex.Message);
+                DebugUtil.Log("Failed setup: " + ex.Message);
                 return;
             }
 
@@ -175,7 +175,7 @@ namespace Kazyx.Uwpmm.Pages
 
         void liveview_Closed(object sender, EventArgs e)
         {
-            Debug.WriteLine("Liveview connection closed");
+            DebugUtil.Log("Liveview connection closed");
         }
 
         private void LiveviewImage_Loaded(object sender, RoutedEventArgs e)
@@ -197,40 +197,40 @@ namespace Kazyx.Uwpmm.Pages
         private async void ZoomOutButton_Click(object sender, RoutedEventArgs e)
         {
             try { await target.Api.Camera.ActZoomAsync(ZoomParam.DirectionOut, ZoomParam.ActionStop); }
-            catch (RemoteApi.RemoteApiException ex) { Debug.WriteLine(ex.StackTrace); }
+            catch (RemoteApi.RemoteApiException ex) { DebugUtil.Log(ex.StackTrace); }
 
         }
 
         private async void ZoomOutButton_Tapped(object sender, TappedRoutedEventArgs e)
         {
             try { await target.Api.Camera.ActZoomAsync(ZoomParam.DirectionOut, ZoomParam.Action1Shot); }
-            catch (RemoteApi.RemoteApiException ex) { Debug.WriteLine(ex.StackTrace); }
+            catch (RemoteApi.RemoteApiException ex) { DebugUtil.Log(ex.StackTrace); }
         }
 
         private async void ZoomOutButton_Holding(object sender, HoldingRoutedEventArgs e)
         {
             try { await target.Api.Camera.ActZoomAsync(ZoomParam.DirectionOut, ZoomParam.ActionStart); }
-            catch (RemoteApi.RemoteApiException ex) { Debug.WriteLine(ex.StackTrace); }
+            catch (RemoteApi.RemoteApiException ex) { DebugUtil.Log(ex.StackTrace); }
 
         }
 
         private async void ZoomInButton_Click(object sender, RoutedEventArgs e)
         {
             try { await target.Api.Camera.ActZoomAsync(ZoomParam.DirectionIn, ZoomParam.ActionStop); }
-            catch (RemoteApi.RemoteApiException ex) { Debug.WriteLine(ex.StackTrace); }
+            catch (RemoteApi.RemoteApiException ex) { DebugUtil.Log(ex.StackTrace); }
 
         }
 
         private async void ZoomInButton_Tapped(object sender, TappedRoutedEventArgs e)
         {
             try { await target.Api.Camera.ActZoomAsync(ZoomParam.DirectionIn, ZoomParam.Action1Shot); }
-            catch (RemoteApi.RemoteApiException ex) { Debug.WriteLine(ex.StackTrace); }
+            catch (RemoteApi.RemoteApiException ex) { DebugUtil.Log(ex.StackTrace); }
         }
 
         private async void ZoomInButton_Holding(object sender, HoldingRoutedEventArgs e)
         {
             try { await target.Api.Camera.ActZoomAsync(ZoomParam.DirectionIn, ZoomParam.ActionStart); }
-            catch (RemoteApi.RemoteApiException ex) { Debug.WriteLine(ex.StackTrace); }
+            catch (RemoteApi.RemoteApiException ex) { DebugUtil.Log(ex.StackTrace); }
         }
     }
 }

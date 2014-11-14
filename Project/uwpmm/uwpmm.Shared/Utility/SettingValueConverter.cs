@@ -302,7 +302,7 @@ namespace Kazyx.Uwpmm.Utility
             var mCandidates = new List<string>(num);
             for (int i = 0; i < num; i++)
             {
-                Debug.WriteLine("ev: " + i);
+                DebugUtil.Log("ev: " + i);
                 mCandidates.Add(FromExposureCompensation(i + info.Candidate.MinIndex, info.Candidate.IndexStep));
             }
 

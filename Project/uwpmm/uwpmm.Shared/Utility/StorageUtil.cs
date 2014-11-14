@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Threading.Tasks;
 using Windows.Storage;
 
@@ -40,9 +41,18 @@ namespace Kazyx.Uwpmm.Utility
         /// <returns>Requested directory</returns>
         public static async Task<StorageFolder> GetOrCreateDirectoryAsync(StorageFolder parent, string path)
         {
-            var dir = await parent.GetFolderAsync(path);
+            StorageFolder dir = null;
+            try
+            {
+                dir = await parent.GetFolderAsync(path);
+            }
+            catch (FileNotFoundException)
+            {
+            }
+
             if (dir == null)
             {
+                DebugUtil.Log("CreateDirectory: " + path);
                 dir = await parent.CreateFolderAsync(path);
             }
             return dir;
@@ -50,9 +60,18 @@ namespace Kazyx.Uwpmm.Utility
 
         public static async Task<StorageFile> GetOrCreateFileAsync(StorageFolder parent, string path)
         {
-            var file = await parent.GetFileAsync(path);
+            StorageFile file = null;
+            try
+            {
+                file = await parent.GetFileAsync(path);
+            }
+            catch (FileNotFoundException)
+            {
+            }
+
             if (file == null)
             {
+                DebugUtil.Log("CreateFile: " + path);
                 file = await parent.CreateFileAsync(path);
             }
             return file;

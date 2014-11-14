@@ -87,7 +87,7 @@ namespace Kazyx.Uwpmm.CameraControl
             {
                 await AvContent.StopStreamingAsync();
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 DebugUtil.Log("Failed to stop movie stream");
             }

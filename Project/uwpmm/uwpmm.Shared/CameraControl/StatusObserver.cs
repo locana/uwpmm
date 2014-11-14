@@ -1,9 +1,9 @@
 ﻿using Kazyx.RemoteApi;
 using Kazyx.RemoteApi.Camera;
 using Kazyx.Uwpmm.DataModel;
+using Kazyx.Uwpmm.Utility;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace Kazyx.Uwpmm.CameraControl
@@ -39,10 +39,10 @@ namespace Kazyx.Uwpmm.CameraControl
 
         public async Task<bool> Start()
         {
-            Debug.WriteLine("StatusObserver: Start");
+            DebugUtil.Log("StatusObserver: Start");
             if (IsProcessing)
             {
-                Debug.WriteLine("StatusObserver: Already processing");
+                DebugUtil.Log("StatusObserver: Already processing");
                 return false;
             }
 
@@ -51,7 +51,7 @@ namespace Kazyx.Uwpmm.CameraControl
             failure_count = 0;
             if (!await Refresh())
             {
-                Debug.WriteLine("StatusObserver: Failed to start");
+                DebugUtil.Log("StatusObserver: Failed to start");
                 return false;
             }
 
@@ -62,20 +62,20 @@ namespace Kazyx.Uwpmm.CameraControl
 
         public void Stop()
         {
-            Debug.WriteLine("StatusObserver: Stop");
+            DebugUtil.Log("StatusObserver: Stop");
             IsProcessing = false;
         }
 
         public async Task<bool> Refresh()
         {
-            Debug.WriteLine("StatusObserver: Refresh");
+            DebugUtil.Log("StatusObserver: Refresh");
             try
             {
                 await Update(await api.Camera.GetEventAsync(false, version));
             }
             catch (RemoteApiException e)
             {
-                Debug.WriteLine("StatusObserver: Refresh failed - " + e.code);
+                DebugUtil.Log("StatusObserver: Refresh failed - " + e.code);
                 return false;
             }
             return true;
@@ -118,7 +118,7 @@ namespace Kazyx.Uwpmm.CameraControl
                     }
                     catch (RemoteApiException)
                     {
-                        Debug.WriteLine("Failed to get still image size capability");
+                        DebugUtil.Log("Failed to get still image size capability");
                     }
                 }
                 else
@@ -163,7 +163,7 @@ namespace Kazyx.Uwpmm.CameraControl
                     }
                     catch (RemoteApiException)
                     {
-                        Debug.WriteLine("Failed to get white balance capability");
+                        DebugUtil.Log("Failed to get white balance capability");
                     }
                 }
                 else
@@ -206,7 +206,7 @@ namespace Kazyx.Uwpmm.CameraControl
             switch (code)
             {
                 case StatusCode.Timeout:
-                    Debug.WriteLine("GetEvent timeout without any event. Retry for the next event");
+                    DebugUtil.Log("GetEvent timeout without any event. Retry for the next event");
                     PollingLoop();
                     return;
                 case StatusCode.NotAcceptable:
@@ -216,21 +216,21 @@ namespace Kazyx.Uwpmm.CameraControl
                 case StatusCode.Any:
                     if (failure_count++ < RETRY_LIMIT)
                     {
-                        Debug.WriteLine("GetEvent failed - retry " + failure_count + ", status: " + code);
+                        DebugUtil.Log("GetEvent failed - retry " + failure_count + ", status: " + code);
                         await Task.Delay(TimeSpan.FromSeconds(RETRY_INTERVAL_SEC));
                         PollingLoop();
                         return;
                     }
                     break;
                 case StatusCode.DuplicatePolling:
-                    Debug.WriteLine("GetEvent failed duplicate polling");
+                    DebugUtil.Log("GetEvent failed duplicate polling");
                     return;
                 default:
-                    Debug.WriteLine("GetEvent failed with code: " + code);
+                    DebugUtil.Log("GetEvent failed with code: " + code);
                     break;
             }
 
-            Debug.WriteLine("StatusObserver Error limit");
+            DebugUtil.Log("StatusObserver Error limit");
 
             if (IsProcessing)
             {

@@ -15,7 +15,7 @@ namespace Kazyx.Uwpmm.Utility
 #if DEBUG
         private static StringBuilder LogBuilder = new StringBuilder();
 
-        private const string LOG_ROOT = "/log_store/";
+        private const string LOG_ROOT = "log_store";
 
         private const string LOG_EXTENSION = ".txt";
 
@@ -45,8 +45,9 @@ namespace Kazyx.Uwpmm.Utility
         }
 
 #if DEBUG
-        public static async void Flush(bool crash = false)
+        public static async Task Flush(bool crash = false)
         {
+            Debug.WriteLine("Flush");
             var root = ApplicationData.Current.TemporaryFolder;
             var folder = await StorageUtil.GetOrCreateDirectoryAsync(root, LOG_ROOT);
             var time = DateTimeOffset.Now.ToLocalTime().ToString("yyyyMMdd-HHmmss");
@@ -67,6 +68,7 @@ namespace Kazyx.Uwpmm.Utility
 
         public static async Task<List<string>> LogFiles()
         {
+            Debug.WriteLine("LogFiles");
             var root = ApplicationData.Current.TemporaryFolder;
             var folder = await StorageUtil.GetOrCreateDirectoryAsync(root, LOG_ROOT);
 
@@ -85,6 +87,7 @@ namespace Kazyx.Uwpmm.Utility
 
         public static async Task<string> GetFile(string filename)
         {
+            Debug.WriteLine("GetFile");
             var root = ApplicationData.Current.TemporaryFolder;
             var folder = await StorageUtil.GetOrCreateDirectoryAsync(root, LOG_ROOT);
 

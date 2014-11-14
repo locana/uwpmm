@@ -50,7 +50,7 @@ namespace Kazyx.Uwpmm.DataModel
 
         private void GenericPropertyChanged(string name)
         {
-            Debug.WriteLine("PropertyChanged: " + name);
+            DebugUtil.Log("PropertyChanged: " + name);
             NotifyChanged("Candidates" + name);
             NotifyChanged("SelectedIndex" + name);
             NotifyChanged("IsAvailable" + name);

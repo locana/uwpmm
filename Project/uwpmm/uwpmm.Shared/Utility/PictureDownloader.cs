@@ -16,7 +16,7 @@ namespace Kazyx.Uwpmm.Utility
 
         public static async Task<StorageFile> DownloadToSave(Uri uri)
         {
-            Debug.WriteLine("Download picture: " + uri.OriginalString);
+            DebugUtil.Log("Download picture: " + uri.OriginalString);
             try
             {
                 using (var http = new HttpClient())
@@ -34,12 +34,12 @@ namespace Kazyx.Uwpmm.Utility
                         folder = await library.GetFolderAsync(DIRECTORY_NAME);
                         if (folder == null)
                         {
-                            Debug.WriteLine("Create folder: " + DIRECTORY_NAME);
+                            DebugUtil.Log("Create folder: " + DIRECTORY_NAME);
                             folder = await library.CreateFolderAsync(DIRECTORY_NAME);
                         }
 
                         var filename = string.Format(DIRECTORY_NAME + "_{0:yyyyMMdd_HHmmss}.jpg", DateTime.Now);
-                        Debug.WriteLine("Create file: " + filename);
+                        DebugUtil.Log("Create file: " + filename);
 
                         var file = await folder.CreateFileAsync(filename, CreationCollisionOption.GenerateUniqueName);
                         using (var stream = await file.OpenAsync(FileAccessMode.ReadWrite))
@@ -60,8 +60,8 @@ namespace Kazyx.Uwpmm.Utility
             }
             catch (Exception e)
             {
-                Debug.WriteLine(e.Message);
-                Debug.WriteLine(e.StackTrace);
+                DebugUtil.Log(e.Message);
+                DebugUtil.Log(e.StackTrace);
                 return null;
             }
         }

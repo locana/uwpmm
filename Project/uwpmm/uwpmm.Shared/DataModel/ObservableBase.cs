@@ -32,7 +32,7 @@ namespace Kazyx.Uwpmm.DataModel
                 }
                 catch (COMException)
                 {
-                    Debug.WriteLine("Caught COMException: ObservableBase#PropertyChanged");
+                    DebugUtil.Log("Caught COMException: ObservableBase#PropertyChanged");
                 }
             }
         }

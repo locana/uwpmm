@@ -12,7 +12,7 @@ namespace Kazyx.Uwpmm.CameraControl
     {
         public static async Task<TargetDevice> SetUp(DeviceApiHolder api, StreamProcessor liveview)
         {
-            Debug.WriteLine("Set up control");
+            DebugUtil.Log("Set up control");
             try
             {
                 await api.RetrieveApiList();
@@ -29,7 +29,7 @@ namespace Kazyx.Uwpmm.CameraControl
                     var res = await OpenLiveviewStream(api, liveview);
                     if (!res)
                     {
-                        Debug.WriteLine("Failed to open liveview connection.");
+                        DebugUtil.Log("Failed to open liveview connection.");
                         throw new Exception();
                     }
                 }
@@ -49,14 +49,14 @@ namespace Kazyx.Uwpmm.CameraControl
             }
             catch (RemoteApiException e)
             {
-                Debug.WriteLine("Failed setup: " + e.code);
+                DebugUtil.Log("Failed setup: " + e.code);
                 throw e;
             }
         }
 
         public static async Task<bool> OpenLiveviewStream(DeviceApiHolder api, StreamProcessor liveview)
         {
-            Debug.WriteLine("Open liveview stream");
+            DebugUtil.Log("Open liveview stream");
             try
             {
                 var url = await api.Camera.StartLiveviewAsync();
@@ -64,14 +64,14 @@ namespace Kazyx.Uwpmm.CameraControl
             }
             catch (RemoteApiException e)
             {
-                Debug.WriteLine("Failed to startLiveview: " + e.code);
+                DebugUtil.Log("Failed to startLiveview: " + e.code);
                 return false;
             }
         }
 
         public static async Task<bool> CloseLiveviewStream(DeviceApiHolder api, StreamProcessor liveview)
         {
-            Debug.WriteLine("Close liveview stream");
+            DebugUtil.Log("Close liveview stream");
             try
             {
                 liveview.CloseConnection();
@@ -80,14 +80,14 @@ namespace Kazyx.Uwpmm.CameraControl
             }
             catch (RemoteApiException e)
             {
-                Debug.WriteLine("Failed to stopLiveview: " + e.code);
+                DebugUtil.Log("Failed to stopLiveview: " + e.code);
                 return false;
             }
         }
 
         public static async Task<bool> ReOpenLiveviewStream(DeviceApiHolder api, StreamProcessor liveview)
         {
-            Debug.WriteLine("Reopen liveview stream");
+            DebugUtil.Log("Reopen liveview stream");
             liveview.CloseConnection();
             await Task.Delay(2000);
             return await OpenLiveviewStream(api, liveview);
@@ -95,11 +95,11 @@ namespace Kazyx.Uwpmm.CameraControl
 
         public static async Task<bool> TakePicture(DeviceApiHolder api, Action<StorageFile> ImageSaved, bool awaiting = false)
         {
-            Debug.WriteLine("Taking picture sequence");
+            DebugUtil.Log("Taking picture sequence");
             try
             {
                 var urls = awaiting ? await api.Camera.AwaitTakePictureAsync() : await api.Camera.ActTakePictureAsync();
-                Debug.WriteLine("Success taking picture");
+                DebugUtil.Log("Success taking picture");
 
                 if (ImageSaved == null)
                 {
@@ -119,8 +119,8 @@ namespace Kazyx.Uwpmm.CameraControl
                         }
                         catch (Exception e)
                         {
-                            Debug.WriteLine(e.Message);
-                            Debug.WriteLine(e.StackTrace);
+                            DebugUtil.Log(e.Message);
+                            DebugUtil.Log(e.StackTrace);
                             return false;
                         }
                     }
@@ -135,11 +135,11 @@ namespace Kazyx.Uwpmm.CameraControl
             {
                 if (e.code != StatusCode.StillCapturingNotFinished)
                 {
-                    Debug.WriteLine("Failed to take picture: " + e.code);
+                    DebugUtil.Log("Failed to take picture: " + e.code);
                     throw e;
                 }
             }
-            Debug.WriteLine("Take picture timeout: await for completion");
+            DebugUtil.Log("Take picture timeout: await for completion");
             return await TakePicture(api, ImageSaved, true);
         }
     }

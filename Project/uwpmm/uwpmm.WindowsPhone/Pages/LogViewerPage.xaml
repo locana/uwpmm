@@ -1,0 +1,45 @@
+﻿<Page
+    x:Class="Kazyx.Uwpmm.Pages.LogViewerPage"
+    DataContext="{Binding DefaultViewModel, RelativeSource={RelativeSource Self}}"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Kazyx.Uwpmm.Pages"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+    FontSize="{StaticResource TextStyleLargeFontSize}"
+    FontFamily="{StaticResource PhoneFontFamilySemiLight}"
+    FontWeight="Light">
+
+    <Grid x:Name="LayoutRoot">
+        <Hub >
+
+            <HubSection Margin="0">
+                <HubSection.Header>
+                    <TextBlock Text="Log Files" Margin="0,8,0,0" Style="{StaticResource SubheaderTextBlockStyle}" FontWeight="Bold"/>
+                </HubSection.Header>
+                <HubSection.ContentTemplate>
+                    <DataTemplate>
+                        <ListView ItemsSource="{Binding LogFilesList}" x:Name="FileListBox" SelectionChanged="FileListBox_SelectionChanged" Margin="0,-24,0,0" />
+                    </DataTemplate>
+                </HubSection.ContentTemplate>
+            </HubSection>
+
+            <HubSection Margin="0">
+                <HubSection.Header>
+                    <TextBlock x:Name="ContentHeader" Text="Content" Margin="0,8,0,0" Style="{StaticResource SubheaderTextBlockStyle}" FontWeight="Bold"/>
+                </HubSection.Header>
+                <HubSection.ContentTemplate>
+                    <DataTemplate>
+                        <ScrollViewer Margin="-12,-24,-12,0" HorizontalContentAlignment="Left" VerticalContentAlignment="Top">
+                            <TextBlock Text="{Binding LogContentText}" x:Name="LogContent" TextWrapping="Wrap" Tapped="LogContent_Tapped" />
+                        </ScrollViewer>
+                    </DataTemplate>
+                </HubSection.ContentTemplate>
+            </HubSection>
+
+        </Hub>
+    </Grid>
+
+</Page>

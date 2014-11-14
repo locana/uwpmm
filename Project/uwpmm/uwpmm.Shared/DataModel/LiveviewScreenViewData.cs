@@ -1,5 +1,6 @@
 ﻿
 using Kazyx.Uwpmm.CameraControl;
+using Kazyx.Uwpmm.Utility;
 using System.Diagnostics;
 using Windows.UI.Xaml;
 namespace Kazyx.Uwpmm.DataModel
@@ -37,7 +38,7 @@ namespace Kazyx.Uwpmm.DataModel
             get
             {
                 if (Device.Status.ZoomInfo == null) { return 0; }
-                Debug.WriteLine("Zoom pos " + Device.Status.ZoomInfo.PositionInCurrentBox);
+                DebugUtil.Log("Zoom pos " + Device.Status.ZoomInfo.PositionInCurrentBox);
                 return Device.Status.ZoomInfo.PositionInCurrentBox;
             }
         }

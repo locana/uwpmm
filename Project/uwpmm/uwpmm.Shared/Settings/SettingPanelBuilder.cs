@@ -181,7 +181,7 @@ namespace Kazyx.Uwpmm.Settings
 
             if (selected < 0 || param.Candidates.Count <= selected)
             {
-                Debug.WriteLine("ignore out of range");
+                DebugUtil.Log("ignore out of range");
                 return;
             }
 
@@ -192,11 +192,11 @@ namespace Kazyx.Uwpmm.Settings
             }
             catch (RemoteApiException e)
             {
-                Debug.WriteLine("Failed to set parameter: " + e.code);
+                DebugUtil.Log("Failed to set parameter: " + e.code);
             }
             catch (NullReferenceException e)
             {
-                Debug.WriteLine("Failed to set parameter: " + e.Message);
+                DebugUtil.Log("Failed to set parameter: " + e.Message);
             }
             await DataSource.Device.Observer.Refresh();
         }
@@ -281,11 +281,11 @@ namespace Kazyx.Uwpmm.Settings
                 }
                 catch (RemoteApiException ex)
                 {
-                    Debug.WriteLine("Failed to set color temperture: " + ex.code);
+                    DebugUtil.Log("Failed to set color temperture: " + ex.code);
                 }
                 catch (NullReferenceException ex)
                 {
-                    Debug.WriteLine("Failed to set color temperture: " + ex.Message);
+                    DebugUtil.Log("Failed to set color temperture: " + ex.Message);
                 }
             };
 

@@ -1,6 +1,6 @@
 ﻿using Kazyx.RemoteApi;
 using Kazyx.RemoteApi.Camera;
-using System.Diagnostics;
+using Kazyx.Uwpmm.Utility;
 using System.Threading.Tasks;
 
 namespace Kazyx.Uwpmm.CameraControl
@@ -15,7 +15,7 @@ namespace Kazyx.Uwpmm.CameraControl
             }
             catch (RemoteApiException e)
             {
-                Debug.WriteLine(e.StackTrace);
+                DebugUtil.Log(e.StackTrace);
             }
         }
 
@@ -27,7 +27,7 @@ namespace Kazyx.Uwpmm.CameraControl
             }
             catch (RemoteApiException e)
             {
-                Debug.WriteLine(e.StackTrace);
+                DebugUtil.Log(e.StackTrace);
             }
         }
 
@@ -39,7 +39,7 @@ namespace Kazyx.Uwpmm.CameraControl
             }
             catch (RemoteApiException e)
             {
-                Debug.WriteLine(e.StackTrace);
+                DebugUtil.Log(e.StackTrace);
             }
         }
 
@@ -51,7 +51,7 @@ namespace Kazyx.Uwpmm.CameraControl
             }
             catch (RemoteApiException e)
             {
-                Debug.WriteLine(e.StackTrace);
+                DebugUtil.Log(e.StackTrace);
             }
         }
 
@@ -63,7 +63,7 @@ namespace Kazyx.Uwpmm.CameraControl
             }
             catch (RemoteApiException e)
             {
-                Debug.WriteLine(e.StackTrace);
+                DebugUtil.Log(e.StackTrace);
             }
         }
 
@@ -75,7 +75,7 @@ namespace Kazyx.Uwpmm.CameraControl
             }
             catch (RemoteApiException e)
             {
-                Debug.WriteLine(e.StackTrace);
+                DebugUtil.Log(e.StackTrace);
             }
         }
     }
