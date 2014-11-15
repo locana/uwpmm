@@ -1,7 +1,5 @@
-﻿using Kazyx.Uwpmm.Control;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
@@ -18,18 +16,77 @@ namespace Kazyx.Uwpmm.Utility
 
         public CommandBar bar = new CommandBar();
 
+        readonly AppBarButton CameraSettingButton = new AppBarButton() { Icon = new BitmapIcon() { UriSource = new Uri("ms-appx:///Assets/AppBar/appbar_cameraSetting.png", UriKind.Absolute) }, Label = "Camera settings" };
+        readonly AppBarButton AppSettingButton = new AppBarButton() { Icon = new BitmapIcon() { UriSource = new Uri("ms-appx:///Assets/AppBar/feature.settings.png", UriKind.Absolute) }, Label = "Application settings" };
+
+        readonly Dictionary<AppBarItem, AppBarButton> AppBarItems = new Dictionary<AppBarItem, AppBarButton>();
+        readonly Dictionary<AppBarItemType, SortedSet<AppBarItem>> EnabledItems = new Dictionary<AppBarItemType, SortedSet<AppBarItem>>();
+
         void Init()
+        {
+            EnabledItems.Add(AppBarItemType.Primary, new SortedSet<AppBarItem>());
+            EnabledItems.Add(AppBarItemType.Secondary, new SortedSet<AppBarItem>());
+            AppBarItems.Add(AppBarItem.ControlPanel, CameraSettingButton);
+            AppBarItems.Add(AppBarItem.AppSetting, AppSettingButton);
+        }
+
+        public CommandBarManager SetEvent(AppBarItem item, Windows.UI.Xaml.RoutedEventHandler handler)
+        {
+            AppBarItems[item].Click += handler;
+            return this;
+        }
+
+        public CommandBarManager Enable(AppBarItemType type, AppBarItem item)
+        {
+            if (!EnabledItems[type].Contains(item))
+            {
+                EnabledItems[type].Add(item);
+            }
+            return this;
+        }
+
+        public CommandBarManager Disable(AppBarItemType type, AppBarItem item)
+        {
+            if (EnabledItems[type].Contains(item))
+            {
+                EnabledItems[type].Remove(item);
+            }
+            return this;
+        }
+
+        public CommandBar CreateNew(double opacity)
         {
             bar = new CommandBar()
             {
                 Background = Application.Current.Resources["AppBarBackgroundThemeBrush"] as Brush,
+                Opacity = opacity,
             };
-            bar.SecondaryCommands.Add(new AppBarButton() { Label = "Control" });
+            foreach (AppBarItem item in EnabledItems[AppBarItemType.Primary])
+            {
+                bar.PrimaryCommands.Add(AppBarItems[item]);
+            }
+            foreach (AppBarItem item in EnabledItems[AppBarItemType.Secondary])
+            {
+                bar.SecondaryCommands.Add(AppBarItems[item]);
+            }
+            return bar;
         }
 
-        enum Item
+        public bool IsEnabled(AppBarItemType type, AppBarItem item)
+        {
+            return EnabledItems[type].Contains(item);
+        }
+
+        public enum AppBarItemType
+        {
+            Primary,
+            Secondary,
+        }
+
+        public enum AppBarItem
         {
             ControlPanel,
+            AppSetting,
         }
     }
 }

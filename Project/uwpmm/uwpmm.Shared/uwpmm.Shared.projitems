@@ -59,8 +59,15 @@
     <Compile Include="$(MSBuildThisFileDirectory)Utility\SystemUtil.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\ThumbnailCacheLoader.cs" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\AppBar\appbar_cameraSetting.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppBar\feature.settings.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\Camera.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\License.txt" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\LiveviewScreen\Camcorder.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\LiveviewScreen\Camera.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\LiveviewScreen\ContShootingButton.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\LiveviewScreen\IntervalStillRecButton.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\LiveviewScreen\Music.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\LiveviewScreen\Stop.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\LiveviewScreen\ZoomIn.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\LiveviewScreen\ZoomOut.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\LightGray.png" />

@@ -3,18 +3,14 @@ using Kazyx.ImageStream;
 using Kazyx.RemoteApi.Camera;
 using Kazyx.Uwpmm.CameraControl;
 using Kazyx.Uwpmm.Common;
-using Kazyx.Uwpmm.Control;
 using Kazyx.Uwpmm.DataModel;
 using Kazyx.Uwpmm.Settings;
 using Kazyx.Uwpmm.Utility;
 using System;
-using System.Diagnostics;
-using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
 // The Basic Page item template is documented at http://go.microsoft.com/fwlink/?LinkID=390556
@@ -110,13 +106,25 @@ namespace Kazyx.Uwpmm.Pages
 
         #endregion
 
+        CommandBarManager _CommandBarManager = new CommandBarManager();
+
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             var discovery = new SsdpDiscovery();
             discovery.SonyCameraDeviceDiscovered += discovery_ScalarDeviceDiscovered;
             discovery.SearchSonyCameraDevices();
-            var abm = new CommandBarManager();
-            this.BottomAppBar = abm.bar;
+
+            _CommandBarManager.SetEvent(CommandBarManager.AppBarItem.ControlPanel, (s, args) =>
+            {
+                if (ControlPanelScrollViewer.Visibility == Windows.UI.Xaml.Visibility.Visible)
+                {
+                    ControlPanelScrollViewer.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                }
+                else
+                {
+                    ControlPanelScrollViewer.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                }
+            });
         }
 
         private TargetDevice target;
@@ -154,12 +162,12 @@ namespace Kazyx.Uwpmm.Pages
                 Bottom.DataContext = screenViewData;
             });
 
-
         }
 
         private void GoToLiveviewScreen()
         {
             PivotRoot.SelectedIndex = 1;
+            this.BottomAppBar = _CommandBarManager.Enable(CommandBarManager.AppBarItemType.Primary, CommandBarManager.AppBarItem.ControlPanel).CreateNew(0.6);
         }
 
         private bool IsRendering = false;
@@ -231,6 +239,25 @@ namespace Kazyx.Uwpmm.Pages
         {
             try { await target.Api.Camera.ActZoomAsync(ZoomParam.DirectionIn, ZoomParam.ActionStart); }
             catch (RemoteApi.RemoteApiException ex) { DebugUtil.Log(ex.StackTrace); }
+        }
+
+        private void ShutterButton_Click(object sender, RoutedEventArgs e)
+        {
+            ShutterButtonPressed();
+        }
+
+        private void ShutterButton_ManipulationStarted(object sender, ManipulationStartedRoutedEventArgs e)
+        {
+
+        }
+
+        async void ShutterButtonPressed()
+        {
+            if (target.Status.ShootMode == null) { return; }
+            if (target.Status.ShootMode.Current == ShootModeParam.Still)
+            {
+                await target.Api.Camera.ActTakePictureAsync();
+            }
         }
     }
 }

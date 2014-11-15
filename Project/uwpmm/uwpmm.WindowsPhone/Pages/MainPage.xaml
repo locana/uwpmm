@@ -22,7 +22,7 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <Grid Grid.Row="1" x:Name="ContentRoot" Margin="19,9.5,19,0">
+        <Grid Grid.Row="1" x:Name="ContentRoot" Margin="0">
             <Pivot Name="PivotRoot">
                 <PivotItem Name="Entrance">
                     <Grid Name="EntrancePage">
@@ -33,38 +33,44 @@
                     </Grid>
                 </PivotItem>
 
-                <PivotItem Name="Liveview">
+                <PivotItem Name="Liveview" Margin="0">
                     <Grid Name="LiveviewScreen">
                         <Image x:Name="LiveviewImage" Source="{Binding Image, Mode=OneWay}" Loaded="LiveviewImage_Loaded" Unloaded="LiveviewImage_Unloaded" />
 
-                        <Grid Name="Bottom" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Margin="20, 60">
+                        <Grid Name="Bottom" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Margin="14, 60">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="auto"/>
                                 <RowDefinition Height="auto"/>
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="8*"/>
-                                <ColumnDefinition Width="7*"/>
+                                <ColumnDefinition Width="4*"/>
+                                <ColumnDefinition Width="auto"/>
                             </Grid.ColumnDefinitions>
-                            <controls:ZoomBar Grid.Column="0" Grid.Row="0" Height="13" Margin="4"  VerticalAlignment="Top" Visibility="{Binding ZoomInterfacesVisibility}"
-                              PositionInCurrentBox="{Binding ZoomPositionInCurrentBox, Mode=OneWay, FallbackValue=0}" CurrentBoxIndex="{Binding ZoomBoxIndex, Mode=OneWay, FallbackValue=0}"
-                              TotalBoxNum="{Binding ZoomBoxNum, Mode=OneWay, FallbackValue=1}" />
+                            <Button Name="ShutterButton" Grid.RowSpan="2" Grid.Column="2" MinWidth="10" Width="80" Height="70" HorizontalAlignment="Stretch" 
+                                    VerticalAlignment="Bottom" BorderThickness="1" Click="ShutterButton_Click" ManipulationStarted="ShutterButton_ManipulationStarted"
+                                    IsEnabled="{Binding ShutterButtonEnabled}" Background="Black" Opacity="0.8" >
+                                <Image Source="{Binding ShutterButtonImage}" Margin="8"/>
+                            </Button>
+                            <controls:ZoomBar Grid.Column="0" Grid.Row="0" Height="13" Margin="4"  VerticalAlignment="Bottom" Visibility="{Binding ZoomInterfacesVisibility}"
+                                              PositionInCurrentBox="{Binding ZoomPositionInCurrentBox, Mode=OneWay, FallbackValue=0}" CurrentBoxIndex="{Binding ZoomBoxIndex, Mode=OneWay, FallbackValue=0}"
+                                              TotalBoxNum="{Binding ZoomBoxNum, Mode=OneWay, FallbackValue=1}"  />
                             <Grid  Grid.Column="0" Grid.Row="1" Height="60" Visibility="{Binding ZoomInterfacesVisibility}">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
-                                <Button Name="ZoomOutButton" BorderThickness="1" Grid.Column="0" Background="Black" Opacity="0.8" Margin="3" HorizontalAlignment="Left" 
+                                <Button Name="ZoomOutButton" BorderThickness="1" MinWidth="20" Grid.Column="0" Background="Black" Opacity="0.8" Margin="2" HorizontalAlignment="Stretch" 
                             Click="ZoomOutButton_Click" Tapped="ZoomOutButton_Tapped" Holding="ZoomOutButton_Holding" >
                                     <Image Source="/Assets/LiveviewScreen/ZoomOut.png" Margin="0" />
                                 </Button>
-                                <Button Name="ZoomInButton" BorderThickness="1" Grid.Column="1" Background="Black" Opacity="0.8" Margin="3" HorizontalAlignment="Center"
+                                <Button Name="ZoomInButton" BorderThickness="1" MinWidth="20" Grid.Column="1" Background="Black" Opacity="0.8" Margin="2" HorizontalAlignment="Stretch"
                             Click="ZoomInButton_Click" Tapped="ZoomInButton_Tapped" Holding="ZoomInButton_Holding">
                                     <Image Source="/Assets/LiveviewScreen/ZoomIn.png" Margin="0"  />
                                 </Button>
                             </Grid>
                         </Grid>
-                        <ScrollViewer Name="ControlPanelScrollViewer" Margin="28,0,-8,0" Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Right" Width="200"
+                        <ScrollViewer Name="ControlPanelScrollViewer" Margin="28,0,0,0" Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Right" Width="200"
                         Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Opacity="0.8">
                             <StackPanel x:Name="ControlPanel" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
                         </ScrollViewer>
