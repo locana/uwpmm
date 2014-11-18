@@ -14,48 +14,47 @@ namespace Kazyx.Uwpmm.Utility
 
         private const int BUFFER_SIZE = 2048;
 
+        private static readonly HttpClient HttpClient = new HttpClient();
+
         public static async Task<StorageFile> DownloadToSave(Uri uri)
         {
             DebugUtil.Log("Download picture: " + uri.OriginalString);
             try
             {
-                using (var http = new HttpClient())
+                var res = await HttpClient.GetAsync(uri, HttpCompletionOption.ResponseContentRead);
+                if (res.StatusCode != HttpStatusCode.OK)
                 {
-                    var res = await http.GetAsync(uri, HttpCompletionOption.ResponseContentRead);
-                    if (res.StatusCode != HttpStatusCode.OK)
+                    return null;
+                }
+
+                using (var resStream = await res.Content.ReadAsStreamAsync())
+                {
+                    var library = KnownFolders.PicturesLibrary;
+                    StorageFolder folder = null;
+                    folder = await library.GetFolderAsync(DIRECTORY_NAME);
+                    if (folder == null)
                     {
-                        return null;
+                        DebugUtil.Log("Create folder: " + DIRECTORY_NAME);
+                        folder = await library.CreateFolderAsync(DIRECTORY_NAME);
                     }
 
-                    using (var resStream = await res.Content.ReadAsStreamAsync())
+                    var filename = string.Format(DIRECTORY_NAME + "_{0:yyyyMMdd_HHmmss}.jpg", DateTime.Now);
+                    DebugUtil.Log("Create file: " + filename);
+
+                    var file = await folder.CreateFileAsync(filename, CreationCollisionOption.GenerateUniqueName);
+                    using (var stream = await file.OpenAsync(FileAccessMode.ReadWrite))
                     {
-                        var library = KnownFolders.PicturesLibrary;
-                        StorageFolder folder = null;
-                        folder = await library.GetFolderAsync(DIRECTORY_NAME);
-                        if (folder == null)
+                        var buffer = new byte[BUFFER_SIZE];
+                        using (var os = stream.GetOutputStreamAt(0))
                         {
-                            DebugUtil.Log("Create folder: " + DIRECTORY_NAME);
-                            folder = await library.CreateFolderAsync(DIRECTORY_NAME);
-                        }
-
-                        var filename = string.Format(DIRECTORY_NAME + "_{0:yyyyMMdd_HHmmss}.jpg", DateTime.Now);
-                        DebugUtil.Log("Create file: " + filename);
-
-                        var file = await folder.CreateFileAsync(filename, CreationCollisionOption.GenerateUniqueName);
-                        using (var stream = await file.OpenAsync(FileAccessMode.ReadWrite))
-                        {
-                            var buffer = new byte[BUFFER_SIZE];
-                            using (var os = stream.GetOutputStreamAt(0))
+                            int read = 0;
+                            while ((read = resStream.Read(buffer, 0, BUFFER_SIZE)) != 0)
                             {
-                                int read = 0;
-                                while ((read = resStream.Read(buffer, 0, BUFFER_SIZE)) != 0)
-                                {
-                                    await os.WriteAsync(buffer.AsBuffer(0, read));
-                                }
+                                await os.WriteAsync(buffer.AsBuffer(0, read));
                             }
                         }
-                        return file;
                     }
+                    return file;
                 }
             }
             catch (Exception e)

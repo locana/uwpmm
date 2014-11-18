@@ -17,9 +17,12 @@ namespace Kazyx.Uwpmm.Utility
         private const string CACHE_ROOT = "thumb_cache/";
         private const string CACHE_ROOT_TMP = "tmp/thumb_cache/";
 
+        private readonly HttpClient HttpClient;
+
         private ThumbnailCacheLoader()
         {
             CreateCacheRoot();
+            HttpClient = new HttpClient();
         }
 
         private async void CreateCacheRoot()
@@ -95,23 +98,20 @@ namespace Kazyx.Uwpmm.Utility
                 return await GetResizedCachePathAsync(filepath_tmp, filepath);
             }
 
-            using (var http = new HttpClient())
+            var res = await HttpClient.GetAsync(uri, HttpCompletionOption.ResponseContentRead);
+            if (res.StatusCode != HttpStatusCode.OK)
             {
-                var res = await http.GetAsync(uri, HttpCompletionOption.ResponseContentRead);
-                if (res.StatusCode != HttpStatusCode.OK)
+                return null;
+            }
+            using (var stream = await res.Content.ReadAsStreamAsync())
+            {
+                if (await folder.GetFileAsync(filepath_tmp) == null)
                 {
-                    return null;
+                    var dst = await folder.CreateFileAsync(filepath_tmp);
+                    var outStream = await dst.OpenStreamForWriteAsync();
+                    await stream.CopyToAsync(outStream);
                 }
-                using (var stream = await res.Content.ReadAsStreamAsync())
-                {
-                    if (await folder.GetFileAsync(filepath_tmp) == null)
-                    {
-                        var dst = await folder.CreateFileAsync(filepath_tmp);
-                        var outStream = await dst.OpenStreamForWriteAsync();
-                        await stream.CopyToAsync(outStream);
-                    }
-                    return await GetResizedCachePathAsync(filepath_tmp, filepath);
-                }
+                return await GetResizedCachePathAsync(filepath_tmp, filepath);
             }
         }
 
