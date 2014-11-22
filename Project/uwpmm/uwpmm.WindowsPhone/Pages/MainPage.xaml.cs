@@ -108,6 +108,8 @@ namespace Kazyx.Uwpmm.Pages
 
         CommandBarManager _CommandBarManager = new CommandBarManager();
 
+        bool ControlPanelDisplayed = false;
+
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             var discovery = new SsdpDiscovery();
@@ -116,15 +118,33 @@ namespace Kazyx.Uwpmm.Pages
 
             _CommandBarManager.SetEvent(CommandBarManager.AppBarItem.ControlPanel, (s, args) =>
             {
-                if (ControlPanelScrollViewer.Visibility == Windows.UI.Xaml.Visibility.Visible)
-                {
-                    ControlPanelScrollViewer.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-                }
-                else
-                {
-                    ControlPanelScrollViewer.Visibility = Windows.UI.Xaml.Visibility.Visible;
-                }
+                if (ControlPanelDisplayed) { StartToHideControlPanel(); }
+                else { StartToShowControlPanel(); }
             });
+        }
+
+        private void StartToShowControlPanel()
+        {
+            SlideTransform.X = 200;
+            ShowControlPanelStoryBoard.Begin();
+            SlideInControlPanel.Begin();
+        }
+
+        private void StartToHideControlPanel()
+        {
+            HideControlPanelStoryBoard.Begin();
+            SlideOutControlPanel.Begin();
+        }
+
+        private void ShowControlPanelStoryBoard_Completed(object sender, object e)
+        {
+            ControlPanelDisplayed = true;
+            SlideTransform.X = 0;
+        }
+
+        private void HideControlPanelStoryBoard_Completed(object sender, object e)
+        {
+            ControlPanelDisplayed = false;
         }
 
         private TargetDevice target;
@@ -259,5 +279,7 @@ namespace Kazyx.Uwpmm.Pages
                 await target.Api.Camera.ActTakePictureAsync();
             }
         }
+
+
     }
 }
