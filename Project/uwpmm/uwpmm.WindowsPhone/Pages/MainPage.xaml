@@ -37,8 +37,9 @@
 
                 <PivotItem Name="Liveview" Margin="0">
                     <Grid Name="LiveviewScreen">
-                        <Image x:Name="LiveviewImage" Source="{Binding Image, Mode=OneWay}" Loaded="LiveviewImage_Loaded" Unloaded="LiveviewImage_Unloaded" />
-
+                        <Image x:Name="LiveviewImage" Source="{Binding Image, Mode=OneWay}" Loaded="LiveviewImage_Loaded" Unloaded="LiveviewImage_Unloaded"
+                               SizeChanged="LiveviewImage_SizeChanged"/>
+                        <controls:FocusFrameSurface x:Name="_FocusFrameSurface" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
                         <Grid Name="Bottom" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Margin="14, 60">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="auto"/>

@@ -330,5 +330,22 @@ namespace Kazyx.Uwpmm.DataModel
                 return _IsLiveviewAvailable;
             }
         }
+
+        private bool _IsFocusFrameInfoAvailable = false;
+        public bool IsLiveviewFrameInfoAvailable
+        {
+            set
+            {
+                if (_IsFocusFrameInfoAvailable != value)
+                {
+                    _IsFocusFrameInfoAvailable = value;
+                    NotifyChangedOnUI("IsFocusFrameInfoAvailable");
+                }
+            }
+            get
+            {
+                return _IsFocusFrameInfoAvailable;
+            }
+        }
     }
 }

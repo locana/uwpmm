@@ -27,6 +27,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)Control\AppBarContent.xaml.cs">
       <DependentUpon>AppBarContent.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Control\FocusFrameSurface.xaml.cs">
+      <DependentUpon>FocusFrameSurface.xaml</DependentUpon>
+    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Control\Histogram.xaml.cs">
       <DependentUpon>Histogram.xaml</DependentUpon>
     </Compile>
@@ -54,6 +57,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Utility\ParameterUtil.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\PictureDownloader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\Preference.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utility\ResourceManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\SettingValueConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\StorageUtil.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\SystemUtil.cs" />
@@ -81,6 +85,10 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="$(MSBuildThisFileDirectory)Control\AppBarContent.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Control\FocusFrameSurface.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -209,6 +209,9 @@ namespace Kazyx.Uwpmm.Pages
         async void discovery_ScalarDeviceDiscovered(object sender, SonyCameraDeviceEventArgs e)
         {
             var api = new DeviceApiHolder(e.SonyCameraDevice);
+            api.SupportedApisUpdated += api_SupportedApisUpdated;
+            api.AvailiableApisUpdated += api_AvailiableApisUpdated;
+
             TargetDevice target = null;
             try
             {
@@ -233,7 +236,21 @@ namespace Kazyx.Uwpmm.Pages
                 }
                 screenViewData = new LiveviewScreenViewData(target);
                 Bottom.DataContext = screenViewData;
+                _FocusFrameSurface.ClearFrames();
             });
+        }
+
+        async void api_AvailiableApisUpdated(object sender, AvailableApiEventArgs e)
+        {
+            if (target == null) { return; }
+            if (e.AvailableApis.Contains("setLiveviewFrameInfo"))
+            {
+                await target.Api.Camera.SetLiveviewFrameInfo(new FrameInfoSetting() { TransferFrameInfo = true });
+            }
+        }
+
+        private void api_SupportedApisUpdated(object sender, SupportedApiEventArgs e)
+        {
         }
 
         private void GoToLiveviewScreen()
@@ -243,7 +260,6 @@ namespace Kazyx.Uwpmm.Pages
 
         private void GoToEntranceScreen()
         {
-
             PivotRoot.SelectedIndex = 0;
         }
 
@@ -258,6 +274,14 @@ namespace Kazyx.Uwpmm.Pages
             IsRendering = false;
         }
 
+        async void liveview_FocusFrameRetrieved(object sender, FocusFrameEventArgs e)
+        {
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                _FocusFrameSurface.SetFocusFrames(e.Packet.FocusFrames);
+            });
+        }
+
         void liveview_Closed(object sender, EventArgs e)
         {
             DebugUtil.Log("Liveview connection closed");
@@ -268,6 +292,7 @@ namespace Kazyx.Uwpmm.Pages
             var image = sender as Image;
             image.DataContext = liveview_data;
             liveview.JpegRetrieved += liveview_JpegRetrieved;
+            liveview.FocusFrameRetrieved += liveview_FocusFrameRetrieved;
             liveview.Closed += liveview_Closed;
         }
 
@@ -276,6 +301,7 @@ namespace Kazyx.Uwpmm.Pages
             var image = sender as Image;
             image.DataContext = null;
             liveview.JpegRetrieved -= liveview_JpegRetrieved;
+            liveview.FocusFrameRetrieved -= liveview_FocusFrameRetrieved;
             liveview.Closed -= liveview_Closed;
         }
 
@@ -339,6 +365,14 @@ namespace Kazyx.Uwpmm.Pages
                 }
                 catch (RemoteApi.RemoteApiException) { }
             }
+        }
+
+        private void LiveviewImage_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            var rh = (sender as Image).RenderSize.Height;
+            var rw = (sender as Image).RenderSize.Width;
+            this._FocusFrameSurface.Height = rh;
+            this._FocusFrameSurface.Width = rw;
         }
     }
 }

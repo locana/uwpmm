@@ -106,7 +106,7 @@ namespace Kazyx.Uwpmm.CameraControl
 
         public delegate void SupportedApiEventHandler(object sender, SupportedApiEventArgs e);
 
-        public SupportedApiEventHandler SupportedApisUpdated;
+        public event SupportedApiEventHandler SupportedApisUpdated;
 
         protected void OnSupportedApisUpdated()
         {
@@ -118,7 +118,7 @@ namespace Kazyx.Uwpmm.CameraControl
 
         public delegate void VersionEventHandler(object sender, VersionEventArgs e);
 
-        public VersionEventHandler ServerVersionDetected;
+        public event VersionEventHandler ServerVersionDetected;
 
         protected void OnServerVersionDetected()
         {
@@ -130,7 +130,7 @@ namespace Kazyx.Uwpmm.CameraControl
 
         public delegate void AvailableApiEventHandler(object sender, AvailableApiEventArgs e);
 
-        public AvailableApiEventHandler AvailiableApisUpdated;
+        public event AvailableApiEventHandler AvailiableApisUpdated;
 
         protected void OnAvailableApisUpdated()
         {

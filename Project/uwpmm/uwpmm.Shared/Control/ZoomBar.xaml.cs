@@ -74,7 +74,7 @@ namespace Kazyx.Uwpmm.Control
             {
                 SeparatorLines.Children.Add(new Line()
                 {
-                    Stroke = (Brush)Application.Current.Resources["PhoneForegroundBrush"],
+                    Stroke = (Brush)Application.Current.Resources["ApplicationForegroundThemeBrush"],
                     StrokeThickness = 1,
                     X1 = (this.Background.ActualWidth / this.TotalBoxNum) * i,
                     X2 = (this.Background.ActualWidth / this.TotalBoxNum) * i,
