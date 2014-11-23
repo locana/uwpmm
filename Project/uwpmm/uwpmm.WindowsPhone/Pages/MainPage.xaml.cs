@@ -121,6 +121,59 @@ namespace Kazyx.Uwpmm.Pages
                 if (ControlPanelDisplayed) { StartToHideControlPanel(); }
                 else { StartToShowControlPanel(); }
             });
+
+            PivotRoot.SelectionChanged += PivotRoot_SelectionChanged;
+
+            Windows.Phone.UI.Input.HardwareButtons.BackPressed += HardwareButtons_BackPressed;
+            Windows.Phone.UI.Input.HardwareButtons.CameraHalfPressed += async (_sender, arg) =>
+            {
+                if (target == null || target.Api == null || !target.Api.Capability.IsAvailable("actHalfPressShutter")) { return; }
+                await target.Api.Camera.ActHalfPressShutterAsync();
+            };
+            Windows.Phone.UI.Input.HardwareButtons.CameraReleased += async (_sender, arg) =>
+            {
+                if (target == null || target.Api == null || !target.Api.Capability.IsAvailable("cancelHalfPressShutter")) { return; }
+                await target.Api.Camera.CancelHalfPressShutterAsync();
+            };
+            Windows.Phone.UI.Input.HardwareButtons.CameraPressed += (_sender, arg) =>
+            {
+                ShutterButtonPressed();
+            };
+        }
+
+        async void PivotRoot_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            switch ((sender as Pivot).SelectedIndex)
+            {
+                case 0:
+                    if (target != null)
+                    {
+                        await SequentialOperation.CloseLiveviewStream(target.Api, liveview);
+                        target.Observer.Stop();
+                    }
+                    break;
+                case 1:
+                    this.BottomAppBar = _CommandBarManager.Enable(CommandBarManager.AppBarItemType.Primary, CommandBarManager.AppBarItem.ControlPanel).CreateNew(0.6);
+                    break;
+            }
+        }
+
+        void HardwareButtons_BackPressed(object sender, Windows.Phone.UI.Input.BackPressedEventArgs e)
+        {
+            if (PivotRoot.SelectedIndex == 0)
+            {
+                return;
+            }
+
+            if (ControlPanelDisplayed)
+            {
+                StartToHideControlPanel();
+                e.Handled = true;
+                return;
+            }
+
+            GoToEntranceScreen();
+            e.Handled = true;
         }
 
         private void StartToShowControlPanel()
@@ -181,13 +234,17 @@ namespace Kazyx.Uwpmm.Pages
                 screenViewData = new LiveviewScreenViewData(target);
                 Bottom.DataContext = screenViewData;
             });
-
         }
 
         private void GoToLiveviewScreen()
         {
             PivotRoot.SelectedIndex = 1;
-            this.BottomAppBar = _CommandBarManager.Enable(CommandBarManager.AppBarItemType.Primary, CommandBarManager.AppBarItem.ControlPanel).CreateNew(0.6);
+        }
+
+        private void GoToEntranceScreen()
+        {
+
+            PivotRoot.SelectedIndex = 0;
         }
 
         private bool IsRendering = false;
@@ -273,13 +330,15 @@ namespace Kazyx.Uwpmm.Pages
 
         async void ShutterButtonPressed()
         {
-            if (target.Status.ShootMode == null) { return; }
+            if (target == null || target.Status.ShootMode == null) { return; }
             if (target.Status.ShootMode.Current == ShootModeParam.Still)
             {
-                await target.Api.Camera.ActTakePictureAsync();
+                try
+                {
+                    await target.Api.Camera.ActTakePictureAsync();
+                }
+                catch (RemoteApi.RemoteApiException) { }
             }
         }
-
-
     }
 }
