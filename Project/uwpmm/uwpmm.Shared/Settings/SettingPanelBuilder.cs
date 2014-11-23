@@ -236,7 +236,7 @@ namespace Kazyx.Uwpmm.Settings
         {
             var box = new ComboBox
             {
-                Margin = new Thickness(4, 0, 0, 0),
+                Margin = new Thickness(8, 0, 6, 0),
                 BorderThickness = new Thickness(1),
             };
             box.SetBinding(ComboBox.IsEnabledProperty, new Binding

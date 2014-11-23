@@ -49,7 +49,7 @@
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="auto"/>
                             </Grid.ColumnDefinitions>
-                            <Button Name="ShutterButton" Grid.RowSpan="2" Grid.Column="2" MinWidth="10" Width="80" Height="70" HorizontalAlignment="Stretch" 
+                            <Button Name="ShutterButton" Grid.RowSpan="2" Grid.Column="2" MinWidth="10" Width="80" Height="80" HorizontalAlignment="Stretch" 
                                     VerticalAlignment="Bottom" BorderThickness="1" Click="ShutterButton_Click" ManipulationStarted="ShutterButton_ManipulationStarted"
                                     IsEnabled="{Binding ShutterButtonEnabled}" Background="Black" Opacity="0.8" >
                                 <Image Source="{Binding ShutterButtonImage}" Margin="8"/>
@@ -73,7 +73,7 @@
                             </Grid>
                         </Grid>
                         <ScrollViewer Name="ControlPanelScrollViewer" Margin="28,0,0,0" Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Right" Width="200"
-                        Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Opacity="0.7" >
+                        Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Opacity="0.8" >
                             <ScrollViewer.RenderTransform>
                                 <TranslateTransform x:Name="SlideTransform" X="200"/>
                             </ScrollViewer.RenderTransform>
@@ -83,7 +83,7 @@
                                     <DoubleAnimationUsingKeyFrames>
                                         <EasingDoubleKeyFrame KeyTime="00:00:0.00" Value="0.0"/>
                                         <EasingDoubleKeyFrame KeyTime="00:00:0.02" Value="0.2"/>
-                                        <EasingDoubleKeyFrame KeyTime="00:00:0.10" Value="0.7"/>
+                                        <EasingDoubleKeyFrame KeyTime="00:00:0.10" Value="0.8"/>
                                     </DoubleAnimationUsingKeyFrames>
                                 </Storyboard>
                                 <Storyboard x:Name="SlideInControlPanel" >
@@ -97,7 +97,7 @@
                                 <Storyboard x:Name="HideControlPanelStoryBoard" Storyboard.TargetName="ControlPanelScrollViewer" Storyboard.TargetProperty="Opacity"
                                             Completed="HideControlPanelStoryBoard_Completed">
                                     <DoubleAnimationUsingKeyFrames>
-                                        <EasingDoubleKeyFrame KeyTime="00:00:0.00" Value="0.7"/>
+                                        <EasingDoubleKeyFrame KeyTime="00:00:0.00" Value="0.8"/>
                                         <EasingDoubleKeyFrame KeyTime="00:00:0.03" Value="0.6"/>
                                         <EasingDoubleKeyFrame KeyTime="00:00:0.12" Value="0.0"/>
                                     </DoubleAnimationUsingKeyFrames>
