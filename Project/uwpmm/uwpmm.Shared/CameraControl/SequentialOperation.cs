@@ -10,7 +10,7 @@ namespace Kazyx.Uwpmm.CameraControl
 {
     public class SequentialOperation
     {
-        public static async Task<TargetDevice> SetUp(DeviceApiHolder api, StreamProcessor liveview)
+        public static async Task<TargetDevice> SetUp(string udn, DeviceApiHolder api, StreamProcessor liveview)
         {
             DebugUtil.Log("Set up control");
             try
@@ -43,7 +43,7 @@ namespace Kazyx.Uwpmm.CameraControl
                     catch (RemoteApiException) { }
                 }
 
-                var target = new TargetDevice(api);
+                var target = new TargetDevice(udn, api);
                 await target.Observer.Start();
                 return target;
             }

@@ -122,7 +122,7 @@ namespace Kazyx.Uwpmm.Pages
             TargetDevice target = null;
             try
             {
-                target = await SequentialOperation.SetUp(api, liveview);
+                target = await SequentialOperation.SetUp(e.SonyCameraDevice.UDN, api, liveview);
             }
             catch (Exception ex)
             {

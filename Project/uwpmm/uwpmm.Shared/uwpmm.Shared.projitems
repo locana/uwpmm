@@ -37,6 +37,7 @@
       <DependentUpon>ZoomBar.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)DataModel\ApiCapabilityContainer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DataModel\AsyncConversionSource.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataModel\CameraStatus.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataModel\ContentPlaybackData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataModel\ControlPanelDataSource.cs" />
@@ -61,6 +62,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Utility\SettingValueConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\StorageUtil.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\SystemUtil.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utility\ThumbnailImageConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\ThumbnailCacheLoader.cs" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\AppBar\appbar_cameraSetting.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\AppBar\feature.settings.png" />

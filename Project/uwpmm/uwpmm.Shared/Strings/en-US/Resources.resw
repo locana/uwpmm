@@ -1034,4 +1034,7 @@ Please update to the latest at PlayMemories Camera Apps store.</value>
   <data name="AppInfo" xml:space="preserve">
     <value>Application info</value>
   </data>
+  <data name="Viewer_StoragePhone" xml:space="preserve">
+    <value>Phone storage</value>
+  </data>
 </root>

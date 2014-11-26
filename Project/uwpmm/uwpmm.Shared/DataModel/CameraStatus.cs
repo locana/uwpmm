@@ -245,8 +245,8 @@ namespace Kazyx.Uwpmm.DataModel
             get { return _EvInfo; }
         }
 
-        private StorageInfo[] _Storages;
-        public StorageInfo[] Storages
+        private List<StorageInfo> _Storages;
+        public List<StorageInfo> Storages
         {
             set
             {
@@ -347,5 +347,224 @@ namespace Kazyx.Uwpmm.DataModel
                 return _IsFocusFrameInfoAvailable;
             }
         }
+
+        public AutoFocusType AfType { get; set; }
+
+        private Capability<string> _ZoomSetting;
+        public Capability<string> ZoomSetting
+        {
+            set
+            {
+                _ZoomSetting = value;
+                NotifyChangedOnUI("ZoomSetting");
+            }
+            get { return _ZoomSetting; }
+        }
+
+        private Capability<string> _StillQuality;
+        public Capability<string> StillQuality
+        {
+            set
+            {
+                _StillQuality = value;
+                NotifyChangedOnUI("StillQuality");
+            }
+            get { return _StillQuality; }
+        }
+
+        private Capability<string> _ContShootingMode;
+        public Capability<string> ContShootingMode
+        {
+            set
+            {
+                _ContShootingMode = value;
+                NotifyChangedOnUI("ContShootingMode");
+            }
+            get { return _ContShootingMode; }
+        }
+
+        private Capability<string> _ContShootingSpeed;
+        public Capability<string> ContShootingSpeed
+        {
+            set
+            {
+                _ContShootingSpeed = value;
+                NotifyChangedOnUI("ContShootingSpeed");
+            }
+            get { return _ContShootingSpeed; }
+        }
+
+        private List<ContShootingResult> _ContShootingResult;
+        public List<ContShootingResult> ContShootingResult
+        {
+            set
+            {
+                _ContShootingResult = value;
+                NotifyChangedOnUI("ContShootingResult");
+            }
+            get { return _ContShootingResult; }
+        }
+
+        private Capability<string> _FlipMode;
+        public Capability<string> FlipMode
+        {
+            set
+            {
+                _FlipMode = value;
+                NotifyChangedOnUI("FlipMode");
+            }
+            get { return _FlipMode; }
+        }
+
+        private Capability<string> _SceneSelection;
+        public Capability<string> SceneSelection
+        {
+            set
+            {
+                _SceneSelection = value;
+                NotifyChangedOnUI("SceneSelection");
+            }
+            get { return _SceneSelection; }
+        }
+
+        private Capability<string> _IntervalTime;
+        public Capability<string> IntervalTime
+        {
+            set
+            {
+                _IntervalTime = value;
+                NotifyChangedOnUI("IntervalTime");
+            }
+            get { return _IntervalTime; }
+        }
+
+        private Capability<string> _ColorSetting;
+        public Capability<string> ColorSetting
+        {
+            set
+            {
+                _ColorSetting = value;
+                NotifyChangedOnUI("ColorSetting");
+            }
+            get { return _ColorSetting; }
+        }
+
+        private Capability<string> _MovieFormat;
+        public Capability<string> MovieFormat
+        {
+            set
+            {
+                _MovieFormat = value;
+                NotifyChangedOnUI("MovieFormat");
+            }
+            get { return _MovieFormat; }
+        }
+
+        private Capability<string> _InfraredRemoteControl;
+        public Capability<string> InfraredRemoteControl
+        {
+            set
+            {
+                _InfraredRemoteControl = value;
+                NotifyChangedOnUI("InfraredRemoteControl");
+            }
+            get { return _InfraredRemoteControl; }
+        }
+
+        private Capability<string> _TvColorSystem;
+        public Capability<string> TvColorSystem
+        {
+            set
+            {
+                _TvColorSystem = value;
+                NotifyChangedOnUI("TvColorSystem");
+            }
+            get { return _TvColorSystem; }
+        }
+
+        private string _TrackingFocusStatus;
+        public string TrackingFocusStatus
+        {
+            set
+            {
+                _TrackingFocusStatus = value;
+                NotifyChangedOnUI("TrackingFocusStatus");
+            }
+            get { return _TrackingFocusStatus; }
+        }
+
+        private Capability<string> _TrackingFocus;
+        public Capability<string> TrackingFocus
+        {
+            set
+            {
+                _TrackingFocus = value;
+                NotifyChangedOnUI("TrackingFocus");
+            }
+            get { return _TrackingFocus; }
+        }
+
+        private List<BatteryInfo> _BatteryInfo;
+        public List<BatteryInfo> BatteryInfo
+        {
+            set
+            {
+                _BatteryInfo = value;
+                NotifyChangedOnUI("BatteryInfo");
+            }
+            get { return _BatteryInfo; }
+        }
+
+        private int _RecordingTimeSec;
+        public int RecordingTimeSec
+        {
+            set
+            {
+                _RecordingTimeSec = value;
+                NotifyChangedOnUI("RecordingTimeSec");
+            }
+            get { return _RecordingTimeSec; }
+        }
+
+        private int _NumberOfShots;
+        public int NumberOfShots
+        {
+            set
+            {
+                _NumberOfShots = value;
+                NotifyChangedOnUI("NumberOfShots");
+            }
+            get { return _NumberOfShots; }
+        }
+
+        private Capability<int> _AutoPowerOff;
+        public Capability<int> AutoPowerOff
+        {
+            set
+            {
+                _AutoPowerOff = value;
+                NotifyChangedOnUI("AutoPowerOff");
+            }
+            get { return _AutoPowerOff; }
+        }
+
+        private bool _StorageAccessSupported = false;
+        public bool StorageAccessSupported
+        {
+            set
+            {
+                _StorageAccessSupported = value;
+                NotifyChangedOnUI("StorageAccessSupported");
+                NotifyChangedOnUI("StorageAccessVisibility");
+            }
+            get { return _StorageAccessSupported; }
+        }
+    }
+
+    public enum AutoFocusType
+    {
+        None,
+        HalfPress,
+        Touch,
     }
 }

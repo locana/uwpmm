@@ -1,5 +1,6 @@
 ﻿using Kazyx.DeviceDiscovery;
 using Kazyx.RemoteApi;
+using Kazyx.RemoteApi.AvContent;
 using Kazyx.RemoteApi.Camera;
 using Kazyx.RemoteApi.System;
 using Kazyx.Uwpmm.DataModel;
@@ -17,11 +18,11 @@ namespace Kazyx.Uwpmm.CameraControl
 
         public string FriendlyName { private set; get; }
 
-        private readonly CameraApiClient _Camera;
-        public CameraApiClient Camera { get { return _Camera; } }
+        public CameraApiClient Camera { private set; get; }
 
-        private readonly SystemApiClient _System;
-        public SystemApiClient System { get { return _System; } }
+        public SystemApiClient System { private set; get; }
+
+        public AvContentApiClient AvContent { private set; get; }
 
         public DeviceApiHolder(SonyCameraDeviceInfo info)
         {
@@ -31,11 +32,27 @@ namespace Kazyx.Uwpmm.CameraControl
 
             if (info.Endpoints.ContainsKey("camera"))
             {
-                _Camera = new CameraApiClient(new Uri(info.Endpoints["camera"]));
+                try
+                {
+                    Camera = new CameraApiClient(new Uri(info.Endpoints["camera"]));
+                }
+                catch { };
             }
             if (info.Endpoints.ContainsKey("system"))
             {
-                _System = new SystemApiClient(new Uri(info.Endpoints["system"]));
+                try
+                {
+                    System = new SystemApiClient(new Uri(info.Endpoints["system"]));
+                }
+                catch { };
+            }
+            if (info.Endpoints.ContainsKey("avContent"))
+            {
+                try
+                {
+                    AvContent = new AvContentApiClient(new Uri(info.Endpoints["avContent"]));
+                }
+                catch { };
             }
 
             if (FriendlyName == "DSC-QX10")

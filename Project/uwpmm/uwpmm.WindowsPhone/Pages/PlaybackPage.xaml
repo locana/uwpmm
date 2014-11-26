@@ -1,0 +1,190 @@
+﻿<Page
+    x:Class="Kazyx.Uwpmm.Pages.PlaybackPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Kazyx.Uwpmm.Pages"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:util="using:Kazyx.Uwpmm.Utility"
+    xmlns:control="using:Kazyx.Uwpmm.Control"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Page.Resources>
+        <!--
+        <util:ThumbnailImageConverter x:Key="ThumbnailConverter" />
+        <DataTemplate x:Key="ItemTemplate">
+            <Grid Height="108" Width="108" Margin="6,6">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="48"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="48"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="48"/>
+                </Grid.RowDefinitions>
+                <Grid.Background>
+                    <SolidColorBrush Color="{StaticResource PhoneChromeColor}"/>
+                </Grid.Background>
+                <Image Grid.ColumnSpan="3" Grid.RowSpan="2" x:Name="ThumbnailImage" Width="108" Height="108" Stretch="Uniform" Tapped="RemoteThumbnail_Tap" 
+                       DataContext="{Binding Path=CachePath, Converter={StaticResource ThumbnailConverter}}">
+                    <Image.Source>
+                        <Binding Path="Result"/>
+                    </Image.Source>
+                </Image>
+                <Image Grid.Row="1" Grid.Column="0" Source="/Assets/Screen/protected.png" Visibility="{Binding ProtectedIconVisibility, Mode=OneTime}" IsHitTestVisible="False" CacheMode="BitmapCache" Margin="0,0,20,20"/>
+                <Image Grid.Row="1" Grid.Column="2" Source="/Assets/Screen/mode_movie.png" Visibility="{Binding MovieIconVisibility, Mode=OneTime}" IsHitTestVisible="False" CacheMode="BitmapCache" Margin="0,0,20,20"/>
+                <Border Grid.RowSpan="2" Grid.ColumnSpan="3" Visibility="{Binding UnselectableMaskVisibility, FallbackValue=Collapsed}">
+                    <Border.Background>
+                        <SolidColorBrush Color="{StaticResource PhoneSemitransparentColor}"/>
+                    </Border.Background>
+                </Border>
+                <FlyoutBase.AttachedFlyout>
+                    <MenuFlyout>
+                        <MenuFlyoutItem Text="{Binding [Viewer_MenuPlayback], Source={StaticResource LocalizedStrings}}" Click="Playback_Click" />
+                        <MenuFlyoutItem Text="{Binding [Viewer_MenuCopyToPhone], Source={StaticResource LocalizedStrings}}" Click="CopyToPhone_Click" Visibility="{Binding CopyToPhoneVisibility}"/>
+                        <MenuFlyoutItem Text="{Binding [Viewer_MenuDelete], Source={StaticResource LocalizedStrings}}" Click="Delete_Click" Visibility="{Binding DeleteMenuVisiblity}" />
+                    </MenuFlyout>
+                </FlyoutBase.AttachedFlyout>
+            </Grid>
+        </DataTemplate>
+        -->
+
+        <DataTemplate x:Key="LocalItemTemplate">
+            <StackPanel Height="108" Width="108" Margin="6,6">
+                <Image x:Name="ThumbnailImage" Width="108" Height="108"
+                       Stretch="UniformToFill"
+                       Source="{Binding RowImage, Mode=OneWay}" Tapped="ThumbnailImage_Tapped" />
+            </StackPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="HeaderTemplate">
+            <TextBlock Text="{Binding Path=Key}" Style="{StaticResource GroupHeaderTextBlockStyle}"/>
+        </DataTemplate>
+
+        <!--
+        <phone:JumpListItemBackgroundConverter x:Key="BackgroundConverter"/>
+        <phone:JumpListItemForegroundConverter x:Key="ForegroundConverter"/>
+        <Style x:Key="DateGroupJumpListStyle" TargetType="phone:LongListSelector">
+            <Setter Property="LayoutMode" Value="List"/>
+            <Setter Property="ItemTemplate" >
+                <Setter.Value>
+                    <DataTemplate>
+                        <Border Background="{Binding Converter={StaticResource BackgroundConverter}}" Margin="20,6" >
+                            <TextBlock Text="{Binding Key}" FontFamily="{StaticResource PhoneFontFamilySemiBold}"  Style="{StaticResource PhoneTextGroupHeaderStyle}" Padding="20,0" 
+               Foreground="{Binding Converter={StaticResource ForegroundConverter}}" VerticalAlignment="Bottom"/>
+                        </Border>
+                    </DataTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        -->
+
+        <Storyboard x:Name="ShowTitleBlockAnimation">
+            <DoubleAnimation Duration="0:0:0.5" From="0.0" To="0.9" Storyboard.TargetProperty="Opacity" Storyboard.TargetName="TitleBlock" />
+        </Storyboard>
+        <Storyboard x:Name="HideTitleBlockAnimation">
+            <DoubleAnimation Duration="0:0:0.5" From="109" To="0" Storyboard.TargetProperty="Height" Storyboard.TargetName="TitleBlock" />
+        </Storyboard>
+        <Storyboard x:Name="ShowSettingAnimation">
+            <DoubleAnimation Duration="0:0:0.1" From="0.0" To="0.9" Storyboard.TargetProperty="Opacity" Storyboard.TargetName="AppSettings" />
+        </Storyboard>
+        <Storyboard x:Name="HideSettingAnimation">
+            <DoubleAnimation Duration="0:0:0.1" From="0.9" To="0.0" Storyboard.TargetProperty="Opacity" Storyboard.TargetName="AppSettings" />
+        </Storyboard>
+    </Page.Resources>
+
+    <Grid x:Name="LayoutRoot">
+        <Grid.Resources>
+            <Storyboard x:Name="ToastApparance" Completed="ToastApparance_Completed">
+                <DoubleAnimation Storyboard.TargetName="Toast"
+                                             Storyboard.TargetProperty="Opacity" From="0.0" To="1.0" 
+                                             Duration="0:0:0.2" AutoReverse="False" />
+            </Storyboard>
+            <Storyboard x:Name="ToastDisApparance">
+                <DoubleAnimation Storyboard.TargetName="Toast"
+                                             Storyboard.TargetProperty="Opacity" From="1.0" To="0.0" 
+                                             Duration="0:0:0.2" AutoReverse="False" />
+            </Storyboard>
+        </Grid.Resources>
+
+        <Pivot x:Name="PivotRoot" SelectionChanged="Pivot_SelectionChanged" Loaded="PivotRoot_Loaded">
+            <PivotItem Margin="0,14,0,0">
+                <PivotItem.Header>
+                    <TextBlock Text="{Binding [Viewer_StoragePhone], Source={StaticResource LocalizedStrings}}" Margin="0,8,0,0" Style="{StaticResource SubheaderTextBlockStyle}" FontWeight="Bold"/>
+                </PivotItem.Header>
+                <!--
+                <phone:LongListSelector
+                    Name="LocalImageGrid"
+                    Margin="0"
+                    IsGroupingEnabled="False"
+                    LayoutMode="Grid"
+                    GridCellSize="112,112"
+                    ManipulationStarted="LocalImageGrid_ManipulationStarted"
+                    ItemsSource="{Binding Group, Mode=OneWay}"
+                    ItemTemplate="{StaticResource LocalItemTemplate}" >
+                </phone:LongListSelector>
+                -->
+            </PivotItem>
+
+            <PivotItem x:Name="RemotePivot" Margin="0,14,0,0">
+                <PivotItem.Header>
+                    <TextBlock x:Name="TitleBlock" Text="{Binding [Viewer_StorageCamera], Source={StaticResource LocalizedStrings}}" Margin="0,8,0,0" Style="{StaticResource SubheaderTextBlockStyle}" FontWeight="Bold"/>
+                </PivotItem.Header>
+                <Grid>
+                    <TextBlock x:Name="UnsupportedMessage" Text="{Binding [Viewer_StorageAccessNotSupportedDetail], Source={StaticResource LocalizedStrings}}" TextWrapping="Wrap" VerticalAlignment="Center" Margin="36,0" Style="{StaticResource SubheaderTextBlockStyle}"/>
+                    <!--
+                    <toolkit:LongListMultiSelector
+                        Name="RemoteImageGrid"
+                        Margin="0"
+                        IsSelectionEnabled="False"
+                        IsGroupingEnabled="True"
+                        GroupHeaderTemplate="{StaticResource HeaderTemplate}"
+                        LayoutMode="Grid"
+                        GridCellSize="112,112"
+                        ItemTemplate="{StaticResource ItemTemplate}"
+                        JumpListStyle="{StaticResource DateGroupJumpListStyle}"
+                        Loaded="ImageGrid_Loaded"
+                        Unloaded="ImageGrid_Unloaded"
+                        SelectionChanged="ImageGrid_SelectionChanged"
+                        ItemRealized="ImageGrid_ItemRealized"
+                        IsSelectionEnabledChanged="RemoteImageGrid_IsSelectionEnabledChanged" >
+                    </toolkit:LongListMultiSelector>
+                    -->
+                </Grid>
+            </PivotItem>
+        </Pivot>
+        <Border x:Name="HeaderBlocker" Height="74" VerticalAlignment="Top" Visibility="Collapsed">
+            <Border.Background>
+                <SolidColorBrush Color="{StaticResource PhoneBackgroundColor}"/>
+            </Border.Background>
+            <TextBlock x:Name="HeaderBlockerText" VerticalAlignment="Center" Style="{StaticResource SubheaderTextBlockStyle}" />
+        </Border>
+
+        <!-- Comment out until PlaybackScreen controls are ported.
+        <control:PhotoPlaybackScreen Name="PhotoPlaybackScreen" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0" SourceBitmap="{Binding Image}"
+                                          ManipulationStarted="viewport_ManipulationStarted" ManipulationDelta="viewport_ManipulationDelta" ManipulationCompleted="viewport_ManipulationCompleted" />
+        <Border x:Name="MovieDrawer" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="Collapsed">
+            <Border.Background>
+                <SolidColorBrush Color="{StaticResource PhoneSemitransparentColor}"/>
+            </Border.Background>
+            <control:MoviePlaybackScreen Name="MoviePlaybackScreen" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="12" CurrentPosition="{Binding CurrentPosition}" Duration="{Binding Duration}"/>
+        </Border>
+        -->
+
+        <Grid Name="AppSettingPanel" Visibility="Collapsed" >
+            <Grid.Background>
+                <SolidColorBrush Color="{StaticResource PhoneBackgroundColor}"/>
+            </Grid.Background>
+            <ScrollViewer >
+                <StackPanel Name="AppSettings" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="-12,0,0,0" >
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
+
+        <Grid Name="Toast" Opacity="0.0" Visibility="Visible" Height="auto" HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="-15,0" Background="{StaticResource PhoneAccentBrush}">
+            <TextBlock HorizontalAlignment="Center" Grid.Row="0" TextWrapping="Wrap" Padding="5,5" Height="auto" Foreground="{StaticResource PhoneForegroundBrush}" VerticalAlignment="Center" Name="ToastMessage" Margin="15,0"/>
+        </Grid>
+    </Grid>
+</Page>
