@@ -36,6 +36,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)Control\FocusFrameSurface.xaml.cs">
       <DependentUpon>FocusFrameSurface.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Control\FramingGridsSurface.xaml.cs">
+      <DependentUpon>FramingGridsSurface.xaml</DependentUpon>
+    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Control\Histogram.xaml.cs">
       <DependentUpon>Histogram.xaml</DependentUpon>
     </Compile>
@@ -65,6 +68,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)DataModel\RemoteThumbnailData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)LocalizedStrings.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Settings\SettingPanelBuilder.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utility\ApplicationSettingNames.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\BoolToVisibilityConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\DebugUtil.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\DummyContentsGenerator.cs" />
@@ -115,6 +119,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="$(MSBuildThisFileDirectory)Control\FocusFrameSurface.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Control\FramingGridsSurface.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
