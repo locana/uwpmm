@@ -27,6 +27,12 @@
     <Compile Include="$(MSBuildThisFileDirectory)Control\AppBarContent.xaml.cs">
       <DependentUpon>AppBarContent.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Control\CheckBoxSetting.xaml.cs">
+      <DependentUpon>CheckBoxSetting.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Control\ComboBoxSetting.xaml.cs">
+      <DependentUpon>ComboBoxSetting.xaml</DependentUpon>
+    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Control\FocusFrameSurface.xaml.cs">
       <DependentUpon>FocusFrameSurface.xaml</DependentUpon>
     </Compile>
@@ -39,10 +45,14 @@
     <Compile Include="$(MSBuildThisFileDirectory)Control\PhotoPlaybackScreen.xaml.cs">
       <DependentUpon>PhotoPlaybackScreen.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Control\SettingSection.xaml.cs">
+      <DependentUpon>SettingSection.xaml</DependentUpon>
+    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Control\ZoomBar.xaml.cs">
       <DependentUpon>ZoomBar.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)DataModel\ApiCapabilityContainer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DataModel\AppSettingData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataModel\AsyncConversionSource.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataModel\CameraStatus.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataModel\ContentPlaybackData.cs" />
@@ -96,6 +106,14 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Control\CheckBoxSetting.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Control\ComboBoxSetting.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="$(MSBuildThisFileDirectory)Control\FocusFrameSurface.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -109,6 +127,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="$(MSBuildThisFileDirectory)Control\PhotoPlaybackScreen.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Control\SettingSection.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
