@@ -33,6 +33,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)Control\Histogram.xaml.cs">
       <DependentUpon>Histogram.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Control\MoviePlaybackScreen.xaml.cs">
+      <DependentUpon>MoviePlaybackScreen.xaml</DependentUpon>
+    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Control\PhotoPlaybackScreen.xaml.cs">
       <DependentUpon>PhotoPlaybackScreen.xaml</DependentUpon>
     </Compile>
@@ -98,6 +101,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="$(MSBuildThisFileDirectory)Control\Histogram.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Control\MoviePlaybackScreen.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
