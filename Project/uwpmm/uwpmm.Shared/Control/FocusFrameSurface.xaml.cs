@@ -15,7 +15,6 @@ namespace Kazyx.Uwpmm.Control
         public FocusFrameSurface()
         {
             this.InitializeComponent();
-            FocusedBrush = ResourceManager.AccentColorBrush;
         }
 
         public void ClearFrames()
@@ -23,7 +22,7 @@ namespace Kazyx.Uwpmm.Control
             this.LayoutRoot.Children.Clear();
         }
 
-        Brush FocusedBrush;
+        Brush FocusedBrush = ResourceManager.AccentColorBrush;
         Brush NormalBrush = (Brush)Application.Current.Resources["ApplicationPageBackgroundThemeBrush"];
         Brush MainBrush = (Brush)Application.Current.Resources["ApplicationForegroundThemeBrush"];
         Brush SubBrush = (Brush)Application.Current.Resources["ApplicationPageBackgroundThemeBrush"];

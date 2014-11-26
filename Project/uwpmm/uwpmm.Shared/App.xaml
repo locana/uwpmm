@@ -5,5 +5,10 @@
     xmlns:local="using:Kazyx.Uwpmm">
     <Application.Resources>
         <local:LocalizedStrings x:Key="LocalizedStrings" />
+
+        <!--For PhotoPlaybackScreem.xaml-->
+        <DataTemplate x:Key="DetailInfoTemplate">
+            <TextBlock Grid.Row="1" Text="{Binding}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="26,3,0,3" TextWrapping="Wrap" />
+        </DataTemplate>
     </Application.Resources>
 </Application>
