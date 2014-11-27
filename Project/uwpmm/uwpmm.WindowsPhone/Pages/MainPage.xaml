@@ -26,7 +26,7 @@
 
         <Grid Grid.Row="1" x:Name="ContentRoot" Margin="0">
             <Pivot Name="PivotRoot">
-                <PivotItem Name="Entrance">
+                <PivotItem Name="Entrance" Loaded="Entrance_Loaded">
                     <Grid Name="EntrancePage">
                         <StackPanel>
                             <TextBlock Text="MY APPLICATION" Style="{ThemeResource TitleTextBlockStyle}" Margin="0,0,0,30"/>

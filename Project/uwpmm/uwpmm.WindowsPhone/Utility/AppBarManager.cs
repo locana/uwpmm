@@ -18,6 +18,9 @@ namespace Kazyx.Uwpmm.Utility
 
         readonly AppBarButton CameraSettingButton = new AppBarButton() { Icon = new BitmapIcon() { UriSource = new Uri("ms-appx:///Assets/AppBar/appbar_cameraSetting.png", UriKind.Absolute) }, Label = "Camera settings" };
         readonly AppBarButton AppSettingButton = new AppBarButton() { Icon = new BitmapIcon() { UriSource = new Uri("ms-appx:///Assets/AppBar/feature.settings.png", UriKind.Absolute) }, Label = "Application settings" };
+        readonly AppBarButton AboutPageButton = new AppBarButton() { Label = "About this application" };
+        readonly AppBarButton LoggerPageButton = new AppBarButton() { Label = "Logger" };
+        readonly AppBarButton PlaybackPageButton = new AppBarButton() { Label = "Playback mode" };
 
         readonly Dictionary<AppBarItem, AppBarButton> AppBarItems = new Dictionary<AppBarItem, AppBarButton>();
         readonly Dictionary<AppBarItemType, SortedSet<AppBarItem>> EnabledItems = new Dictionary<AppBarItemType, SortedSet<AppBarItem>>();
@@ -28,6 +31,9 @@ namespace Kazyx.Uwpmm.Utility
             EnabledItems.Add(AppBarItemType.Secondary, new SortedSet<AppBarItem>());
             AppBarItems.Add(AppBarItem.ControlPanel, CameraSettingButton);
             AppBarItems.Add(AppBarItem.AppSetting, AppSettingButton);
+            AppBarItems.Add(AppBarItem.AboutPage, AboutPageButton);
+            AppBarItems.Add(AppBarItem.LoggerPage, LoggerPageButton);
+            AppBarItems.Add(AppBarItem.PlaybackPage, PlaybackPageButton);
         }
 
         public CommandBarManager SetEvent(AppBarItem item, Windows.UI.Xaml.RoutedEventHandler handler)
@@ -36,7 +42,26 @@ namespace Kazyx.Uwpmm.Utility
             return this;
         }
 
-        public CommandBarManager Enable(AppBarItemType type, AppBarItem item)
+        public CommandBarManager Clear()
+        {
+            foreach (var items in EnabledItems)
+            {
+                items.Value.Clear();
+            }
+            return this;
+        }
+
+        public CommandBarManager Icon(AppBarItem item)
+        {
+            return Enable(AppBarItemType.Primary, item);
+        }
+
+        public CommandBarManager NoIcon(AppBarItem item)
+        {
+            return Enable(AppBarItemType.Secondary, item);
+        }
+
+        private CommandBarManager Enable(AppBarItemType type, AppBarItem item)
         {
             if (!EnabledItems[type].Contains(item))
             {
@@ -76,17 +101,20 @@ namespace Kazyx.Uwpmm.Utility
         {
             return EnabledItems[type].Contains(item);
         }
+    }
 
-        public enum AppBarItemType
-        {
-            Primary,
-            Secondary,
-        }
+    public enum AppBarItemType
+    {
+        Primary,
+        Secondary,
+    }
 
-        public enum AppBarItem
-        {
-            ControlPanel,
-            AppSetting,
-        }
+    public enum AppBarItem
+    {
+        ControlPanel,
+        AppSetting,
+        AboutPage,
+        PlaybackPage,
+        LoggerPage,
     }
 }

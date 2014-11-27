@@ -116,10 +116,22 @@ namespace Kazyx.Uwpmm.Pages
             discovery.SonyCameraDeviceDiscovered += discovery_ScalarDeviceDiscovered;
             discovery.SearchSonyCameraDevices();
 
-            _CommandBarManager.SetEvent(CommandBarManager.AppBarItem.ControlPanel, (s, args) =>
+            _CommandBarManager.SetEvent(AppBarItem.ControlPanel, (s, args) =>
             {
                 if (ControlPanelDisplayed) { StartToHideControlPanel(); }
                 else { StartToShowControlPanel(); }
+            });
+            _CommandBarManager.SetEvent(AppBarItem.AboutPage, (s, args) =>
+            {
+                Frame.Navigate(typeof(AboutPage));
+            });
+            _CommandBarManager.SetEvent(AppBarItem.LoggerPage, (s, args) =>
+            {
+                Frame.Navigate(typeof(LogViewerPage));
+            });
+            _CommandBarManager.SetEvent(AppBarItem.PlaybackPage, (s, args) =>
+            {
+                Frame.Navigate(typeof(PlaybackPage));
             });
 
             PivotRoot.SelectionChanged += PivotRoot_SelectionChanged;
@@ -141,11 +153,18 @@ namespace Kazyx.Uwpmm.Pages
             };
         }
 
+        private void CreateEntranceAppBar()
+        {
+            this.BottomAppBar = _CommandBarManager.Clear().NoIcon(AppBarItem.AboutPage).NoIcon(AppBarItem.PlaybackPage).NoIcon(AppBarItem.LoggerPage)
+                .CreateNew(0.6);
+        }
+
         async void PivotRoot_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             switch ((sender as Pivot).SelectedIndex)
             {
                 case 0:
+                    CreateEntranceAppBar();
                     if (target != null)
                     {
                         await SequentialOperation.CloseLiveviewStream(target.Api, liveview);
@@ -153,9 +172,14 @@ namespace Kazyx.Uwpmm.Pages
                     }
                     break;
                 case 1:
-                    this.BottomAppBar = _CommandBarManager.Enable(CommandBarManager.AppBarItemType.Primary, CommandBarManager.AppBarItem.ControlPanel).CreateNew(0.6);
+                    this.BottomAppBar = _CommandBarManager.Clear().Icon(AppBarItem.ControlPanel).CreateNew(0.6);
                     break;
             }
+        }
+
+        private void Entrance_Loaded(object sender, RoutedEventArgs e)
+        {
+            CreateEntranceAppBar();
         }
 
         void HardwareButtons_BackPressed(object sender, Windows.Phone.UI.Input.BackPressedEventArgs e)
