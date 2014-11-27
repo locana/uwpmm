@@ -149,7 +149,7 @@ namespace Kazyx.Uwpmm.Pages
             if (IsRendering) { return; }
 
             IsRendering = true;
-            await LiveviewUtil.SetAsBitmap(e.Packet.ImageData, liveview_data, Dispatcher);
+            await LiveviewUtil.SetAsBitmap(e.Packet.ImageData, liveview_data, null, Dispatcher);
             IsRendering = false;
         }
 

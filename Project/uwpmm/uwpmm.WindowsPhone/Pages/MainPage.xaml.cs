@@ -6,6 +6,7 @@ using Kazyx.Uwpmm.Common;
 using Kazyx.Uwpmm.DataModel;
 using Kazyx.Uwpmm.Settings;
 using Kazyx.Uwpmm.Utility;
+using NtImageProcessor;
 using System;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
@@ -25,6 +26,7 @@ namespace Kazyx.Uwpmm.Pages
         private NavigationHelper navigationHelper;
         private ObservableDictionary defaultViewModel = new ObservableDictionary();
         private LiveviewScreenViewData screenViewData;
+        private HistogramCreator HistogramCreator;
 
         public MainPage()
         {
@@ -138,6 +140,23 @@ namespace Kazyx.Uwpmm.Pages
             Windows.Phone.UI.Input.HardwareButtons.CameraPressed += (_sender, arg) =>
             {
                 ShutterButtonPressed();
+            };
+
+            InitializeUI();
+        }
+
+        void InitializeUI()
+        {
+            HistogramControl.Init(Control.Histogram.ColorType.White, 1500);
+
+            HistogramCreator = null;
+            HistogramCreator = new HistogramCreator(HistogramCreator.HistogramResolution.Resolution_128);
+            HistogramCreator.OnHistogramCreated += async (r, g, b) => 
+            {
+                await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                {
+                    HistogramControl.SetHistogramValue(r, g, b);
+                });
             };
         }
 
@@ -270,7 +289,7 @@ namespace Kazyx.Uwpmm.Pages
             if (IsRendering) { return; }
 
             IsRendering = true;
-            await LiveviewUtil.SetAsBitmap(e.Packet.ImageData, liveview_data, Dispatcher);
+            await LiveviewUtil.SetAsBitmap(e.Packet.ImageData, liveview_data, HistogramCreator, Dispatcher);
             IsRendering = false;
         }
 

@@ -172,7 +172,7 @@ namespace Kazyx.Uwpmm.CameraControl
             if (IsRendering) { return; }
 
             IsRendering = true;
-            await LiveviewUtil.SetAsBitmap(e.Packet.ImageData, MoviePlaybackData);
+            await LiveviewUtil.SetAsBitmap(e.Packet.ImageData, MoviePlaybackData, null);
             IsRendering = false;
         }
     }
