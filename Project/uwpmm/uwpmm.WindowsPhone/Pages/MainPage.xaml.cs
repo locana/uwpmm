@@ -203,7 +203,7 @@ namespace Kazyx.Uwpmm.Pages
                     }
                     break;
                 case 1:
-                    this.BottomAppBar = _CommandBarManager.Clear().Icon(AppBarItem.ControlPanel).Icon(AppBarItem.CancelTouchAF).CreateNew(0.6);
+                    this.BottomAppBar = _CommandBarManager.Clear().Icon(AppBarItem.ControlPanel).CreateNew(0.6);
                     break;
             }
         }
@@ -283,13 +283,15 @@ namespace Kazyx.Uwpmm.Pages
             target.Status.OnFocusStatusChanged += (status) =>
             {
                 DebugUtil.Log("Focus status changed: " + status);
-                ShowCancelTouchAFButton();
+                if (status == Kazyx.RemoteApi.Camera.FocusState.Focused) { ShowCancelTouchAFButton(); }
+                else { HideCancelTouchAFButton(); }
             };
 
             target.Status.OnTouchFocusStatusChanged += (arg) =>
             {
                 DebugUtil.Log("TouchFocusStatus changed: " + arg.Focused);
-                ShowCancelTouchAFButton();
+                if (arg.Focused) { ShowCancelTouchAFButton(); }
+                else { HideCancelTouchAFButton(); }
             };
 
             await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
@@ -307,9 +309,14 @@ namespace Kazyx.Uwpmm.Pages
             });
         }
 
+        private void HideCancelTouchAFButton()
+        {
+            this.BottomAppBar = _CommandBarManager.Disable(AppBarItemType.WithIcon, AppBarItem.CancelTouchAF).CreateNew(0.6);
+        }
+
         void ShowCancelTouchAFButton()
         {
-            // this.BottomAppBar = _CommandBarManager.Icon(AppBarItem.CancelTouchAF).CreateNew(0.6);
+            this.BottomAppBar = _CommandBarManager.Icon(AppBarItem.CancelTouchAF).CreateNew(0.6);
         }
 
         async void api_AvailiableApisUpdated(object sender, AvailableApiEventArgs e)
