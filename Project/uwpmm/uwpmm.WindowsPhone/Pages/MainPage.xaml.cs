@@ -123,6 +123,11 @@ namespace Kazyx.Uwpmm.Pages
                 if (ControlPanelDisplayed) { StartToHideControlPanel(); }
                 else { StartToShowControlPanel(); }
             });
+            _CommandBarManager.SetEvent(AppBarItem.CancelTouchAF, async (s, args) =>
+                {
+                    if (target == null || target.Api == null) { return; }
+                    await target.Api.Camera.CancelTouchAFAsync();
+                });
             _CommandBarManager.SetEvent(AppBarItem.AboutPage, (s, args) =>
             {
                 Frame.Navigate(typeof(AboutPage));
@@ -154,6 +159,13 @@ namespace Kazyx.Uwpmm.Pages
                 ShutterButtonPressed();
             };
 
+            _FocusFrameSurface.OnTouchFocusOperated += async (obj, args) =>
+            {
+                DebugUtil.Log("Touch AF operated: " + args.X + " " + args.Y);
+                if (target == null || target.Api == null || !target.Api.Capability.IsAvailable("setTouchAFPosition")) { return; }
+                await target.Api.Camera.SetAFPositionAsync(args.X, args.Y);
+            };
+
             InitializeUI();
         }
 
@@ -163,7 +175,7 @@ namespace Kazyx.Uwpmm.Pages
 
             HistogramCreator = null;
             HistogramCreator = new HistogramCreator(HistogramCreator.HistogramResolution.Resolution_128);
-            HistogramCreator.OnHistogramCreated += async (r, g, b) => 
+            HistogramCreator.OnHistogramCreated += async (r, g, b) =>
             {
                 await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
                 {
@@ -191,7 +203,7 @@ namespace Kazyx.Uwpmm.Pages
                     }
                     break;
                 case 1:
-                    this.BottomAppBar = _CommandBarManager.Clear().Icon(AppBarItem.ControlPanel).CreateNew(0.6);
+                    this.BottomAppBar = _CommandBarManager.Clear().Icon(AppBarItem.ControlPanel).Icon(AppBarItem.CancelTouchAF).CreateNew(0.6);
                     break;
             }
         }
@@ -268,6 +280,18 @@ namespace Kazyx.Uwpmm.Pages
 
             this.target = target;
 
+            target.Status.OnFocusStatusChanged += (status) =>
+            {
+                DebugUtil.Log("Focus status changed: " + status);
+                ShowCancelTouchAFButton();
+            };
+
+            target.Status.OnTouchFocusStatusChanged += (arg) =>
+            {
+                DebugUtil.Log("TouchFocusStatus changed: " + arg.Focused);
+                ShowCancelTouchAFButton();
+            };
+
             await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
                 GoToLiveviewScreen();
@@ -281,6 +305,11 @@ namespace Kazyx.Uwpmm.Pages
                 Bottom.DataContext = screenViewData;
                 _FocusFrameSurface.ClearFrames();
             });
+        }
+
+        void ShowCancelTouchAFButton()
+        {
+            // this.BottomAppBar = _CommandBarManager.Icon(AppBarItem.CancelTouchAF).CreateNew(0.6);
         }
 
         async void api_AvailiableApisUpdated(object sender, AvailableApiEventArgs e)
@@ -385,6 +414,7 @@ namespace Kazyx.Uwpmm.Pages
         {
             try { await target.Api.Camera.ActZoomAsync(ZoomParam.DirectionIn, ZoomParam.ActionStart); }
             catch (RemoteApi.RemoteApiException ex) { DebugUtil.Log(ex.StackTrace); }
+
         }
 
         private void ShutterButton_Click(object sender, RoutedEventArgs e)

@@ -9,6 +9,6 @@
     d:DesignHeight="300"
     d:DesignWidth="400">
     
-    <Grid Name="LayoutRoot" Background="Transparent">
+    <Grid Name="LayoutRoot" Background="Transparent" Tapped="LayoutRoot_Tapped">
     </Grid>
 </UserControl>

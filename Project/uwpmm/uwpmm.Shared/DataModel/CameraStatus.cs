@@ -1,5 +1,7 @@
 ﻿using Kazyx.RemoteApi;
 using Kazyx.RemoteApi.Camera;
+using Kazyx.Uwpmm.Utility;
+using System;
 using System.Collections.Generic;
 
 namespace Kazyx.Uwpmm.DataModel
@@ -220,6 +222,7 @@ namespace Kazyx.Uwpmm.DataModel
             get { return _FlashMode; }
         }
 
+        public Action<TouchFocusStatus> OnTouchFocusStatusChanged;
         private TouchFocusStatus _TouchFocusStatus;
         public TouchFocusStatus TouchFocusStatus
         {
@@ -227,6 +230,7 @@ namespace Kazyx.Uwpmm.DataModel
             {
                 _TouchFocusStatus = value;
                 NotifyChangedOnUI("TouchFocusStatus");
+                RunOnUI(OnTouchFocusStatusChanged, value);
             }
             get
             {
@@ -303,6 +307,7 @@ namespace Kazyx.Uwpmm.DataModel
             }
         }
 
+        public Action<string> OnFocusStatusChanged;
         private string _FocusStatus;
         public string FocusStatus
         {
@@ -310,6 +315,7 @@ namespace Kazyx.Uwpmm.DataModel
             {
                 _FocusStatus = value;
                 NotifyChangedOnUI("FocusStatus");
+                RunOnUI(OnFocusStatusChanged, value);
             }
             get { return _FocusStatus; }
         }
@@ -558,6 +564,19 @@ namespace Kazyx.Uwpmm.DataModel
                 NotifyChangedOnUI("StorageAccessVisibility");
             }
             get { return _StorageAccessSupported; }
+        }
+
+        async void RunOnUI<T>(Action<T> action, T arg)
+        {
+            if (action != null)
+            {
+                var dispatcher = SystemUtil.GetCurrentDispatcher();
+                if (dispatcher == null) { return; }
+                await dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+                {
+                    action(arg);
+                });
+            }
         }
     }
 

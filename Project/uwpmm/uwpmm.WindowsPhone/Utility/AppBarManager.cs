@@ -18,6 +18,7 @@ namespace Kazyx.Uwpmm.Utility
 
         readonly AppBarButton CameraSettingButton = new AppBarButton() { Icon = new BitmapIcon() { UriSource = new Uri("ms-appx:///Assets/AppBar/appbar_cameraSetting.png", UriKind.Absolute) }, Label = "Camera settings" };
         readonly AppBarButton AppSettingButton = new AppBarButton() { Icon = new BitmapIcon() { UriSource = new Uri("ms-appx:///Assets/AppBar/feature.settings.png", UriKind.Absolute) }, Label = "Application settings" };
+        readonly AppBarButton CancelTouchFocusButton = new AppBarButton() { Icon = new BitmapIcon() { UriSource = new Uri("ms-appx:///Assets/AppBar/appbar_cancel.png", UriKind.Absolute) }, Label = "Cancel touch AF" };
         readonly AppBarButton AboutPageButton = new AppBarButton() { Label = "About this application" };
         readonly AppBarButton LoggerPageButton = new AppBarButton() { Label = "Logger" };
         readonly AppBarButton PlaybackPageButton = new AppBarButton() { Label = "Playback mode" };
@@ -29,11 +30,13 @@ namespace Kazyx.Uwpmm.Utility
         {
             EnabledItems.Add(AppBarItemType.Primary, new SortedSet<AppBarItem>());
             EnabledItems.Add(AppBarItemType.Secondary, new SortedSet<AppBarItem>());
+
             AppBarItems.Add(AppBarItem.ControlPanel, CameraSettingButton);
             AppBarItems.Add(AppBarItem.AppSetting, AppSettingButton);
             AppBarItems.Add(AppBarItem.AboutPage, AboutPageButton);
             AppBarItems.Add(AppBarItem.LoggerPage, LoggerPageButton);
             AppBarItems.Add(AppBarItem.PlaybackPage, PlaybackPageButton);
+            AppBarItems.Add(AppBarItem.CancelTouchAF, CancelTouchFocusButton);
         }
 
         public CommandBarManager SetEvent(AppBarItem item, Windows.UI.Xaml.RoutedEventHandler handler)
@@ -116,5 +119,6 @@ namespace Kazyx.Uwpmm.Utility
         AboutPage,
         PlaybackPage,
         LoggerPage,
+        CancelTouchAF,
     }
 }

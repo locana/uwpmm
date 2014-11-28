@@ -1,5 +1,6 @@
 ﻿using Kazyx.ImageStream.FocusInfo;
 using Kazyx.Uwpmm.Utility;
+using System;
 using System.Collections.Generic;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -29,6 +30,21 @@ namespace Kazyx.Uwpmm.Control
         private static readonly double FaceFrameStrokeThickness = 1.5;
         private static readonly double FrameStrokeThickness = 2.5;
         private static readonly double FrameOpacity = 0.7;
+
+
+        public delegate void TouchFocusHandler(object sender, TouchFocusEventArgs e);
+        public event TouchFocusHandler OnTouchFocusOperated;
+
+        public class TouchFocusEventArgs : EventArgs
+        {
+            public double X { get; set; }
+            public double Y { get; set; }
+            public TouchFocusEventArgs(double x, double y)
+            {
+                this.X = x;
+                this.Y = y;
+            }
+        }
 
         void AddFrame(double X1, double X2, double Y1, double Y2, Brush StrokeBrush, double StrokeThickness, bool DottedBorder = false)
         {
@@ -97,6 +113,17 @@ namespace Kazyx.Uwpmm.Control
                         }
                         break;
                 }
+            }
+        }
+
+        private void LayoutRoot_Tapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
+        {
+            if (OnTouchFocusOperated != null)
+            {
+                OnTouchFocusOperated(this, new TouchFocusEventArgs(
+                    e.GetPosition(this).X / this.ActualWidth * 100.0,
+                    e.GetPosition(this).Y / this.ActualHeight * 100.0
+                    ));
             }
         }
     }
