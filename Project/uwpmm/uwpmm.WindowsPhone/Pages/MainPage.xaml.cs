@@ -283,15 +283,31 @@ namespace Kazyx.Uwpmm.Pages
             target.Status.OnFocusStatusChanged += (status) =>
             {
                 DebugUtil.Log("Focus status changed: " + status);
-                if (status == Kazyx.RemoteApi.Camera.FocusState.Focused) { ShowCancelTouchAFButton(); }
-                else { HideCancelTouchAFButton(); }
+                if (status == Kazyx.RemoteApi.Camera.FocusState.Focused)
+                {
+                    ShowCancelTouchAFButton();
+                    _FocusFrameSurface.Focused = true;
+                }
+                else
+                {
+                    HideCancelTouchAFButton();
+                    _FocusFrameSurface.Focused = false;
+                }
             };
 
             target.Status.OnTouchFocusStatusChanged += (arg) =>
             {
                 DebugUtil.Log("TouchFocusStatus changed: " + arg.Focused);
-                if (arg.Focused) { ShowCancelTouchAFButton(); }
-                else { HideCancelTouchAFButton(); }
+                if (arg.Focused)
+                {
+                    ShowCancelTouchAFButton();
+                    _FocusFrameSurface.Focused = true;
+                }
+                else
+                {
+                    HideCancelTouchAFButton();
+                    _FocusFrameSurface.Focused = false;
+                }
             };
 
             await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
@@ -306,6 +322,13 @@ namespace Kazyx.Uwpmm.Pages
                 screenViewData = new LiveviewScreenViewData(target);
                 Bottom.DataContext = screenViewData;
                 _FocusFrameSurface.ClearFrames();
+
+                if (!target.Api.Capability.IsSupported("setLiveviewFrameInfo"))
+                {
+                    // For devices which does not support to transfer focus frame info, draw focus frame itself.
+                    _FocusFrameSurface.SelfDrawTouchAFFrame = true;
+                }
+                else { _FocusFrameSurface.SelfDrawTouchAFFrame = false; }
             });
         }
 

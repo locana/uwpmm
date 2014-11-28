@@ -16,6 +16,8 @@ namespace Kazyx.Uwpmm.Control
         public FocusFrameSurface()
         {
             this.InitializeComponent();
+            SelfDrawTouchAFFrame = false;
+            Focused = false;
         }
 
         public void ClearFrames()
@@ -31,9 +33,23 @@ namespace Kazyx.Uwpmm.Control
         private static readonly double FrameStrokeThickness = 2.5;
         private static readonly double FrameOpacity = 0.7;
 
-
         public delegate void TouchFocusHandler(object sender, TouchFocusEventArgs e);
         public event TouchFocusHandler OnTouchFocusOperated;
+
+        public bool SelfDrawTouchAFFrame { get; set; }
+        public bool Focused
+        {
+            set
+            {
+                if (SelfDrawTouchAFFrame && SelfDrawnFrame != null)
+                {
+                    if (value) { SelfDrawnFrame.Stroke = FocusedBrush; }
+                    else { this.ClearFrames(); }
+                }
+            }
+        }
+
+        Rectangle SelfDrawnFrame = null;
 
         public class TouchFocusEventArgs : EventArgs
         {
@@ -46,7 +62,7 @@ namespace Kazyx.Uwpmm.Control
             }
         }
 
-        void AddFrame(double X1, double X2, double Y1, double Y2, Brush StrokeBrush, double StrokeThickness, bool DottedBorder = false)
+        Rectangle AddFrame(double X1, double X2, double Y1, double Y2, Brush StrokeBrush, double StrokeThickness, bool DottedBorder = false)
         {
             // DebugUtil.Log("[FocusFrames] " + X1 + " " + X2 + " " + Y1 + " " + Y2);
             var r = new Rectangle()
@@ -69,6 +85,7 @@ namespace Kazyx.Uwpmm.Control
             }
 
             this.LayoutRoot.Children.Add(r);
+            return r;
         }
 
         public void SetFocusFrames(List<FocusFrameInfo> frames)
@@ -124,6 +141,12 @@ namespace Kazyx.Uwpmm.Control
                     e.GetPosition(this).X / this.ActualWidth * 100.0,
                     e.GetPosition(this).Y / this.ActualHeight * 100.0
                     ));
+            }
+
+            if (SelfDrawTouchAFFrame)
+            {
+                this.ClearFrames();
+                this.SelfDrawnFrame = this.AddFrame(e.GetPosition(this).X - 15, e.GetPosition(this).X + 15, e.GetPosition(this).Y - 15, e.GetPosition(this).Y + 15, NormalBrush, FrameStrokeThickness);
             }
         }
     }
