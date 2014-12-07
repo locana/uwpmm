@@ -46,7 +46,10 @@ namespace Kazyx.Uwpmm.CameraControl
                 return false;
             }
 
-            version = api.Capability.IsSupported("getEvent", "1.1") ? ApiVersion.V1_1 : ApiVersion.V1_0;
+            if (api.Capability.IsSupported("getEvent", "1.3")) { version = ApiVersion.V1_3; }
+            else if (api.Capability.IsSupported("getEvent", "1.2")) { version = ApiVersion.V1_2; }
+            else if (api.Capability.IsSupported("getEvent", "1.1")) { version = ApiVersion.V1_1; }
+            else { version = ApiVersion.V1_0; }
 
             failure_count = 0;
             if (!await Refresh())
