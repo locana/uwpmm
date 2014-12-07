@@ -20,11 +20,14 @@ namespace Kazyx.Uwpmm.DataModel
                 NotifyChangedOnUI("ZoomBoxIndex");
                 NotifyChangedOnUI("ZoomBoxNum");
                 NotifyChangedOnUI("ShutterButtonImage");
+                NotifyChangedOnUI("ShutterButtonEnabled");
+                NotifyChangedOnUI("RecDisplayVisibility");
             };
             Device.Api.AvailiableApisUpdated += (sender, e) =>
             {
                 NotifyChangedOnUI("ZoomInterfacesVisibility");
                 NotifyChangedOnUI("ShutterButtonEnabled");
+                NotifyChangedOnUI("RecDisplayVisibility");
             };
         }
 
@@ -52,8 +55,9 @@ namespace Kazyx.Uwpmm.DataModel
                     case ShootModeParam.Audio:
                         return AudioImage;
                     case ShootModeParam.Interval:
-                    default:
                         return IntervalStillImage;
+                    default:
+                        return null;
                 }
             }
         }
@@ -66,16 +70,22 @@ namespace Kazyx.Uwpmm.DataModel
                 {
                     return false;
                 }
-                switch (Device.Status.Status)
+                switch (Device.Status.ShootMode.Current)
                 {
-                    case EventParam.Idle:
-                    case EventParam.MvRecording:
-                    case EventParam.AuRecording:
-                    case EventParam.ItvRecording:
-                        return true;
-                    default:
-                        return false;
+                    case ShootModeParam.Still:
+                        if (Device.Status.Status == EventParam.Idle) { return true; }
+                        break;
+                    case ShootModeParam.Movie:
+                        if (Device.Status.Status == EventParam.Idle || Device.Status.Status == EventParam.MvRecording) { return true; }
+                        break;
+                    case ShootModeParam.Audio:
+                        if (Device.Status.Status == EventParam.Idle || Device.Status.Status == EventParam.AuRecording) { return true; }
+                        break;
+                    case ShootModeParam.Interval:
+                        if (Device.Status.Status == EventParam.Idle || Device.Status.Status == EventParam.ItvRecording) { return true; }
+                        break;
                 }
+                return false;
             }
         }
 
@@ -84,6 +94,22 @@ namespace Kazyx.Uwpmm.DataModel
             get
             {
                 if (Device.Api.Capability.IsAvailable("actZoom")) { return Visibility.Visible; }
+                return Visibility.Collapsed;
+            }
+        }
+
+        public Visibility RecDisplayVisibility
+        {
+            get
+            {
+                if (Device.Status == null) { return Visibility.Collapsed; }
+                switch (Device.Status.Status)
+                {
+                    case EventParam.MvRecording:
+                    case EventParam.AuRecording:
+                    case EventParam.ItvRecording:
+                        return Visibility.Visible;
+                }
                 return Visibility.Collapsed;
             }
         }

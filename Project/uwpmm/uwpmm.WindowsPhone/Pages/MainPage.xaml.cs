@@ -195,6 +195,7 @@ namespace Kazyx.Uwpmm.Pages
             switch ((sender as Pivot).SelectedIndex)
             {
                 case 0:
+                    LiveViewPageUnloaded();
                     CreateEntranceAppBar();
                     if (target != null)
                     {
@@ -204,8 +205,21 @@ namespace Kazyx.Uwpmm.Pages
                     break;
                 case 1:
                     this.BottomAppBar = _CommandBarManager.Clear().Icon(AppBarItem.ControlPanel).CreateNew(0.6);
+                    LiveViewPageLoaded();
                     break;
             }
+        }
+
+        private void LiveViewPageLoaded()
+        {
+            screenViewData = new LiveviewScreenViewData(target);
+            Liveview.DataContext = screenViewData;
+            _FocusFrameSurface.ClearFrames();
+        }
+
+        private void LiveViewPageUnloaded()
+        {
+            LayoutRoot.DataContext = null;
         }
 
         private void Entrance_Loaded(object sender, RoutedEventArgs e)
@@ -319,9 +333,6 @@ namespace Kazyx.Uwpmm.Pages
                 {
                     ControlPanel.Children.Add(panel);
                 }
-                screenViewData = new LiveviewScreenViewData(target);
-                Bottom.DataContext = screenViewData;
-                _FocusFrameSurface.ClearFrames();
 
                 if (!target.Api.Capability.IsSupported("setLiveviewFrameInfo"))
                 {
@@ -467,6 +478,45 @@ namespace Kazyx.Uwpmm.Pages
                     await target.Api.Camera.ActTakePictureAsync();
                 }
                 catch (RemoteApi.RemoteApiException) { }
+            }
+            else if (target.Status.ShootMode.Current == ShootModeParam.Movie)
+            {
+                if (target.Status.Status == EventParam.Idle)
+                {
+                    try { await target.Api.Camera.StartMovieRecAsync(); }
+                    catch (RemoteApi.RemoteApiException) { }
+                }
+                else if (target.Status.Status == EventParam.MvRecording)
+                {
+                    try { await target.Api.Camera.StopMovieRecAsync(); }
+                    catch (RemoteApi.RemoteApiException) { }
+                }
+            }
+            else if (target.Status.ShootMode.Current == ShootModeParam.Audio)
+            {
+                if (target.Status.Status == EventParam.Idle)
+                {
+                    try { await target.Api.Camera.StartAudioRecAsync(); }
+                    catch (RemoteApi.RemoteApiException) { }
+                }
+                else if (target.Status.Status == EventParam.AuRecording)
+                {
+                    try { await target.Api.Camera.StopAudioRecAsync(); }
+                    catch (RemoteApi.RemoteApiException) { }
+                }
+            }
+            else if (target.Status.ShootMode.Current == ShootModeParam.Interval)
+            {
+                if (target.Status.Status == EventParam.Idle)
+                {
+                    try { await target.Api.Camera.StartIntervalStillRecAsync(); }
+                    catch (RemoteApi.RemoteApiException) { }
+                }
+                else if (target.Status.Status == EventParam.ItvRecording)
+                {
+                    try { await target.Api.Camera.StopIntervalStillRecAsync(); }
+                    catch (RemoteApi.RemoteApiException) { }
+                }
             }
         }
 

@@ -94,6 +94,7 @@
     <Content Include="$(MSBuildThisFileDirectory)Assets\LiveviewScreen\ContShootingButton.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\LiveviewScreen\IntervalStillRecButton.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\LiveviewScreen\Music.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\LiveviewScreen\rec.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\LiveviewScreen\Stop.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\LiveviewScreen\ZoomIn.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\LiveviewScreen\ZoomOut.png" />

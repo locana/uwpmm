@@ -48,8 +48,11 @@
                             </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
                             </Grid.RowDefinitions>
                             <controls:Histogram Margin="6,6" HorizontalAlignment="Left" VerticalAlignment="Center" x:Name="HistogramControl" Width="120" Height="90"/>
+                            <Image Name="RecDisplay" Source="/Assets/LiveviewScreen/rec.png" Stretch="Uniform" Grid.Row="1" Width="80" HorizontalAlignment="Left" 
+                                   Visibility="{Binding RecDisplayVisibility, Mode=OneWay, FallbackValue=Collapsed}"/>
                         </Grid>
                         <Grid Name="Bottom" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Margin="14, 60">
                             <Grid.RowDefinitions>
