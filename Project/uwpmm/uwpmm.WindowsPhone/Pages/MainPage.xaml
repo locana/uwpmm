@@ -127,6 +127,11 @@
                             </ScrollViewer.Resources>
                             <StackPanel x:Name="ControlPanel" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
                         </ScrollViewer>
+                        <Grid Name="ProcessingDisplay" HorizontalAlignment="Stretch" VerticalAlignment="Center" Height="80" Visibility="{Binding ProgressDisplayVisibility, Mode=OneWay, FallbackValue=Collapsed}">
+                            <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Opacity="0.5"
+                                       Fill="{ThemeResource ApplicationPageBackgroundThemeBrush}"/>
+                            <ProgressBar HorizontalAlignment="Stretch" IsIndeterminate="True"/>
+                        </Grid>
                     </Grid>
                 </PivotItem>
             </Pivot>

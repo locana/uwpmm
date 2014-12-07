@@ -22,6 +22,7 @@ namespace Kazyx.Uwpmm.DataModel
                 NotifyChangedOnUI("ShutterButtonImage");
                 NotifyChangedOnUI("ShutterButtonEnabled");
                 NotifyChangedOnUI("RecDisplayVisibility");
+                NotifyChangedOnUI("ProgressDisplayVisibility");
             };
             Device.Api.AvailiableApisUpdated += (sender, e) =>
             {
@@ -110,7 +111,25 @@ namespace Kazyx.Uwpmm.DataModel
                     case EventParam.ItvRecording:
                         return Visibility.Visible;
                 }
+                
                 return Visibility.Collapsed;
+            }
+        }
+
+        public Visibility ProgressDisplayVisibility
+        {
+            get
+            {
+                if (Device.Status == null) { return Visibility.Visible; }
+                switch (Device.Status.Status)
+                {
+                    case EventParam.Idle:
+                    case EventParam.MvRecording:
+                    case EventParam.AuRecording:
+                    case EventParam.ItvRecording:
+                        return Visibility.Collapsed;
+                }
+                return Visibility.Visible;
             }
         }
 
