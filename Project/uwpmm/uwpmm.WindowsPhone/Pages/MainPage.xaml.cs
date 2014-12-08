@@ -289,6 +289,7 @@ namespace Kazyx.Uwpmm.Pages
             catch (Exception ex)
             {
                 DebugUtil.Log("Failed setup: " + ex.Message);
+                ShowError("Failed to establish connection with your camera device.");
                 return;
             }
 
@@ -473,23 +474,32 @@ namespace Kazyx.Uwpmm.Pages
             if (target == null || target.Status.ShootMode == null) { return; }
             if (target.Status.ShootMode.Current == ShootModeParam.Still)
             {
-                try
+                try { await target.Api.Camera.ActTakePictureAsync(); }
+                catch (RemoteApi.RemoteApiException ex)
                 {
-                    await target.Api.Camera.ActTakePictureAsync();
+                    DebugUtil.Log(ex.StackTrace);
+                    ShowError("Failed to take a picture.");
                 }
-                catch (RemoteApi.RemoteApiException) { }
             }
             else if (target.Status.ShootMode.Current == ShootModeParam.Movie)
             {
                 if (target.Status.Status == EventParam.Idle)
                 {
                     try { await target.Api.Camera.StartMovieRecAsync(); }
-                    catch (RemoteApi.RemoteApiException) { }
+                    catch (RemoteApi.RemoteApiException ex)
+                    {
+                        DebugUtil.Log(ex.StackTrace);
+                        ShowError("Failed to start movie recording.");
+                    }
                 }
                 else if (target.Status.Status == EventParam.MvRecording)
                 {
                     try { await target.Api.Camera.StopMovieRecAsync(); }
-                    catch (RemoteApi.RemoteApiException) { }
+                    catch (RemoteApi.RemoteApiException ex)
+                    {
+                        DebugUtil.Log(ex.StackTrace);
+                        ShowError("Failed to stop movie recording.");
+                    }
                 }
             }
             else if (target.Status.ShootMode.Current == ShootModeParam.Audio)
@@ -497,12 +507,20 @@ namespace Kazyx.Uwpmm.Pages
                 if (target.Status.Status == EventParam.Idle)
                 {
                     try { await target.Api.Camera.StartAudioRecAsync(); }
-                    catch (RemoteApi.RemoteApiException) { }
+                    catch (RemoteApi.RemoteApiException ex)
+                    {
+                        DebugUtil.Log(ex.StackTrace);
+                        ShowError("Failed to start audio recording.");
+                    }
                 }
                 else if (target.Status.Status == EventParam.AuRecording)
                 {
                     try { await target.Api.Camera.StopAudioRecAsync(); }
-                    catch (RemoteApi.RemoteApiException) { }
+                    catch (RemoteApi.RemoteApiException ex)
+                    {
+                        DebugUtil.Log(ex.StackTrace);
+                        ShowError("Failed to stop audio recording.");
+                    }
                 }
             }
             else if (target.Status.ShootMode.Current == ShootModeParam.Interval)
@@ -510,14 +528,27 @@ namespace Kazyx.Uwpmm.Pages
                 if (target.Status.Status == EventParam.Idle)
                 {
                     try { await target.Api.Camera.StartIntervalStillRecAsync(); }
-                    catch (RemoteApi.RemoteApiException) { }
+                    catch (RemoteApi.RemoteApiException ex)
+                    {
+                        DebugUtil.Log(ex.StackTrace);
+                        ShowError("Failed to start interval recording.");
+                    }
                 }
                 else if (target.Status.Status == EventParam.ItvRecording)
                 {
                     try { await target.Api.Camera.StopIntervalStillRecAsync(); }
-                    catch (RemoteApi.RemoteApiException) { }
+                    catch (RemoteApi.RemoteApiException ex)
+                    {
+                        DebugUtil.Log(ex.StackTrace);
+                        ShowError("Failed to stop interval recording.");
+                    }
                 }
             }
+        }
+
+        private void ShowError(string error)
+        {
+            // TODO show error by MessageBox or Toast.
         }
 
         private void LiveviewImage_SizeChanged(object sender, SizeChangedEventArgs e)
