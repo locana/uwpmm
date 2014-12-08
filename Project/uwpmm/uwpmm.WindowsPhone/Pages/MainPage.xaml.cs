@@ -9,6 +9,7 @@ using Kazyx.Uwpmm.Utility;
 using NtImageProcessor;
 using System;
 using Windows.UI.Core;
+using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
@@ -546,9 +547,10 @@ namespace Kazyx.Uwpmm.Pages
             }
         }
 
-        private void ShowError(string error)
+        private async void ShowError(string error)
         {
-            // TODO show error by MessageBox or Toast.
+            var dialog = new MessageDialog(error);
+            await dialog.ShowAsync();
         }
 
         private void LiveviewImage_SizeChanged(object sender, SizeChangedEventArgs e)
