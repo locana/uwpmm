@@ -32,6 +32,14 @@ namespace Kazyx.Uwpmm.Utility
                     return new AppBarButton() { Label = "Logger" };
                 case AppBarItem.PlaybackPage:
                     return new AppBarButton() { Label = "Playback mode" };
+                case AppBarItem.DeleteMultiple:
+                    return new AppBarButton() { Icon = new BitmapIcon() { UriSource = new Uri("ms-appx:///Assets/AppBar/appbar_delete.png") }, Label = "Delete" };
+                case AppBarItem.DownloadMultiple:
+                    return new AppBarButton() { Icon = new BitmapIcon() { UriSource = new Uri("ms-appx:///Assets/AppBar/appbar_download.png") }, Label = "Download" };
+                case AppBarItem.ShowDetailInfo:
+                    return new AppBarButton() { Icon = new BitmapIcon() { UriSource = new Uri("ms-appx:///Assets/AppBar/appbar_display_info.png") }, Label = "Show info" };
+                case AppBarItem.HideDetailInfo:
+                    return new AppBarButton() { Icon = new BitmapIcon() { UriSource = new Uri("ms-appx:///Assets/AppBar/appbar_close_display.png") }, Label = "Hide info" };
                 default:
                     throw new NotImplementedException();
             }
@@ -132,5 +140,10 @@ namespace Kazyx.Uwpmm.Utility
         PlaybackPage,
         LoggerPage,
         CancelTouchAF,
+        DownloadMultiple,
+        DeleteMultiple,
+        ShowDetailInfo,
+        HideDetailInfo,
+        Ok
     }
 }

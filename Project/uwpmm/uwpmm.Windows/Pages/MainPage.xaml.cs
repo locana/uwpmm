@@ -7,6 +7,7 @@ using Kazyx.Uwpmm.Settings;
 using Kazyx.Uwpmm.Utility;
 using System;
 using System.Diagnostics;
+using Windows.Storage;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -108,6 +109,24 @@ namespace Kazyx.Uwpmm.Pages
             var discovery = new SsdpDiscovery();
             discovery.SonyCameraDeviceDiscovered += discovery_ScalarDeviceDiscovered;
             discovery.SearchSonyCameraDevices();
+            PictureDownloader.Instance.Fetched += OnFetchdImage;
+        }
+
+        private void pageRoot_Unloaded(object sender, RoutedEventArgs e)
+        {
+            PictureDownloader.Instance.Fetched -= OnFetchdImage;
+        }
+
+        private async void OnFetchdImage(StorageFile file)
+        {
+            var stream = await file.OpenReadAsync();
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                var image = new BitmapImage();
+                image.SetSource(stream);
+                PostviewImage.Source = image;
+                stream.Dispose();
+            });
         }
 
         private TargetDevice target;
@@ -177,17 +196,7 @@ namespace Kazyx.Uwpmm.Pages
         private async void Button_Click(object sender, RoutedEventArgs e)
         {
             if (target == null) return;
-            await SequentialOperation.TakePicture(target.Api, async (file) =>
-            {
-                var stream = await file.OpenReadAsync();
-                await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-                {
-                    var image = new BitmapImage();
-                    image.SetSource(stream);
-                    PostviewImage.Source = image;
-                    stream.Dispose();
-                });
-            });
+            await SequentialOperation.TakePicture(target.Api);
         }
 
         private async void ZoomOut_Tapped(object sender, TappedRoutedEventArgs e)

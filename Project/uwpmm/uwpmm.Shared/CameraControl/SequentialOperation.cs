@@ -93,18 +93,13 @@ namespace Kazyx.Uwpmm.CameraControl
             return await OpenLiveviewStream(api, liveview);
         }
 
-        public static async Task<bool> TakePicture(DeviceApiHolder api, Action<StorageFile> ImageSaved, bool awaiting = false)
+        public static async Task<bool> TakePicture(DeviceApiHolder api, bool awaiting = false)
         {
             DebugUtil.Log("Taking picture sequence");
             try
             {
                 var urls = awaiting ? await api.Camera.AwaitTakePictureAsync() : await api.Camera.ActTakePictureAsync();
                 DebugUtil.Log("Success taking picture");
-
-                if (ImageSaved == null)
-                {
-                    return true;
-                }
 
                 if (App.Settings.PostviewSyncEnabled)
                 {
@@ -113,8 +108,7 @@ namespace Kazyx.Uwpmm.CameraControl
                         try
                         {
                             var uri = new Uri(url);
-                            var file = await PictureDownloader.DownloadToSave(uri);
-                            ImageSaved.Invoke(file);
+                            PictureDownloader.Instance.Enqueue(uri);
                             return true;
                         }
                         catch (Exception e)
@@ -140,7 +134,7 @@ namespace Kazyx.Uwpmm.CameraControl
                 }
             }
             DebugUtil.Log("Take picture timeout: await for completion");
-            return await TakePicture(api, ImageSaved, true);
+            return await TakePicture(api, true);
         }
     }
 }

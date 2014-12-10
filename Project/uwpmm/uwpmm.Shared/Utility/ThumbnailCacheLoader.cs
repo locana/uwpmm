@@ -140,11 +140,14 @@ namespace Kazyx.Uwpmm.Utility
                     {
                         var original = new BitmapImage();
                         original.CreateOptions = BitmapCreateOptions.None;
-                        original.SetSource(srcStream.AsRandomAccessStream());
+                        var rndStream = srcStream.AsRandomAccessStream();
+                        rndStream.Seek(0);
+                        original.SetSource(rndStream);
                         var max = Math.Max(original.PixelHeight, original.PixelWidth);
                         var scale = (float)THUMBNAIL_SIZE / (float)max;
                         var wbmp = new WriteableBitmap((int)(original.PixelWidth * scale), (int)(original.PixelHeight * scale));
-                        wbmp.SetSource(srcStream.AsRandomAccessStream());
+                        rndStream.Seek(0);
+                        wbmp.SetSource(rndStream);
                         byte[] pixels = null;
                         using (var pixelStream = wbmp.PixelBuffer.AsStream())
                         {

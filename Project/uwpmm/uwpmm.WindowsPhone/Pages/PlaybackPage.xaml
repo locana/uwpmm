@@ -162,16 +162,17 @@
             <TextBlock x:Name="HeaderBlockerText" VerticalAlignment="Center" Style="{StaticResource SubheaderTextBlockStyle}" />
         </Border>
 
-        <!-- Comment out until PlaybackScreen controls are ported.
-        <control:PhotoPlaybackScreen Name="PhotoPlaybackScreen" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0" SourceBitmap="{Binding Image}"
-                                          ManipulationStarted="viewport_ManipulationStarted" ManipulationDelta="viewport_ManipulationDelta" ManipulationCompleted="viewport_ManipulationCompleted" />
+        <control:PhotoPlaybackScreen x:Name="PhotoScreen" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0"
+                                          ManipulationStarted="PhotoScreen_ManipulationStarted" ManipulationDelta="PhotoScreen_ManipulationDelta" ManipulationCompleted="PhotoScreen_ManipulationCompleted" >
+        </control:PhotoPlaybackScreen>
+
         <Border x:Name="MovieDrawer" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="Collapsed">
-            <Border.Background>
-                <SolidColorBrush Color="{StaticResource PhoneSemitransparentColor}"/>
-            </Border.Background>
-            <control:MoviePlaybackScreen Name="MoviePlaybackScreen" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="12" CurrentPosition="{Binding CurrentPosition}" Duration="{Binding Duration}"/>
+            <!--
+            <control:MoviePlaybackScreen x:Name="MovieScreen" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="12" CurrentPosition="{Binding CurrentPosition}" Duration="{Binding Duration}"/>
+            Avoid binding issue of CurrentPosition and Duration property
+            -->
+            <control:MoviePlaybackScreen x:Name="MovieScreen" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="12"/>
         </Border>
-        -->
 
         <Grid Name="AppSettingPanel" Visibility="Collapsed" >
             <Grid.Background>

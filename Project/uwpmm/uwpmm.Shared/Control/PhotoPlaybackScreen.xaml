@@ -29,7 +29,7 @@
     <Grid x:Name="LayoutRoot" Background="Transparent" >
         <Border x:Name="background" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <Border.Background>
-                <SolidColorBrush Color="{StaticResource ButtonBackgroundThemeBrush}"/>
+                <SolidColorBrush Color="{StaticResource PhoneBackgroundColor}"/>
             </Border.Background>
         </Border>
 

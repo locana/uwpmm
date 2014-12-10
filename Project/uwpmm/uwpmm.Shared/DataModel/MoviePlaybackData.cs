@@ -6,7 +6,7 @@ namespace Kazyx.Uwpmm.DataModel
     {
         public MoviePlaybackData() { }
 
-        private TimeSpan _CurrentPosition;
+        private TimeSpan _CurrentPosition = TimeSpan.FromMilliseconds(0);
         public TimeSpan CurrentPosition
         {
             get { return _CurrentPosition; }
@@ -17,7 +17,7 @@ namespace Kazyx.Uwpmm.DataModel
             }
         }
 
-        private TimeSpan _Duration;
+        private TimeSpan _Duration = TimeSpan.FromMilliseconds(0);
         public TimeSpan Duration
         {
             get { return _Duration; }

@@ -2,17 +2,24 @@
 using Kazyx.RemoteApi.Camera;
 using Kazyx.Uwpmm.CameraControl;
 using Kazyx.Uwpmm.Common;
+using Kazyx.Uwpmm.Control;
 using Kazyx.Uwpmm.DataModel;
 using Kazyx.Uwpmm.Utility;
+using NtImageProcessor.MetaData.Misc;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
+using System.Net;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 
 // The Basic Page item template is documented at http://go.microsoft.com/fwlink/?LinkID=390556
@@ -27,6 +34,8 @@ namespace Kazyx.Uwpmm.Pages
         private NavigationHelper navigationHelper;
         private ObservableDictionary defaultViewModel = new ObservableDictionary();
 
+        private HttpClient HttpClient = new HttpClient();
+
         public PlaybackPage()
         {
             this.InitializeComponent();
@@ -35,38 +44,45 @@ namespace Kazyx.Uwpmm.Pages
             this.navigationHelper.LoadState += this.NavigationHelper_LoadState;
             this.navigationHelper.SaveState += this.NavigationHelper_SaveState;
 
-            // Comment out until application bar manager is imported.
-            /*
-            abm.SetEvent(IconMenu.DownloadMultiple, (sender, e) =>
+            CommandBarManager.SetEvent(AppBarItem.DownloadMultiple, (sender, e) =>
             {
                 DebugUtil.Log("Download clicked");
                 if (GridSource != null)
                 {
                     GridSource.SelectivityFactor = SelectivityFactor.CopyToPhone;
                 }
-                RemoteImageGrid.IsSelectionEnabled = true;
+                // RemoteImageGrid.IsSelectionEnabled = true;
             });
-            abm.SetEvent(IconMenu.DeleteMultiple, (sender, e) =>
+
+            CommandBarManager.SetEvent(AppBarItem.DownloadMultiple, (sender, e) =>
+            {
+                DebugUtil.Log("Download clicked");
+                if (GridSource != null)
+                {
+                    GridSource.SelectivityFactor = SelectivityFactor.CopyToPhone;
+                }
+                // RemoteImageGrid.IsSelectionEnabled = true;
+            });
+            CommandBarManager.SetEvent(AppBarItem.DeleteMultiple, (sender, e) =>
             {
                 DebugUtil.Log("Delete clicked");
                 if (GridSource != null)
                 {
                     GridSource.SelectivityFactor = SelectivityFactor.Delete;
                 }
-                RemoteImageGrid.IsSelectionEnabled = true;
+                // RemoteImageGrid.IsSelectionEnabled = true;
             });
-            abm.SetEvent(IconMenu.ShowDetailInfo, (sender, e) =>
+            CommandBarManager.SetEvent(AppBarItem.ShowDetailInfo, (sender, e) =>
             {
-                PhotoPlaybackScreen.DetailInfoVisibility = Visibility.Visible;
-                ApplicationBar = abm.Clear().Enable(IconMenu.HideDetailInfo).CreateNew(0.5);
+                PhotoScreen.DetailInfoVisibility = Visibility.Visible;
+                BottomAppBar = CommandBarManager.Clear().Icon(AppBarItem.HideDetailInfo).CreateNew(0.5);
             });
-            abm.SetEvent(IconMenu.HideDetailInfo, (sender, e) =>
+            CommandBarManager.SetEvent(AppBarItem.HideDetailInfo, (sender, e) =>
             {
-                PhotoPlaybackScreen.DetailInfoVisibility = Visibility.Collapsed;
-                ApplicationBar = abm.Clear().Enable(IconMenu.ShowDetailInfo).CreateNew(0.5);
+                PhotoScreen.DetailInfoVisibility = Visibility.Collapsed;
+                BottomAppBar = CommandBarManager.Clear().Icon(AppBarItem.ShowDetailInfo).CreateNew(0.5);
             });
-
-            abm.SetEvent(IconMenu.Ok, (sender, e) =>
+            CommandBarManager.SetEvent(AppBarItem.Ok, (sender, e) =>
             {
                 DebugUtil.Log("Ok clicked");
                 switch (InnerState)
@@ -95,12 +111,11 @@ namespace Kazyx.Uwpmm.Pages
                         break;
                 }
             });
-            abm.SetEvent(IconMenu.ApplicationSetting, (sender, e) =>
+            CommandBarManager.SetEvent(AppBarItem.AppSetting, (sender, e) =>
             {
                 DebugUtil.Log("AppSettings clicked");
                 OpenAppSettingPanel();
             });
-             * */
 
             // Comment out until setting screen is imported.
             /*
@@ -116,7 +131,7 @@ namespace Kazyx.Uwpmm.Pages
 
 
             // TODO: If seek is supported, set vallback of seek bar and enable it.
-            //MoviePlaybackScreen.SeekOperated += (NewValue) =>
+            //MovieScreen.SeekOperated += (NewValue) =>
             //{
             //};
         }
@@ -204,11 +219,11 @@ namespace Kazyx.Uwpmm.Pages
             LocalImageGrid.DataContext = groups;
             */
             CloseMovieStream();
-            /*
             MovieDrawer.DataContext = MovieStreamHelper.INSTANCE.MoviePlaybackData;
 
-            PhotoPlaybackScreen.DataContext = PhotoData;
+            PhotoScreen.DataContext = PhotoData;
             SetStillDetailVisibility(false);
+            /*
             LoadLocalContents();
              * */
 
@@ -277,44 +292,43 @@ namespace Kazyx.Uwpmm.Pages
 
         private StatusBar statusBar = StatusBar.GetForCurrentView();
 
+        CommandBarManager CommandBarManager = new CommandBarManager();
+
         private ViewerState InnerState = ViewerState.Local;
 
-        private void UpdateInnerState(ViewerState state)
+        private async void UpdateInnerState(ViewerState state)
         {
             InnerState = state;
 
-            // Comment out until application bar manager is ported.
-            /*
             await SystemUtil.GetCurrentDispatcher().RunAsync(CoreDispatcherPriority.Normal, () =>
             {
                 switch (InnerState)
                 {
                     case ViewerState.RemoteSelecting:
-                        ApplicationBar = abm.Clear().Enable(IconMenu.Ok).CreateNew(0.5);
+                        BottomAppBar = CommandBarManager.Clear().Icon(AppBarItem.Ok).CreateNew(0.5);
                         break;
                     case ViewerState.RemoteSingle:
-                        ApplicationBar = abm.Clear().Enable(IconMenu.DownloadMultiple).Enable(IconMenu.DeleteMultiple).Enable(IconMenu.ApplicationSetting).CreateNew(0.5);
+                        BottomAppBar = CommandBarManager.Clear().Icon(AppBarItem.DownloadMultiple).Icon(AppBarItem.DeleteMultiple).Icon(AppBarItem.AppSetting).CreateNew(0.5);
                         break;
                     case ViewerState.AppSettings:
-                        ApplicationBar = abm.Clear().Enable(IconMenu.Ok).CreateNew(0.5);
+                        BottomAppBar = CommandBarManager.Clear().Icon(AppBarItem.Ok).CreateNew(0.5);
                         break;
                     case ViewerState.LocalStillPlayback:
                     case ViewerState.RemoteStillPlayback:
-                        if (PhotoPlaybackScreen.DetailInfoVisibility == System.Windows.Visibility.Visible)
+                        if (PhotoScreen.DetailInfoVisibility == Visibility.Visible)
                         {
-                            ApplicationBar = abm.Clear().Enable(IconMenu.HideDetailInfo).CreateNew(0.5);
+                            BottomAppBar = CommandBarManager.Clear().Icon(AppBarItem.HideDetailInfo).CreateNew(0.5);
                         }
                         else
                         {
-                            ApplicationBar = abm.Clear().Enable(IconMenu.ShowDetailInfo).CreateNew(0.5);
+                            BottomAppBar = CommandBarManager.Clear().Icon(AppBarItem.ShowDetailInfo).CreateNew(0.5);
                         }
                         break;
                     default:
-                        ApplicationBar = null;
+                        BottomAppBar = null;
                         break;
                 }
             });
-             * */
         }
 
         private void UnlockPivot()
@@ -354,8 +368,8 @@ namespace Kazyx.Uwpmm.Pages
             await SystemUtil.GetCurrentDispatcher().RunAsync(CoreDispatcherPriority.Normal, () =>
             {
                 UnlockPivot();
-                // MoviePlaybackScreen.Reset();
-                // MovieDrawer.Visibility = Visibility.Collapsed;
+                MovieScreen.Reset();
+                MovieDrawer.Visibility = Visibility.Collapsed;
             });
         }
 
@@ -711,9 +725,9 @@ namespace Kazyx.Uwpmm.Pages
 
                                 var _bitmap = new BitmapImage();
                                 _bitmap.SetSource(replica.AsRandomAccessStream());
-                                PhotoPlaybackScreen.SourceBitmap = _bitmap;
+                                PhotoScreen.SourceBitmap = _bitmap;
                                 InitBitmapBeforeOpen();
-                                PhotoPlaybackScreen.SetBitmap();
+                                PhotoScreen.SetBitmap();
                                 try
                                 {
                                     PhotoData.MetaData = NtImageProcessor.MetaData.JpegMetaDataParser.ParseImage((Stream)replica);
@@ -721,7 +735,7 @@ namespace Kazyx.Uwpmm.Pages
                                 catch (UnsupportedFileFormatException)
                                 {
                                     PhotoData.MetaData = null;
-                                    PhotoPlaybackScreen.DetailInfoVisibility = Visibility.Collapsed;
+                                    PhotoScreen.DetailInfoVisibility = Visibility.Collapsed;
                                 }
                                 SetStillDetailVisibility(true);
                             }
@@ -765,6 +779,7 @@ namespace Kazyx.Uwpmm.Pages
                 }
             }
         }
+        */
 
         private void SetStillDetailVisibility(bool visible)
         {
@@ -773,9 +788,9 @@ namespace Kazyx.Uwpmm.Pages
                 PivotRoot.IsLocked = true;
                 HideProgress();
                 IsViewingDetail = true;
-                PhotoPlaybackScreen.Visibility = Visibility.Visible;
-                RemoteImageGrid.IsEnabled = false;
-                LocalImageGrid.IsEnabled = false;
+                PhotoScreen.Visibility = Visibility.Visible;
+                // RemoteImageGrid.IsEnabled = false;
+                // LocalImageGrid.IsEnabled = false;
                 if (PivotRoot.SelectedIndex == 0)
                 {
                     UpdateInnerState(ViewerState.LocalStillPlayback);
@@ -790,9 +805,9 @@ namespace Kazyx.Uwpmm.Pages
                 UnlockPivot();
                 HideProgress();
                 IsViewingDetail = false;
-                PhotoPlaybackScreen.Visibility = Visibility.Collapsed;
-                RemoteImageGrid.IsEnabled = true;
-                LocalImageGrid.IsEnabled = true;
+                PhotoScreen.Visibility = Visibility.Collapsed;
+                // RemoteImageGrid.IsEnabled = true;
+                // LocalImageGrid.IsEnabled = true;
                 if (PivotRoot.SelectedIndex == 0)
                 {
                     UpdateInnerState(ViewerState.Local);
@@ -807,24 +822,9 @@ namespace Kazyx.Uwpmm.Pages
         void InitBitmapBeforeOpen()
         {
             DebugUtil.Log("Before open");
-            PhotoPlaybackScreen.Init();
+            PhotoScreen.Init();
         }
-
-        private void viewport_ManipulationStarted(object sender, System.Windows.Input.ManipulationStartedEventArgs e)
-        {
-            PhotoPlaybackScreen.viewport_ManipulationStarted(sender, e);
-        }
-
-        private void viewport_ManipulationDelta(object sender, System.Windows.Input.ManipulationDeltaEventArgs e)
-        {
-            PhotoPlaybackScreen.viewport_ManipulationDelta(sender, e);
-        }
-
-        private void viewport_ManipulationCompleted(object sender, System.Windows.Input.ManipulationCompletedEventArgs e)
-        {
-            PhotoPlaybackScreen.viewport_ManipulationCompleted(sender, e);
-        }
-
+        /*
         private void PhoneApplicationPage_BackKeyPress(object sender, CancelEventArgs e)
         {
             if (IsViewingDetail)
@@ -850,20 +850,24 @@ namespace Kazyx.Uwpmm.Pages
                 e.Cancel = true;
             }
         }
+        */
 
         private void ReleaseDetail()
         {
-            PhotoPlaybackScreen.ReleaseImage();
+            PhotoScreen.ReleaseImage();
             SetStillDetailVisibility(false);
             // poor codes to avoid LongListMultiSelector freezing
+            /*
             LocalImageGrid.Margin = new Thickness(0.1);
             LocalImageGrid.UpdateLayout();
             LocalImageGrid.Margin = new Thickness(0);
             LocalImageGrid.UpdateLayout();
+             * */
         }
 
         private bool IsViewingDetail = false;
 
+        /*
         private async void ImageGrid_ItemRealized(object sender, ItemRealizationEventArgs e)
         {
             if (e.ItemKind == LongListSelectorItemKind.Item)
@@ -917,9 +921,9 @@ namespace Kazyx.Uwpmm.Pages
             }
         }
 
-        /*
         private void DeleteSelectedImages()
         {
+            /*
             var items = RemoteImageGrid.SelectedItems;
             if (items.Count == 0)
             {
@@ -935,10 +939,12 @@ namespace Kazyx.Uwpmm.Pages
             }
             DeleteContents(contents);
             RemoteImageGrid.IsSelectionEnabled = false;
+             * */
         }
 
         private void FetchSelectedImages()
         {
+            /*
             var items = RemoteImageGrid.SelectedItems;
             if (items.Count == 0)
             {
@@ -957,19 +963,22 @@ namespace Kazyx.Uwpmm.Pages
                 }
             }
             RemoteImageGrid.IsSelectionEnabled = false;
+             * */
         }
 
         private void EnqueueImageDownload(RemoteThumbnail source)
         {
-            if (ApplicationSettings.GetInstance().PrioritizeOriginalSizeContents && source.Source.OriginalUrl != null)
+            // if (ApplicationSettings.GetInstance().PrioritizeOriginalSizeContents && source.Source.OriginalUrl != null)
+            if (source.Source.OriginalUrl != null)
             {
-                PictureSyncManager.Instance.Enqueue(new Uri(source.Source.OriginalUrl));
-                return;
+                PictureDownloader.Instance.Enqueue(new Uri(source.Source.OriginalUrl));
             }
-            // Fallback to large size image
-            PictureSyncManager.Instance.Enqueue(new Uri(source.Source.LargeUrl));
+            else
+            {
+                // Fallback to large size image
+                PictureDownloader.Instance.Enqueue(new Uri(source.Source.LargeUrl));
+            }
         }
-        */
 
         private async void ShowToast(string message)
         {
@@ -1023,20 +1032,21 @@ namespace Kazyx.Uwpmm.Pages
                 }
             }
         }
-
+        */
+        /*
         private void PhoneApplicationPage_OrientationChanged(object sender, OrientationChangedEventArgs e)
         {
             DebugUtil.Log("Orientation changed: " + e.Orientation);
             switch (e.Orientation)
             {
                 case PageOrientation.LandscapeLeft:
-                    MoviePlaybackScreen.Margin = new Thickness(12, 12, 72, 12);
+                    MovieScreen.Margin = new Thickness(12, 12, 72, 12);
                     break;
                 case PageOrientation.LandscapeRight:
-                    MoviePlaybackScreen.Margin = new Thickness(72, 12, 12, 12);
+                    MovieScreen.Margin = new Thickness(72, 12, 12, 12);
                     break;
                 case PageOrientation.Portrait:
-                    MoviePlaybackScreen.Margin = new Thickness(12);
+                    MovieScreen.Margin = new Thickness(12);
                     break;
             }
         }
@@ -1060,6 +1070,7 @@ namespace Kazyx.Uwpmm.Pages
             var content = item.DataContext as RemoteThumbnail;
             PlaybackContent(content);
         }
+         * */
 
         private async void PlaybackContent(RemoteThumbnail content)
         {
@@ -1071,7 +1082,14 @@ namespace Kazyx.Uwpmm.Pages
                         ChangeProgressText(SystemUtil.GetStringResource("Progress_OpeningDetailImage"));
                         try
                         {
-                            using (var strm = await Downloader.GetResponseStreamAsync(new Uri(content.Source.LargeUrl)))
+                            var res = await HttpClient.GetAsync(new Uri(content.Source.LargeUrl));
+                            if (res.StatusCode != HttpStatusCode.OK)
+                            {
+                                HideProgress();
+                                return;
+                            }
+
+                            using (var strm = await res.Content.ReadAsStreamAsync())
                             {
                                 var replica = new MemoryStream();
 
@@ -1088,17 +1106,17 @@ namespace Kazyx.Uwpmm.Pages
                                     {
                                         var _bitmap = new BitmapImage();
                                         _bitmap.SetSource(replica.AsRandomAccessStream());
-                                        PhotoPlaybackScreen.SourceBitmap = _bitmap;
+                                        PhotoScreen.SourceBitmap = _bitmap;
                                         InitBitmapBeforeOpen();
-                                        PhotoPlaybackScreen.SetBitmap();
+                                        PhotoScreen.SetBitmap();
                                         try
                                         {
-                                            PhotoData.MetaData = NtImageProcessor.MetaData.JpegMetaDataParser.ParseImage((Stream)replica);
+                                            PhotoData.MetaData = NtImageProcessor.MetaData.JpegMetaDataParser.ParseImage(replica);
                                         }
                                         catch (UnsupportedFileFormatException)
                                         {
                                             PhotoData.MetaData = null;
-                                            PhotoPlaybackScreen.DetailInfoVisibility = System.Windows.Visibility.Collapsed;
+                                            PhotoScreen.DetailInfoVisibility = Visibility.Collapsed;
                                         }
                                         SetStillDetailVisibility(true);
                                     }
@@ -1163,6 +1181,7 @@ namespace Kazyx.Uwpmm.Pages
             }
         }
 
+        /*
         private void CopyToPhone_Click(object sender, RoutedEventArgs e)
         {
             var item = sender as MenuItem;
@@ -1186,7 +1205,7 @@ namespace Kazyx.Uwpmm.Pages
             contents.ContentUris.Add(data.Source.Uri);
             DeleteContents(contents);
         }
-        */
+         * */
 
         private async void DeleteContents(TargetContents contents)
         {
@@ -1242,9 +1261,24 @@ namespace Kazyx.Uwpmm.Pages
             pivot.IsLocked = !TargetDevice.Status.StorageAccessSupported;
         }
 
-        private void ThumbnailImage_Tapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
+        private void ThumbnailImage_Tapped(object sender, TappedRoutedEventArgs e)
         {
 
+        }
+
+        private void PhotoScreen_ManipulationCompleted(object sender, ManipulationCompletedRoutedEventArgs e)
+        {
+            // PhotoScreen.viewport_ManipulationCompleted(sender, e);
+        }
+
+        private void PhotoScreen_ManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
+        {
+            // PhotoScreen.viewport_ManipulationDelta(sender, e);
+        }
+
+        private void PhotoScreen_ManipulationStarted(object sender, ManipulationStartedRoutedEventArgs e)
+        {
+            // PhotoScreen.viewport_ManipulationStarted(sender, e);
         }
     }
 
