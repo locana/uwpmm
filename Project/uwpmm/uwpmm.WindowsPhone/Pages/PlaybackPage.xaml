@@ -184,8 +184,6 @@
             </ScrollViewer>
         </Grid>
 
-        <Grid Name="Toast" Opacity="0.0" Visibility="Visible" Height="auto" HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="-15,0" Background="{StaticResource PhoneAccentBrush}">
-            <TextBlock HorizontalAlignment="Center" Grid.Row="0" TextWrapping="Wrap" Padding="5,5" Height="auto" Foreground="{StaticResource PhoneForegroundBrush}" VerticalAlignment="Center" Name="ToastMessage" Margin="15,0"/>
-        </Grid>
+        <control:Toast x:Name="Toast" HorizontalAlignment="Stretch" VerticalAlignment="Top"/>
     </Grid>
 </Page>

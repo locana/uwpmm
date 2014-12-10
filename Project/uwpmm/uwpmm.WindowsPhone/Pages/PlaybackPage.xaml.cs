@@ -53,16 +53,6 @@ namespace Kazyx.Uwpmm.Pages
                 }
                 // RemoteImageGrid.IsSelectionEnabled = true;
             });
-
-            CommandBarManager.SetEvent(AppBarItem.DownloadMultiple, (sender, e) =>
-            {
-                DebugUtil.Log("Download clicked");
-                if (GridSource != null)
-                {
-                    GridSource.SelectivityFactor = SelectivityFactor.CopyToPhone;
-                }
-                // RemoteImageGrid.IsSelectionEnabled = true;
-            });
             CommandBarManager.SetEvent(AppBarItem.DeleteMultiple, (sender, e) =>
             {
                 DebugUtil.Log("Delete clicked");
@@ -984,15 +974,8 @@ namespace Kazyx.Uwpmm.Pages
         {
             await SystemUtil.GetCurrentDispatcher().RunAsync(CoreDispatcherPriority.Normal, () =>
             {
-                ToastMessage.Text = message;
-                ToastApparance.Begin();
+                Toast.PushToast(new Control.ToastContent() { Text = message });
             });
-        }
-
-        private async void ToastApparance_Completed(object sender, object e)
-        {
-            await Task.Delay(3000);
-            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => { ToastDisApparance.Begin(); });
         }
 
         /*
