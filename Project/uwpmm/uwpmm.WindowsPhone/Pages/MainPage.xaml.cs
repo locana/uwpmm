@@ -13,6 +13,7 @@ using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 
 // The Basic Page item template is documented at http://go.microsoft.com/fwlink/?LinkID=390556
@@ -559,6 +560,13 @@ namespace Kazyx.Uwpmm.Pages
             var rw = (sender as Image).RenderSize.Width;
             this._FocusFrameSurface.Height = rh;
             this._FocusFrameSurface.Width = rw;
+        }
+
+        private void Button_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            Toast.PushToast(new Control.ToastContent() { Text = "hoge" });
+            Toast.PushToast(new Control.ToastContent() { Text = "hoge2", Icon = new BitmapImage(new Uri("ms-appx:///Assets/AppBar/appbar_cancel.png", UriKind.Absolute)) });
+            Toast.PushToast(new Control.ToastContent() { Text = "hoge3" });
         }
     }
 }

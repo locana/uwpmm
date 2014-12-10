@@ -31,6 +31,7 @@
                         <StackPanel>
                             <TextBlock Text="MY APPLICATION" Style="{ThemeResource TitleTextBlockStyle}" Margin="0,0,0,30"/>
                             <TextBlock Text="After connection established, swipe to right." />
+                            <Button Content="show toast" Tapped="Button_Tapped"/>
                         </StackPanel>
                     </Grid>
                 </PivotItem>
@@ -135,6 +136,7 @@
                     </Grid>
                 </PivotItem>
             </Pivot>
+            <controls:Toast x:Name="Toast" HorizontalAlignment="Stretch" VerticalAlignment="Top"/>
         </Grid>
     </Grid>
 </Page>
