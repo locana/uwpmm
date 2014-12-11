@@ -135,7 +135,5 @@ namespace Kazyx.Uwpmm
             await SuspensionManager.SaveAsync();
             deferral.Complete();
         }
-
-        public static Preference Settings = new Preference();
     }
 }

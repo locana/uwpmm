@@ -8,7 +8,7 @@
     xmlns:util="using:Kazyx.Uwpmm.Utility"
     xmlns:control="using:Kazyx.Uwpmm.Control"
     mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Loaded="Page_Loaded" Unloaded="Page_Unloaded">
 
     <Page.Resources>
         <!--
@@ -96,19 +96,6 @@
     </Page.Resources>
 
     <Grid x:Name="LayoutRoot">
-        <Grid.Resources>
-            <Storyboard x:Name="ToastApparance" Completed="ToastApparance_Completed">
-                <DoubleAnimation Storyboard.TargetName="Toast"
-                                             Storyboard.TargetProperty="Opacity" From="0.0" To="1.0" 
-                                             Duration="0:0:0.2" AutoReverse="False" />
-            </Storyboard>
-            <Storyboard x:Name="ToastDisApparance">
-                <DoubleAnimation Storyboard.TargetName="Toast"
-                                             Storyboard.TargetProperty="Opacity" From="1.0" To="0.0" 
-                                             Duration="0:0:0.2" AutoReverse="False" />
-            </Storyboard>
-        </Grid.Resources>
-
         <Pivot x:Name="PivotRoot" SelectionChanged="Pivot_SelectionChanged" Loaded="PivotRoot_Loaded">
             <PivotItem Margin="0,14,0,0">
                 <PivotItem.Header>

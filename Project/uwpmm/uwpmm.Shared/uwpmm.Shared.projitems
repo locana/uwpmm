@@ -58,6 +58,7 @@
       <DependentUpon>ZoomBar.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)DataModel\ApiCapabilityContainer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DataModel\ApplicationSettings.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataModel\AppSettingData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataModel\AsyncConversionSource.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataModel\CameraStatus.cs" />

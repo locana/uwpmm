@@ -206,8 +206,11 @@ namespace Kazyx.Uwpmm.Pages
                     }
                     break;
                 case 1:
-                    this.BottomAppBar = _CommandBarManager.Clear().Icon(AppBarItem.ControlPanel).CreateNew(0.6);
-                    LiveViewPageLoaded();
+                    if (target != null)
+                    {
+                        this.BottomAppBar = _CommandBarManager.Clear().Icon(AppBarItem.ControlPanel).CreateNew(0.6);
+                        LiveViewPageLoaded();
+                    }
                     break;
             }
         }

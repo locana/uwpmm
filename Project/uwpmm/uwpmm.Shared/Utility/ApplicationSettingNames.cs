@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
+﻿
 namespace Kazyx.Uwpmm.Utility
 {
     public class FramingGridTypes
@@ -15,7 +12,7 @@ namespace Kazyx.Uwpmm.Utility
         public const string Fibonacci = "grid_fibonacci";
     }
 
-    public class FramingGridColor
+    public class FramingGridColors
     {
         public const string White = "white";
         public const string Black = "black";

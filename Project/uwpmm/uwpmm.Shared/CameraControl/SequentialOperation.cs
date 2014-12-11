@@ -1,5 +1,6 @@
 ﻿using Kazyx.ImageStream;
 using Kazyx.RemoteApi;
+using Kazyx.Uwpmm.DataModel;
 using Kazyx.Uwpmm.Utility;
 using System;
 using System.Diagnostics;
@@ -101,7 +102,7 @@ namespace Kazyx.Uwpmm.CameraControl
                 var urls = awaiting ? await api.Camera.AwaitTakePictureAsync() : await api.Camera.ActTakePictureAsync();
                 DebugUtil.Log("Success taking picture");
 
-                if (App.Settings.PostviewSyncEnabled)
+                if (ApplicationSettings.GetInstance().IsPostviewTransferEnabled)
                 {
                     foreach (var url in urls)
                     {

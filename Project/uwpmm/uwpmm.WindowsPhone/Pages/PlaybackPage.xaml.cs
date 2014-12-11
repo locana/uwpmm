@@ -14,6 +14,8 @@ using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using Windows.Phone.UI.Input;
+using Windows.Storage;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
@@ -108,7 +110,6 @@ namespace Kazyx.Uwpmm.Pages
             });
 
             // Comment out until setting screen is imported.
-            /*
             var storage_access_settings = new SettingSection(SystemUtil.GetStringResource("SettingSection_ContentsSync"));
             AppSettings.Children.Add(storage_access_settings);
             storage_access_settings.Add(new CheckBoxSetting(
@@ -117,7 +118,6 @@ namespace Kazyx.Uwpmm.Pages
                     enabled => { ApplicationSettings.GetInstance().PrioritizeOriginalSizeContents = enabled; })));
 
             HideSettingAnimation.Completed += HideSettingAnimation_Completed;
-            */
 
 
             // TODO: If seek is supported, set vallback of seek bar and enable it.
@@ -218,13 +218,12 @@ namespace Kazyx.Uwpmm.Pages
              * */
 
 #if DEBUG
-            // AddDummyContentsAsync();
+            AddDummyContentsAsync();
 #endif
-            /*
-            PictureSyncManager.Instance.Failed += OnDLError;
-            PictureSyncManager.Instance.Fetched += OnFetched;
-            PictureSyncManager.Instance.Downloader.QueueStatusUpdated += OnFetchingImages;
-             * */
+            PictureDownloader.Instance.Failed += OnDLError;
+            PictureDownloader.Instance.Fetched += OnFetched;
+            PictureDownloader.Instance.QueueStatusUpdated += OnFetchingImages;
+
             if (TargetDevice != null)
             {
                 TargetDevice.Status.PropertyChanged += Status_PropertyChanged;
@@ -241,12 +240,12 @@ namespace Kazyx.Uwpmm.Pages
             {
                 TargetDevice.Status.PropertyChanged -= Status_PropertyChanged;
             }
-            // PictureSyncManager.Instance.Failed -= OnDLError;
-            // PictureSyncManager.Instance.Fetched -= OnFetched;
-            // PictureSyncManager.Instance.Downloader.QueueStatusUpdated -= OnFetchingImages;
+            PictureDownloader.Instance.Failed -= OnDLError;
+            PictureDownloader.Instance.Fetched -= OnFetched;
+            PictureDownloader.Instance.QueueStatusUpdated -= OnFetchingImages;
 
             CloseMovieStream();
-            // MovieDrawer.DataContext = null;
+            MovieDrawer.DataContext = null;
 
             if (Canceller != null)
             {
@@ -328,9 +327,6 @@ namespace Kazyx.Uwpmm.Pages
                 PivotRoot.IsLocked = false;
             }
         }
-
-        // Comment out until application bar manager is ported.
-        // private readonly AppBarManager abm = new AppBarManager();
 
         private bool IsRemoteInitialized = false;
         internal PhotoPlaybackData PhotoData = new PhotoPlaybackData();
@@ -445,7 +441,10 @@ namespace Kazyx.Uwpmm.Pages
 #if DEBUG
         private async void AddDummyContentsAsync()
         {
-            TargetDevice.Status.StorageAccessSupported = true;
+            if (TargetDevice != null)
+            {
+                TargetDevice.Status.StorageAccessSupported = true;
+            }
             UnlockPivot();
 
             if (CurrentUuid == null)
@@ -648,29 +647,29 @@ namespace Kazyx.Uwpmm.Pages
             });
         }
 
-        /*
-        private async void OnFetched(Picture pic, Geoposition pos)
+        private async void OnFetched(StorageFile file)
         {
             if (InnerState == ViewerState.OutOfPage) return;
 
             DebugUtil.Log("ViewerPage: OnFetched");
             await SystemUtil.GetCurrentDispatcher().RunAsync(CoreDispatcherPriority.Normal, () =>
             {
+                /*
                 var groups = LocalImageGrid.DataContext as ThumbnailGroup;
                 if (groups == null)
                 {
                     return;
                 }
                 groups.Group.Insert(0, new ThumbnailData(pic));
+                 * */
             });
         }
 
-        private void OnDLError(ImageDLError error)
+        private void OnDLError(ImageFetchError error)
         {
             DebugUtil.Log("ViewerPage: OnDLError");
             // TODO show toast according to error cause...
         }
-         * */
 
         private void OnFetchingImages(int count)
         {
@@ -814,33 +813,6 @@ namespace Kazyx.Uwpmm.Pages
             DebugUtil.Log("Before open");
             PhotoScreen.Init();
         }
-        /*
-        private void PhoneApplicationPage_BackKeyPress(object sender, CancelEventArgs e)
-        {
-            if (IsViewingDetail)
-            {
-                ReleaseDetail();
-                e.Cancel = true;
-            }
-            if (MovieDrawer.Visibility == Visibility.Visible || MovieStreamHelper.INSTANCE.IsProcessing)
-            {
-                CloseMovieStream();
-                e.Cancel = true;
-            }
-
-            if (RemoteImageGrid.IsSelectionEnabled)
-            {
-                RemoteImageGrid.IsSelectionEnabled = false;
-                e.Cancel = true;
-            }
-
-            if (AppSettingPanel.Visibility == Visibility.Visible)
-            {
-                CloseAppSettingPanel();
-                e.Cancel = true;
-            }
-        }
-        */
 
         private void ReleaseDetail()
         {
@@ -1262,6 +1234,44 @@ namespace Kazyx.Uwpmm.Pages
         private void PhotoScreen_ManipulationStarted(object sender, ManipulationStartedRoutedEventArgs e)
         {
             // PhotoScreen.viewport_ManipulationStarted(sender, e);
+        }
+
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            HardwareButtons.BackPressed += HardwareButtons_BackPressed;
+        }
+
+        private void Page_Unloaded(object sender, RoutedEventArgs e)
+        {
+            HardwareButtons.BackPressed -= HardwareButtons_BackPressed;
+        }
+
+        void HardwareButtons_BackPressed(object sender, BackPressedEventArgs e)
+        {
+            if (IsViewingDetail)
+            {
+                ReleaseDetail();
+                e.Handled = true;
+            }
+            if (MovieDrawer.Visibility == Visibility.Visible || MovieStreamHelper.INSTANCE.IsProcessing)
+            {
+                CloseMovieStream();
+                e.Handled = true;
+            }
+
+            /*
+            if (RemoteImageGrid.IsSelectionEnabled)
+            {
+                RemoteImageGrid.IsSelectionEnabled = false;
+                e.Handled = true;
+            }
+             * */
+
+            if (AppSettingPanel.Visibility == Visibility.Visible)
+            {
+                CloseAppSettingPanel();
+                e.Handled = true;
+            }
         }
     }
 
