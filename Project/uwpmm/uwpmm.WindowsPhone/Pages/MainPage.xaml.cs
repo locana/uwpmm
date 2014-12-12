@@ -29,7 +29,6 @@ namespace Kazyx.Uwpmm.Pages
         private ObservableDictionary defaultViewModel = new ObservableDictionary();
         private LiveviewScreenViewData screenViewData;
         private HistogramCreator HistogramCreator;
-        private PictureDownloader PictureDownloader = new PictureDownloader();
 
         public MainPage()
         {
@@ -171,12 +170,12 @@ namespace Kazyx.Uwpmm.Pages
 
             InitializeUI();
 
-            PictureDownloader.Fetched += (storage) =>
+            PictureDownloader.Instance.Fetched += (storage) =>
             {
                 ShowToast("Picture downloaded successfully!\n" + storage.Name);
             };
 
-            PictureDownloader.Failed += (err) =>
+            PictureDownloader.Instance.Failed += (err) =>
             {
                 ShowError("Failed to download or save the picture.\n" + err);
             };
@@ -343,7 +342,7 @@ namespace Kazyx.Uwpmm.Pages
 
             target.Status.OnPictureUrlsUpdated += (urls) =>
             {
-                foreach (var url in urls) { PictureDownloader.Enqueue(new Uri(url, UriKind.Absolute)); }
+                foreach (var url in urls) { PictureDownloader.Instance.Enqueue(new Uri(url, UriKind.Absolute)); }
             };
 
             await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
@@ -495,9 +494,8 @@ namespace Kazyx.Uwpmm.Pages
             if (target == null || target.Status.ShootMode == null) { return; }
             if (target.Status.ShootMode.Current == ShootModeParam.Still)
             {
-                try { 
-                    var urls = await target.Api.Camera.ActTakePictureAsync();
-                    foreach (var url in urls) { PictureDownloader.Enqueue(new Uri(url, UriKind.Absolute)); }
+                try {
+                    await SequentialOperation.TakePicture(target.Api, false);
                 }
                 catch (RemoteApi.RemoteApiException ex)
                 {
