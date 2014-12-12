@@ -29,6 +29,7 @@ namespace Kazyx.Uwpmm.Pages
         private ObservableDictionary defaultViewModel = new ObservableDictionary();
         private LiveviewScreenViewData screenViewData;
         private HistogramCreator HistogramCreator;
+        private PictureDownloader PictureDownloader = new PictureDownloader();
 
         public MainPage()
         {
@@ -169,6 +170,16 @@ namespace Kazyx.Uwpmm.Pages
             };
 
             InitializeUI();
+
+            PictureDownloader.Fetched += (storage) =>
+            {
+                ShowToast("Picture downloaded successfully!\n" + storage.Name);
+            };
+
+            PictureDownloader.Failed += (err) =>
+            {
+                ShowError("Failed to download or save the picture.\n" + err);
+            };
         }
 
         void InitializeUI()
@@ -330,6 +341,11 @@ namespace Kazyx.Uwpmm.Pages
                 }
             };
 
+            target.Status.OnPictureUrlsUpdated += (urls) =>
+            {
+                foreach (var url in urls) { PictureDownloader.Enqueue(new Uri(url, UriKind.Absolute)); }
+            };
+
             await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
                 GoToLiveviewScreen();
@@ -479,7 +495,10 @@ namespace Kazyx.Uwpmm.Pages
             if (target == null || target.Status.ShootMode == null) { return; }
             if (target.Status.ShootMode.Current == ShootModeParam.Still)
             {
-                try { await target.Api.Camera.ActTakePictureAsync(); }
+                try { 
+                    var urls = await target.Api.Camera.ActTakePictureAsync();
+                    foreach (var url in urls) { PictureDownloader.Enqueue(new Uri(url, UriKind.Absolute)); }
+                }
                 catch (RemoteApi.RemoteApiException ex)
                 {
                     DebugUtil.Log(ex.StackTrace);
@@ -563,6 +582,11 @@ namespace Kazyx.Uwpmm.Pages
             var rw = (sender as Image).RenderSize.Width;
             this._FocusFrameSurface.Height = rh;
             this._FocusFrameSurface.Width = rw;
+        }
+
+        private void ShowToast(String s)
+        {
+            Toast.PushToast(new Control.ToastContent() { Text = s });
         }
 
         private void Button_Tapped(object sender, TappedRoutedEventArgs e)

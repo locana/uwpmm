@@ -271,6 +271,7 @@ namespace Kazyx.Uwpmm.DataModel
             get { return _LiveviewOrientation == null ? Orientation.Straight : _LiveviewOrientation; }
         }
 
+        public Action<List<string>> OnPictureUrlsUpdated;
         private List<string> _PictureUrls;
         public List<string> PictureUrls
         {
@@ -278,6 +279,7 @@ namespace Kazyx.Uwpmm.DataModel
             {
                 _PictureUrls = value;
                 NotifyChangedOnUI("PictureUrls");
+                if (OnPictureUrlsUpdated != null) { OnPictureUrlsUpdated(value); }
             }
             get { return _PictureUrls; }
         }
