@@ -586,12 +586,5 @@ namespace Kazyx.Uwpmm.Pages
         {
             Toast.PushToast(new Control.ToastContent() { Text = s });
         }
-
-        private void Button_Tapped(object sender, TappedRoutedEventArgs e)
-        {
-            Toast.PushToast(new Control.ToastContent() { Text = "hoge" });
-            Toast.PushToast(new Control.ToastContent() { Text = "hoge2", Icon = new BitmapImage(new Uri("ms-appx:///Assets/AppBar/appbar_cancel.png", UriKind.Absolute)) });
-            Toast.PushToast(new Control.ToastContent() { Text = "hoge3" });
-        }
     }
 }
