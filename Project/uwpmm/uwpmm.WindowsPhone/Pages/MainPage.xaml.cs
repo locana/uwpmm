@@ -8,6 +8,7 @@ using Kazyx.Uwpmm.Settings;
 using Kazyx.Uwpmm.Utility;
 using NtImageProcessor;
 using System;
+using Windows.Storage.FileProperties;
 using Windows.UI.Core;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
@@ -170,9 +171,13 @@ namespace Kazyx.Uwpmm.Pages
 
             InitializeUI();
 
-            PictureDownloader.Instance.Fetched += (storage) =>
+            PictureDownloader.Instance.Fetched += async (storage) =>
             {
-                ShowToast("Picture downloaded successfully!\n" + storage.Name);
+                var thumb = await storage.GetThumbnailAsync(ThumbnailMode.ListView, 100);
+                var image = new BitmapImage();
+                image.SetSource(thumb);
+                Toast.PushToast(new Control.ToastContent() { Text = "Picture downloaded successfully!\n" + storage.Name, Icon = image });
+                thumb.Dispose();
             };
 
             PictureDownloader.Instance.Failed += (err) =>
@@ -494,8 +499,9 @@ namespace Kazyx.Uwpmm.Pages
             if (target == null || target.Status.ShootMode == null) { return; }
             if (target.Status.ShootMode.Current == ShootModeParam.Still)
             {
-                try {
-                    await SequentialOperation.TakePicture(target.Api, false);
+                try
+                {
+                    await SequentialOperation.TakePicture(target.Api, true);
                 }
                 catch (RemoteApi.RemoteApiException ex)
                 {
