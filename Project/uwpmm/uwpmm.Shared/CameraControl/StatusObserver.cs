@@ -238,10 +238,7 @@ namespace Kazyx.Uwpmm.CameraControl
             if (IsProcessing)
             {
                 Stop();
-                if (EndByError != null)
-                {
-                    EndByError.Invoke();
-                }
+                EndByError.Raise();
             }
         }
 

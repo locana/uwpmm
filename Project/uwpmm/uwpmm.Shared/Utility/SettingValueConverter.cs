@@ -2,7 +2,6 @@
 using Kazyx.RemoteApi.Camera;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace Kazyx.Uwpmm.Utility
 {

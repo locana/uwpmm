@@ -135,10 +135,7 @@ namespace Kazyx.Uwpmm.Utility
 
         protected void OnGeopositionUpdated(GeopositionEventArgs e)
         {
-            if (GeopositionUpdated != null)
-            {
-                GeopositionUpdated(e);
-            }
+            GeopositionUpdated.Raise(e);
         }
 
         internal async Task<Geoposition> AcquireGeoPosition()

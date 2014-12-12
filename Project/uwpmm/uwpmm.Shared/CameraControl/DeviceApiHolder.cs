@@ -1,9 +1,9 @@
 ﻿using Kazyx.DeviceDiscovery;
-using Kazyx.RemoteApi;
 using Kazyx.RemoteApi.AvContent;
 using Kazyx.RemoteApi.Camera;
 using Kazyx.RemoteApi.System;
 using Kazyx.Uwpmm.DataModel;
+using Kazyx.Uwpmm.Utility;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -121,40 +121,25 @@ namespace Kazyx.Uwpmm.CameraControl
             }
         }
 
-        public delegate void SupportedApiEventHandler(object sender, SupportedApiEventArgs e);
-
-        public event SupportedApiEventHandler SupportedApisUpdated;
+        public event EventHandler<SupportedApiEventArgs> SupportedApisUpdated;
 
         protected void OnSupportedApisUpdated()
         {
-            if (SupportedApisUpdated != null)
-            {
-                SupportedApisUpdated(this, new SupportedApiEventArgs(Capability.SupportedApis));
-            }
+            SupportedApisUpdated.Raise(this, new SupportedApiEventArgs(Capability.SupportedApis));
         }
 
-        public delegate void VersionEventHandler(object sender, VersionEventArgs e);
-
-        public event VersionEventHandler ServerVersionDetected;
+        public event EventHandler<VersionEventArgs> ServerVersionDetected;
 
         protected void OnServerVersionDetected()
         {
-            if (ServerVersionDetected != null)
-            {
-                ServerVersionDetected(this, new VersionEventArgs(Capability.Version));
-            }
+            ServerVersionDetected.Raise(this, new VersionEventArgs(Capability.Version));
         }
 
-        public delegate void AvailableApiEventHandler(object sender, AvailableApiEventArgs e);
-
-        public event AvailableApiEventHandler AvailiableApisUpdated;
+        public event EventHandler<AvailableApiEventArgs> AvailiableApisUpdated;
 
         protected void OnAvailableApisUpdated()
         {
-            if (AvailiableApisUpdated != null)
-            {
-                AvailiableApisUpdated(this, new AvailableApiEventArgs(Capability.AvailableApis));
-            }
+            AvailiableApisUpdated.Raise(this, new AvailableApiEventArgs(Capability.AvailableApis));
         }
     }
 

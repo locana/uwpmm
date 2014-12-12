@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Net;
 using System.Net.Http;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -31,19 +30,13 @@ namespace Kazyx.Uwpmm.Utility
         protected void OnFetched(StorageFile file)
         {
             DebugUtil.Log("PictureSyncManager: OnFetched");
-            if (Fetched != null)
-            {
-                Fetched(file);
-            }
+            Fetched.Raise(file);
         }
 
         protected void OnFailed(ImageFetchError error)
         {
             DebugUtil.Log("PictureSyncManager: OnFailed" + error);
-            if (Failed != null)
-            {
-                Failed(error);
-            }
+            Failed.Raise(error);
         }
 
         public async void Enqueue(Uri uri)
@@ -54,10 +47,7 @@ namespace Kazyx.Uwpmm.Utility
                 var req = new DownloadRequest { Uri = uri, Completed = OnFetched, Error = OnFailed };
                 DebugUtil.Log("Enqueue " + uri.AbsoluteUri);
                 DownloadQueue.Enqueue(req);
-                if (QueueStatusUpdated != null)
-                {
-                    QueueStatusUpdated(DownloadQueue.Count);
-                }
+                QueueStatusUpdated.Raise(DownloadQueue.Count);
                 ProcessQueueSequentially();
             });
         }
@@ -79,10 +69,7 @@ namespace Kazyx.Uwpmm.Utility
                         DebugUtil.Log("Dequeue - remaining " + DownloadQueue.Count);
                         await DownloadToSave(DownloadQueue.Dequeue());
 
-                        if (QueueStatusUpdated != null)
-                        {
-                            QueueStatusUpdated(DownloadQueue.Count);
-                        }
+                        QueueStatusUpdated.Raise(DownloadQueue.Count);
                     }
                     DebugUtil.Log("Queue end. Kill task");
                     task = null;
@@ -101,10 +88,10 @@ namespace Kazyx.Uwpmm.Utility
                     case HttpStatusCode.OK:
                         break;
                     case HttpStatusCode.Gone:
-                        req.Error(ImageFetchError.Gone);
+                        req.Error.Raise(ImageFetchError.Gone);
                         return;
                     default:
-                        req.Error(ImageFetchError.Network);
+                        req.Error.Raise(ImageFetchError.Network);
                         return;
                 }
 
@@ -135,7 +122,7 @@ namespace Kazyx.Uwpmm.Utility
                             }
                         }
                     }
-                    req.Completed(file);
+                    req.Completed.Raise(file);
                     return;
                 }
             }
@@ -143,7 +130,7 @@ namespace Kazyx.Uwpmm.Utility
             {
                 DebugUtil.Log(e.Message);
                 DebugUtil.Log(e.StackTrace);
-                req.Error(ImageFetchError.Unknown); // TODO
+                req.Error.Raise(ImageFetchError.Unknown); // TODO
             }
         }
     }

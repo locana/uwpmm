@@ -83,6 +83,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Utility\PictureDownloader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\Preference.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\ResourceManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utility\SafeDelegateExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\SettingValueConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\StorageUtil.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\SystemUtil.cs" />

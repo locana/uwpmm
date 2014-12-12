@@ -125,26 +125,18 @@ namespace Kazyx.Uwpmm.CameraControl
         }
 
         public event EventHandler StreamClosed;
-        public event StreamingStatusHandler StatusChanged;
+        public event EventHandler<StreamingStatusEventArgs> StatusChanged;
 
         protected void OnStatusChanged(StreamingStatus status)
         {
-            if (StatusChanged != null)
-            {
-                var arg = new StreamingStatusEventArgs();
-                arg.Status = status;
-                StatusChanged(this, arg);
-            }
+            StatusChanged.Raise(this, new StreamingStatusEventArgs { Status = status });
         }
 
         void StreamProcessor_Closed(object sender, EventArgs e)
         {
             DebugUtil.Log("StreamClosed. Finish MovieStreamHelper");
             Finish();
-            if (StreamClosed != null)
-            {
-                StreamClosed(sender, e);
-            }
+            StreamClosed.Raise(sender, e);
         }
 
         async void StreamProcessor_PlaybackInfoRetrieved(object sender, PlaybackInfoEventArgs e)
@@ -176,8 +168,6 @@ namespace Kazyx.Uwpmm.CameraControl
             IsRendering = false;
         }
     }
-
-    public delegate void StreamingStatusHandler(object sender, StreamingStatusEventArgs e);
 
     public class StreamingStatusEventArgs : EventArgs
     {

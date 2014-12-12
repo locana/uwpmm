@@ -1,8 +1,6 @@
 ﻿using Kazyx.Uwpmm.Utility;
 using System;
 using System.ComponentModel;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
 using Windows.UI.Core;
 
 namespace Kazyx.Uwpmm.DataModel
@@ -24,17 +22,7 @@ namespace Kazyx.Uwpmm.DataModel
 
         protected void NotifyChanged(string name)
         {
-            if (PropertyChanged != null)
-            {
-                try
-                {
-                    PropertyChanged(this, new PropertyChangedEventArgs(name));
-                }
-                catch (COMException)
-                {
-                    DebugUtil.Log("Caught COMException: ObservableBase#PropertyChanged");
-                }
-            }
+            PropertyChanged.Raise(this, new PropertyChangedEventArgs(name));
         }
     }
 }
