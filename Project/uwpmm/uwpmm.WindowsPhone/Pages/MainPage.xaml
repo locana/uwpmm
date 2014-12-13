@@ -58,14 +58,17 @@
                                     <ColumnDefinition Width="auto"/>
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="auto"/>
+                                    <ColumnDefinition Width="auto"/>
                                 </Grid.ColumnDefinitions>
                                 <Image Source="{Binding ShootModeImage, Mode=OneWay}" />
                                 <Image Source="{Binding ExposureModeImage, Mode=OneWay}" Grid.Column="1" Margin="3"/>
-                                <Image Name="RecDisplay" Source="/Assets/LiveviewScreen/rec.png" Grid.Column="2"
+                                <Image Name="RecDisplay" Source="/Assets/LiveviewScreen/rec.png" Grid.Column="2" Margin="3"
                                    Visibility="{Binding RecDisplayVisibility, Mode=OneWay, FallbackValue=Collapsed}"/>
-                            </Grid>                            
+                                <Image Source="{Binding MemoryCardStatusImage}" Grid.Column="4" Margin="3"/>
+                                <TextBlock Text="{Binding RecordbaleAmount}" Grid.Column="5" FontSize="22" VerticalAlignment="Center"/>
+                            </Grid>
                             <controls:Histogram Margin="6,6" HorizontalAlignment="Left" VerticalAlignment="Center" x:Name="HistogramControl" Width="120" Height="90" Grid.Row="1"/>
-                           
+
 
                         </Grid>
                         <Grid Name="Bottom" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Margin="14, 60">

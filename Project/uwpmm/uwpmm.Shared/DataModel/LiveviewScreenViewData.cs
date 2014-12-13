@@ -25,6 +25,8 @@ namespace Kazyx.Uwpmm.DataModel
                 NotifyChangedOnUI("ProgressDisplayVisibility");
                 NotifyChangedOnUI("ShootModeImage");
                 NotifyChangedOnUI("ExposureModeImage");
+                NotifyChangedOnUI("MemoryCardStatusImage");
+                NotifyChangedOnUI("RecordbaleAmount");
             };
             Device.Api.AvailiableApisUpdated += (sender, e) =>
             {
@@ -53,6 +55,9 @@ namespace Kazyx.Uwpmm.DataModel
         private static readonly BitmapImage SModeImage = new BitmapImage(new Uri("ms-appx:///Assets/LiveviewScreen/ExposureMode_S.png", UriKind.Absolute));
         private static readonly BitmapImage PModeImage = new BitmapImage(new Uri("ms-appx:///Assets/LiveviewScreen/ExposureMode_P.png", UriKind.Absolute));
         private static readonly BitmapImage PShiftModeImage = new BitmapImage(new Uri("ms-appx:///Assets/LiveviewScreen/ExposureMode_P_shift.png", UriKind.Absolute));
+
+        private static readonly BitmapImage AvailableMediaImage = new BitmapImage(new Uri("ms-appx:///Assets/LiveviewScreen/memory_card.png", UriKind.Absolute));
+        private static readonly BitmapImage NoMediaImage = new BitmapImage(new Uri("ms-appx:///Assets/LiveviewScreen/no_memory_card.png", UriKind.Absolute));
 
         public BitmapImage ShutterButtonImage
         {
@@ -119,6 +124,29 @@ namespace Kazyx.Uwpmm.DataModel
                         return MModeImage;
                 }
                 return null;
+            }
+        }
+
+        public BitmapImage MemoryCardStatusImage
+        {
+            get
+            {
+                if (Device.Status.Storages == null) return null;
+                foreach (var storage in Device.Status.Storages)
+                {
+                    if (storage.RecordTarget)
+                    {
+                        switch (storage.StorageID)
+                        {
+                            case "No Media":
+                                return NoMediaImage;
+                            case "Memory Card 1":
+                            default:
+                                return AvailableMediaImage;
+                        }
+                    }
+                }
+                return NoMediaImage;
             }
         }
 
@@ -217,6 +245,34 @@ namespace Kazyx.Uwpmm.DataModel
             {
                 if (Device.Status.ZoomInfo == null) { return 0; }
                 return Device.Status.ZoomInfo.NumberOfBoxes;
+            }
+        }
+
+        public string RecordbaleAmount
+        {
+            get
+            {
+                if (Device.Status.Storages == null || Device.Status.ShootMode == null) { return ""; }
+                foreach (StorageInfo storage in Device.Status.Storages)
+                {
+                    if (storage.RecordTarget)
+                    {
+                        switch (Device.Status.ShootMode.Current)
+                        {
+                            case ShootModeParam.Still:
+                            case ShootModeParam.Interval:
+                                if (storage.RecordableImages == -1) { return ""; }
+                                return storage.RecordableImages.ToString();
+                            case ShootModeParam.Movie:
+                            case ShootModeParam.Audio:
+                                if (storage.RecordableMovieLength == -1) { return ""; }
+                                return storage.RecordableMovieLength.ToString() + " min.";
+                            default:
+                                break;
+                        }
+                    }
+                }
+                return "";
             }
         }
     }
