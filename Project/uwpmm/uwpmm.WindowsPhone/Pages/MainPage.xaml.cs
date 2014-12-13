@@ -4,6 +4,7 @@ using Kazyx.RemoteApi;
 using Kazyx.RemoteApi.Camera;
 using Kazyx.Uwpmm.CameraControl;
 using Kazyx.Uwpmm.Common;
+using Kazyx.Uwpmm.Control;
 using Kazyx.Uwpmm.DataModel;
 using Kazyx.Uwpmm.Settings;
 using Kazyx.Uwpmm.Utility;
@@ -138,6 +139,14 @@ namespace Kazyx.Uwpmm.Pages
                     if (target == null || target.Api == null) { return; }
                     await target.Api.Camera.CancelTouchAFAsync();
                 });
+            _CommandBarManager.SetEvent(AppBarItem.AppSetting, (s, args) =>
+            {
+                OpenAppSettingPanel();
+            });
+            _CommandBarManager.SetEvent(AppBarItem.Ok, (s, args) =>
+            {
+                CloseAppSettingPanel();
+            });
             _CommandBarManager.SetEvent(AppBarItem.AboutPage, (s, args) =>
             {
                 Frame.Navigate(typeof(AboutPage));
@@ -212,6 +221,7 @@ namespace Kazyx.Uwpmm.Pages
                     HistogramControl.SetHistogramValue(r, g, b);
                 });
             };
+            InitializeAppSettingPanel();
         }
 
         private void CreateEntranceAppBar()
@@ -226,6 +236,7 @@ namespace Kazyx.Uwpmm.Pages
         private void CreateCameraControlAppBar()
         {
             this.BottomAppBar = _CommandBarManager.Clear()//
+                .Icon(AppBarItem.AppSetting)
                 .Icon(AppBarItem.ControlPanel)//
                 .CreateNew(0.6);
         }
@@ -735,6 +746,98 @@ namespace Kazyx.Uwpmm.Pages
                     }
                 }
             }
+        }
+
+
+        private AppSettingData<bool> geoSetting;
+        private AppSettingData<int> gridColorSetting;
+        private AppSettingData<int> fibonacciOriginSetting;
+        private AppSettingData<bool> FocusFrameSetting;
+
+        private void OpenAppSettingPanel()
+        {
+            // TODO: cancel touch AF and close other panels.
+            AppSettingPanel.Visibility = Windows.UI.Xaml.Visibility.Visible;
+            ShowSettingAnimation.Begin();
+            this.BottomAppBar = _CommandBarManager.Clear().Icon(AppBarItem.Ok).CreateNew(0.6);
+        }
+
+        private void CloseAppSettingPanel()
+        {
+            HideSettingAnimation.Begin();
+            CreateCameraControlAppBar();
+        }
+
+        private void InitializeAppSettingPanel()
+        {
+            var image_settings = new SettingSection("Image settings");
+
+            AppSettings.Children.Add(image_settings);
+
+            image_settings.Add(new CheckBoxSetting(
+                new AppSettingData<bool>("Save image after shooting", "postview",
+                () => { return ApplicationSettings.GetInstance().IsPostviewTransferEnabled; },
+                enabled => { ApplicationSettings.GetInstance().IsPostviewTransferEnabled = enabled; })));
+
+            geoSetting = new AppSettingData<bool>("Add geotag", "geotag",
+                () => { return ApplicationSettings.GetInstance().GeotagEnabled; },
+                enabled => { ApplicationSettings.GetInstance().GeotagEnabled = enabled; GeopositionManager.GetInstance().Enable = enabled; });
+            image_settings.Add(new CheckBoxSetting(geoSetting));
+
+            var display_settings = new SettingSection("Display");
+
+            AppSettings.Children.Add(display_settings);
+
+            display_settings.Add(new CheckBoxSetting(
+                new AppSettingData<bool>("Show button to take image", "button",
+                () => { return ApplicationSettings.GetInstance().IsShootButtonDisplayed; },
+                enabled => { ApplicationSettings.GetInstance().IsShootButtonDisplayed = enabled; })));
+
+            display_settings.Add(new CheckBoxSetting(
+                new AppSettingData<bool>("Show histogram", "",
+                () => { return ApplicationSettings.GetInstance().IsHistogramDisplayed; },
+                enabled => { ApplicationSettings.GetInstance().IsHistogramDisplayed = enabled; })));
+
+            FocusFrameSetting = new AppSettingData<bool>("Show focus frame", "",
+                () => { return ApplicationSettings.GetInstance().RequestFocusFrameInfo; },
+                enabled =>
+                {
+                    ApplicationSettings.GetInstance().RequestFocusFrameInfo = enabled;
+                    //cameraManager.FocusFrameSettingChanged(enabled);
+                    //if (!enabled) { FocusFrames.ClearFrames(); }
+                });
+            display_settings.Add(new CheckBoxSetting(FocusFrameSetting));
+
+            //display_settings.Add(new ListPickerSetting(
+            //    new AppSettingData<int>(AppResources.FramingGrids, AppResources.Guide_FramingGrids,
+            //        () => { return ApplicationSettings.GetInstance().GridTypeIndex; },
+            //        setting =>
+            //        {
+            //            ApplicationSettings.GetInstance().GridTypeIndex = setting;
+            //            DisplayGridColorSetting(ApplicationSettings.GetInstance().GridTypeSettings[setting] != FramingGridTypes.Off);
+            //            DisplayFibonacciOriginSetting(ApplicationSettings.GetInstance().GridTypeSettings[setting] == FramingGridTypes.Fibonacci);
+            //        },
+            //        SettingsValueConverter.FromFramingGrid(ApplicationSettings.GetInstance().GridTypeSettings.ToArray())
+            //        )));
+
+            //gridColorSetting = new AppSettingData<int>(AppResources.FramingGridColor, null,
+            //        () => { return ApplicationSettings.GetInstance().GridColorIndex; },
+            //        setting => { ApplicationSettings.GetInstance().GridColorIndex = setting; },
+            //        SettingsValueConverter.FromFramingGridColor(ApplicationSettings.GetInstance().GridColorSettings.ToArray()));
+            //display_settings.Add(new ListPickerSetting(gridColorSetting));
+
+            //fibonacciOriginSetting = new AppSettingData<int>(AppResources.FibonacciSpiralOrigin, null,
+            //    () => { return ApplicationSettings.GetInstance().FibonacciOriginIndex; },
+            //    setting => { ApplicationSettings.GetInstance().FibonacciOriginIndex = setting; },
+            //    SettingsValueConverter.FromFibonacciLineOrigin(ApplicationSettings.GetInstance().FibonacciLineOriginSettings.ToArray()));
+            //display_settings.Add(new ListPickerSetting(fibonacciOriginSetting));
+
+            HideSettingAnimation.Completed += HideSettingAnimation_Completed;
+        }
+
+        private void HideSettingAnimation_Completed(object sender, object e)
+        {
+            AppSettingPanel.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
         }
     }
 }

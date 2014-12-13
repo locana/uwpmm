@@ -16,9 +16,8 @@
         </Grid.RowDefinitions>
         <Border Background="{StaticResource PhoneChromeBrush}" Margin="0,5" >
             <TextBlock Name="TitleTextBlock" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
-                       FontSize="14" 
-                   Foreground="{StaticResource PhoneAccentBrush}" Text="" Margin="25,5" />
+                       FontSize="24" Foreground="{StaticResource PhoneAccentBrush}" Text="" Margin="40,5" />
         </Border>
-        <StackPanel Name="SettingItems" Grid.Row="1" Margin="0,0,0,20"></StackPanel>
+        <StackPanel Name="SettingItems" Grid.Row="1" Margin="10,0,0,20"></StackPanel>
     </Grid>
 </UserControl>

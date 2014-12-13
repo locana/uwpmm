@@ -16,14 +16,16 @@
         </Grid.RowDefinitions>
         <Grid Grid.Row="0" Margin="15,0,0,0" >
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="auto" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <CheckBox Grid.Column="0" Name="SettingCheckBox" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,0,0,-12" IsChecked="{Binding CurrentSetting, Mode=TwoWay}" IsEnabled="{Binding IsActive, Mode=OneWay}" />
-            <TextBlock Text="{Binding Title, Mode=OneWay}" Visibility="{Binding GuideVisibility, Mode=OneWay}" Name="SettingName" Grid.Column="1" TextWrapping="Wrap" VerticalAlignment="Center"
-                       FontSize="14" Margin="0,6,0,0"/>
+            <CheckBox Grid.Column="0" Name="SettingCheckBox" VerticalAlignment="Center" HorizontalAlignment="Center" MinWidth="10"
+                      Margin="8,0" IsChecked="{Binding CurrentSetting, Mode=TwoWay}" IsEnabled="{Binding IsActive, Mode=OneWay}" />
+            <TextBlock Text="{Binding Title, Mode=OneWay}" Visibility="{Binding GuideVisibility, Mode=OneWay}" Name="SettingName" 
+                       Grid.Column="1" TextWrapping="Wrap" VerticalAlignment="Center"
+                       FontSize="22" Margin="0"/>
         </Grid>
-        <TextBlock Grid.Row="1"  TextWrapping="Wrap"
-                   Name="SettingGuide" Text="{Binding Guide, Mode=OneWay}" Margin="40, 0, 0,0"/>
+        <TextBlock Grid.Row="1"  TextWrapping="Wrap" FontSize="20"
+                   Name="SettingGuide" Text="{Binding Guide, Mode=OneWay}" Margin="40, 0, 0,0" Foreground="{ThemeResource TextBoxDisabledForegroundThemeBrush}"/>
     </Grid>
 </UserControl>
