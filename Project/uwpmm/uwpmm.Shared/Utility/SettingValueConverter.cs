@@ -589,7 +589,7 @@ namespace Kazyx.Uwpmm.Utility
             return val + " " + SystemUtil.GetStringResource("Seconds");
         }
 
-        /*
+
         internal static string[] FromFramingGrid(string[] keys)
         {
             string[] names = new string[keys.Length];
@@ -598,25 +598,25 @@ namespace Kazyx.Uwpmm.Utility
                 switch (keys[i])
                 {
                     case FramingGridTypes.Off:
-                        names[i] = SystemUtil.GetStringResource("Off;
+                        names[i] = SystemUtil.GetStringResource("Off");
                         break;
                     case FramingGridTypes.RuleOfThirds:
-                        names[i] = SystemUtil.GetStringResource("Grid_RuleOfThirds;
+                        names[i] = SystemUtil.GetStringResource("Grid_RuleOfThirds");
                         break;
                     case FramingGridTypes.Diagonal:
-                        names[i] = SystemUtil.GetStringResource("Grid_Diagonal;
+                        names[i] = SystemUtil.GetStringResource("Grid_Diagonal");
                         break;
                     case FramingGridTypes.Square:
-                        names[i] = SystemUtil.GetStringResource("Grid_Square;
+                        names[i] = SystemUtil.GetStringResource("Grid_Square");
                         break;
                     case FramingGridTypes.Crosshairs:
-                        names[i] = SystemUtil.GetStringResource("Grid_Crosshairs;
+                        names[i] = SystemUtil.GetStringResource("Grid_Crosshairs");
                         break;
                     case FramingGridTypes.Fibonacci:
-                        names[i] = SystemUtil.GetStringResource("Grid_Fibonacci;
+                        names[i] = SystemUtil.GetStringResource("Grid_Fibonacci");
                         break;
                     case FramingGridTypes.GoldenRatio:
-                        names[i] = SystemUtil.GetStringResource("Grid_GoldenRatio;
+                        names[i] = SystemUtil.GetStringResource("Grid_GoldenRatio");
                         break;
                     default:
                         names[i] = keys[i];
@@ -633,20 +633,20 @@ namespace Kazyx.Uwpmm.Utility
             {
                 switch (keys[i])
                 {
-                    case FramingGridColor.White:
-                        names[i] = SystemUtil.GetStringResource("White;
+                    case FramingGridColors.White:
+                        names[i] = SystemUtil.GetStringResource("White");
                         break;
-                    case FramingGridColor.Black:
-                        names[i] = SystemUtil.GetStringResource("Black;
+                    case FramingGridColors.Black:
+                        names[i] = SystemUtil.GetStringResource("Black");
                         break;
-                    case FramingGridColor.Red:
-                        names[i] = SystemUtil.GetStringResource("Red;
+                    case FramingGridColors.Red:
+                        names[i] = SystemUtil.GetStringResource("Red");
                         break;
-                    case FramingGridColor.Green:
-                        names[i] = SystemUtil.GetStringResource("Green;
+                    case FramingGridColors.Green:
+                        names[i] = SystemUtil.GetStringResource("Green");
                         break;
-                    case FramingGridColor.Blue:
-                        names[i] = SystemUtil.GetStringResource("Blue;
+                    case FramingGridColors.Blue:
+                        names[i] = SystemUtil.GetStringResource("Blue");
                         break;
                     default:
                         names[i] = keys[i];
@@ -664,16 +664,16 @@ namespace Kazyx.Uwpmm.Utility
                 switch (keys[i])
                 {
                     case FibonacciLineOrigins.UpperLeft:
-                        names[i] = SystemUtil.GetStringResource("UpperLeft;
+                        names[i] = SystemUtil.GetStringResource("UpperLeft");
                         break;
                     case FibonacciLineOrigins.UpperRight:
-                        names[i] = SystemUtil.GetStringResource("UpperRight;
+                        names[i] = SystemUtil.GetStringResource("UpperRight");
                         break;
                     case FibonacciLineOrigins.BottomLeft:
-                        names[i] = SystemUtil.GetStringResource("BottomLeft;
+                        names[i] = SystemUtil.GetStringResource("BottomLeft");
                         break;
                     case FibonacciLineOrigins.BottomRight:
-                        names[i] = SystemUtil.GetStringResource("BottomRight;
+                        names[i] = SystemUtil.GetStringResource("BottomRight");
                         break;
                     default:
                         names[i] = keys[i];
@@ -682,6 +682,5 @@ namespace Kazyx.Uwpmm.Utility
             }
             return names;
         }
-         * */
     }
 }

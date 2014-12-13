@@ -40,6 +40,9 @@
                     <Grid Name="LiveviewScreen">
                         <Image x:Name="LiveviewImage" Source="{Binding Image, Mode=OneWay}" Loaded="LiveviewImage_Loaded" Unloaded="LiveviewImage_Unloaded"
                                SizeChanged="LiveviewImage_SizeChanged"/>
+                        <controls:FramingGridsSurface x:Name="FramingGuideSurface" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                                                      Type="{Binding GridType, Mode=OneWay}"
+                                                   Stroke="{Binding GridColorBrush,Mode=OneWay}" FibonacciOrigin="{Binding FibonacciLineOrigin, Mode=OneWay}"/>
                         <controls:FocusFrameSurface x:Name="_FocusFrameSurface" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
                         <Grid Name="Top" HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="14,10">
                             <Grid.ColumnDefinitions>

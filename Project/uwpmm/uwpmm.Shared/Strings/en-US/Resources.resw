@@ -1037,4 +1037,19 @@ Please update to the latest at PlayMemories Camera Apps store.</value>
   <data name="Viewer_StoragePhone" xml:space="preserve">
     <value>Phone storage</value>
   </data>
+  <data name="Black" xml:space="preserve">
+    <value>Black</value>
+  </data>
+  <data name="Blue" xml:space="preserve">
+    <value>Blue</value>
+  </data>
+  <data name="Green" xml:space="preserve">
+    <value>Green</value>
+  </data>
+  <data name="Red" xml:space="preserve">
+    <value>Red</value>
+  </data>
+  <data name="White" xml:space="preserve">
+    <value>White</value>
+  </data>
 </root>

@@ -224,6 +224,7 @@ namespace Kazyx.Uwpmm.Pages
             HistogramControl.DataContext = ApplicationSettings.GetInstance();
             ShutterButtonWrapper.DataContext = ApplicationSettings.GetInstance();
             InitializeAppSettingPanel();
+            FramingGuideSurface.DataContext = ApplicationSettings.GetInstance();
         }
 
         private void CreateEntranceAppBar()
@@ -551,7 +552,8 @@ namespace Kazyx.Uwpmm.Pages
                 try
                 {
                     await SequentialOperation.TakePicture(target.Api);
-                    if (!ApplicationSettings.GetInstance().IsPostviewTransferEnabled) {
+                    if (!ApplicationSettings.GetInstance().IsPostviewTransferEnabled)
+                    {
                         ShowToast("Captured!");
                     }
                 }
@@ -638,6 +640,8 @@ namespace Kazyx.Uwpmm.Pages
             var rw = (sender as Image).RenderSize.Width;
             this._FocusFrameSurface.Height = rh;
             this._FocusFrameSurface.Width = rw;
+            this.FramingGuideSurface.Height = rh;
+            this.FramingGuideSurface.Width = rw;
         }
 
         private void ShowToast(string s)
@@ -754,7 +758,6 @@ namespace Kazyx.Uwpmm.Pages
             }
         }
 
-
         private AppSettingData<bool> geoSetting;
         private AppSettingData<int> gridColorSetting;
         private AppSettingData<int> fibonacciOriginSetting;
@@ -813,31 +816,56 @@ namespace Kazyx.Uwpmm.Pages
                 });
             display_settings.Add(new CheckBoxSetting(FocusFrameSetting));
 
-            //display_settings.Add(new ListPickerSetting(
-            //    new AppSettingData<int>(AppResources.FramingGrids, AppResources.Guide_FramingGrids,
-            //        () => { return ApplicationSettings.GetInstance().GridTypeIndex; },
-            //        setting =>
-            //        {
-            //            ApplicationSettings.GetInstance().GridTypeIndex = setting;
-            //            DisplayGridColorSetting(ApplicationSettings.GetInstance().GridTypeSettings[setting] != FramingGridTypes.Off);
-            //            DisplayFibonacciOriginSetting(ApplicationSettings.GetInstance().GridTypeSettings[setting] == FramingGridTypes.Fibonacci);
-            //        },
-            //        SettingsValueConverter.FromFramingGrid(ApplicationSettings.GetInstance().GridTypeSettings.ToArray())
-            //        )));
+            display_settings.Add(new ComboBoxSetting(
+                new AppSettingData<int>("Framing grids setting", "you can select various types of framing assist lines",
+                    () => { return ApplicationSettings.GetInstance().GridTypeIndex; },
+                    setting =>
+                    {
+                        if (setting < 0) { return; }
+                        ApplicationSettings.GetInstance().GridTypeIndex = setting;
+                        DisplayGridColorSetting(ApplicationSettings.GetInstance().GridTypeSettings[setting] != FramingGridTypes.Off);
+                        DisplayFibonacciOriginSetting(ApplicationSettings.GetInstance().GridTypeSettings[setting] == FramingGridTypes.Fibonacci);
+                    },
+                    SettingValueConverter.FromFramingGrid(ApplicationSettings.GetInstance().GridTypeSettings.ToArray())
+                    )));
 
-            //gridColorSetting = new AppSettingData<int>(AppResources.FramingGridColor, null,
-            //        () => { return ApplicationSettings.GetInstance().GridColorIndex; },
-            //        setting => { ApplicationSettings.GetInstance().GridColorIndex = setting; },
-            //        SettingsValueConverter.FromFramingGridColor(ApplicationSettings.GetInstance().GridColorSettings.ToArray()));
-            //display_settings.Add(new ListPickerSetting(gridColorSetting));
+            gridColorSetting = new AppSettingData<int>("Color", null,
+                    () => { return ApplicationSettings.GetInstance().GridColorIndex; },
+                    setting =>
+                    {
+                        if (setting < 0) { return; }
+                        ApplicationSettings.GetInstance().GridColorIndex = setting;
+                    },
+                    SettingValueConverter.FromFramingGridColor(ApplicationSettings.GetInstance().GridColorSettings.ToArray()));
+            display_settings.Add(new ComboBoxSetting(gridColorSetting));
 
-            //fibonacciOriginSetting = new AppSettingData<int>(AppResources.FibonacciSpiralOrigin, null,
-            //    () => { return ApplicationSettings.GetInstance().FibonacciOriginIndex; },
-            //    setting => { ApplicationSettings.GetInstance().FibonacciOriginIndex = setting; },
-            //    SettingsValueConverter.FromFibonacciLineOrigin(ApplicationSettings.GetInstance().FibonacciLineOriginSettings.ToArray()));
-            //display_settings.Add(new ListPickerSetting(fibonacciOriginSetting));
+            fibonacciOriginSetting = new AppSettingData<int>("Origin", null,
+                () => { return ApplicationSettings.GetInstance().FibonacciOriginIndex; },
+                setting =>
+                {
+                    if (setting < 0) { return; }
+                    ApplicationSettings.GetInstance().FibonacciOriginIndex = setting;
+                },
+                SettingValueConverter.FromFibonacciLineOrigin(ApplicationSettings.GetInstance().FibonacciLineOriginSettings.ToArray()));
+            display_settings.Add(new ComboBoxSetting(fibonacciOriginSetting));
 
             HideSettingAnimation.Completed += HideSettingAnimation_Completed;
+        }
+
+        private void DisplayGridColorSetting(bool displayed)
+        {
+            if (gridColorSetting != null)
+            {
+                gridColorSetting.IsActive = displayed;
+            }
+        }
+
+        private void DisplayFibonacciOriginSetting(bool displayed)
+        {
+            if (fibonacciOriginSetting != null)
+            {
+                fibonacciOriginSetting.IsActive = displayed;
+            }
         }
 
         private void HideSettingAnimation_Completed(object sender, object e)

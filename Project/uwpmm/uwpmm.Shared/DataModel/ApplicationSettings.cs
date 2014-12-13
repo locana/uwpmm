@@ -252,6 +252,7 @@ namespace Kazyx.Uwpmm.DataModel
         {
             set
             {
+                if (value < 0) { return; }
                 GridType = GridTypeSettings[value];
             }
             get
@@ -320,6 +321,7 @@ namespace Kazyx.Uwpmm.DataModel
         {
             set
             {
+                if (value < 0) { return; }
                 GridColor = GridColorSettings[value];
             }
             get
