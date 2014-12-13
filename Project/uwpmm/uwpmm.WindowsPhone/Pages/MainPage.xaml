@@ -68,7 +68,8 @@
                                 <Image Source="{Binding MemoryCardStatusImage}" Grid.Column="4" Margin="3"/>
                                 <TextBlock Text="{Binding RecordbaleAmount}" Grid.Column="5" FontSize="22" VerticalAlignment="Center"/>
                             </Grid>
-                            <controls:Histogram Margin="6,6" HorizontalAlignment="Left" VerticalAlignment="Center" x:Name="HistogramControl" Width="120" Height="90" Grid.Row="1"/>
+                            <controls:Histogram Margin="6,6" HorizontalAlignment="Left" VerticalAlignment="Center" x:Name="HistogramControl" Width="120" Height="90" Grid.Row="1"
+                                                Visibility="{Binding HistogramVisibility}"/>
 
 
                         </Grid>
@@ -82,11 +83,14 @@
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="auto"/>
                             </Grid.ColumnDefinitions>
-                            <Button Name="ShutterButton" Grid.RowSpan="2" Grid.Column="2" MinWidth="10" Width="80" Height="80" HorizontalAlignment="Stretch" 
-                                    VerticalAlignment="Bottom" BorderThickness="1" Click="ShutterButton_Click" ManipulationStarted="ShutterButton_ManipulationStarted"
+                            <Grid Name="ShutterButtonWrapper" Grid.RowSpan="2" Grid.Column="2" Width="80" Height="80" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" 
+                                  Visibility="{Binding ShootButtonVisibility}">
+                                <Button Name="ShutterButton" MinWidth="10" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                                    BorderThickness="1" Click="ShutterButton_Click" ManipulationStarted="ShutterButton_ManipulationStarted"
                                     IsEnabled="{Binding ShutterButtonEnabled}" Background="Black" Opacity="0.8" >
-                                <Image Source="{Binding ShutterButtonImage}" Margin="8"/>
-                            </Button>
+                                    <Image Source="{Binding ShutterButtonImage}" Margin="8"/>
+                                </Button>
+                            </Grid>
                             <controls:ZoomBar Grid.Column="0" Grid.Row="0" Height="13" Margin="4"  VerticalAlignment="Bottom" Visibility="{Binding ZoomInterfacesVisibility}"
                                               PositionInCurrentBox="{Binding ZoomPositionInCurrentBox, Mode=OneWay, FallbackValue=0}" CurrentBoxIndex="{Binding ZoomBoxIndex, Mode=OneWay, FallbackValue=0}"
                                               TotalBoxNum="{Binding ZoomBoxNum, Mode=OneWay, FallbackValue=1}" Width="140"  />

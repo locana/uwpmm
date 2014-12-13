@@ -221,6 +221,8 @@ namespace Kazyx.Uwpmm.Pages
                     HistogramControl.SetHistogramValue(r, g, b);
                 });
             };
+            HistogramControl.DataContext = ApplicationSettings.GetInstance();
+            ShutterButtonWrapper.DataContext = ApplicationSettings.GetInstance();
             InitializeAppSettingPanel();
         }
 
@@ -273,6 +275,7 @@ namespace Kazyx.Uwpmm.Pages
         {
             screenViewData = new LiveviewScreenViewData(target);
             Liveview.DataContext = screenViewData;
+            ShutterButton.DataContext = screenViewData;
             _FocusFrameSurface.ClearFrames();
         }
 
@@ -432,7 +435,7 @@ namespace Kazyx.Uwpmm.Pages
         async void api_AvailiableApisUpdated(object sender, AvailableApiEventArgs e)
         {
             if (target == null) { return; }
-            if (e.AvailableApis.Contains("setLiveviewFrameInfo"))
+            if (ApplicationSettings.GetInstance().RequestFocusFrameInfo && e.AvailableApis.Contains("setLiveviewFrameInfo"))
             {
                 await target.Api.Camera.SetLiveviewFrameInfo(new FrameInfoSetting() { TransferFrameInfo = true });
             }
@@ -548,6 +551,9 @@ namespace Kazyx.Uwpmm.Pages
                 try
                 {
                     await SequentialOperation.TakePicture(target.Api);
+                    if (!ApplicationSettings.GetInstance().IsPostviewTransferEnabled) {
+                        ShowToast("Captured!");
+                    }
                 }
                 catch (RemoteApiException ex)
                 {
@@ -803,8 +809,7 @@ namespace Kazyx.Uwpmm.Pages
                 enabled =>
                 {
                     ApplicationSettings.GetInstance().RequestFocusFrameInfo = enabled;
-                    //cameraManager.FocusFrameSettingChanged(enabled);
-                    //if (!enabled) { FocusFrames.ClearFrames(); }
+                    if (!enabled) { _FocusFrameSurface.ClearFrames(); }
                 });
             display_settings.Add(new CheckBoxSetting(FocusFrameSetting));
 
