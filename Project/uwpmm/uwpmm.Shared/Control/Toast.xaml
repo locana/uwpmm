@@ -17,8 +17,8 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <Image VerticalAlignment="Stretch"  HorizontalAlignment="Left" Source="{Binding Icon}" Grid.Column="0" Stretch="Fill" MaxHeight="70" />
-            <TextBlock VerticalAlignment="Center" HorizontalAlignment="Stretch" TextAlignment="Justify" Text="{Binding Text}" Grid.Column="1" 
-                       Foreground="{ThemeResource ApplicationForegroundThemeBrush}" FontSize="{StaticResource TextStyleLargeFontSize}" Margin="6"/>
+            <TextBlock VerticalAlignment="Center" HorizontalAlignment="Stretch" Text="{Binding Text}" Grid.Column="1" TextWrapping="WrapWholeWords"
+                       Foreground="{ThemeResource ApplicationForegroundThemeBrush}" FontSize="{StaticResource TextStyleLargeFontSize}" Margin="6" />
             <Grid.RenderTransform>
                 <TranslateTransform x:Name="SlideTransform"/>
             </Grid.RenderTransform>

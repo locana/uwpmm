@@ -181,7 +181,9 @@ namespace Kazyx.Uwpmm.Pages
                 {
                     var image = new BitmapImage();
                     image.SetSource(thumb);
-                    Toast.PushToast(new Control.ToastContent() { Text = "Picture downloaded successfully!\n" + storage.Name, Icon = image });
+                    var path = storage.Path.Split('\\');
+                    var name = '\\' + path[path.Length - 2] + '\\' + path[path.Length - 1];
+                    Toast.PushToast(new Control.ToastContent() { Text = "Picture downloaded successfully!" + name, Icon = image });
                     thumb.Dispose();
                 });
             };
