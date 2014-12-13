@@ -287,7 +287,7 @@ namespace Kazyx.Uwpmm.Pages
         {
             InnerState = state;
 
-            await SystemUtil.GetCurrentDispatcher().RunAsync(CoreDispatcherPriority.Normal, () =>
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
                 switch (InnerState)
                 {
@@ -349,7 +349,7 @@ namespace Kazyx.Uwpmm.Pages
         {
             UpdateInnerState(ViewerState.RemoteSingle);
             MovieStreamHelper.INSTANCE.Finish();
-            await SystemUtil.GetCurrentDispatcher().RunAsync(CoreDispatcherPriority.Normal, () =>
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
                 UnlockPivot();
                 MovieScreen.Reset();
@@ -388,6 +388,7 @@ namespace Kazyx.Uwpmm.Pages
 
         private async void LoadLocalContents()
         {
+            ChangeProgressText(SystemUtil.GetStringResource("Progress_LoadingLocalContents"));
             try
             {
                 var library = KnownFolders.PicturesLibrary;
@@ -396,9 +397,11 @@ namespace Kazyx.Uwpmm.Pages
                 {
                     await LoadContentsFrom(folder);
                 }
+                HideProgress();
             }
             catch
             {
+                DebugUtil.Log("Failed to load local contents.");
                 ShowToast("Failed to load local contents.");
             }
         }
@@ -479,7 +482,7 @@ namespace Kazyx.Uwpmm.Pages
                         list.Add(new Thumbnail(CurrentUuid, date, content));
                     }
                     await Task.Delay(500);
-                    await SystemUtil.GetCurrentDispatcher().RunAsync(CoreDispatcherPriority.Normal, () =>
+                    await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
                     {
                         if (RemoteGridSource != null)
                         {
@@ -547,7 +550,7 @@ namespace Kazyx.Uwpmm.Pages
         private async void DeleteRemoteGridFacially()
         {
             IsRemoteInitialized = false;
-            await SystemUtil.GetCurrentDispatcher().RunAsync(CoreDispatcherPriority.Normal, () => { RemoteGridSource.Clear(); });
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => { RemoteGridSource.Clear(); });
         }
 
         private bool _StorageAvailable = false;
@@ -639,7 +642,7 @@ namespace Kazyx.Uwpmm.Pages
                 list.Add(new Thumbnail(TargetDevice.Udn, args.DateInfo, content));
             }
 
-            await SystemUtil.GetCurrentDispatcher().RunAsync(CoreDispatcherPriority.Normal, () =>
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
                 if (RemoteGridSource != null)
                 {
@@ -650,7 +653,7 @@ namespace Kazyx.Uwpmm.Pages
 
         private async void HideProgress()
         {
-            await SystemUtil.GetCurrentDispatcher().RunAsync(CoreDispatcherPriority.Normal, async () =>
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
             {
                 await statusBar.HideAsync();
             });
@@ -659,7 +662,7 @@ namespace Kazyx.Uwpmm.Pages
         private async void ChangeProgressText(string text)
         {
             DebugUtil.Log(text);
-            await SystemUtil.GetCurrentDispatcher().RunAsync(CoreDispatcherPriority.Normal, async () =>
+            await Dispatcher.RunAsync(CoreDispatcherPriority.High, async () =>
             {
                 statusBar.ProgressIndicator.Text = text;
                 await statusBar.ShowAsync();
@@ -671,7 +674,7 @@ namespace Kazyx.Uwpmm.Pages
             if (InnerState == ViewerState.OutOfPage) return;
 
             DebugUtil.Log("ViewerPage: OnFetched");
-            await SystemUtil.GetCurrentDispatcher().RunAsync(CoreDispatcherPriority.Normal, () =>
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
                 /*
                 var groups = LocalImageGrid.DataContext as ThumbnailGroup;
@@ -873,7 +876,7 @@ namespace Kazyx.Uwpmm.Pages
 
         private async void ShowToast(string message)
         {
-            await SystemUtil.GetCurrentDispatcher().RunAsync(CoreDispatcherPriority.Normal, () =>
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
                 Toast.PushToast(new Control.ToastContent() { Text = message });
             });
@@ -975,7 +978,7 @@ namespace Kazyx.Uwpmm.Pages
                             }
                             replica.Seek(0, SeekOrigin.Begin);
 
-                            await SystemUtil.GetCurrentDispatcher().RunAsync(CoreDispatcherPriority.Normal, () =>
+                            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
                             {
                                 try
                                 {
@@ -1307,6 +1310,7 @@ namespace Kazyx.Uwpmm.Pages
             }
             catch
             {
+                HideProgress();
                 ShowToast(SystemUtil.GetStringResource("Viewer_FailedToOpenDetail"));
             }
         }

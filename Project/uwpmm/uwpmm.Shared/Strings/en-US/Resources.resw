@@ -521,7 +521,7 @@ Please check internet connection status</value>
     <value>Fetching contents...</value>
   </data>
   <data name="Progress_LoadingLocalContents" xml:space="preserve">
-    <value>Loading camera roll images...</value>
+    <value>Loading local images...</value>
   </data>
   <data name="Progress_OpeningDetailImage" xml:space="preserve">
     <value>Opening detail image...</value>
