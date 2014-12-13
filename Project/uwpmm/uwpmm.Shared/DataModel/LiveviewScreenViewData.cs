@@ -23,6 +23,10 @@ namespace Kazyx.Uwpmm.DataModel
                 NotifyChangedOnUI("ShutterButtonEnabled");
                 NotifyChangedOnUI("RecDisplayVisibility");
                 NotifyChangedOnUI("ProgressDisplayVisibility");
+                NotifyChangedOnUI("ShootModeImage");
+                NotifyChangedOnUI("ExposureModeImage");
+                NotifyChangedOnUI("MemoryCardStatusImage");
+                NotifyChangedOnUI("RecordbaleAmount");
             };
             Device.Api.AvailiableApisUpdated += (sender, e) =>
             {
@@ -38,6 +42,22 @@ namespace Kazyx.Uwpmm.DataModel
         private static readonly BitmapImage StopImage = new BitmapImage(new Uri("ms-appx:///Assets/LiveviewScreen/Stop.png", UriKind.Absolute));
         private static readonly BitmapImage IntervalStillImage = new BitmapImage(new Uri("ms-appx:///Assets/LiveviewScreen/IntervalStillRecButton.png", UriKind.Absolute));
         private static readonly BitmapImage ContShootingImage = new BitmapImage(new Uri("ms-appx:///Assets/LiveviewScreen/ContShootingButton.png", UriKind.Absolute));
+
+        private static readonly BitmapImage StillModeImage = new BitmapImage(new Uri("ms-appx:///Assets/LiveviewScreen/mode_photo.png", UriKind.Absolute));
+        private static readonly BitmapImage MovieModeImage = new BitmapImage(new Uri("ms-appx:///Assets/LiveviewScreen/mode_movie.png", UriKind.Absolute));
+        private static readonly BitmapImage IntervalModeImage = new BitmapImage(new Uri("ms-appx:///Assets/LiveviewScreen/mode_interval.png", UriKind.Absolute));
+        private static readonly BitmapImage AudioModeImage = new BitmapImage(new Uri("ms-appx:///Assets/LiveviewScreen/mode_audio.png", UriKind.Absolute));
+
+        private static readonly BitmapImage AModeImage = new BitmapImage(new Uri("ms-appx:///Assets/LiveviewScreen/ExposureMode_A.png", UriKind.Absolute));
+        private static readonly BitmapImage IAModeImage = new BitmapImage(new Uri("ms-appx:///Assets/LiveviewScreen/ExposureMode_iA.png", UriKind.Absolute));
+        private static readonly BitmapImage IAPlusModeImage = new BitmapImage(new Uri("ms-appx:///Assets/LiveviewScreen/ExposureMode_iAPlus.png", UriKind.Absolute));
+        private static readonly BitmapImage MModeImage = new BitmapImage(new Uri("ms-appx:///Assets/LiveviewScreen/ExposureMode_M.png", UriKind.Absolute));
+        private static readonly BitmapImage SModeImage = new BitmapImage(new Uri("ms-appx:///Assets/LiveviewScreen/ExposureMode_S.png", UriKind.Absolute));
+        private static readonly BitmapImage PModeImage = new BitmapImage(new Uri("ms-appx:///Assets/LiveviewScreen/ExposureMode_P.png", UriKind.Absolute));
+        private static readonly BitmapImage PShiftModeImage = new BitmapImage(new Uri("ms-appx:///Assets/LiveviewScreen/ExposureMode_P_shift.png", UriKind.Absolute));
+
+        private static readonly BitmapImage AvailableMediaImage = new BitmapImage(new Uri("ms-appx:///Assets/LiveviewScreen/memory_card.png", UriKind.Absolute));
+        private static readonly BitmapImage NoMediaImage = new BitmapImage(new Uri("ms-appx:///Assets/LiveviewScreen/no_memory_card.png", UriKind.Absolute));
 
         public BitmapImage ShutterButtonImage
         {
@@ -60,6 +80,73 @@ namespace Kazyx.Uwpmm.DataModel
                     default:
                         return null;
                 }
+            }
+        }
+
+        public BitmapImage ShootModeImage
+        {
+            get
+            {
+                if (Device.Status.ShootMode == null) { return null; }
+                switch (Device.Status.ShootMode.Current)
+                {
+                    case ShootModeParam.Still:
+                        return StillModeImage;
+                    case ShootModeParam.Movie:
+                        return MovieModeImage;
+                    case ShootModeParam.Interval:
+                        return IntervalModeImage;
+                    case ShootModeParam.Audio:
+                        return AudioImage;
+                }
+                return null;
+            }
+        }
+
+        public BitmapImage ExposureModeImage
+        {
+            get
+            {
+                if (Device.Status.ExposureMode == null) { return null; }
+                switch (Device.Status.ExposureMode.Current)
+                {
+                    case ExposureMode.Intelligent:
+                        return IAModeImage;
+                    case ExposureMode.Superior:
+                        return IAPlusModeImage;
+                    case ExposureMode.Program:
+                        return PModeImage;
+                    case ExposureMode.Aperture:
+                        return AModeImage;
+                    case ExposureMode.SS:
+                        return SModeImage;
+                    case ExposureMode.Manual:
+                        return MModeImage;
+                }
+                return null;
+            }
+        }
+
+        public BitmapImage MemoryCardStatusImage
+        {
+            get
+            {
+                if (Device.Status.Storages == null) return null;
+                foreach (var storage in Device.Status.Storages)
+                {
+                    if (storage.RecordTarget)
+                    {
+                        switch (storage.StorageID)
+                        {
+                            case "No Media":
+                                return NoMediaImage;
+                            case "Memory Card 1":
+                            default:
+                                return AvailableMediaImage;
+                        }
+                    }
+                }
+                return NoMediaImage;
             }
         }
 
@@ -111,7 +198,7 @@ namespace Kazyx.Uwpmm.DataModel
                     case EventParam.ItvRecording:
                         return Visibility.Visible;
                 }
-                
+
                 return Visibility.Collapsed;
             }
         }
@@ -158,6 +245,34 @@ namespace Kazyx.Uwpmm.DataModel
             {
                 if (Device.Status.ZoomInfo == null) { return 0; }
                 return Device.Status.ZoomInfo.NumberOfBoxes;
+            }
+        }
+
+        public string RecordbaleAmount
+        {
+            get
+            {
+                if (Device.Status.Storages == null || Device.Status.ShootMode == null) { return ""; }
+                foreach (StorageInfo storage in Device.Status.Storages)
+                {
+                    if (storage.RecordTarget)
+                    {
+                        switch (Device.Status.ShootMode.Current)
+                        {
+                            case ShootModeParam.Still:
+                            case ShootModeParam.Interval:
+                                if (storage.RecordableImages == -1) { return ""; }
+                                return storage.RecordableImages.ToString();
+                            case ShootModeParam.Movie:
+                            case ShootModeParam.Audio:
+                                if (storage.RecordableMovieLength == -1) { return ""; }
+                                return storage.RecordableMovieLength.ToString() + " min.";
+                            default:
+                                break;
+                        }
+                    }
+                }
+                return "";
             }
         }
     }

@@ -108,6 +108,7 @@ namespace Kazyx.Uwpmm.CameraControl
             if (status.LiveviewOrientation != null) { target.LiveviewOrientation = status.LiveviewOrientation; }
             if (status.EvInfo != null) { target.EvInfo = status.EvInfo; }
             if (status.CameraStatus != null) { target.Status = status.CameraStatus; }
+            if (status.StorageInfo != null) { target.Storages = status.StorageInfo; }
 
             if (status.StillImageSize != null)
             {
