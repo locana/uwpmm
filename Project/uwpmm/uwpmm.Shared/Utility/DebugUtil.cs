@@ -49,10 +49,10 @@ namespace Kazyx.Uwpmm.Utility
         {
             Debug.WriteLine("Flush");
             var root = ApplicationData.Current.TemporaryFolder;
-            var folder = await StorageUtil.GetOrCreateDirectoryAsync(root, LOG_ROOT);
+            var folder = await root.CreateFolderAsync(LOG_ROOT, CreationCollisionOption.OpenIfExists);
             var time = DateTimeOffset.Now.ToLocalTime().ToString("yyyyMMdd-HHmmss");
             var filename = time + (crash ? "_crash" : "") + LOG_EXTENSION;
-            var file = await StorageUtil.GetOrCreateFileAsync(folder, filename);
+            var file = await folder.CreateFileAsync(filename, CreationCollisionOption.OpenIfExists);
 
             Debug.WriteLine("\n\nFlush log file: {0}\n\n", filename);
 
@@ -70,7 +70,7 @@ namespace Kazyx.Uwpmm.Utility
         {
             Debug.WriteLine("LogFiles");
             var root = ApplicationData.Current.TemporaryFolder;
-            var folder = await StorageUtil.GetOrCreateDirectoryAsync(root, LOG_ROOT);
+            var folder = await root.CreateFolderAsync(LOG_ROOT, CreationCollisionOption.OpenIfExists);
 
             var list = new List<string>();
 
@@ -89,7 +89,7 @@ namespace Kazyx.Uwpmm.Utility
         {
             Debug.WriteLine("GetFile");
             var root = ApplicationData.Current.TemporaryFolder;
-            var folder = await StorageUtil.GetOrCreateDirectoryAsync(root, LOG_ROOT);
+            var folder = await root.CreateFolderAsync(LOG_ROOT, CreationCollisionOption.OpenIfExists);
 
             var file = await folder.GetFileAsync(filename);
             if (file == null)

@@ -28,8 +28,8 @@ namespace Kazyx.Uwpmm.Utility
         private async void CreateCacheRoot()
         {
             var root = ApplicationData.Current.TemporaryFolder;
-            await StorageUtil.GetOrCreateDirectoryAsync(root, CACHE_ROOT);
-            await StorageUtil.GetOrCreateDirectoryAsync(root, CACHE_ROOT_TMP);
+            await root.CreateFolderAsync(CACHE_ROOT, CreationCollisionOption.OpenIfExists);
+            await root.CreateFolderAsync(CACHE_ROOT_TMP, CreationCollisionOption.OpenIfExists);
         }
 
         private static readonly ThumbnailCacheLoader instance = new ThumbnailCacheLoader();
@@ -53,20 +53,20 @@ namespace Kazyx.Uwpmm.Utility
                 DebugUtil.Log("Delete all of thumbnail cache.");
 
                 var cacheRoot = await root.GetFolderAsync(CACHE_ROOT);
-                await StorageUtil.DeleteDirectoryRecursiveAsync(cacheRoot, false);
+                await cacheRoot.DeleteDirectoryRecursiveAsync(false);
 
                 var tmpCacheRoot = await root.GetFolderAsync(CACHE_ROOT_TMP);
-                await StorageUtil.DeleteDirectoryRecursiveAsync(tmpCacheRoot, false);
+                await tmpCacheRoot.DeleteDirectoryRecursiveAsync(false);
             }
             else
             {
                 DebugUtil.Log("Delete thumbnail cache of " + uuid);
 
                 var uuidRoot = await root.GetFolderAsync(CACHE_ROOT + uuid.Replace(":", "-"));
-                await StorageUtil.DeleteDirectoryRecursiveAsync(uuidRoot);
+                await uuidRoot.DeleteDirectoryRecursiveAsync();
 
                 var uuidTmpRoot = await root.GetFolderAsync(CACHE_ROOT_TMP + uuid.Replace(":", "-"));
-                await StorageUtil.DeleteDirectoryRecursiveAsync(uuidTmpRoot);
+                await uuidTmpRoot.DeleteDirectoryRecursiveAsync();
             }
         }
 
@@ -86,8 +86,8 @@ namespace Kazyx.Uwpmm.Utility
             var filepath_tmp = directory_tmp + filename;
 
             var folder = ApplicationData.Current.TemporaryFolder;
-            await StorageUtil.GetOrCreateDirectoryAsync(folder, directory);
-            await StorageUtil.GetOrCreateDirectoryAsync(folder, directory_tmp);
+            await folder.CreateFolderAsync(directory, CreationCollisionOption.OpenIfExists);
+            await folder.CreateFolderAsync(directory_tmp, CreationCollisionOption.OpenIfExists);
 
             if (await folder.GetFileAsync(filepath) != null)
             {
@@ -133,8 +133,8 @@ namespace Kazyx.Uwpmm.Utility
                         return;
                     }
 
-                    var src = await StorageUtil.GetOrCreateFileAsync(root, path);
-                    var file = await StorageUtil.GetOrCreateFileAsync(root, resizedPath);
+                    var src = await root.CreateFileAsync(path, CreationCollisionOption.OpenIfExists);
+                    var file = await root.CreateFileAsync(resizedPath, CreationCollisionOption.OpenIfExists);
 
                     using (var srcStream = await src.OpenStreamForReadAsync())
                     {
