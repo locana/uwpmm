@@ -38,7 +38,7 @@
                     <GridView x:Name="LocalGrid" ItemsSource="{Binding Source={StaticResource LocalSources}}" SelectionChanged="LocalGrid_SelectionChanged" Loaded="LocalGrid_Loaded" Unloaded="LocalGrid_Unloaded">
                         <GridView.ItemTemplate>
                             <DataTemplate>
-                                <Grid Height="108" Width="108" Margin="6,6" Holding="LocalGrid_Holding">
+                                <Grid Height="116" Width="116" Margin="2,2" Holding="LocalGrid_Holding">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="48"/>
                                         <ColumnDefinition Width="*"/>
@@ -96,7 +96,7 @@
                     <GridView x:Name="RemoteGrid" ItemsSource="{Binding Source={StaticResource RemoteSources}}" SelectionChanged="RemoteGrid_SelectionChanged" Loaded="RemoteGrid_Loaded" Unloaded="RemoteGrid_Unloaded">
                         <GridView.ItemTemplate>
                             <DataTemplate>
-                                <Grid Height="108" Width="108" Margin="6,6" Holding="Grid_Holding">
+                                <Grid Height="108" Width="116" Margin="2,2" Holding="Grid_Holding">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="48"/>
                                         <ColumnDefinition Width="*"/>
