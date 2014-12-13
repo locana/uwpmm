@@ -13,45 +13,6 @@
     <Page.Resources>
         <CollectionViewSource x:Name="RemoteSources" IsSourceGrouped="True" />
         <CollectionViewSource x:Name="LocalSources" IsSourceGrouped="True" />
-        <!--
-        <util:ThumbnailImageConverter x:Key="ThumbnailConverter" />
-        <DataTemplate x:Key="ItemTemplate">
-            <Grid Height="108" Width="108" Margin="6,6">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="48"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="48"/>
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="48"/>
-                </Grid.RowDefinitions>
-                <Grid.Background>
-                    <SolidColorBrush Color="{StaticResource PhoneChromeColor}"/>
-                </Grid.Background>
-                <Image Grid.ColumnSpan="3" Grid.RowSpan="2" x:Name="ThumbnailImage" Width="108" Height="108" Stretch="Uniform" Tapped="RemoteThumbnail_Tap" 
-                       DataContext="{Binding Path=CachePath, Converter={StaticResource ThumbnailConverter}}">
-                    <Image.Source>
-                        <Binding Path="Result"/>
-                    </Image.Source>
-                </Image>
-                <Image Grid.Row="1" Grid.Column="0" Source="/Assets/Screen/protected.png" Visibility="{Binding ProtectedIconVisibility, Mode=OneTime}" IsHitTestVisible="False" CacheMode="BitmapCache" Margin="0,0,20,20"/>
-                <Image Grid.Row="1" Grid.Column="2" Source="/Assets/Screen/mode_movie.png" Visibility="{Binding MovieIconVisibility, Mode=OneTime}" IsHitTestVisible="False" CacheMode="BitmapCache" Margin="0,0,20,20"/>
-                <Border Grid.RowSpan="2" Grid.ColumnSpan="3" Visibility="{Binding UnselectableMaskVisibility, FallbackValue=Collapsed}">
-                    <Border.Background>
-                        <SolidColorBrush Color="{StaticResource PhoneSemitransparentColor}"/>
-                    </Border.Background>
-                </Border>
-                <FlyoutBase.AttachedFlyout>
-                    <MenuFlyout>
-                        <MenuFlyoutItem Text="{Binding [Viewer_MenuPlayback], Source={StaticResource LocalizedStrings}}" Click="Playback_Click" />
-                        <MenuFlyoutItem Text="{Binding [Viewer_MenuCopyToPhone], Source={StaticResource LocalizedStrings}}" Click="CopyToPhone_Click" Visibility="{Binding CopyToPhoneVisibility}"/>
-                        <MenuFlyoutItem Text="{Binding [Viewer_MenuDelete], Source={StaticResource LocalizedStrings}}" Click="Delete_Click" Visibility="{Binding DeleteMenuVisiblity}" />
-                    </MenuFlyout>
-                </FlyoutBase.AttachedFlyout>
-            </Grid>
-        </DataTemplate>
-        -->
 
         <DataTemplate x:Key="LocalItemTemplate">
             <StackPanel Height="108" Width="108" Margin="6,6">
@@ -60,28 +21,6 @@
                        Source="{Binding RowImage, Mode=OneWay}" Tapped="ThumbnailImage_Tapped" />
             </StackPanel>
         </DataTemplate>
-
-        <DataTemplate x:Key="HeaderTemplate">
-            <TextBlock Text="{Binding Path=Key}" Style="{StaticResource GroupHeaderTextBlockStyle}"/>
-        </DataTemplate>
-
-        <!--
-        <phone:JumpListItemBackgroundConverter x:Key="BackgroundConverter"/>
-        <phone:JumpListItemForegroundConverter x:Key="ForegroundConverter"/>
-        <Style x:Key="DateGroupJumpListStyle" TargetType="phone:LongListSelector">
-            <Setter Property="LayoutMode" Value="List"/>
-            <Setter Property="ItemTemplate" >
-                <Setter.Value>
-                    <DataTemplate>
-                        <Border Background="{Binding Converter={StaticResource BackgroundConverter}}" Margin="20,6" >
-                            <TextBlock Text="{Binding Key}" FontFamily="{StaticResource PhoneFontFamilySemiBold}"  Style="{StaticResource PhoneTextGroupHeaderStyle}" Padding="20,0" 
-               Foreground="{Binding Converter={StaticResource ForegroundConverter}}" VerticalAlignment="Bottom"/>
-                        </Border>
-                    </DataTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-        -->
 
         <Storyboard x:Name="ShowTitleBlockAnimation">
             <DoubleAnimation Duration="0:0:0.5" From="0.0" To="0.9" Storyboard.TargetProperty="Opacity" Storyboard.TargetName="TitleBlock" />
@@ -103,6 +42,57 @@
                 <PivotItem.Header>
                     <TextBlock Text="{Binding [Viewer_StoragePhone], Source={StaticResource LocalizedStrings}}" Margin="0,8,0,0" Style="{StaticResource SubheaderTextBlockStyle}" FontWeight="Bold"/>
                 </PivotItem.Header>
+                <Grid>
+                    <GridView x:Name="LocalGrid" ItemsSource="{Binding Source={StaticResource LocalSources}}" SelectionChanged="LocalGrid_SelectionChanged" Loaded="LocalGrid_Loaded" Unloaded="LocalGrid_Unloaded">
+                        <GridView.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Height="108" Width="108" Margin="6,6" Holding="LocalGrid_Holding">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="48"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="48"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*"/>
+                                        <RowDefinition Height="48"/>
+                                    </Grid.RowDefinitions>
+                                    <Grid.Background>
+                                        <SolidColorBrush Color="{StaticResource PhoneChromeColor}"/>
+                                    </Grid.Background>
+                                    <Image Grid.ColumnSpan="3" Grid.RowSpan="2" x:Name="LocalThumbnailImage" Width="108" Height="108" Stretch="Uniform" Source="{Binding Path=ThumbnailImage}" Tapped="LocalThumbnailImage_Tapped"/>
+                                    <Image Grid.Row="1" Grid.Column="2" Source="/Assets/Screen/mode_movie.png" Visibility="{Binding MovieIconVisibility, Mode=OneTime}" IsHitTestVisible="False" CacheMode="BitmapCache" Margin="0,0,20,20"/>
+                                    <Border Grid.RowSpan="2" Grid.ColumnSpan="3" Visibility="{Binding UnselectableMaskVisibility, FallbackValue=Collapsed}">
+                                        <Border.Background>
+                                            <SolidColorBrush Color="{StaticResource PhoneControlDisabledColor}"/>
+                                        </Border.Background>
+                                    </Border>
+                                    <FlyoutBase.AttachedFlyout>
+                                        <MenuFlyout>
+                                            <MenuFlyoutItem Text="{Binding [Viewer_MenuPlayback], Source={StaticResource LocalizedStrings}}" Click="LocalPlayback_Click" />
+                                            <MenuFlyoutItem Text="{Binding [Viewer_MenuDelete], Source={StaticResource LocalizedStrings}}" Click="LocalDelete_Click" />
+                                        </MenuFlyout>
+                                    </FlyoutBase.AttachedFlyout>
+                                </Grid>
+                            </DataTemplate>
+                        </GridView.ItemTemplate>
+                        <GridView.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <ItemsWrapGrid Orientation="Horizontal" ItemHeight="100" ItemWidth="100"/>
+                            </ItemsPanelTemplate>
+                        </GridView.ItemsPanel>
+                        <GridView.GroupStyle>
+                            <GroupStyle HidesIfEmpty="True">
+                                <GroupStyle.HeaderTemplate>
+                                    <DataTemplate>
+                                        <Grid>
+                                            <TextBlock Text="{Binding Key}" Style="{StaticResource GroupHeaderTextBlockStyle}"/>
+                                        </Grid>
+                                    </DataTemplate>
+                                </GroupStyle.HeaderTemplate>
+                            </GroupStyle>
+                        </GridView.GroupStyle>
+                    </GridView>
+                </Grid>
                 <!--
                 <phone:LongListSelector
                     Name="LocalImageGrid"

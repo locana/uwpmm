@@ -50,18 +50,18 @@ namespace Kazyx.Uwpmm.Pages
             CommandBarManager.SetEvent(AppBarItem.DownloadMultiple, (sender, e) =>
             {
                 DebugUtil.Log("Download clicked");
-                if (GridSource != null)
+                if (RemoteGridSource != null)
                 {
-                    GridSource.SelectivityFactor = SelectivityFactor.CopyToPhone;
+                    RemoteGridSource.SelectivityFactor = SelectivityFactor.CopyToPhone;
                 }
                 RemoteGrid.SelectionMode = ListViewSelectionMode.Multiple;
             });
             CommandBarManager.SetEvent(AppBarItem.DeleteMultiple, (sender, e) =>
             {
                 DebugUtil.Log("Delete clicked");
-                if (GridSource != null)
+                if (RemoteGridSource != null)
                 {
-                    GridSource.SelectivityFactor = SelectivityFactor.Delete;
+                    RemoteGridSource.SelectivityFactor = SelectivityFactor.Delete;
                 }
                 RemoteGrid.SelectionMode = ListViewSelectionMode.Multiple;
             });
@@ -84,7 +84,7 @@ namespace Kazyx.Uwpmm.Pages
                         CloseAppSettingPanel();
                         break;
                     case ViewerState.RemoteSelecting:
-                        switch (GridSource.SelectivityFactor)
+                        switch (RemoteGridSource.SelectivityFactor)
                         {
                             case SelectivityFactor.CopyToPhone:
                                 UpdateInnerState(ViewerState.Sync);
@@ -201,20 +201,16 @@ namespace Kazyx.Uwpmm.Pages
             UpdateStorageInfo();
             UnsupportedMessage.Visibility = Visibility.Collapsed;
 
-            GridSource = new DateGroupCollection();
+            RemoteGridSource = new DateGroupCollection();
+            LocalGridSource = new DateGroupCollection();
 
-            /*
-            groups = new ThumbnailGroup();
-            LocalImageGrid.DataContext = groups;
-            */
             CloseMovieStream();
             MovieDrawer.DataContext = MovieStreamHelper.INSTANCE.MoviePlaybackData;
 
             PhotoScreen.DataContext = PhotoData;
             SetStillDetailVisibility(false);
-            /*
+
             LoadLocalContents();
-             * */
 
 #if DEBUG
             // AddDummyContentsAsync();
@@ -250,19 +246,16 @@ namespace Kazyx.Uwpmm.Pages
             {
                 Canceller.Cancel();
             }
-            if (GridSource != null)
+            if (RemoteGridSource != null)
             {
-                GridSource.Clear();
-                GridSource = null;
+                RemoteGridSource.Clear();
+                RemoteGridSource = null;
             }
-
-            /*
-            if (groups != null && groups.Group != null)
+            if (LocalGridSource != null)
             {
-                groups.Group.Clear();
-                groups = null;
+                LocalGridSource.Clear();
+                LocalGridSource = null;
             }
-             * */
 
             HideProgress();
 
@@ -387,6 +380,73 @@ namespace Kazyx.Uwpmm.Pages
             }
         }
 
+        private async void LoadLocalContents()
+        {
+            try
+            {
+                var library = KnownFolders.PicturesLibrary;
+
+                foreach (var folder in await library.GetFoldersAsync())
+                {
+                    await LoadContentsFrom(folder);
+                }
+            }
+            catch
+            {
+                ShowToast("Failed to load local contents.");
+            }
+        }
+
+        private async Task LoadContentsFrom(StorageFolder folder)
+        {
+            var list = new List<StorageFile>();
+            await LoadPicturesRecursively(list, folder);
+
+            var thumbs = new List<Thumbnail>();
+            foreach (var file in list)
+            {
+                var content = new ContentInfo
+                {
+                    Protected = false,
+                    ContentType = ContentKind.StillImage,
+                };
+                thumbs.Add(new Thumbnail(folder.DisplayName, file, content));
+            }
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                DebugUtil.Log("Loaded local folder: " + folder.DisplayName);
+                if (LocalGridSource != null)
+                {
+                    LocalGridSource.AddRange(thumbs);
+                }
+            });
+        }
+
+        private async Task LoadPicturesRecursively(List<StorageFile> into, StorageFolder folder)
+        {
+            var files = await folder.GetFilesAsync();
+
+            foreach (var file in files)
+            {
+                switch (file.ContentType)
+                {
+                    case "image/jpeg":
+                    case "image/png":
+                    case "image/bmp":
+                    case "image/gif":
+                        into.Add(file);
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            foreach (var child in await folder.GetFoldersAsync())
+            {
+                await LoadPicturesRecursively(into, child);
+            }
+        }
+
         /*
         ThumbnailGroup groups = null;
 
@@ -463,9 +523,9 @@ namespace Kazyx.Uwpmm.Pages
                     await Task.Delay(500);
                     await SystemUtil.GetCurrentDispatcher().RunAsync(CoreDispatcherPriority.Normal, () =>
                     {
-                        if (GridSource != null)
+                        if (RemoteGridSource != null)
                         {
-                            GridSource.AddRange(list);
+                            RemoteGridSource.AddRange(list);
                         }
                     });
                 }
@@ -476,7 +536,9 @@ namespace Kazyx.Uwpmm.Pages
 
         private CancellationTokenSource Canceller;
 
-        private DateGroupCollection GridSource;
+        private DateGroupCollection RemoteGridSource;
+
+        private DateGroupCollection LocalGridSource;
 
         private bool CheckRemoteCapability()
         {
@@ -527,7 +589,7 @@ namespace Kazyx.Uwpmm.Pages
         private async void DeleteRemoteGridFacially()
         {
             IsRemoteInitialized = false;
-            await SystemUtil.GetCurrentDispatcher().RunAsync(CoreDispatcherPriority.Normal, () => { GridSource.Clear(); });
+            await SystemUtil.GetCurrentDispatcher().RunAsync(CoreDispatcherPriority.Normal, () => { RemoteGridSource.Clear(); });
         }
 
         private bool _StorageAvailable = false;
@@ -621,9 +683,9 @@ namespace Kazyx.Uwpmm.Pages
 
             await SystemUtil.GetCurrentDispatcher().RunAsync(CoreDispatcherPriority.Normal, () =>
             {
-                if (GridSource != null)
+                if (RemoteGridSource != null)
                 {
-                    GridSource.AddRange(list);
+                    RemoteGridSource.AddRange(list);
                 }
             });
         }
@@ -1268,7 +1330,7 @@ namespace Kazyx.Uwpmm.Pages
 
         private void RemoteGrid_Loaded(object sender, RoutedEventArgs e)
         {
-            RemoteSources.Source = GridSource;
+            RemoteSources.Source = RemoteGridSource;
         }
 
         private void RemoteGrid_Unloaded(object sender, RoutedEventArgs e)
@@ -1279,6 +1341,67 @@ namespace Kazyx.Uwpmm.Pages
         private void Grid_Holding(object sender, HoldingRoutedEventArgs e)
         {
             FlyoutBase.ShowAttachedFlyout(sender as FrameworkElement);
+        }
+
+        private void LocalGrid_Loaded(object sender, RoutedEventArgs e)
+        {
+            LocalSources.Source = LocalGridSource;
+        }
+
+        private void LocalGrid_Unloaded(object sender, RoutedEventArgs e)
+        {
+            LocalSources.Source = null;
+        }
+
+        private void LocalGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+        }
+
+        private void LocalGrid_Holding(object sender, HoldingRoutedEventArgs e)
+        {
+            FlyoutBase.ShowAttachedFlyout(sender as FrameworkElement);
+        }
+
+        private async void LocalThumbnailImage_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            var image = sender as Image;
+            var content = image.DataContext as Thumbnail;
+
+            try
+            {
+                using (var stream = await content.CacheFile.OpenStreamForReadAsync())
+                {
+                    var bitmap = new BitmapImage();
+                    await bitmap.SetSourceAsync(stream.AsRandomAccessStream());
+                    PhotoScreen.SourceBitmap = bitmap;
+                    InitBitmapBeforeOpen();
+                    PhotoScreen.SetBitmap();
+                    try
+                    {
+                        PhotoData.MetaData = NtImageProcessor.MetaData.JpegMetaDataParser.ParseImage(stream);
+                    }
+                    catch (UnsupportedFileFormatException)
+                    {
+                        PhotoData.MetaData = null;
+                        PhotoScreen.DetailInfoVisibility = Visibility.Collapsed;
+                    }
+                    SetStillDetailVisibility(true);
+                }
+            }
+            catch
+            {
+                ShowToast("Failed to load local detail image");
+            }
+        }
+
+        private void LocalPlayback_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void LocalDelete_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 

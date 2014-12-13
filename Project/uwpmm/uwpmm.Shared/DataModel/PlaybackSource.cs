@@ -23,6 +23,14 @@ namespace Kazyx.Uwpmm.DataModel
             DeviceUuid = uuid;
         }
 
+        public Thumbnail(string groupTitle, StorageFile localfile, ContentInfo content)
+        {
+            GroupTitle = groupTitle;
+            CacheFile = localfile;
+            Source = content;
+            DeviceUuid = "localhost";
+        }
+
         public ContentInfo Source { private set; get; }
 
         public Visibility ProtectedIconVisibility
@@ -137,47 +145,7 @@ namespace Kazyx.Uwpmm.DataModel
                 }
             }
             catch { DebugUtil.Log("Failed to load thumbnail from cache."); }
-
-            /*
-            var bmp = new BitmapImage();
-            bmp.CreateOptions = BitmapCreateOptions.None;
-
-            LoaderTask = Task.Run(async () =>
-            {
-                try
-                {
-                    DebugUtil.Log("Get thumbnail async.");
-                    using (var stream = await file.GetThumbnailAsync(ThumbnailMode.PicturesView))
-                    {
-                        DebugUtil.Log("Set source async.");
-                        await bmp.SetSourceAsync(stream);
-                    }
-
-                    return bmp;
-                }
-                catch (Exception e)
-                {
-                    DebugUtil.Log("Failed to load bitmap.");
-                    DebugUtil.Log(e.StackTrace);
-                    // CacheFile seems to be deleted.
-                    CacheFile = null;
-                    LoaderTask = null;
-                    return null;
-                }
-            });
-
-            var scheduler = (SynchronizationContext.Current == null) ? TaskScheduler.Current : TaskScheduler.FromCurrentSynchronizationContext();
-            LoaderTask.ContinueWith((t) =>
-            {
-                if (!t.IsCanceled && !t.IsFaulted)
-                {
-                    NotifyChangedOnUI("ThumbnailImage");
-                }
-            }, CancellationToken.None, TaskContinuationOptions.ExecuteSynchronously, scheduler);
-             * */
         }
-
-        // private Task<BitmapImage> LoaderTask { get; set; }
 
         private BitmapImage _ThumbnailImage = null;
 
@@ -194,7 +162,6 @@ namespace Kazyx.Uwpmm.DataModel
                 if (tmp != null)
                 {
                     DebugUtil.Log("Return loaded BitmapImage.");
-                    // _ThumbnailImage = null;
                     return tmp;
                 }
                 if (CacheFile == null)
@@ -208,28 +175,6 @@ namespace Kazyx.Uwpmm.DataModel
                     LoadCachedThumbnailImageAsync();
                     return null;
                 }
-                /*
-                if (LoaderTask != null)
-                {
-                    if (LoaderTask.Status == TaskStatus.RanToCompletion)
-                    {
-                        var image = LoaderTask.Result;
-                        LoaderTask = null;
-                        return image;
-                    }
-                    else
-                    {
-                        DebugUtil.Log("Load BitmapImage from cache async does not end yet.");
-                        return null;
-                    }
-                }
-                else
-                {
-                    DebugUtil.Log("Load BitmapImage from cache async.");
-                    LoadCachedThumbnailImageAsync();
-                    return null;
-                }
-                 * */
             }
         }
 
