@@ -14,14 +14,6 @@
         <CollectionViewSource x:Name="RemoteSources" IsSourceGrouped="True" />
         <CollectionViewSource x:Name="LocalSources" IsSourceGrouped="True" />
 
-        <DataTemplate x:Key="LocalItemTemplate">
-            <StackPanel Height="108" Width="108" Margin="6,6">
-                <Image x:Name="ThumbnailImage" Width="108" Height="108"
-                       Stretch="UniformToFill"
-                       Source="{Binding RowImage, Mode=OneWay}" Tapped="ThumbnailImage_Tapped" />
-            </StackPanel>
-        </DataTemplate>
-
         <Storyboard x:Name="ShowTitleBlockAnimation">
             <DoubleAnimation Duration="0:0:0.5" From="0.0" To="0.9" Storyboard.TargetProperty="Opacity" Storyboard.TargetName="TitleBlock" />
         </Storyboard>
@@ -93,18 +85,6 @@
                         </GridView.GroupStyle>
                     </GridView>
                 </Grid>
-                <!--
-                <phone:LongListSelector
-                    Name="LocalImageGrid"
-                    Margin="0"
-                    IsGroupingEnabled="False"
-                    LayoutMode="Grid"
-                    GridCellSize="112,112"
-                    ManipulationStarted="LocalImageGrid_ManipulationStarted"
-                    ItemsSource="{Binding Group, Mode=OneWay}"
-                    ItemTemplate="{StaticResource LocalItemTemplate}" >
-                </phone:LongListSelector>
-                -->
             </PivotItem>
 
             <PivotItem x:Name="RemotePivot" Margin="0,14,0,0">
@@ -164,24 +144,6 @@
                             </GroupStyle>
                         </GridView.GroupStyle>
                     </GridView>
-                    <!--
-                    <toolkit:LongListMultiSelector
-                        Name="RemoteImageGrid"
-                        Margin="0"
-                        IsSelectionEnabled="False"
-                        IsGroupingEnabled="True"
-                        GroupHeaderTemplate="{StaticResource HeaderTemplate}"
-                        LayoutMode="Grid"
-                        GridCellSize="112,112"
-                        ItemTemplate="{StaticResource ItemTemplate}"
-                        JumpListStyle="{StaticResource DateGroupJumpListStyle}"
-                        Loaded="ImageGrid_Loaded"
-                        Unloaded="ImageGrid_Unloaded"
-                        SelectionChanged="ImageGrid_SelectionChanged"
-                        ItemRealized="ImageGrid_ItemRealized"
-                        IsSelectionEnabledChanged="RemoteImageGrid_IsSelectionEnabledChanged" >
-                    </toolkit:LongListMultiSelector>
-                    -->
                 </Grid>
             </PivotItem>
         </Pivot>
