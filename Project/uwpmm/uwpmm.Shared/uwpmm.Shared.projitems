@@ -119,6 +119,27 @@
     <Compile Include="$(MSBuildThisFileDirectory)Common\RelayCommand.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\SuspensionManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\ObservableDictionary.cs" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Screen\audio.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Screen\ExposureMode_A.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Screen\ExposureMode_iA.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Screen\ExposureMode_iAPlus.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Screen\ExposureMode_M.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Screen\ExposureMode_P.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Screen\ExposureMode_P_shift.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Screen\ExposureMode_S.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Screen\focused.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Screen\GeoInfoStatus_NG.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Screen\GeoInfoStatus_OK.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Screen\GeoInfoStatus_Updating.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Screen\memory_card.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Screen\mode_audio.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Screen\mode_interval.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Screen\mode_movie.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Screen\mode_photo.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Screen\no_memory_card.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Screen\OpenSlider.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Screen\protected.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Screen\rec.png" />
     <PRIResource Include="$(MSBuildThisFileDirectory)Strings\en-US\Resources.resw" />
   </ItemGroup>
   <ItemGroup>

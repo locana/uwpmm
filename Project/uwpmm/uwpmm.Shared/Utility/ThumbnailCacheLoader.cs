@@ -10,20 +10,24 @@ namespace Kazyx.Uwpmm.Utility
 {
     public class ThumbnailCacheLoader
     {
-        private const string CACHE_ROOT = "thumb_cache/";
+        private const string CACHE_ROOT = "thumb_cache";
 
         private readonly HttpClient HttpClient;
 
+        private StorageFolder CacheFolder;
+
         private ThumbnailCacheLoader()
         {
-            CreateCacheRoot();
             HttpClient = new HttpClient();
         }
 
-        private async void CreateCacheRoot()
+        private async Task LoadCacheRoot()
         {
-            var root = ApplicationData.Current.TemporaryFolder;
-            await root.CreateFolderAsync(CACHE_ROOT, CreationCollisionOption.OpenIfExists);
+            if (CacheFolder == null)
+            {
+                var root = ApplicationData.Current.TemporaryFolder;
+                CacheFolder = await root.CreateFolderAsync(CACHE_ROOT, CreationCollisionOption.OpenIfExists);
+            }
         }
 
         private static readonly ThumbnailCacheLoader instance = new ThumbnailCacheLoader();
@@ -46,14 +50,15 @@ namespace Kazyx.Uwpmm.Utility
             {
                 DebugUtil.Log("Delete all of thumbnail cache.");
 
-                var cacheRoot = await root.GetFolderAsync(CACHE_ROOT);
-                await cacheRoot.DeleteDirectoryRecursiveAsync(false);
+                await LoadCacheRoot();
+                await CacheFolder.DeleteDirectoryRecursiveAsync(false);
             }
             else
             {
                 DebugUtil.Log("Delete thumbnail cache of " + uuid);
 
-                var uuidRoot = await root.GetFolderAsync(CACHE_ROOT + uuid.Replace(":", "-"));
+                await LoadCacheRoot();
+                var uuidRoot = await CacheFolder.GetFolderAsync(uuid.Replace(":", "-"));
                 await uuidRoot.DeleteDirectoryRecursiveAsync();
             }
         }
@@ -67,17 +72,18 @@ namespace Kazyx.Uwpmm.Utility
         public async Task<StorageFile> LoadCacheFileAsync(string uuid, ContentInfo content)
         {
             var uri = new Uri(content.ThumbnailUrl);
-            var directory = CACHE_ROOT + uuid.Replace(":", "-") + "/";
+            var directory = uuid.Replace(":", "-") + "/";
             var filename = content.CreatedTime.Replace(":", "-").Replace("/", "-") + "--" + Path.GetFileName(uri.LocalPath);
 
-            var root = ApplicationData.Current.TemporaryFolder;
-            var folder = await root.CreateFolderAsync(directory, CreationCollisionOption.OpenIfExists);
-            var file = await folder.GetFileAsync(filename);
+            await LoadCacheRoot();
+            var folder = await CacheFolder.CreateFolderAsync(directory, CreationCollisionOption.OpenIfExists);
 
-            if (file != null)
+            try
             {
-                return file;
+                DebugUtil.Log("Checking file: " + filename);
+                return await folder.GetFileAsync(filename);
             }
+            catch { }
 
             var res = await HttpClient.GetAsync(uri, HttpCompletionOption.ResponseContentRead);
             if (res.StatusCode != HttpStatusCode.OK)
@@ -86,6 +92,7 @@ namespace Kazyx.Uwpmm.Utility
             }
             using (var stream = await res.Content.ReadAsStreamAsync())
             {
+                DebugUtil.Log("Creating file: " + directory + filename);
                 var dst = await folder.CreateFileAsync(filename, CreationCollisionOption.OpenIfExists);
                 using (var outStream = await dst.OpenStreamForWriteAsync())
                 {

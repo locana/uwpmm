@@ -65,7 +65,7 @@ namespace Kazyx.Uwpmm.Utility
             "http://cdn.gsmarena.com/vv/newsimg/13/12/htc-one-max-black/gsmarena_001.jpg",
             "http://www.notebookcheck.net/fileadmin/_processed_/csm_Nokia-Lumia-720-3__2__d354fb1d00.jpg",
             "http://www.technobuffalo.com/wp-content/uploads/2013/05/Verizon-Nokia-Lumia-928-VS-Nokia-Lumia-920-Front.jpg",
-            "http://cdn.gsmarena.com/vv/newsimg/13/12/htc-one-max-black/gsmarena_001.jpg",
+            "http://www.sony.jp/products/picture/ILCE-QX1_SELP1650.jpg",
         };
 
         private static string CreatedTime()

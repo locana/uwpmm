@@ -53,7 +53,7 @@ namespace Kazyx.Uwpmm.Pages
                 {
                     GridSource.SelectivityFactor = SelectivityFactor.CopyToPhone;
                 }
-                // RemoteImageGrid.IsSelectionEnabled = true;
+                RemoteGrid.SelectionMode = ListViewSelectionMode.Multiple;
             });
             CommandBarManager.SetEvent(AppBarItem.DeleteMultiple, (sender, e) =>
             {
@@ -62,7 +62,7 @@ namespace Kazyx.Uwpmm.Pages
                 {
                     GridSource.SelectivityFactor = SelectivityFactor.Delete;
                 }
-                // RemoteImageGrid.IsSelectionEnabled = true;
+                RemoteGrid.SelectionMode = ListViewSelectionMode.Multiple;
             });
             CommandBarManager.SetEvent(AppBarItem.ShowDetailInfo, (sender, e) =>
             {
@@ -109,7 +109,6 @@ namespace Kazyx.Uwpmm.Pages
                 OpenAppSettingPanel();
             });
 
-            // Comment out until setting screen is imported.
             var storage_access_settings = new SettingSection(SystemUtil.GetStringResource("SettingSection_ContentsSync"));
             AppSettings.Children.Add(storage_access_settings);
             storage_access_settings.Add(new CheckBoxSetting(
@@ -202,9 +201,8 @@ namespace Kazyx.Uwpmm.Pages
             UnsupportedMessage.Visibility = Visibility.Collapsed;
 
             GridSource = new DateGroupCollection();
-            /*
-            RemoteImageGrid.ItemsSource = GridSource;
 
+            /*
             groups = new ThumbnailGroup();
             LocalImageGrid.DataContext = groups;
             */
@@ -218,7 +216,7 @@ namespace Kazyx.Uwpmm.Pages
              * */
 
 #if DEBUG
-            AddDummyContentsAsync();
+            // AddDummyContentsAsync();
 #endif
             PictureDownloader.Instance.Failed += OnDLError;
             PictureDownloader.Instance.Fetched += OnFetched;
@@ -454,12 +452,12 @@ namespace Kazyx.Uwpmm.Pages
 
             for (int i = 0; i < 1; i++)
             {
-                foreach (var date in DummyContentsGenerator.RandomDateList(50))
+                foreach (var date in DummyContentsGenerator.RandomDateList(5))
                 {
-                    var list = new List<PlaybackSource>();
-                    foreach (var content in DummyContentsGenerator.RandomContentList(50))
+                    var list = new List<Thumbnail>();
+                    foreach (var content in DummyContentsGenerator.RandomContentList(30))
                     {
-                        list.Add(new PlaybackSource(CurrentUuid, date, content));
+                        list.Add(new Thumbnail(CurrentUuid, date, content));
                     }
                     await Task.Delay(500);
                     await SystemUtil.GetCurrentDispatcher().RunAsync(CoreDispatcherPriority.Normal, () =>
@@ -614,10 +612,10 @@ namespace Kazyx.Uwpmm.Pages
         {
             if (InnerState == ViewerState.OutOfPage) return;
 
-            var list = new List<PlaybackSource>();
+            var list = new List<Thumbnail>();
             foreach (var content in args.ContentList)
             {
-                list.Add(new PlaybackSource(TargetDevice.Udn, args.DateInfo, content));
+                list.Add(new Thumbnail(TargetDevice.Udn, args.DateInfo, content));
             }
 
             await SystemUtil.GetCurrentDispatcher().RunAsync(CoreDispatcherPriority.Normal, () =>
@@ -737,37 +735,6 @@ namespace Kazyx.Uwpmm.Pages
                 });
             });
         }
-
-        private void ImageGrid_Loaded(object sender, RoutedEventArgs e)
-        {
-            var selector = sender as LongListMultiSelector;
-            selector.ItemsSource = GridSource;
-        }
-
-        private void ImageGrid_Unloaded(object sender, RoutedEventArgs e)
-        {
-            var selector = sender as LongListMultiSelector;
-            selector.ItemsSource = null;
-        }
-
-        private void ImageGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            var selector = sender as LongListMultiSelector;
-            if (selector.IsSelectionEnabled)
-            {
-                DebugUtil.Log("SelectionChanged in multi mode");
-                var contents = selector.SelectedItems;
-                DebugUtil.Log("Selected Items: " + contents.Count);
-                if (contents.Count > 0)
-                {
-                    UpdateInnerState(ViewerState.RemoteSelecting);
-                }
-                else
-                {
-                    UpdateInnerState(ViewerState.RemoteMulti);
-                }
-            }
-        }
         */
 
         private void SetStillDetailVisibility(bool visible)
@@ -778,7 +745,7 @@ namespace Kazyx.Uwpmm.Pages
                 HideProgress();
                 IsViewingDetail = true;
                 PhotoScreen.Visibility = Visibility.Visible;
-                // RemoteImageGrid.IsEnabled = false;
+                RemoteGrid.IsEnabled = false;
                 // LocalImageGrid.IsEnabled = false;
                 if (PivotRoot.SelectedIndex == 0)
                 {
@@ -795,7 +762,7 @@ namespace Kazyx.Uwpmm.Pages
                 HideProgress();
                 IsViewingDetail = false;
                 PhotoScreen.Visibility = Visibility.Collapsed;
-                // RemoteImageGrid.IsEnabled = true;
+                RemoteGrid.IsEnabled = true;
                 // LocalImageGrid.IsEnabled = true;
                 if (PivotRoot.SelectedIndex == 0)
                 {
@@ -845,7 +812,7 @@ namespace Kazyx.Uwpmm.Pages
 
         private void Pivot_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            // RemoteImageGrid.IsSelectionEnabled = false;
+            RemoteGrid.SelectionMode = ListViewSelectionMode.None;
             var pivot = sender as Pivot;
             switch (pivot.SelectedIndex)
             {
@@ -885,8 +852,7 @@ namespace Kazyx.Uwpmm.Pages
 
         private void DeleteSelectedImages()
         {
-            /*
-            var items = RemoteImageGrid.SelectedItems;
+            var items = RemoteGrid.SelectedItems;
             if (items.Count == 0)
             {
                 HideProgress();
@@ -896,18 +862,16 @@ namespace Kazyx.Uwpmm.Pages
             contents.ContentUris = new List<string>();
             foreach (var item in items)
             {
-                var data = item as RemoteThumbnail;
+                var data = item as Thumbnail;
                 contents.ContentUris.Add(data.Source.Uri);
             }
             DeleteContents(contents);
-            RemoteImageGrid.IsSelectionEnabled = false;
-             * */
+            RemoteGrid.SelectionMode = ListViewSelectionMode.None;
         }
 
         private void FetchSelectedImages()
         {
-            /*
-            var items = RemoteImageGrid.SelectedItems;
+            var items = RemoteGrid.SelectedItems;
             if (items.Count == 0)
             {
                 HideProgress();
@@ -917,21 +881,19 @@ namespace Kazyx.Uwpmm.Pages
             {
                 try
                 {
-                    EnqueueImageDownload(item as RemoteThumbnail);
+                    EnqueueImageDownload(item as Thumbnail);
                 }
                 catch (Exception e)
                 {
                     DebugUtil.Log(e.StackTrace);
                 }
             }
-            RemoteImageGrid.IsSelectionEnabled = false;
-             * */
+            RemoteGrid.SelectionMode = ListViewSelectionMode.None;
         }
 
-        private void EnqueueImageDownload(PlaybackSource source)
+        private void EnqueueImageDownload(Thumbnail source)
         {
-            // if (ApplicationSettings.GetInstance().PrioritizeOriginalSizeContents && source.Source.OriginalUrl != null)
-            if (source.Source.OriginalUrl != null)
+            if (ApplicationSettings.GetInstance().PrioritizeOriginalSizeContents && source.Source.OriginalUrl != null)
             {
                 PictureDownloader.Instance.Enqueue(new Uri(source.Source.OriginalUrl));
             }
@@ -1006,19 +968,6 @@ namespace Kazyx.Uwpmm.Pages
             }
         }
 
-        private void RemoteThumbnail_Tap(object sender, System.Windows.Input.GestureEventArgs e)
-        {
-            if (RemoteImageGrid.IsSelectionEnabled)
-            {
-                DebugUtil.Log("Ignore tap in multi-selection mode.");
-                return;
-            }
-
-            var image = sender as Image;
-            var content = image.DataContext as RemoteThumbnail;
-            PlaybackContent(content);
-        }
-
         private void Playback_Click(object sender, RoutedEventArgs e)
         {
             var item = sender as MenuItem;
@@ -1027,7 +976,7 @@ namespace Kazyx.Uwpmm.Pages
         }
          * */
 
-        private async void PlaybackContent(PlaybackSource content)
+        private async void PlaybackContent(Thumbnail content)
         {
             if (content != null)
             {
@@ -1248,30 +1197,75 @@ namespace Kazyx.Uwpmm.Pages
 
         void HardwareButtons_BackPressed(object sender, BackPressedEventArgs e)
         {
+            DebugUtil.Log("Backkey pressed.");
             if (IsViewingDetail)
             {
+                DebugUtil.Log("Release detail.");
                 ReleaseDetail();
                 e.Handled = true;
             }
+
             if (MovieDrawer.Visibility == Visibility.Visible || MovieStreamHelper.INSTANCE.IsProcessing)
             {
+                DebugUtil.Log("Close movie stream.");
                 CloseMovieStream();
                 e.Handled = true;
             }
 
-            /*
-            if (RemoteImageGrid.IsSelectionEnabled)
+            if (RemoteGrid.SelectionMode == ListViewSelectionMode.Multiple)
             {
-                RemoteImageGrid.IsSelectionEnabled = false;
+                DebugUtil.Log("Set selection mode none.");
+                RemoteGrid.SelectionMode = ListViewSelectionMode.None;
                 e.Handled = true;
             }
-             * */
 
             if (AppSettingPanel.Visibility == Visibility.Visible)
             {
+                DebugUtil.Log("Close app setting panel.");
                 CloseAppSettingPanel();
                 e.Handled = true;
             }
+        }
+
+        private void RemoteThumbnailImage_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            if (RemoteGrid.SelectionMode == ListViewSelectionMode.Multiple)
+            {
+                DebugUtil.Log("Ignore tap in multi-selection mode.");
+                return;
+            }
+            var image = sender as Image;
+            var content = image.DataContext as Thumbnail;
+            PlaybackContent(content);
+        }
+
+        private void RemoteGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var selector = sender as GridView;
+            if (selector.SelectionMode == ListViewSelectionMode.Multiple)
+            {
+                DebugUtil.Log("SelectionChanged in multi mode");
+                var contents = selector.SelectedItems;
+                DebugUtil.Log("Selected Items: " + contents.Count);
+                if (contents.Count > 0)
+                {
+                    UpdateInnerState(ViewerState.RemoteSelecting);
+                }
+                else
+                {
+                    UpdateInnerState(ViewerState.RemoteMulti);
+                }
+            }
+        }
+
+        private void RemoteGrid_Loaded(object sender, RoutedEventArgs e)
+        {
+            RemoteSources.Source = GridSource;
+        }
+
+        private void RemoteGrid_Unloaded(object sender, RoutedEventArgs e)
+        {
+            RemoteSources.Source = null;
         }
     }
 

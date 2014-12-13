@@ -14,9 +14,9 @@ using Windows.UI.Xaml.Media.Imaging;
 
 namespace Kazyx.Uwpmm.DataModel
 {
-    public class PlaybackSource : ObservableBase
+    public class Thumbnail : ObservableBase
     {
-        public PlaybackSource(string uuid, DateInfo date, ContentInfo content)
+        public Thumbnail(string uuid, DateInfo date, ContentInfo content)
         {
             GroupTitle = date.Title;
             Source = content;
@@ -108,38 +108,60 @@ namespace Kazyx.Uwpmm.DataModel
             {
                 _CacheFile = value;
                 NotifyChangedOnUI("CacheFile");
+                NotifyChangedOnUI("ThumbnailImage");
             }
             get { return _CacheFile; }
         }
 
-        private void LoadCachedThumbnailImageAsync()
+        private async void LoadCachedThumbnailImageAsync()
         {
             var file = CacheFile;
+            if (file == null)
+            {
+                DebugUtil.Log("CacheFile is null");
+                return;
+            }
+
+            try
+            {
+                using (var stream = await file.GetThumbnailAsync(ThumbnailMode.PicturesView))
+                {
+                    DebugUtil.Log("Set source async.");
+                    await SystemUtil.GetCurrentDispatcher().RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
+                    {
+                        var bmp = new BitmapImage();
+                        bmp.CreateOptions = BitmapCreateOptions.None;
+                        await bmp.SetSourceAsync(stream);
+                        ThumbnailImage = bmp;
+                    });
+                }
+            }
+            catch { DebugUtil.Log("Failed to load thumbnail from cache."); }
+
+            /*
+            var bmp = new BitmapImage();
+            bmp.CreateOptions = BitmapCreateOptions.None;
 
             LoaderTask = Task.Run(async () =>
             {
                 try
                 {
-                    if (file == null)
-                    {
-                        return null;
-                    }
-
-                    var bmp = new BitmapImage();
-                    bmp.CreateOptions = BitmapCreateOptions.None;
-
+                    DebugUtil.Log("Get thumbnail async.");
                     using (var stream = await file.GetThumbnailAsync(ThumbnailMode.PicturesView))
                     {
-                        bmp.SetSource(stream);
+                        DebugUtil.Log("Set source async.");
+                        await bmp.SetSourceAsync(stream);
                     }
 
                     return bmp;
                 }
                 catch (Exception e)
                 {
+                    DebugUtil.Log("Failed to load bitmap.");
                     DebugUtil.Log(e.StackTrace);
                     // CacheFile seems to be deleted.
                     CacheFile = null;
+                    LoaderTask = null;
                     return null;
                 }
             });
@@ -152,14 +174,41 @@ namespace Kazyx.Uwpmm.DataModel
                     NotifyChangedOnUI("ThumbnailImage");
                 }
             }, CancellationToken.None, TaskContinuationOptions.ExecuteSynchronously, scheduler);
+             * */
         }
 
-        private Task<BitmapImage> LoaderTask { get; set; }
+        // private Task<BitmapImage> LoaderTask { get; set; }
+
+        private BitmapImage _ThumbnailImage = null;
 
         public BitmapImage ThumbnailImage
         {
+            private set
+            {
+                _ThumbnailImage = value;
+                NotifyChanged("ThumbnailImage");
+            }
             get
             {
+                var tmp = Interlocked.Exchange(ref _ThumbnailImage, null);
+                if (tmp != null)
+                {
+                    DebugUtil.Log("Return loaded BitmapImage.");
+                    // _ThumbnailImage = null;
+                    return tmp;
+                }
+                if (CacheFile == null)
+                {
+                    FetchThumbnailAsync();
+                    return null;
+                }
+                else
+                {
+                    DebugUtil.Log("Load BitmapImage from cache async.");
+                    LoadCachedThumbnailImageAsync();
+                    return null;
+                }
+                /*
                 if (LoaderTask != null)
                 {
                     if (LoaderTask.Status == TaskStatus.RanToCompletion)
@@ -170,26 +219,25 @@ namespace Kazyx.Uwpmm.DataModel
                     }
                     else
                     {
+                        DebugUtil.Log("Load BitmapImage from cache async does not end yet.");
                         return null;
                     }
                 }
                 else
                 {
+                    DebugUtil.Log("Load BitmapImage from cache async.");
                     LoadCachedThumbnailImageAsync();
                     return null;
                 }
+                 * */
             }
         }
 
-        public async Task FetchThumbnailAsync()
+        private async void FetchThumbnailAsync()
         {
-            if (CacheFile != null)
-            {
-                return;
-            }
-
             try
             {
+                DebugUtil.Log("Trying to fetch thumbnail image");
                 CacheFile = await ThumbnailCacheLoader.INSTANCE.LoadCacheFileAsync(DeviceUuid, Source);
             }
             catch (Exception e)
@@ -207,7 +255,7 @@ namespace Kazyx.Uwpmm.DataModel
         Delete,
     }
 
-    public class DateGroup : List<PlaybackSource>, INotifyPropertyChanged, INotifyCollectionChanged
+    public class DateGroup : List<Thumbnail>, INotifyPropertyChanged, INotifyCollectionChanged
     {
         public string Key { private set; get; }
 
@@ -227,17 +275,17 @@ namespace Kazyx.Uwpmm.DataModel
             Key = key;
         }
 
-        new public void Add(PlaybackSource content)
+        new public void Add(Thumbnail content)
         {
             var previous = Count;
             base.Add(content);
             OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, content, previous));
         }
 
-        new public void AddRange(IEnumerable<PlaybackSource> contents)
+        new public void AddRange(IEnumerable<Thumbnail> contents)
         {
             var previous = Count;
-            var list = new List<PlaybackSource>(contents);
+            var list = new List<Thumbnail>(contents);
             base.AddRange(contents);
             var e = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset);
             OnCollectionChanged(e);
@@ -289,7 +337,7 @@ namespace Kazyx.Uwpmm.DataModel
             }
         }
 
-        public void Add(PlaybackSource content)
+        public void Add(Thumbnail content)
         {
             var group = GetGroup(content.GroupTitle);
             if (group == null)
@@ -300,14 +348,14 @@ namespace Kazyx.Uwpmm.DataModel
             group.Add(content);
         }
 
-        public void AddRange(IEnumerable<PlaybackSource> contents)
+        public void AddRange(IEnumerable<Thumbnail> contents)
         {
-            var groups = new Dictionary<string, List<PlaybackSource>>();
+            var groups = new Dictionary<string, List<Thumbnail>>();
             foreach (var content in contents)
             {
                 if (!groups.ContainsKey(content.GroupTitle))
                 {
-                    groups.Add(content.GroupTitle, new List<PlaybackSource>());
+                    groups.Add(content.GroupTitle, new List<Thumbnail>());
                 }
                 groups[content.GroupTitle].Add(content);
             }
