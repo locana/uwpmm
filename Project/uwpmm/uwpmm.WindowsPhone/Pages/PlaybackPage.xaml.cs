@@ -35,7 +35,8 @@ namespace Kazyx.Uwpmm.Pages
     public sealed partial class PlaybackPage : Page
     {
         private NavigationHelper navigationHelper;
-        private ObservableDictionary defaultViewModel = new ObservableDictionary();
+
+        private const bool LOAD_DUMMY_CONTENTS = false;
 
         private HttpClient HttpClient = new HttpClient();
 
@@ -138,10 +139,12 @@ namespace Kazyx.Uwpmm.Pages
         /// Gets the view model for this <see cref="Page"/>.
         /// This can be changed to a strongly typed view model.
         /// </summary>
+        /*
         public ObservableDictionary DefaultViewModel
         {
             get { return this.defaultViewModel; }
         }
+         * */
 
         /// <summary>
         /// Populates the page with content passed during navigation.  Any saved state is also
@@ -213,7 +216,10 @@ namespace Kazyx.Uwpmm.Pages
             LoadLocalContents();
 
 #if DEBUG
-            // AddDummyContentsAsync();
+            if (LOAD_DUMMY_CONTENTS)
+            {
+                AddDummyContentsAsync();
+            }
 #endif
             PictureDownloader.Instance.Failed += OnDLError;
             PictureDownloader.Instance.Fetched += OnFetched;
@@ -446,54 +452,6 @@ namespace Kazyx.Uwpmm.Pages
                 await LoadPicturesRecursively(into, child);
             }
         }
-
-        /*
-        ThumbnailGroup groups = null;
-
-        private void LoadLocalContents()
-        {
-            var lib = new MediaLibrary();
-            PictureAlbum CameraRoll = null;
-            foreach (var album in lib.RootPictureAlbum.Albums)
-            {
-                if (album.Name == "Camera Roll")
-                {
-                    CameraRoll = album;
-                    break;
-                }
-            }
-            if (CameraRoll == null)
-            {
-                DebugUtil.Log("No camera roll. Going back");
-                ShowToast(SystemUtil.GetStringResource("Viewer_NoCameraRoll"));
-                return;
-            }
-            LoadThumbnails(CameraRoll);
-        }
-
-        private async void LoadThumbnails(PictureAlbum album)
-        {
-            ChangeProgressText(SystemUtil.GetStringResource("Progress_LoadingLocalContents"));
-            var group = new List<ThumbnailData>();
-            await Task.Run(() =>
-            {
-                foreach (var pic in album.Pictures)
-                {
-                    group.Add(new ThumbnailData(pic));
-                }
-            });
-            group.Reverse();
-
-            await SystemUtil.GetCurrentDispatcher().RunAsync(CoreDispatcherPriority.Normal, () =>
-            {
-                if (group != null)
-                {
-                    groups.Group = new ObservableCollection<ThumbnailData>(group);
-                }
-            });
-            HideProgress();
-        }
-         * */
 
         private string CurrentUuid { set; get; }
 
@@ -746,60 +704,6 @@ namespace Kazyx.Uwpmm.Pages
             }
         }
 
-        /*
-        private async void ThumbnailImage_Tap(object sender, System.Windows.Input.GestureEventArgs e)
-        {
-            if (IsViewingDetail)
-            {
-                return;
-            }
-            ChangeProgressText(SystemUtil.GetStringResource("Progress_OpeningDetailImage"));
-            var img = sender as Image;
-            var thumb = img.DataContext as ThumbnailData;
-            await Task.Run(async () =>
-            {
-                await SystemUtil.GetCurrentDispatcher().RunAsync(CoreDispatcherPriority.Normal, () =>
-                {
-                    try
-                    {
-                        using (var strm = thumb.picture.GetImage())
-                        {
-                            using (var replica = new MemoryStream())
-                            {
-                                strm.CopyTo(replica); // Copy to the new stream to avoid stream crash issue.
-                                if (replica.Length <= 0)
-                                {
-                                    return;
-                                }
-                                replica.Seek(0, SeekOrigin.Begin);
-
-                                var _bitmap = new BitmapImage();
-                                _bitmap.SetSource(replica.AsRandomAccessStream());
-                                PhotoScreen.SourceBitmap = _bitmap;
-                                InitBitmapBeforeOpen();
-                                PhotoScreen.SetBitmap();
-                                try
-                                {
-                                    PhotoData.MetaData = NtImageProcessor.MetaData.JpegMetaDataParser.ParseImage((Stream)replica);
-                                }
-                                catch (UnsupportedFileFormatException)
-                                {
-                                    PhotoData.MetaData = null;
-                                    PhotoScreen.DetailInfoVisibility = Visibility.Collapsed;
-                                }
-                                SetStillDetailVisibility(true);
-                            }
-                        }
-                    }
-                    catch (InvalidOperationException)
-                    {
-                        ShowToast(SystemUtil.GetStringResource("Viewer_FailedToOpenDetail"));
-                    }
-                });
-            });
-        }
-        */
-
         private void SetStillDetailVisibility(bool visible)
         {
             if (visible)
@@ -809,7 +713,7 @@ namespace Kazyx.Uwpmm.Pages
                 IsViewingDetail = true;
                 PhotoScreen.Visibility = Visibility.Visible;
                 RemoteGrid.IsEnabled = false;
-                // LocalImageGrid.IsEnabled = false;
+                LocalGrid.IsEnabled = false;
                 if (PivotRoot.SelectedIndex == 0)
                 {
                     UpdateInnerState(ViewerState.LocalStillPlayback);
@@ -826,7 +730,7 @@ namespace Kazyx.Uwpmm.Pages
                 IsViewingDetail = false;
                 PhotoScreen.Visibility = Visibility.Collapsed;
                 RemoteGrid.IsEnabled = true;
-                // LocalImageGrid.IsEnabled = true;
+                LocalGrid.IsEnabled = true;
                 if (PivotRoot.SelectedIndex == 0)
                 {
                     UpdateInnerState(ViewerState.Local);
@@ -1226,18 +1130,13 @@ namespace Kazyx.Uwpmm.Pages
 
         private void PivotRoot_Loaded(object sender, RoutedEventArgs e)
         {
-            if (TargetDevice == null)
+            if (LOAD_DUMMY_CONTENTS)
             {
                 return;
             }
 
             var pivot = sender as Pivot;
-            pivot.IsLocked = !TargetDevice.Status.StorageAccessSupported;
-        }
-
-        private void ThumbnailImage_Tapped(object sender, TappedRoutedEventArgs e)
-        {
-
+            pivot.IsLocked = TargetDevice == null || !TargetDevice.Status.StorageAccessSupported;
         }
 
         private void PhotoScreen_ManipulationCompleted(object sender, ManipulationCompletedRoutedEventArgs e)
@@ -1362,10 +1261,28 @@ namespace Kazyx.Uwpmm.Pages
             FlyoutBase.ShowAttachedFlyout(sender as FrameworkElement);
         }
 
-        private async void LocalThumbnailImage_Tapped(object sender, TappedRoutedEventArgs e)
+        private void LocalThumbnailImage_Tapped(object sender, TappedRoutedEventArgs e)
         {
             var image = sender as Image;
             var content = image.DataContext as Thumbnail;
+            DisplayLocalDetailImage(content);
+        }
+
+        private void LocalPlayback_Click(object sender, RoutedEventArgs e)
+        {
+            var item = sender as MenuFlyoutItem;
+            var data = item.DataContext as Thumbnail;
+            DisplayLocalDetailImage(data);
+        }
+
+        private async void DisplayLocalDetailImage(Thumbnail content)
+        {
+            if (IsViewingDetail)
+            {
+                return;
+            }
+
+            ChangeProgressText(SystemUtil.GetStringResource("Progress_OpeningDetailImage"));
 
             try
             {
@@ -1390,13 +1307,8 @@ namespace Kazyx.Uwpmm.Pages
             }
             catch
             {
-                ShowToast("Failed to load local detail image");
+                ShowToast(SystemUtil.GetStringResource("Viewer_FailedToOpenDetail"));
             }
-        }
-
-        private void LocalPlayback_Click(object sender, RoutedEventArgs e)
-        {
-
         }
 
         private void LocalDelete_Click(object sender, RoutedEventArgs e)
