@@ -6,7 +6,6 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Threading;
-using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
 using Windows.UI.Xaml;
@@ -132,7 +131,7 @@ namespace Kazyx.Uwpmm.DataModel
 
             try
             {
-                using (var stream = await file.GetThumbnailAsync(ThumbnailMode.PicturesView))
+                using (var stream = await file.GetThumbnailAsync(ThumbnailMode.ListView))
                 {
                     DebugUtil.Log("Set source async.");
                     await SystemUtil.GetCurrentDispatcher().RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
