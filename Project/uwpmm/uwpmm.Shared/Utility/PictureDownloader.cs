@@ -11,6 +11,8 @@ namespace Kazyx.Uwpmm.Utility
 {
     public class PictureDownloader
     {
+        private PictureDownloader() { }
+
         private const string DIRECTORY_NAME = "uwpmm";
 
         private const int BUFFER_SIZE = 2048;
@@ -98,13 +100,9 @@ namespace Kazyx.Uwpmm.Utility
                 using (var resStream = await res.Content.ReadAsStreamAsync())
                 {
                     var library = KnownFolders.PicturesLibrary;
-                    StorageFolder folder = null;
-                    folder = await library.GetFolderAsync(DIRECTORY_NAME);
-                    if (folder == null)
-                    {
-                        DebugUtil.Log("Create folder: " + DIRECTORY_NAME);
-                        folder = await library.CreateFolderAsync(DIRECTORY_NAME);
-                    }
+
+                    DebugUtil.Log("Create folder: " + DIRECTORY_NAME);
+                    var folder = await library.CreateFolderAsync(DIRECTORY_NAME, CreationCollisionOption.OpenIfExists);
 
                     var filename = string.Format(DIRECTORY_NAME + "_{0:yyyyMMdd_HHmmss}.jpg", DateTime.Now);
                     DebugUtil.Log("Create file: " + filename);

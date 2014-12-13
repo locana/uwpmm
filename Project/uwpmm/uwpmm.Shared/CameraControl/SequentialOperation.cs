@@ -94,7 +94,12 @@ namespace Kazyx.Uwpmm.CameraControl
             return await OpenLiveviewStream(api, liveview);
         }
 
-        public static async Task<bool> TakePicture(DeviceApiHolder api, bool awaiting = false)
+        public static async Task<bool> TakePicture(DeviceApiHolder api)
+        {
+            return await TakePicture(api, false);
+        }
+
+        private static async Task<bool> TakePicture(DeviceApiHolder api, bool awaiting = false)
         {
             DebugUtil.Log("Taking picture sequence");
             try
@@ -110,7 +115,6 @@ namespace Kazyx.Uwpmm.CameraControl
                         {
                             var uri = new Uri(url);
                             PictureDownloader.Instance.Enqueue(uri);
-                            return true;
                         }
                         catch (Exception e)
                         {
@@ -119,7 +123,7 @@ namespace Kazyx.Uwpmm.CameraControl
                             return false;
                         }
                     }
-                    return false;
+                    return true;
                 }
                 else
                 {

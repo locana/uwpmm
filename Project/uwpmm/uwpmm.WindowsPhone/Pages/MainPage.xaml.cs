@@ -1,5 +1,6 @@
 ﻿using Kazyx.DeviceDiscovery;
 using Kazyx.ImageStream;
+using Kazyx.RemoteApi;
 using Kazyx.RemoteApi.Camera;
 using Kazyx.Uwpmm.CameraControl;
 using Kazyx.Uwpmm.Common;
@@ -174,10 +175,13 @@ namespace Kazyx.Uwpmm.Pages
             PictureDownloader.Instance.Fetched += async (storage) =>
             {
                 var thumb = await storage.GetThumbnailAsync(ThumbnailMode.ListView, 100);
-                var image = new BitmapImage();
-                image.SetSource(thumb);
-                Toast.PushToast(new Control.ToastContent() { Text = "Picture downloaded successfully!\n" + storage.Name, Icon = image });
-                thumb.Dispose();
+                await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                {
+                    var image = new BitmapImage();
+                    image.SetSource(thumb);
+                    Toast.PushToast(new Control.ToastContent() { Text = "Picture downloaded successfully!\n" + storage.Name, Icon = image });
+                    thumb.Dispose();
+                });
             };
 
             PictureDownloader.Instance.Failed += (err) =>
@@ -301,6 +305,7 @@ namespace Kazyx.Uwpmm.Pages
             api.SupportedApisUpdated += api_SupportedApisUpdated;
             api.AvailiableApisUpdated += api_AvailiableApisUpdated;
 
+            // TODO this must be done after shooting pivot is loaded again.
             TargetDevice target = null;
             try
             {
@@ -315,40 +320,8 @@ namespace Kazyx.Uwpmm.Pages
 
             this.target = target;
 
-            target.Status.OnFocusStatusChanged += (status) =>
-            {
-                DebugUtil.Log("Focus status changed: " + status);
-                if (status == Kazyx.RemoteApi.Camera.FocusState.Focused)
-                {
-                    ShowCancelTouchAFButton();
-                    _FocusFrameSurface.Focused = true;
-                }
-                else
-                {
-                    HideCancelTouchAFButton();
-                    _FocusFrameSurface.Focused = false;
-                }
-            };
-
-            target.Status.OnTouchFocusStatusChanged += (arg) =>
-            {
-                DebugUtil.Log("TouchFocusStatus changed: " + arg.Focused);
-                if (arg.Focused)
-                {
-                    ShowCancelTouchAFButton();
-                    _FocusFrameSurface.Focused = true;
-                }
-                else
-                {
-                    HideCancelTouchAFButton();
-                    _FocusFrameSurface.Focused = false;
-                }
-            };
-
-            target.Status.OnPictureUrlsUpdated += (urls) =>
-            {
-                foreach (var url in urls) { PictureDownloader.Instance.Enqueue(new Uri(url, UriKind.Absolute)); }
-            };
+            target.Status.PropertyChanged += Status_PropertyChanged;
+            // TODO remove when the target is gone to out of control.
 
             await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
@@ -367,6 +340,48 @@ namespace Kazyx.Uwpmm.Pages
                 }
                 else { _FocusFrameSurface.SelfDrawTouchAFFrame = false; }
             });
+        }
+
+        void Status_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            var status = sender as CameraStatus;
+            switch (e.PropertyName)
+            {
+                case "FocusStatus":
+                    DebugUtil.Log("Focus status changed: " + status.Status);
+                    if (status.Status == Kazyx.RemoteApi.Camera.FocusState.Focused)
+                    {
+                        ShowCancelTouchAFButton();
+                        _FocusFrameSurface.Focused = true;
+                    }
+                    else
+                    {
+                        HideCancelTouchAFButton();
+                        _FocusFrameSurface.Focused = false;
+                    }
+                    break;
+                case "TouchFocusStatus":
+                    DebugUtil.Log("TouchFocusStatus changed: " + status.TouchFocusStatus.Focused);
+                    if (status.TouchFocusStatus.Focused)
+                    {
+                        ShowCancelTouchAFButton();
+                        _FocusFrameSurface.Focused = true;
+                    }
+                    else
+                    {
+                        HideCancelTouchAFButton();
+                        _FocusFrameSurface.Focused = false;
+                    }
+                    break;
+                case "PictureUrls":
+                    foreach (var url in status.PictureUrls)
+                    {
+                        PictureDownloader.Instance.Enqueue(new Uri(url, UriKind.Absolute));
+                    }
+                    break;
+                default:
+                    break;
+            }
         }
 
         private void HideCancelTouchAFButton()
@@ -447,41 +462,39 @@ namespace Kazyx.Uwpmm.Pages
         private async void ZoomOutButton_Click(object sender, RoutedEventArgs e)
         {
             try { await target.Api.Camera.ActZoomAsync(ZoomParam.DirectionOut, ZoomParam.ActionStop); }
-            catch (RemoteApi.RemoteApiException ex) { DebugUtil.Log(ex.StackTrace); }
-
+            catch (RemoteApiException ex) { DebugUtil.Log(ex.StackTrace); }
         }
 
         private async void ZoomOutButton_Tapped(object sender, TappedRoutedEventArgs e)
         {
             try { await target.Api.Camera.ActZoomAsync(ZoomParam.DirectionOut, ZoomParam.Action1Shot); }
-            catch (RemoteApi.RemoteApiException ex) { DebugUtil.Log(ex.StackTrace); }
+            catch (RemoteApiException ex) { DebugUtil.Log(ex.StackTrace); }
         }
 
         private async void ZoomOutButton_Holding(object sender, HoldingRoutedEventArgs e)
         {
             try { await target.Api.Camera.ActZoomAsync(ZoomParam.DirectionOut, ZoomParam.ActionStart); }
-            catch (RemoteApi.RemoteApiException ex) { DebugUtil.Log(ex.StackTrace); }
+            catch (RemoteApiException ex) { DebugUtil.Log(ex.StackTrace); }
 
         }
 
         private async void ZoomInButton_Click(object sender, RoutedEventArgs e)
         {
             try { await target.Api.Camera.ActZoomAsync(ZoomParam.DirectionIn, ZoomParam.ActionStop); }
-            catch (RemoteApi.RemoteApiException ex) { DebugUtil.Log(ex.StackTrace); }
+            catch (RemoteApiException ex) { DebugUtil.Log(ex.StackTrace); }
 
         }
 
         private async void ZoomInButton_Tapped(object sender, TappedRoutedEventArgs e)
         {
             try { await target.Api.Camera.ActZoomAsync(ZoomParam.DirectionIn, ZoomParam.Action1Shot); }
-            catch (RemoteApi.RemoteApiException ex) { DebugUtil.Log(ex.StackTrace); }
+            catch (RemoteApiException ex) { DebugUtil.Log(ex.StackTrace); }
         }
 
         private async void ZoomInButton_Holding(object sender, HoldingRoutedEventArgs e)
         {
             try { await target.Api.Camera.ActZoomAsync(ZoomParam.DirectionIn, ZoomParam.ActionStart); }
-            catch (RemoteApi.RemoteApiException ex) { DebugUtil.Log(ex.StackTrace); }
-
+            catch (RemoteApiException ex) { DebugUtil.Log(ex.StackTrace); }
         }
 
         private void ShutterButton_Click(object sender, RoutedEventArgs e)
@@ -501,9 +514,9 @@ namespace Kazyx.Uwpmm.Pages
             {
                 try
                 {
-                    await SequentialOperation.TakePicture(target.Api, true);
+                    await SequentialOperation.TakePicture(target.Api);
                 }
-                catch (RemoteApi.RemoteApiException ex)
+                catch (RemoteApiException ex)
                 {
                     DebugUtil.Log(ex.StackTrace);
                     ShowError("Failed to take a picture.");
@@ -514,7 +527,7 @@ namespace Kazyx.Uwpmm.Pages
                 if (target.Status.Status == EventParam.Idle)
                 {
                     try { await target.Api.Camera.StartMovieRecAsync(); }
-                    catch (RemoteApi.RemoteApiException ex)
+                    catch (RemoteApiException ex)
                     {
                         DebugUtil.Log(ex.StackTrace);
                         ShowError("Failed to start movie recording.");
@@ -523,7 +536,7 @@ namespace Kazyx.Uwpmm.Pages
                 else if (target.Status.Status == EventParam.MvRecording)
                 {
                     try { await target.Api.Camera.StopMovieRecAsync(); }
-                    catch (RemoteApi.RemoteApiException ex)
+                    catch (RemoteApiException ex)
                     {
                         DebugUtil.Log(ex.StackTrace);
                         ShowError("Failed to stop movie recording.");
@@ -535,7 +548,7 @@ namespace Kazyx.Uwpmm.Pages
                 if (target.Status.Status == EventParam.Idle)
                 {
                     try { await target.Api.Camera.StartAudioRecAsync(); }
-                    catch (RemoteApi.RemoteApiException ex)
+                    catch (RemoteApiException ex)
                     {
                         DebugUtil.Log(ex.StackTrace);
                         ShowError("Failed to start audio recording.");
@@ -544,7 +557,7 @@ namespace Kazyx.Uwpmm.Pages
                 else if (target.Status.Status == EventParam.AuRecording)
                 {
                     try { await target.Api.Camera.StopAudioRecAsync(); }
-                    catch (RemoteApi.RemoteApiException ex)
+                    catch (RemoteApiException ex)
                     {
                         DebugUtil.Log(ex.StackTrace);
                         ShowError("Failed to stop audio recording.");
@@ -556,7 +569,7 @@ namespace Kazyx.Uwpmm.Pages
                 if (target.Status.Status == EventParam.Idle)
                 {
                     try { await target.Api.Camera.StartIntervalStillRecAsync(); }
-                    catch (RemoteApi.RemoteApiException ex)
+                    catch (RemoteApiException ex)
                     {
                         DebugUtil.Log(ex.StackTrace);
                         ShowError("Failed to start interval recording.");
@@ -565,7 +578,7 @@ namespace Kazyx.Uwpmm.Pages
                 else if (target.Status.Status == EventParam.ItvRecording)
                 {
                     try { await target.Api.Camera.StopIntervalStillRecAsync(); }
-                    catch (RemoteApi.RemoteApiException ex)
+                    catch (RemoteApiException ex)
                     {
                         DebugUtil.Log(ex.StackTrace);
                         ShowError("Failed to stop interval recording.");
@@ -588,7 +601,7 @@ namespace Kazyx.Uwpmm.Pages
             this._FocusFrameSurface.Width = rw;
         }
 
-        private void ShowToast(String s)
+        private void ShowToast(string s)
         {
             Toast.PushToast(new Control.ToastContent() { Text = s });
         }
