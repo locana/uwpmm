@@ -26,5 +26,6 @@
   <Capabilities>
     <Capability Name="internetClientServer" />
     <Capability Name="picturesLibrary" />
+    <DeviceCapability Name="proximity" />
   </Capabilities>
 </Package>

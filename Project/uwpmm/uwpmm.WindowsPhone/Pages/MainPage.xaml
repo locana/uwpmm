@@ -31,6 +31,7 @@
                         <StackPanel>
                             <TextBlock Text="MY APPLICATION" Style="{ThemeResource TitleTextBlockStyle}" Margin="0,0,0,30"/>
                             <TextBlock Text="After connection established, swipe to right." />
+                            <TextBlock Name="NfcAvailable" Text="NFC is available on your phone. Touch to your camera to find the password." Visibility="Collapsed" />
                         </StackPanel>
                     </Grid>
                 </PivotItem>

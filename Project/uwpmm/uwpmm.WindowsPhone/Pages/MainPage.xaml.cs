@@ -8,8 +8,12 @@ using Kazyx.Uwpmm.DataModel;
 using Kazyx.Uwpmm.Settings;
 using Kazyx.Uwpmm.Utility;
 using NtImageProcessor;
+using NtNfcLib;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Text;
+using Windows.Networking.Proximity;
 using Windows.Phone.UI.Input;
 using Windows.Storage.FileProperties;
 using Windows.UI.Core;
@@ -173,6 +177,7 @@ namespace Kazyx.Uwpmm.Pages
             };
 
             InitializeUI();
+            InitializeProximityDevice();
 
             PictureDownloader.Instance.Fetched += async (storage) =>
             {
@@ -621,6 +626,115 @@ namespace Kazyx.Uwpmm.Pages
         private void ShowToast(string s)
         {
             Toast.PushToast(new Control.ToastContent() { Text = s });
+        }
+
+        ProximityDevice ProximityDevice;
+
+        private void InitializeProximityDevice()
+        {
+            try
+            {
+                ProximityDevice = ProximityDevice.GetDefault();
+            }
+            catch (System.IO.FileNotFoundException)
+            {
+                ProximityDevice = null;
+                DebugUtil.Log("Caught ununderstandable exception. ");
+                return;
+            }
+            catch (System.Runtime.InteropServices.COMException)
+            {
+                ProximityDevice = null;
+                DebugUtil.Log("Caught ununderstandable exception. ");
+                return;
+            }
+
+            if (ProximityDevice == null)
+            {
+                DebugUtil.Log("It seems this is not NFC available device");
+                return;
+            }
+
+            try
+            {
+                ProximityDevice.SubscribeForMessage("NDEF", ProximityMessageReceivedHandler);
+            }
+            catch (Exception e)
+            {
+                ProximityDevice = null;
+                DebugUtil.Log("Caught ununderstandable exception. " + e.Message + e.StackTrace);
+                return;
+            }
+
+            NfcAvailable.Visibility = Windows.UI.Xaml.Visibility.Visible;
+        }
+
+        private async void ProximityMessageReceivedHandler(ProximityDevice sender, ProximityMessage message)
+        {
+            var parser = new NdefParser(message);
+            var ndefRecords = new List<NdefRecord>();
+
+            var err = "";
+
+            try
+            {
+                ndefRecords = parser.Parse();
+            }
+            catch (NoSonyNdefRecordException)
+            {
+                // err = AppResources.ErrorMessage_CantFindSonyRecord;
+                err = "No Sony camera info found.";
+            }
+            catch (NoNdefRecordException)
+            {
+                err = "No NDEF record.";
+                // err = AppResources.ErrorMessage_ParseNFC;
+            }
+            catch (NdefParseException)
+            {
+                err = "Failed to parse the data.";
+                // err = AppResources.ErrorMessage_ParseNFC;
+            }
+            catch (Exception)
+            {
+                err = "Something wrong.";
+                // err = AppResources.ErrorMessage_fatal;
+            }
+
+            if (err != "")
+            {
+                DebugUtil.Log("Failed to read NFC: " + err);
+                await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => { ShowError(err); });
+            }
+
+            if (ndefRecords.Count > 0)
+            {
+                foreach (NdefRecord r in ndefRecords)
+                {
+                    if (r.SSID.Length > 0 && r.Password.Length > 0)
+                    {
+                        await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+                        {
+                            // TODO: find any easy way to connect the camera
+                            // Clipboard.SetText(r.Password);
+                            var sb = new StringBuilder();
+                            sb.Append("Found NFC tag!");
+                            sb.Append(System.Environment.NewLine);
+                            sb.Append(System.Environment.NewLine);
+                            sb.Append("SSID: ");
+                            sb.Append(r.SSID);
+                            sb.Append(System.Environment.NewLine);
+                            sb.Append("Password: ");
+                            sb.Append(r.Password);
+                            sb.Append(System.Environment.NewLine);
+                            sb.Append(System.Environment.NewLine);
+                            var dialog = new MessageDialog(sb.ToString());
+                            await dialog.ShowAsync();
+                        });
+                        break;
+                    }
+                }
+            }
         }
     }
 }
