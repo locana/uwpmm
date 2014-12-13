@@ -494,14 +494,12 @@ namespace Kazyx.Uwpmm.Pages
         {
             try { await target.Api.Camera.ActZoomAsync(ZoomParam.DirectionOut, ZoomParam.ActionStart); }
             catch (RemoteApiException ex) { DebugUtil.Log(ex.StackTrace); }
-
         }
 
         private async void ZoomInButton_Click(object sender, RoutedEventArgs e)
         {
             try { await target.Api.Camera.ActZoomAsync(ZoomParam.DirectionIn, ZoomParam.ActionStop); }
             catch (RemoteApiException ex) { DebugUtil.Log(ex.StackTrace); }
-
         }
 
         private async void ZoomInButton_Tapped(object sender, TappedRoutedEventArgs e)
