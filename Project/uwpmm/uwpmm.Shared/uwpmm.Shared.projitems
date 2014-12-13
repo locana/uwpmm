@@ -23,7 +23,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)CameraControl\SequentialOperation.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CameraControl\ServerVersion.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CameraControl\StatusObserver.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)CameraControl\ZoomOperation.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Control\AppBarContent.xaml.cs">
       <DependentUpon>AppBarContent.xaml</DependentUpon>
     </Compile>

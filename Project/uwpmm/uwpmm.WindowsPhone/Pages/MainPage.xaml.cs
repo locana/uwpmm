@@ -9,6 +9,8 @@ using Kazyx.Uwpmm.Settings;
 using Kazyx.Uwpmm.Utility;
 using NtImageProcessor;
 using System;
+using System.ComponentModel;
+using Windows.Phone.UI.Input;
 using Windows.Storage.FileProperties;
 using Windows.UI.Core;
 using Windows.UI.Popups;
@@ -147,18 +149,18 @@ namespace Kazyx.Uwpmm.Pages
 
             PivotRoot.SelectionChanged += PivotRoot_SelectionChanged;
 
-            Windows.Phone.UI.Input.HardwareButtons.BackPressed += HardwareButtons_BackPressed;
-            Windows.Phone.UI.Input.HardwareButtons.CameraHalfPressed += async (_sender, arg) =>
+            HardwareButtons.BackPressed += HardwareButtons_BackPressed;
+            HardwareButtons.CameraHalfPressed += async (_sender, arg) =>
             {
                 if (target == null || target.Api == null || !target.Api.Capability.IsAvailable("actHalfPressShutter")) { return; }
                 await target.Api.Camera.ActHalfPressShutterAsync();
             };
-            Windows.Phone.UI.Input.HardwareButtons.CameraReleased += async (_sender, arg) =>
+            HardwareButtons.CameraReleased += async (_sender, arg) =>
             {
                 if (target == null || target.Api == null || !target.Api.Capability.IsAvailable("cancelHalfPressShutter")) { return; }
                 await target.Api.Camera.CancelHalfPressShutterAsync();
             };
-            Windows.Phone.UI.Input.HardwareButtons.CameraPressed += (_sender, arg) =>
+            HardwareButtons.CameraPressed += (_sender, arg) =>
             {
                 ShutterButtonPressed();
             };
@@ -207,7 +209,17 @@ namespace Kazyx.Uwpmm.Pages
 
         private void CreateEntranceAppBar()
         {
-            this.BottomAppBar = _CommandBarManager.Clear().NoIcon(AppBarItem.AboutPage).NoIcon(AppBarItem.PlaybackPage).NoIcon(AppBarItem.LoggerPage)
+            this.BottomAppBar = _CommandBarManager.Clear()//
+                .NoIcon(AppBarItem.AboutPage)//
+                .NoIcon(AppBarItem.PlaybackPage)//
+                .NoIcon(AppBarItem.LoggerPage)//
+                .CreateNew(0.6);
+        }
+
+        private void CreateCameraControlAppBar()
+        {
+            this.BottomAppBar = _CommandBarManager.Clear()//
+                .Icon(AppBarItem.ControlPanel)//
                 .CreateNew(0.6);
         }
 
@@ -223,12 +235,17 @@ namespace Kazyx.Uwpmm.Pages
                         await SequentialOperation.CloseLiveviewStream(target.Api, liveview);
                         target.Observer.Stop();
                     }
+                    target = null;
                     break;
                 case 1:
                     if (target != null)
                     {
-                        this.BottomAppBar = _CommandBarManager.Clear().Icon(AppBarItem.ControlPanel).CreateNew(0.6);
+                        CreateCameraControlAppBar();
                         LiveViewPageLoaded();
+                    }
+                    else
+                    {
+                        // TODO search devices explicitly.
                     }
                     break;
             }
@@ -342,14 +359,14 @@ namespace Kazyx.Uwpmm.Pages
             });
         }
 
-        void Status_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        void Status_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             var status = sender as CameraStatus;
             switch (e.PropertyName)
             {
                 case "FocusStatus":
-                    DebugUtil.Log("Focus status changed: " + status.Status);
-                    if (status.Status == Kazyx.RemoteApi.Camera.FocusState.Focused)
+                    DebugUtil.Log("Focus status changed: " + status.FocusStatus);
+                    if (status.FocusStatus == Kazyx.RemoteApi.Camera.FocusState.Focused)
                     {
                         ShowCancelTouchAFButton();
                         _FocusFrameSurface.Focused = true;
