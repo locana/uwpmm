@@ -68,7 +68,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)DataModel\MoviePlaybackData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataModel\ObservableBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataModel\PhotoPlaybackData.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)DataModel\RemoteThumbnailData.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DataModel\PlaybackSource.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)LocalizedStrings.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Settings\SettingPanelBuilder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\ApplicationSettingNames.cs" />
@@ -86,7 +86,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Utility\SettingValueConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\StorageExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\SystemUtil.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Utility\ThumbnailImageConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\ThumbnailCacheLoader.cs" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\AppBar\appbar_cameraSetting.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\AppBar\appBar_cancel.png" />

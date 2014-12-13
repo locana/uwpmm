@@ -456,10 +456,10 @@ namespace Kazyx.Uwpmm.Pages
             {
                 foreach (var date in DummyContentsGenerator.RandomDateList(50))
                 {
-                    var list = new List<RemoteThumbnail>();
+                    var list = new List<PlaybackSource>();
                     foreach (var content in DummyContentsGenerator.RandomContentList(50))
                     {
-                        list.Add(new RemoteThumbnail(CurrentUuid, date, content));
+                        list.Add(new PlaybackSource(CurrentUuid, date, content));
                     }
                     await Task.Delay(500);
                     await SystemUtil.GetCurrentDispatcher().RunAsync(CoreDispatcherPriority.Normal, () =>
@@ -614,10 +614,10 @@ namespace Kazyx.Uwpmm.Pages
         {
             if (InnerState == ViewerState.OutOfPage) return;
 
-            var list = new List<RemoteThumbnail>();
+            var list = new List<PlaybackSource>();
             foreach (var content in args.ContentList)
             {
-                list.Add(new RemoteThumbnail(TargetDevice.Udn, args.DateInfo, content));
+                list.Add(new PlaybackSource(TargetDevice.Udn, args.DateInfo, content));
             }
 
             await SystemUtil.GetCurrentDispatcher().RunAsync(CoreDispatcherPriority.Normal, () =>
@@ -928,7 +928,7 @@ namespace Kazyx.Uwpmm.Pages
              * */
         }
 
-        private void EnqueueImageDownload(RemoteThumbnail source)
+        private void EnqueueImageDownload(PlaybackSource source)
         {
             // if (ApplicationSettings.GetInstance().PrioritizeOriginalSizeContents && source.Source.OriginalUrl != null)
             if (source.Source.OriginalUrl != null)
@@ -1027,7 +1027,7 @@ namespace Kazyx.Uwpmm.Pages
         }
          * */
 
-        private async void PlaybackContent(RemoteThumbnail content)
+        private async void PlaybackContent(PlaybackSource content)
         {
             if (content != null)
             {

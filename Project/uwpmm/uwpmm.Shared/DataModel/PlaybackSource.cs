@@ -5,18 +5,18 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.Storage;
+using Windows.Storage.FileProperties;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media.Imaging;
 
 namespace Kazyx.Uwpmm.DataModel
 {
-    public class RemoteThumbnail : ObservableBase
+    public class PlaybackSource : ObservableBase
     {
-        public RemoteThumbnail(string uuid, DateInfo date, ContentInfo content)
+        public PlaybackSource(string uuid, DateInfo date, ContentInfo content)
         {
             GroupTitle = date.Title;
             Source = content;
@@ -101,29 +101,26 @@ namespace Kazyx.Uwpmm.DataModel
 
         public string GroupTitle { private set; get; }
 
-        private string _CachePath = null;
-        public string CachePath
+        private StorageFile _CacheFile = null;
+        public StorageFile CacheFile
         {
             set
             {
-                _CachePath = value;
-                NotifyChangedOnUI("ThumbnailImage");
+                _CacheFile = value;
+                NotifyChangedOnUI("CacheFile");
             }
-            get
-            {
-                return _CachePath;
-            }
+            get { return _CacheFile; }
         }
 
         private void LoadCachedThumbnailImageAsync()
         {
-            var path = CachePath;
+            var file = CacheFile;
 
             LoaderTask = Task.Run(async () =>
             {
                 try
                 {
-                    if (string.IsNullOrEmpty(path))
+                    if (file == null)
                     {
                         return null;
                     }
@@ -131,10 +128,9 @@ namespace Kazyx.Uwpmm.DataModel
                     var bmp = new BitmapImage();
                     bmp.CreateOptions = BitmapCreateOptions.None;
 
-                    var file = await ApplicationData.Current.TemporaryFolder.GetFileAsync(path);
-                    using (var stream = await file.OpenStreamForReadAsync())
+                    using (var stream = await file.GetThumbnailAsync(ThumbnailMode.PicturesView))
                     {
-                        bmp.SetSource(stream.AsRandomAccessStream());
+                        bmp.SetSource(stream);
                     }
 
                     return bmp;
@@ -142,6 +138,8 @@ namespace Kazyx.Uwpmm.DataModel
                 catch (Exception e)
                 {
                     DebugUtil.Log(e.StackTrace);
+                    // CacheFile seems to be deleted.
+                    CacheFile = null;
                     return null;
                 }
             });
@@ -185,14 +183,14 @@ namespace Kazyx.Uwpmm.DataModel
 
         public async Task FetchThumbnailAsync()
         {
-            if (CachePath != null)
+            if (CacheFile != null)
             {
                 return;
             }
 
             try
             {
-                CachePath = await ThumbnailCacheLoader.INSTANCE.GetCachePathAsync(DeviceUuid, Source);
+                CacheFile = await ThumbnailCacheLoader.INSTANCE.LoadCacheFileAsync(DeviceUuid, Source);
             }
             catch (Exception e)
             {
@@ -209,7 +207,7 @@ namespace Kazyx.Uwpmm.DataModel
         Delete,
     }
 
-    public class DateGroup : List<RemoteThumbnail>, INotifyPropertyChanged, INotifyCollectionChanged
+    public class DateGroup : List<PlaybackSource>, INotifyPropertyChanged, INotifyCollectionChanged
     {
         public string Key { private set; get; }
 
@@ -229,17 +227,17 @@ namespace Kazyx.Uwpmm.DataModel
             Key = key;
         }
 
-        new public void Add(RemoteThumbnail content)
+        new public void Add(PlaybackSource content)
         {
             var previous = Count;
             base.Add(content);
             OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, content, previous));
         }
 
-        new public void AddRange(IEnumerable<RemoteThumbnail> contents)
+        new public void AddRange(IEnumerable<PlaybackSource> contents)
         {
             var previous = Count;
-            var list = new List<RemoteThumbnail>(contents);
+            var list = new List<PlaybackSource>(contents);
             base.AddRange(contents);
             var e = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset);
             OnCollectionChanged(e);
@@ -291,7 +289,7 @@ namespace Kazyx.Uwpmm.DataModel
             }
         }
 
-        public void Add(RemoteThumbnail content)
+        public void Add(PlaybackSource content)
         {
             var group = GetGroup(content.GroupTitle);
             if (group == null)
@@ -302,14 +300,14 @@ namespace Kazyx.Uwpmm.DataModel
             group.Add(content);
         }
 
-        public void AddRange(IEnumerable<RemoteThumbnail> contents)
+        public void AddRange(IEnumerable<PlaybackSource> contents)
         {
-            var groups = new Dictionary<string, List<RemoteThumbnail>>();
+            var groups = new Dictionary<string, List<PlaybackSource>>();
             foreach (var content in contents)
             {
                 if (!groups.ContainsKey(content.GroupTitle))
                 {
-                    groups.Add(content.GroupTitle, new List<RemoteThumbnail>());
+                    groups.Add(content.GroupTitle, new List<PlaybackSource>());
                 }
                 groups[content.GroupTitle].Add(content);
             }
