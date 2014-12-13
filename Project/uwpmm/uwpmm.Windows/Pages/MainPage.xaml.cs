@@ -1,5 +1,7 @@
 ﻿using Kazyx.DeviceDiscovery;
 using Kazyx.ImageStream;
+using Kazyx.RemoteApi;
+using Kazyx.RemoteApi.Camera;
 using Kazyx.Uwpmm.CameraControl;
 using Kazyx.Uwpmm.Common;
 using Kazyx.Uwpmm.DataModel;
@@ -201,17 +203,20 @@ namespace Kazyx.Uwpmm.Pages
 
         private async void ZoomOut_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            await ZoomOperation.ZoomOut(target.Api.Camera);
+            try { await target.Api.Camera.ActZoomAsync(ZoomParam.DirectionOut, ZoomParam.Action1Shot); }
+            catch (RemoteApiException ex) { DebugUtil.Log(ex.StackTrace); }
         }
 
         private async void ZoomOut_Click(object sender, RoutedEventArgs e)
         {
-            await ZoomOperation.StopZoomOut(target.Api.Camera);
+            try { await target.Api.Camera.ActZoomAsync(ZoomParam.DirectionOut, ZoomParam.ActionStop); }
+            catch (RemoteApiException ex) { DebugUtil.Log(ex.StackTrace); }
         }
 
         private async void ZoomOut_Holding(object sender, HoldingRoutedEventArgs e)
         {
-            await ZoomOperation.StartZoomOut(target.Api.Camera);
+            try { await target.Api.Camera.ActZoomAsync(ZoomParam.DirectionOut, ZoomParam.ActionStart); }
+            catch (RemoteApiException ex) { DebugUtil.Log(ex.StackTrace); }
         }
 
         private async void ZoomOut_PointerEntered(object sender, PointerRoutedEventArgs e)
@@ -226,17 +231,20 @@ namespace Kazyx.Uwpmm.Pages
 
         private async void ZoomIn_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            await ZoomOperation.ZoomIn(target.Api.Camera);
+            try { await target.Api.Camera.ActZoomAsync(ZoomParam.DirectionIn, ZoomParam.Action1Shot); }
+            catch (RemoteApiException ex) { DebugUtil.Log(ex.StackTrace); }
         }
 
         private async void ZoomIn_Click(object sender, RoutedEventArgs e)
         {
-            await ZoomOperation.StopZoomIn(target.Api.Camera);
+            try { await target.Api.Camera.ActZoomAsync(ZoomParam.DirectionIn, ZoomParam.ActionStop); }
+            catch (RemoteApiException ex) { DebugUtil.Log(ex.StackTrace); }
         }
 
         private async void ZoomIn_Holding(object sender, HoldingRoutedEventArgs e)
         {
-            await ZoomOperation.StartZoomIn(target.Api.Camera);
+            try { await target.Api.Camera.ActZoomAsync(ZoomParam.DirectionIn, ZoomParam.ActionStart); }
+            catch (RemoteApiException ex) { DebugUtil.Log(ex.StackTrace); }
         }
 
         private async void ZoomIn_PointerEntered(object sender, PointerRoutedEventArgs e)
