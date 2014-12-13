@@ -40,6 +40,8 @@ namespace Kazyx.Uwpmm.Utility
                     return new AppBarButton() { Icon = new BitmapIcon() { UriSource = new Uri("ms-appx:///Assets/AppBar/appbar_display_info.png") }, Label = "Show info" };
                 case AppBarItem.HideDetailInfo:
                     return new AppBarButton() { Icon = new BitmapIcon() { UriSource = new Uri("ms-appx:///Assets/AppBar/appbar_close_display.png") }, Label = "Hide info" };
+                case AppBarItem.Ok:
+                    return new AppBarButton() { Icon = new BitmapIcon() { UriSource = new Uri("ms-appx:///Assets/AppBar/appbar_ok.png") }, Label = "OK" };
                 default:
                     throw new NotImplementedException();
             }

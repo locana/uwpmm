@@ -126,7 +126,7 @@
                     <GridView x:Name="RemoteGrid" ItemsSource="{Binding Source={StaticResource RemoteSources}}" SelectionChanged="RemoteGrid_SelectionChanged" Loaded="RemoteGrid_Loaded" Unloaded="RemoteGrid_Unloaded">
                         <GridView.ItemTemplate>
                             <DataTemplate>
-                                <Grid Height="108" Width="108" Margin="6,6">
+                                <Grid Height="108" Width="108" Margin="6,6" Holding="Grid_Holding">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="48"/>
                                         <ColumnDefinition Width="*"/>
@@ -147,7 +147,6 @@
                                             <SolidColorBrush Color="{StaticResource PhoneControlDisabledColor}"/>
                                         </Border.Background>
                                     </Border>
-                                    <!--
                                     <FlyoutBase.AttachedFlyout>
                                         <MenuFlyout>
                                             <MenuFlyoutItem Text="{Binding [Viewer_MenuPlayback], Source={StaticResource LocalizedStrings}}" Click="Playback_Click" />
@@ -155,7 +154,6 @@
                                             <MenuFlyoutItem Text="{Binding [Viewer_MenuDelete], Source={StaticResource LocalizedStrings}}" Click="Delete_Click" Visibility="{Binding DeleteMenuVisiblity}" />
                                         </MenuFlyout>
                                     </FlyoutBase.AttachedFlyout>
-                                    -->
                                 </Grid>
                             </DataTemplate>
                         </GridView.ItemTemplate>

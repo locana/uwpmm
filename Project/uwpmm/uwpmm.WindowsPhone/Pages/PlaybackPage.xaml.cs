@@ -20,6 +20,7 @@ using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
@@ -967,131 +968,133 @@ namespace Kazyx.Uwpmm.Pages
                     break;
             }
         }
+         * */
 
         private void Playback_Click(object sender, RoutedEventArgs e)
         {
-            var item = sender as MenuItem;
-            var content = item.DataContext as RemoteThumbnail;
+            var item = sender as MenuFlyoutItem;
+            var content = item.DataContext as Thumbnail;
             PlaybackContent(content);
         }
-         * */
 
         private async void PlaybackContent(Thumbnail content)
         {
-            if (content != null)
+            if (content == null || content.Source == null || content.Source.ContentType == null)
             {
-                switch (content.Source.ContentType)
-                {
-                    case ContentKind.StillImage:
-                        ChangeProgressText(SystemUtil.GetStringResource("Progress_OpeningDetailImage"));
-                        try
+                ShowToast("Information for playback is lacking.");
+                return;
+            }
+
+            switch (content.Source.ContentType)
+            {
+                case ContentKind.StillImage:
+                    ChangeProgressText(SystemUtil.GetStringResource("Progress_OpeningDetailImage"));
+                    try
+                    {
+                        var res = await HttpClient.GetAsync(new Uri(content.Source.LargeUrl));
+                        if (res.StatusCode != HttpStatusCode.OK)
                         {
-                            var res = await HttpClient.GetAsync(new Uri(content.Source.LargeUrl));
-                            if (res.StatusCode != HttpStatusCode.OK)
+                            HideProgress();
+                            return;
+                        }
+
+                        using (var strm = await res.Content.ReadAsStreamAsync())
+                        {
+                            var replica = new MemoryStream();
+
+                            strm.CopyTo(replica); // Copy to the new stream to avoid stream crash issue.
+                            if (replica.Length <= 0)
                             {
-                                HideProgress();
                                 return;
                             }
+                            replica.Seek(0, SeekOrigin.Begin);
 
-                            using (var strm = await res.Content.ReadAsStreamAsync())
+                            await SystemUtil.GetCurrentDispatcher().RunAsync(CoreDispatcherPriority.Normal, () =>
                             {
-                                var replica = new MemoryStream();
-
-                                strm.CopyTo(replica); // Copy to the new stream to avoid stream crash issue.
-                                if (replica.Length <= 0)
+                                try
                                 {
-                                    return;
-                                }
-                                replica.Seek(0, SeekOrigin.Begin);
-
-                                await SystemUtil.GetCurrentDispatcher().RunAsync(CoreDispatcherPriority.Normal, () =>
-                                {
+                                    var _bitmap = new BitmapImage();
+                                    _bitmap.SetSource(replica.AsRandomAccessStream());
+                                    PhotoScreen.SourceBitmap = _bitmap;
+                                    InitBitmapBeforeOpen();
+                                    PhotoScreen.SetBitmap();
                                     try
                                     {
-                                        var _bitmap = new BitmapImage();
-                                        _bitmap.SetSource(replica.AsRandomAccessStream());
-                                        PhotoScreen.SourceBitmap = _bitmap;
-                                        InitBitmapBeforeOpen();
-                                        PhotoScreen.SetBitmap();
-                                        try
-                                        {
-                                            PhotoData.MetaData = NtImageProcessor.MetaData.JpegMetaDataParser.ParseImage(replica);
-                                        }
-                                        catch (UnsupportedFileFormatException)
-                                        {
-                                            PhotoData.MetaData = null;
-                                            PhotoScreen.DetailInfoVisibility = Visibility.Collapsed;
-                                        }
-                                        SetStillDetailVisibility(true);
+                                        PhotoData.MetaData = NtImageProcessor.MetaData.JpegMetaDataParser.ParseImage(replica);
                                     }
-                                    finally
+                                    catch (UnsupportedFileFormatException)
                                     {
-                                        if (replica != null)
-                                        {
-                                            replica.Dispose();
-                                        }
+                                        PhotoData.MetaData = null;
+                                        PhotoScreen.DetailInfoVisibility = Visibility.Collapsed;
                                     }
-                                });
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            DebugUtil.Log(ex.StackTrace);
-                            HideProgress();
-                        }
-                        break;
-                    case ContentKind.MovieMp4:
-                    case ContentKind.MovieXavcS:
-                        if (MovieStreamHelper.INSTANCE.IsProcessing)
-                        {
-                            MovieStreamHelper.INSTANCE.Finish();
-                        }
-                        var av = TargetDevice.Api.AvContent;
-
-                        if (av != null)
-                        {
-                            if (content.Source.RemotePlaybackAvailable)
-                            {
-                                PivotRoot.IsLocked = true;
-                                UpdateInnerState(ViewerState.RemoteMoviePlayback);
-                                MovieDrawer.Visibility = Visibility.Visible;
-                                ChangeProgressText(SystemUtil.GetStringResource("Progress_OpeningMovieStream"));
-                                var started = await MovieStreamHelper.INSTANCE.Start(av, new PlaybackContent
-                                {
-                                    Uri = content.Source.Uri,
-                                    RemotePlayType = RemotePlayMode.SimpleStreaming
-                                }, content.Source.Name);
-                                if (!started)
-                                {
-                                    ShowToast(SystemUtil.GetStringResource("Viewer_FailedPlaybackMovie"));
-                                    CloseMovieStream();
+                                    SetStillDetailVisibility(true);
                                 }
-                                HideProgress();
-                            }
-                            else
+                                finally
+                                {
+                                    if (replica != null)
+                                    {
+                                        replica.Dispose();
+                                    }
+                                }
+                            });
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        DebugUtil.Log(ex.StackTrace);
+                        HideProgress();
+                    }
+                    break;
+                case ContentKind.MovieMp4:
+                case ContentKind.MovieXavcS:
+                    if (MovieStreamHelper.INSTANCE.IsProcessing)
+                    {
+                        MovieStreamHelper.INSTANCE.Finish();
+                    }
+                    var av = TargetDevice.Api.AvContent;
+
+                    if (av != null)
+                    {
+                        if (content.Source.RemotePlaybackAvailable)
+                        {
+                            PivotRoot.IsLocked = true;
+                            UpdateInnerState(ViewerState.RemoteMoviePlayback);
+                            MovieDrawer.Visibility = Visibility.Visible;
+                            ChangeProgressText(SystemUtil.GetStringResource("Progress_OpeningMovieStream"));
+                            var started = await MovieStreamHelper.INSTANCE.Start(av, new PlaybackContent
                             {
-                                ShowToast(SystemUtil.GetStringResource("Viewer_UnplayableContent"));
+                                Uri = content.Source.Uri,
+                                RemotePlayType = RemotePlayMode.SimpleStreaming
+                            }, content.Source.Name);
+                            if (!started)
+                            {
+                                ShowToast(SystemUtil.GetStringResource("Viewer_FailedPlaybackMovie"));
+                                CloseMovieStream();
                             }
+                            HideProgress();
                         }
                         else
                         {
-                            DebugUtil.Log("Not ready to start stream: " + content.Source.Uri);
-                            ShowToast(SystemUtil.GetStringResource("Viewer_NoAvContentApi"));
+                            ShowToast(SystemUtil.GetStringResource("Viewer_UnplayableContent"));
                         }
-                        break;
-                    default:
-                        break;
-                }
+                    }
+                    else
+                    {
+                        DebugUtil.Log("Not ready to start stream: " + content.Source.Uri);
+                        ShowToast(SystemUtil.GetStringResource("Viewer_NoAvContentApi"));
+                    }
+                    break;
+                default:
+                    break;
             }
         }
 
-        /*
         private void CopyToPhone_Click(object sender, RoutedEventArgs e)
         {
-            var item = sender as MenuItem;
+            var item = sender as MenuFlyoutItem;
             try
             {
-                EnqueueImageDownload(item.DataContext as RemoteThumbnail);
+                EnqueueImageDownload(item.DataContext as Thumbnail);
             }
             catch (Exception ex)
             {
@@ -1101,18 +1104,23 @@ namespace Kazyx.Uwpmm.Pages
 
         private void Delete_Click(object sender, RoutedEventArgs e)
         {
-            var item = sender as MenuItem;
-            var data = item.DataContext as RemoteThumbnail;
+            var item = sender as MenuFlyoutItem;
+            var data = item.DataContext as Thumbnail;
 
             var contents = new TargetContents();
             contents.ContentUris = new List<string>();
             contents.ContentUris.Add(data.Source.Uri);
             DeleteContents(contents);
         }
-         * */
 
         private async void DeleteContents(TargetContents contents)
         {
+            if (TargetDevice == null || TargetDevice.Api == null)
+            {
+                ShowToast("Camera device does not exist anymore");
+                return;
+            }
+
             var av = TargetDevice.Api.AvContent;
             if (av != null && contents != null)
             {
@@ -1266,6 +1274,11 @@ namespace Kazyx.Uwpmm.Pages
         private void RemoteGrid_Unloaded(object sender, RoutedEventArgs e)
         {
             RemoteSources.Source = null;
+        }
+
+        private void Grid_Holding(object sender, HoldingRoutedEventArgs e)
+        {
+            FlyoutBase.ShowAttachedFlyout(sender as FrameworkElement);
         }
     }
 
