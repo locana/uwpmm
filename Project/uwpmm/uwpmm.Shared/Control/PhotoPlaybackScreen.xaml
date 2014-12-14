@@ -12,16 +12,17 @@
 
     <UserControl.Resources>
         <DataTemplate x:Key="VerticalItemTemplate">
-            <Grid Margin="2" HorizontalAlignment="Center" Width="254" VerticalAlignment="Center" >
+            <Grid Margin="2" HorizontalAlignment="Center" Width="224" VerticalAlignment="Center" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" >
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
-                <Border Background="{StaticResource PhoneChromeBrush}" Margin="0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
-                    <TextBlock Grid.Row="0" Text="{Binding Name}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="6,3,3,3" TextWrapping="Wrap" />
+                <Border Margin="0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="{ThemeResource TextBoxBackgroundThemeBrush}" >
+                    <TextBlock Grid.Row="0" Text="{Binding Name}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="18,1,0,1" TextWrapping="Wrap" 
+                               FontSize="18" Foreground="{ThemeResource TextBoxForegroundThemeBrush}" />
                 </Border>
                 <ListBox Grid.Row="1" x:Name="Values" Margin="0" HorizontalAlignment="Stretch"  VerticalAlignment="Stretch" ItemsSource="{Binding ValuesList}"  
-                         IsHitTestVisible="False" ItemTemplate="{StaticResource DetailInfoTemplate}" />
+                         IsHitTestVisible="False" ItemTemplate="{StaticResource DetailInfoTemplate}" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" />
             </Grid>
         </DataTemplate>
     </UserControl.Resources>
@@ -47,10 +48,10 @@
                 <ColumnDefinition Width="4*"/>
                 <ColumnDefinition Width="auto"/>
             </Grid.ColumnDefinitions>
-            <ScrollViewer Name="DetailInfoPanel" Width="260" HorizontalAlignment="Center" VerticalAlignment="Stretch" Grid.Column="1" Margin="0" 
-                      Visibility="Collapsed" Background="{StaticResource ButtonBackgroundThemeBrush}" >
+            <ScrollViewer Name="DetailInfoPanel" Width="230" HorizontalAlignment="Center" VerticalAlignment="Stretch" Grid.Column="1" Margin="0" Opacity="0.8"
+                      Visibility="Collapsed" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" >
                 <ListBox x:Name="DetailInfoList" Margin="0,22,6,62" HorizontalAlignment="Stretch"  VerticalAlignment="Stretch" ItemsSource="{Binding EntryList}"  
-                         IsHitTestVisible="False" ItemTemplate="{StaticResource VerticalItemTemplate}" />
+                         IsHitTestVisible="False" ItemTemplate="{StaticResource VerticalItemTemplate}" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" />
             </ScrollViewer>
         </Grid>
     </Grid>
