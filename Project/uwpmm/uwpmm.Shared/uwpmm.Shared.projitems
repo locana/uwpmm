@@ -79,6 +79,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Utility\LiveviewUtil.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\MetaDataValueConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\ParameterUtil.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utility\PeriodicalShootingTask.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\PictureDownloader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\Preference.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\ResourceManager.cs" />

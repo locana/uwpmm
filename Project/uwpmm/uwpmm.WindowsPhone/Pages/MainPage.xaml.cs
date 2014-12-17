@@ -544,23 +544,75 @@ namespace Kazyx.Uwpmm.Pages
 
         }
 
+        bool PeriodicalShootingEnabled = true;
+        PeriodicalShootingTask PeriodicalShootingTask;
+
         async void ShutterButtonPressed()
         {
             if (target == null || target.Status.ShootMode == null) { return; }
             if (target.Status.ShootMode.Current == ShootModeParam.Still)
             {
-                try
+                if (PeriodicalShootingTask != null && PeriodicalShootingTask.IsRunning)
                 {
-                    await SequentialOperation.TakePicture(target.Api);
-                    if (!ApplicationSettings.GetInstance().IsPostviewTransferEnabled)
-                    {
-                        ShowToast("Captured!");
-                    }
+                    PeriodicalShootingTask.Stop();
                 }
-                catch (RemoteApiException ex)
+                else if (PeriodicalShootingEnabled)
                 {
-                    DebugUtil.Log(ex.StackTrace);
-                    ShowError("Failed to take a picture.");
+                    PeriodicalShootingTask = new PeriodicalShootingTask(new List<TargetDevice>() { target }, 10);
+                    PeriodicalShootingTask.Tick += async (result) =>
+                    {
+                        await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                        {
+                            switch (result)
+                            {
+                                case Utility.PeriodicalShootingTask.ShootingResult.Skipped:
+                                    ShowToast("Skipped.");
+                                    break;
+                                case Utility.PeriodicalShootingTask.ShootingResult.Succeed:
+                                    ShowToast("Captured!");
+                                    break;
+                            };
+                        });
+                    };
+                    PeriodicalShootingTask.Stopped += async (reason) =>
+                    {
+                        await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                        {
+                            switch (reason)
+                            {
+                                case Utility.PeriodicalShootingTask.StopReason.ShootingFailed:
+                                    ShowToast("Failed to shoot. Stop interval shooting.");
+                                    break;
+                                case Utility.PeriodicalShootingTask.StopReason.SkipLimitExceeded:
+                                    ShowToast("Something wrong. The device looks not ready to shoot.");
+                                    break;
+                            };
+                        });
+                    };
+                    PeriodicalShootingTask.StatusUpdated += async (status) =>
+                    {
+                        await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                        {
+                            DebugUtil.Log("Status updated: " + status.Count);
+                        });
+                    };
+                    PeriodicalShootingTask.Start();
+                }
+                else
+                {
+                    try
+                    {
+                        await SequentialOperation.TakePicture(target.Api);
+                        if (!ApplicationSettings.GetInstance().IsPostviewTransferEnabled)
+                        {
+                            ShowToast("Captured!");
+                        }
+                    }
+                    catch (RemoteApiException ex)
+                    {
+                        DebugUtil.Log(ex.StackTrace);
+                        ShowError("Failed to take a picture.");
+                    }
                 }
             }
             else if (target.Status.ShootMode.Current == ShootModeParam.Movie)
