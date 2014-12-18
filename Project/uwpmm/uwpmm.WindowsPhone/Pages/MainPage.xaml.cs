@@ -586,6 +586,9 @@ namespace Kazyx.Uwpmm.Pages
                                 case Utility.PeriodicalShootingTask.StopReason.SkipLimitExceeded:
                                     ShowToast("Something wrong. The device looks not ready to shoot.");
                                     break;
+                                case Utility.PeriodicalShootingTask.StopReason.RequestedByUser:
+                                    ShowToast("Stopped interval shooting.");
+                                    break;
                             };
                         });
                     };
@@ -594,6 +597,12 @@ namespace Kazyx.Uwpmm.Pages
                         await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
                         {
                             DebugUtil.Log("Status updated: " + status.Count);
+                            if (status.IsRunning)
+                            {
+                                PeriodicalShootingStatus.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                                PeriodicalShootingStatusText.Text = "Taking photo every " + status.Interval + " sec. " + status.Count + " pics taken.";
+                            }
+                            else { PeriodicalShootingStatus.Visibility = Windows.UI.Xaml.Visibility.Collapsed; }
                         });
                     };
                     PeriodicalShootingTask.Start();

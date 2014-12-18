@@ -35,6 +35,7 @@ namespace Kazyx.Uwpmm.Utility
                 RequestTakePicture();
             };
             Timer.Start();
+            UpdateStatus();
         }
 
         public void Stop()
@@ -46,6 +47,7 @@ namespace Kazyx.Uwpmm.Utility
         private void _Stop()
         {
             Timer.Stop();
+            UpdateStatus();
         }
 
         public bool IsRunning { get { return Timer.IsEnabled; } }
@@ -94,9 +96,14 @@ namespace Kazyx.Uwpmm.Utility
                 Count++;
             }
 
+            UpdateStatus();
+        }
+
+        private void UpdateStatus()
+        {
             if (StatusUpdated != null)
             {
-                StatusUpdated(new PeriodicalShootingStatus() { Interval = this.Interval, Count = this.Count });
+                StatusUpdated(new PeriodicalShootingStatus() { Interval = this.Interval, Count = this.Count, IsRunning = this.IsRunning });
             }
         }
 
@@ -118,5 +125,6 @@ namespace Kazyx.Uwpmm.Utility
     {
         public int Count { get; set; }
         public int Interval { get; set; }
+        public bool IsRunning { get; set; }
     }
 }
