@@ -11,7 +11,7 @@ namespace Kazyx.Uwpmm.DataModel
         private TargetDevice _Device;
         public TargetDevice Device
         {
-           private set
+            private set
             {
                 _Device = value;
                 NotifyChangedOnUI(""); // Notify all properties are changed.

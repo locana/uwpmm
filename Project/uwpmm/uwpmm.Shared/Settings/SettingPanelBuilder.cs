@@ -76,6 +76,8 @@ namespace Kazyx.Uwpmm.Settings
                 }
             }
 
+            list.Add(BuildPeriodicalShootingPanel());
+
             return list;
         }
 
@@ -264,6 +266,58 @@ namespace Kazyx.Uwpmm.Settings
             return parent;
         }
 
+        private StackPanel BuildPeriodicalShootingPanel()
+        {
+            var indicator = new TextBlock()
+            {
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Center,
+                FontSize = 16,
+            };
+            indicator.SetBinding(TextBlock.TextProperty, new Binding()
+            {
+                Source = ApplicationSettings.GetInstance(),
+                Path = new PropertyPath("IntervalTime"),
+                Mode = BindingMode.OneWay,
+            });
+
+            var checkbox = new CheckBox()
+            {
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Center,
+                MinWidth = 30,
+            };
+            checkbox.SetBinding(CheckBox.IsCheckedProperty, new Binding()
+            {
+                Source = ApplicationSettings.GetInstance(),
+                Path = new PropertyPath("IsIntervalShootingEnabled"),
+                Mode = BindingMode.TwoWay,
+            });
+
+            var firstPanel = new StackPanel()
+            {
+                Orientation = Windows.UI.Xaml.Controls.Orientation.Horizontal,
+                Margin = new Thickness(3, 2, 3, 2),
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+            };
+            firstPanel.Children.Add(checkbox);
+            firstPanel.Children.Add(indicator);
+
+            var slider = BuildSlider(2, 60);
+            slider.Value = ApplicationSettings.GetInstance().IntervalTime;
+            slider.ValueChanged += (sender, e) =>
+            {
+                ApplicationSettings.GetInstance().IntervalTime = (int)(sender as Slider).Value;
+                DebugUtil.Log("Interval updated: " + (int)(sender as Slider).Value);
+            };
+
+            var parent = BuildBasicPanel("Interval shooting");
+            parent.Children.Add(firstPanel);
+            parent.Children.Add(slider);
+
+            return parent;
+        }
+
         private Slider ColorTempertureSlider = null;
 
         private StackPanel BuildColorTemperturePanel()
@@ -332,7 +386,7 @@ namespace Kazyx.Uwpmm.Settings
             {
                 Maximum = max != null ? max.Value : 1,
                 Minimum = min != null ? min.Value : 0,
-                Margin = new Thickness(16, 0, 0, 0),
+                Margin = new Thickness(16, 0, 8, 0),
                 Width = double.NaN,
                 HorizontalAlignment = HorizontalAlignment.Stretch,
                 VerticalAlignment = VerticalAlignment.Top,

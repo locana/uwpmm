@@ -544,7 +544,6 @@ namespace Kazyx.Uwpmm.Pages
 
         }
 
-        bool PeriodicalShootingEnabled = true;
         PeriodicalShootingTask PeriodicalShootingTask;
 
         async void ShutterButtonPressed()
@@ -556,9 +555,9 @@ namespace Kazyx.Uwpmm.Pages
                 {
                     PeriodicalShootingTask.Stop();
                 }
-                else if (PeriodicalShootingEnabled)
+                else if (ApplicationSettings.GetInstance().IsIntervalShootingEnabled)
                 {
-                    PeriodicalShootingTask = new PeriodicalShootingTask(new List<TargetDevice>() { target }, 10);
+                    PeriodicalShootingTask = new PeriodicalShootingTask(new List<TargetDevice>() { target }, ApplicationSettings.GetInstance().IntervalTime);
                     PeriodicalShootingTask.Tick += async (result) =>
                     {
                         await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
