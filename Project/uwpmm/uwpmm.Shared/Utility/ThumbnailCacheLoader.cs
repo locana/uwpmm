@@ -162,6 +162,15 @@ namespace Kazyx.Uwpmm.Utility
 
             public async Task DownloadAsync(HttpClient client)
             {
+                try
+                {
+                    DebugUtil.Log("Re-Checking file: " + filename);
+                    var file = await folder.GetFileAsync(filename);
+                    tcs.TrySetResult(file);
+                    return;
+                }
+                catch { }
+
                 DebugUtil.Log("Start downloading: " + uri);
                 try
                 {
@@ -172,6 +181,7 @@ namespace Kazyx.Uwpmm.Utility
                     }
                     using (var stream = await res.Content.ReadAsStreamAsync())
                     {
+                        DebugUtil.Log("Writing: " + filename);
                         var dst = await folder.CreateFileAsync(filename, CreationCollisionOption.OpenIfExists);
                         using (var outStream = await dst.OpenStreamForWriteAsync())
                         {
