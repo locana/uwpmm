@@ -240,6 +240,7 @@ namespace Kazyx.Uwpmm.Pages
             this.BottomAppBar = _CommandBarManager.Clear()//
                 .Icon(AppBarItem.AppSetting)
                 .Icon(AppBarItem.ControlPanel)//
+                .Icon(AppBarItem.PlaybackPage)
                 .CreateNew(0.6);
         }
 

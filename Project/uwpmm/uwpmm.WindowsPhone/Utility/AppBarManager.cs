@@ -31,7 +31,7 @@ namespace Kazyx.Uwpmm.Utility
                 case AppBarItem.LoggerPage:
                     return new AppBarButton() { Label = "Logger" };
                 case AppBarItem.PlaybackPage:
-                    return new AppBarButton() { Label = "Playback mode" };
+                    return new AppBarButton() { Icon = new BitmapIcon() { UriSource = new Uri("ms-appx:///Assets/AppBar/appbar_playback.png", UriKind.Absolute) }, Label = "Playback mode" };
                 case AppBarItem.DeleteMultiple:
                     return new AppBarButton() { Icon = new BitmapIcon() { UriSource = new Uri("ms-appx:///Assets/AppBar/appbar_delete.png") }, Label = "Delete" };
                 case AppBarItem.DownloadMultiple:
