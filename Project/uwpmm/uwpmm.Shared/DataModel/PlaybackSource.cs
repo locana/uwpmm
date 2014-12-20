@@ -8,6 +8,7 @@ using System.ComponentModel;
 using System.Threading;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media.Imaging;
 
@@ -116,11 +117,12 @@ namespace Kazyx.Uwpmm.DataModel
                 _CacheFile = value;
                 NotifyChangedOnUI("CacheFile");
                 NotifyChangedOnUI("ThumbnailImage");
+                NotifyChangedOnUI("LargeImage");
             }
             get { return _CacheFile; }
         }
 
-        private async void LoadCachedThumbnailImageAsync()
+        private async void LoadCachedThumbnailImageAsync(ImageMode mode)
         {
             var file = CacheFile;
             if (file == null)
@@ -134,12 +136,13 @@ namespace Kazyx.Uwpmm.DataModel
                 using (var stream = await file.GetThumbnailAsync(ThumbnailMode.ListView))
                 {
                     DebugUtil.Log("Set source async.");
-                    await SystemUtil.GetCurrentDispatcher().RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
+                    await SystemUtil.GetCurrentDispatcher().RunAsync(CoreDispatcherPriority.Normal, async () =>
                     {
                         var bmp = new BitmapImage();
                         bmp.CreateOptions = BitmapCreateOptions.None;
                         await bmp.SetSourceAsync(stream);
-                        ThumbnailImage = bmp;
+                        if (ImageMode.Image == mode) { ThumbnailImage = bmp; }
+                        else { LargeImage = bmp; }
                     });
                 }
             }
@@ -155,26 +158,55 @@ namespace Kazyx.Uwpmm.DataModel
                 _ThumbnailImage = value;
                 NotifyChanged("ThumbnailImage");
             }
-            get
+            get { return GetImage(ImageMode.Image); }
+        }
+
+        private BitmapImage _LargeImage = null;
+
+        public BitmapImage LargeImage
+        {
+            private set
             {
-                var tmp = Interlocked.Exchange(ref _ThumbnailImage, null);
-                if (tmp != null)
-                {
-                    DebugUtil.Log("Return loaded BitmapImage.");
-                    return tmp;
-                }
-                if (CacheFile == null)
-                {
-                    FetchThumbnailAsync();
-                    return null;
-                }
-                else
-                {
-                    DebugUtil.Log("Load BitmapImage from cache async.");
-                    LoadCachedThumbnailImageAsync();
-                    return null;
-                }
+                _LargeImage = value;
+                NotifyChanged("LargeImage");
             }
+            get { return GetImage(ImageMode.Album); }
+        }
+
+        private BitmapImage GetImage(ImageMode mode)
+        {
+            BitmapImage tmp = null;
+            if (ImageMode.Image == mode)
+            {
+                tmp = Interlocked.Exchange(ref _ThumbnailImage, null);
+            }
+            else
+            {
+                tmp = Interlocked.Exchange(ref _LargeImage, null);
+            }
+            if (tmp != null)
+            {
+                DebugUtil.Log("Return loaded BitmapImage.");
+                return tmp;
+            }
+
+            if (CacheFile == null)
+            {
+                FetchThumbnailAsync();
+            }
+            else
+            {
+                DebugUtil.Log("Load BitmapImage from cache async.");
+                LoadCachedThumbnailImageAsync(mode);
+            }
+
+            return null;
+        }
+
+        private enum ImageMode
+        {
+            Image,
+            Album,
         }
 
         private async void FetchThumbnailAsync()
@@ -199,9 +231,32 @@ namespace Kazyx.Uwpmm.DataModel
         Delete,
     }
 
-    public class DateGroup : List<Thumbnail>, INotifyPropertyChanged, INotifyCollectionChanged
+    public class Album : List<Thumbnail>, INotifyPropertyChanged, INotifyCollectionChanged
     {
         public string Key { private set; get; }
+
+        private Thumbnail Thumb;
+
+        public BitmapImage RandomThumbnail
+        {
+            get
+            {
+                if (Thumb == null)
+                {
+                    Thumb = this[new Random().Next(0, Count - 1)];
+                    Thumb.PropertyChanged += Thumb_PropertyChanged;
+                }
+                return Thumb.LargeImage;
+            }
+        }
+
+        void Thumb_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "LargeImage")
+            {
+                OnPropertyChanged("RandomThumbnail");
+            }
+        }
 
         public SelectivityFactor SelectivityFactor
         {
@@ -214,7 +269,7 @@ namespace Kazyx.Uwpmm.DataModel
             }
         }
 
-        public DateGroup(string key)
+        public Album(string key)
         {
             Key = key;
         }
@@ -265,8 +320,15 @@ namespace Kazyx.Uwpmm.DataModel
         }
     }
 
-    public class DateGroupCollection : ObservableCollection<DateGroup>
+    public class AlbumGroupCollection : ObservableCollection<Album>
     {
+        private readonly bool SortAlbum;
+
+        public AlbumGroupCollection(bool sortAlbum = true)
+        {
+            SortAlbum = sortAlbum;
+        }
+
         private SelectivityFactor _SelectivityFactor = SelectivityFactor.None;
         public SelectivityFactor SelectivityFactor
         {
@@ -286,7 +348,7 @@ namespace Kazyx.Uwpmm.DataModel
             var group = GetGroup(content.GroupTitle);
             if (group == null)
             {
-                group = new DateGroup(content.GroupTitle);
+                group = new Album(content.GroupTitle);
                 SortAdd(group);
             }
             group.Add(content);
@@ -309,28 +371,31 @@ namespace Kazyx.Uwpmm.DataModel
                 var g = GetGroup(group.Key);
                 if (g == null)
                 {
-                    g = new DateGroup(group.Key);
+                    g = new Album(group.Key);
                     SortAdd(g);
                 }
                 g.AddRange(group.Value);
             }
         }
 
-        private void SortAdd(DateGroup item)
+        private void SortAdd(Album item)
         {
             int insertAt = Items.Count;
-            for (int i = 0; i < Items.Count; i++)
+            if (SortAlbum)
             {
-                if (string.CompareOrdinal(Items[i].Key, item.Key) < 0)
+                for (int i = 0; i < Items.Count; i++)
                 {
-                    insertAt = i;
-                    break;
+                    if (string.CompareOrdinal(Items[i].Key, item.Key) < 0)
+                    {
+                        insertAt = i;
+                        break;
+                    }
                 }
             }
             Insert(insertAt, item);
         }
 
-        private DateGroup GetGroup(string key)
+        private Album GetGroup(string key)
         {
             foreach (var item in base.Items)
             {

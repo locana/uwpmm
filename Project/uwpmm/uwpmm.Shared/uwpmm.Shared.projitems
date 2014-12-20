@@ -77,6 +77,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Utility\DummyContentsGenerator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\GeoPositionManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\LiveviewUtil.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utility\LocalContentsLoader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\MetaDataValueConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\ParameterUtil.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\PeriodicalShootingTask.cs" />
