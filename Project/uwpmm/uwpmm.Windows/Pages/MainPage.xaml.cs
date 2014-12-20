@@ -1,5 +1,4 @@
-﻿using Kazyx.DeviceDiscovery;
-using Kazyx.ImageStream;
+﻿using Kazyx.ImageStream;
 using Kazyx.RemoteApi;
 using Kazyx.RemoteApi.Camera;
 using Kazyx.Uwpmm.CameraControl;
@@ -108,9 +107,8 @@ namespace Kazyx.Uwpmm.Pages
 
         private void pageRoot_Loaded(object sender, RoutedEventArgs e)
         {
-            var discovery = new SsdpDiscovery();
-            discovery.SonyCameraDeviceDiscovered += discovery_ScalarDeviceDiscovered;
-            discovery.SearchSonyCameraDevices();
+            NetworkObserver.INSTANCE.Discovered += NetworkObserver_Discovered;
+            NetworkObserver.INSTANCE.Search();
             PictureDownloader.Instance.Fetched += OnFetchdImage;
         }
 
@@ -132,18 +130,16 @@ namespace Kazyx.Uwpmm.Pages
         }
 
         private TargetDevice target;
-        private SsdpDiscovery discovery = new SsdpDiscovery();
         private StreamProcessor liveview = new StreamProcessor();
         private ImageDataSource liveview_data = new ImageDataSource();
         private ImageDataSource postview_data = new ImageDataSource();
 
-        async void discovery_ScalarDeviceDiscovered(object sender, SonyCameraDeviceEventArgs e)
+        async void NetworkObserver_Discovered(object sender, DeviceEventArgs e)
         {
-            var api = new DeviceApiHolder(e.SonyCameraDevice);
-            TargetDevice target = null;
+            var target = e.Device;
             try
             {
-                target = await SequentialOperation.SetUp(e.SonyCameraDevice.UDN, api, liveview);
+                await SequentialOperation.SetUp(target, liveview);
             }
             catch (Exception ex)
             {
