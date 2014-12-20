@@ -1,5 +1,6 @@
 ﻿using Kazyx.Uwpmm.DataModel;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Http;
@@ -63,6 +64,24 @@ namespace Kazyx.Uwpmm.Utility
             }
         }
 
+        private object LoopLock = new object();
+        private Task DownloadLoop;
+
+        private object HolderLock = new object();
+        private Queue<TaskSource> Queue = new Queue<TaskSource>();
+        private Stack<TaskSource> Stack = new Stack<TaskSource>();
+
+        private const uint FIFO_THRESHOLD = 40;
+
+        public void CleanupRemainingTasks()
+        {
+            lock (HolderLock)
+            {
+                Queue.Clear();
+                Stack.Clear();
+            }
+        }
+
         /// <summary>
         /// Asynchronously download thumbnail image and return local storage file.
         /// </summary>
@@ -85,21 +104,89 @@ namespace Kazyx.Uwpmm.Utility
             }
             catch { }
 
-            var res = await HttpClient.GetAsync(uri, HttpCompletionOption.ResponseContentRead);
-            if (res.StatusCode != HttpStatusCode.OK)
+            var tcs = new TaskCompletionSource<StorageFile>();
+
+            var taskSource = new TaskSource { uri = uri, folder = folder, filename = filename, tcs = tcs };
+            lock (HolderLock)
             {
-                return null;
-            }
-            using (var stream = await res.Content.ReadAsStreamAsync())
-            {
-                DebugUtil.Log("Creating file: " + directory + filename);
-                var dst = await folder.CreateFileAsync(filename, CreationCollisionOption.OpenIfExists);
-                using (var outStream = await dst.OpenStreamForWriteAsync())
+                if (Stack.Count == 0 && Queue.Count < FIFO_THRESHOLD)
                 {
-                    await stream.CopyToAsync(outStream);
+                    Queue.Enqueue(taskSource);
                 }
-                return dst;
+                else
+                {
+                    Stack.Push(taskSource);
+                }
+            }
+            TryRunTask();
+            return await tcs.Task;
+        }
+
+        private void TryRunTask()
+        {
+            lock (LoopLock)
+            {
+                if (DownloadLoop != null)
+                {
+                    return;
+                }
+                DebugUtil.Log("Create new download loop.");
+                DownloadLoop = Task.Factory.StartNew(async () =>
+                {
+                    while (Queue.Count != 0 || Stack.Count != 0)
+                    {
+                        TaskSource source;
+                        lock (HolderLock)
+                        {
+                            if (Stack.Count > 0) { source = Stack.Pop(); }
+                            else if (Queue.Count > 0) { source = Queue.Dequeue(); }
+                            else { break; }
+                        }
+                        await source.DownloadAsync(HttpClient);
+                    }
+                    DebugUtil.Log("Download loop end.");
+                    lock (LoopLock)
+                    {
+                        DownloadLoop = null;
+                    }
+                });
             }
         }
+
+        private class TaskSource
+        {
+            public Uri uri;
+            public StorageFolder folder;
+            public string filename;
+            public TaskCompletionSource<StorageFile> tcs;
+
+            public async Task DownloadAsync(HttpClient client)
+            {
+                DebugUtil.Log("Start downloading: " + uri);
+                try
+                {
+                    var res = await client.GetAsync(uri, HttpCompletionOption.ResponseContentRead);
+                    if (res.StatusCode != HttpStatusCode.OK)
+                    {
+                        tcs.TrySetResult(null);
+                    }
+                    using (var stream = await res.Content.ReadAsStreamAsync())
+                    {
+                        var dst = await folder.CreateFileAsync(filename, CreationCollisionOption.OpenIfExists);
+                        using (var outStream = await dst.OpenStreamForWriteAsync())
+                        {
+                            await stream.CopyToAsync(outStream);
+                        }
+                        tcs.TrySetResult(dst);
+                    }
+                }
+                catch (Exception e)
+                {
+                    DebugUtil.Log(e.StackTrace);
+                    tcs.TrySetException(e);
+                }
+            }
+        }
+
     }
 }

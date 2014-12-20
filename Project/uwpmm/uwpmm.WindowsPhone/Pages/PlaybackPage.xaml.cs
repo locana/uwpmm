@@ -36,7 +36,7 @@ namespace Kazyx.Uwpmm.Pages
     {
         private NavigationHelper navigationHelper;
 
-        private const bool LOAD_DUMMY_CONTENTS = false;
+        private const bool LOAD_DUMMY_CONTENTS = true;
 
         private HttpClient HttpClient = new HttpClient();
 
@@ -244,6 +244,8 @@ namespace Kazyx.Uwpmm.Pages
             PictureDownloader.Instance.Failed -= OnDLError;
             PictureDownloader.Instance.Fetched -= OnFetched;
             PictureDownloader.Instance.QueueStatusUpdated -= OnFetchingImages;
+
+            ThumbnailCacheLoader.INSTANCE.CleanupRemainingTasks();
 
             CloseMovieStream();
             MovieDrawer.DataContext = null;
