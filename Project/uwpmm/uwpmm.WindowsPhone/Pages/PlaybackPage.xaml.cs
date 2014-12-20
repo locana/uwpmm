@@ -225,6 +225,12 @@ namespace Kazyx.Uwpmm.Pages
             PictureDownloader.Instance.Fetched += OnFetched;
             PictureDownloader.Instance.QueueStatusUpdated += OnFetchingImages;
 
+            var devices = NetworkObserver.INSTANCE.Devices;
+            if (devices.Count > 0)
+            {
+                TargetDevice = devices[0]; // TODO choise of device should be exposed to user.
+            }
+
             if (TargetDevice != null)
             {
                 TargetDevice.Status.PropertyChanged += Status_PropertyChanged;

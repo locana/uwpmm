@@ -3,31 +3,29 @@ using Kazyx.RemoteApi;
 using Kazyx.Uwpmm.DataModel;
 using Kazyx.Uwpmm.Utility;
 using System;
-using System.Diagnostics;
 using System.Threading.Tasks;
-using Windows.Storage;
 
 namespace Kazyx.Uwpmm.CameraControl
 {
     public class SequentialOperation
     {
-        public static async Task<TargetDevice> SetUp(string udn, DeviceApiHolder api, StreamProcessor liveview)
+        public static async Task SetUp(TargetDevice device, StreamProcessor liveview)
         {
             DebugUtil.Log("Set up control");
             try
             {
-                await api.RetrieveApiList();
-                var info = await api.Camera.GetApplicationInfoAsync();
-                api.Capability.Version = new ServerVersion(info.Version);
-                api.Capability.AvailableApis = await api.Camera.GetAvailableApiListAsync();
+                await device.Api.RetrieveApiList();
+                var info = await device.Api.Camera.GetApplicationInfoAsync();
+                device.Api.Capability.Version = new ServerVersion(info.Version);
+                device.Api.Capability.AvailableApis = await device.Api.Camera.GetAvailableApiListAsync();
 
-                if (api.Capability.IsSupported("startRecMode"))
+                if (device.Api.Capability.IsSupported("startRecMode"))
                 {
-                    await api.Camera.StartRecModeAsync();
+                    await device.Api.Camera.StartRecModeAsync();
                 }
-                if (api.Capability.IsAvailable("startLiveview"))
+                if (device.Api.Capability.IsAvailable("startLiveview"))
                 {
-                    var res = await OpenLiveviewStream(api, liveview);
+                    var res = await OpenLiveviewStream(device.Api, liveview);
                     if (!res)
                     {
                         DebugUtil.Log("Failed to open liveview connection.");
@@ -35,18 +33,16 @@ namespace Kazyx.Uwpmm.CameraControl
                     }
                 }
 
-                if (api.Capability.IsSupported("setCurrentTime"))
+                if (device.Api.Capability.IsSupported("setCurrentTime"))
                 {
                     try
                     {
-                        await api.System.SetCurrentTimeAsync(DateTimeOffset.UtcNow, (int)DateTimeOffset.Now.Offset.TotalMinutes);
+                        await device.Api.System.SetCurrentTimeAsync(DateTimeOffset.UtcNow, (int)DateTimeOffset.Now.Offset.TotalMinutes);
                     }
                     catch (RemoteApiException) { }
                 }
 
-                var target = new TargetDevice(udn, api);
-                await target.Observer.Start();
-                return target;
+                await device.Observer.Start();
             }
             catch (RemoteApiException e)
             {

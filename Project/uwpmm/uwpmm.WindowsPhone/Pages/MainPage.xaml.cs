@@ -125,9 +125,8 @@ namespace Kazyx.Uwpmm.Pages
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            var discovery = new SsdpDiscovery();
-            discovery.SonyCameraDeviceDiscovered += discovery_ScalarDeviceDiscovered;
-            discovery.SearchSonyCameraDevices();
+            NetworkObserver.INSTANCE.Discovered += NetworkObserver_Discovered;
+            NetworkObserver.INSTANCE.Search();
 
             _CommandBarManager.SetEvent(AppBarItem.ControlPanel, (s, args) =>
             {
@@ -333,22 +332,19 @@ namespace Kazyx.Uwpmm.Pages
         }
 
         private TargetDevice target;
-        private SsdpDiscovery discovery = new SsdpDiscovery();
         private StreamProcessor liveview = new StreamProcessor();
         private ImageDataSource liveview_data = new ImageDataSource();
         private ImageDataSource postview_data = new ImageDataSource();
 
-        async void discovery_ScalarDeviceDiscovered(object sender, SonyCameraDeviceEventArgs e)
+        async void NetworkObserver_Discovered(object sender, DeviceEventArgs e)
         {
-            var api = new DeviceApiHolder(e.SonyCameraDevice);
-            api.SupportedApisUpdated += api_SupportedApisUpdated;
-            api.AvailiableApisUpdated += api_AvailiableApisUpdated;
+            var target = e.Device;
+            target.Api.SupportedApisUpdated += api_SupportedApisUpdated;
+            target.Api.AvailiableApisUpdated += api_AvailiableApisUpdated;
 
-            // TODO this must be done after shooting pivot is loaded again.
-            TargetDevice target = null;
             try
             {
-                target = await SequentialOperation.SetUp(e.SonyCameraDevice.UDN, api, liveview);
+                await SequentialOperation.SetUp(target, liveview);
             }
             catch (Exception ex)
             {
