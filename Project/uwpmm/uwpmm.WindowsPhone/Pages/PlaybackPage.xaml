@@ -35,55 +35,94 @@
                     <TextBlock Text="{Binding [Viewer_StoragePhone], Source={StaticResource LocalizedStrings}}" Margin="0,8,0,0" Style="{StaticResource SubheaderTextBlockStyle}" FontWeight="Bold"/>
                 </PivotItem.Header>
                 <Grid>
-                    <GridView x:Name="LocalGrid" ItemsSource="{Binding Source={StaticResource LocalSources}}" SelectionChanged="LocalGrid_SelectionChanged" Loaded="LocalGrid_Loaded" Unloaded="LocalGrid_Unloaded">
-                        <GridView.ItemTemplate>
-                            <DataTemplate>
-                                <Grid Height="116" Width="116" Margin="2,2" Holding="LocalGrid_Holding">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="48"/>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="48"/>
-                                    </Grid.ColumnDefinitions>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="*"/>
-                                        <RowDefinition Height="48"/>
-                                    </Grid.RowDefinitions>
-                                    <Grid.Background>
-                                        <SolidColorBrush Color="{StaticResource PhoneChromeColor}"/>
-                                    </Grid.Background>
-                                    <Image Grid.ColumnSpan="3" Grid.RowSpan="2" x:Name="LocalThumbnailImage" Width="108" Height="108" Stretch="Uniform" Source="{Binding Path=ThumbnailImage}" Tapped="LocalThumbnailImage_Tapped"/>
-                                    <Image Grid.Row="1" Grid.Column="2" Source="/Assets/Screen/mode_movie.png" Visibility="{Binding MovieIconVisibility, Mode=OneTime}" IsHitTestVisible="False" CacheMode="BitmapCache" Margin="0,0,20,20"/>
-                                    <Border Grid.RowSpan="2" Grid.ColumnSpan="3" Visibility="{Binding UnselectableMaskVisibility, FallbackValue=Collapsed}">
-                                        <Border.Background>
-                                            <SolidColorBrush Color="{StaticResource PhoneControlDisabledColor}"/>
-                                        </Border.Background>
-                                    </Border>
-                                    <FlyoutBase.AttachedFlyout>
-                                        <MenuFlyout>
-                                            <MenuFlyoutItem Text="{Binding [Viewer_MenuPlayback], Source={StaticResource LocalizedStrings}}" Click="LocalPlayback_Click" />
-                                            <MenuFlyoutItem Text="{Binding [Viewer_MenuDelete], Source={StaticResource LocalizedStrings}}" Click="LocalDelete_Click" />
-                                        </MenuFlyout>
-                                    </FlyoutBase.AttachedFlyout>
-                                </Grid>
-                            </DataTemplate>
-                        </GridView.ItemTemplate>
-                        <GridView.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <ItemsWrapGrid Orientation="Horizontal" ItemHeight="100" ItemWidth="100"/>
-                            </ItemsPanelTemplate>
-                        </GridView.ItemsPanel>
-                        <GridView.GroupStyle>
-                            <GroupStyle HidesIfEmpty="True">
-                                <GroupStyle.HeaderTemplate>
+                    <SemanticZoom x:Name="LocalSemanticZoom">
+                        <SemanticZoom.ZoomedInView>
+                            <GridView x:Name="LocalGrid"
+                                      ItemsSource="{Binding Source={StaticResource LocalSources}}"
+                                      SelectionChanged="LocalGrid_SelectionChanged"
+                                      ScrollViewer.IsHorizontalScrollChainingEnabled="False"
+                                      Loaded="LocalGrid_Loaded"
+                                      Unloaded="LocalGrid_Unloaded">
+                                <GridView.ItemTemplate>
                                     <DataTemplate>
-                                        <Grid>
-                                            <TextBlock Text="{Binding Key}" Style="{StaticResource GroupHeaderTextBlockStyle}"/>
+                                        <Grid Height="116" Width="116" Margin="2,2" Holding="LocalGrid_Holding">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="48"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="48"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="*"/>
+                                                <RowDefinition Height="48"/>
+                                            </Grid.RowDefinitions>
+                                            <Grid.Background>
+                                                <SolidColorBrush Color="{StaticResource PhoneChromeColor}"/>
+                                            </Grid.Background>
+                                            <Image Grid.ColumnSpan="3" Grid.RowSpan="2" x:Name="LocalThumbnailImage" Width="108" Height="108" Stretch="Uniform" Source="{Binding Path=ThumbnailImage}" Tapped="LocalThumbnailImage_Tapped"/>
+                                            <Image Grid.Row="1" Grid.Column="2" Source="/Assets/Screen/mode_movie.png" Visibility="{Binding MovieIconVisibility, Mode=OneTime}" IsHitTestVisible="False" CacheMode="BitmapCache" Margin="0,0,20,20"/>
+                                            <Border Grid.RowSpan="2" Grid.ColumnSpan="3" Visibility="{Binding UnselectableMaskVisibility, FallbackValue=Collapsed}">
+                                                <Border.Background>
+                                                    <SolidColorBrush Color="{StaticResource PhoneControlDisabledColor}"/>
+                                                </Border.Background>
+                                            </Border>
+                                            <FlyoutBase.AttachedFlyout>
+                                                <MenuFlyout>
+                                                    <MenuFlyoutItem Text="{Binding [Viewer_MenuPlayback], Source={StaticResource LocalizedStrings}}" Click="LocalPlayback_Click" />
+                                                    <MenuFlyoutItem Text="{Binding [Viewer_MenuDelete], Source={StaticResource LocalizedStrings}}" Click="LocalDelete_Click" />
+                                                </MenuFlyout>
+                                            </FlyoutBase.AttachedFlyout>
                                         </Grid>
                                     </DataTemplate>
-                                </GroupStyle.HeaderTemplate>
-                            </GroupStyle>
-                        </GridView.GroupStyle>
-                    </GridView>
+                                </GridView.ItemTemplate>
+                                <GridView.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <ItemsWrapGrid Orientation="Horizontal" ItemHeight="100" ItemWidth="100"/>
+                                    </ItemsPanelTemplate>
+                                </GridView.ItemsPanel>
+                                <GridView.GroupStyle>
+                                    <GroupStyle HidesIfEmpty="True">
+                                        <GroupStyle.HeaderTemplate>
+                                            <DataTemplate>
+                                                <Grid>
+                                                    <TextBlock Text="{Binding Key}" Style="{StaticResource GroupHeaderTextBlockStyle}" Padding="8,0"/>
+                                                </Grid>
+                                            </DataTemplate>
+                                        </GroupStyle.HeaderTemplate>
+                                    </GroupStyle>
+                                </GridView.GroupStyle>
+                            </GridView>
+                        </SemanticZoom.ZoomedInView>
+                        <SemanticZoom.ZoomedOutView>
+                            <GridView ScrollViewer.IsVerticalScrollChainingEnabled="False"
+                                      Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+                                <GridView.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid Background="{ThemeResource ContentDialogDimmingThemeBrush}"
+                                              Height="188" Width ="188" Margin="8,8">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="40" />
+                                                <RowDefinition Height="*" />
+                                            </Grid.RowDefinitions>
+                                            <Image Source="{Binding Group.RandomThumbnail}"
+                                                   Grid.Row="0" Grid.RowSpan="2" />
+                                            <Border Background="{ThemeResource ContentDialogDimmingThemeBrush}"
+                                                    Grid.Row="0">
+                                                <TextBlock Text="{Binding Group.Key}"
+                                                       Style="{StaticResource GroupHeaderTextBlockStyle}"
+                                                       Padding="8,0" Margin="0,4,0,0"
+                                                       Foreground="{ThemeResource TextBoxForegroundHeaderThemeBrush}"/>
+                                            </Border>
+                                        </Grid>
+                                    </DataTemplate>
+                                </GridView.ItemTemplate>
+                                <GridView.Header>
+                                    <TextBlock Text="Album View"
+                                               Style="{StaticResource SubheaderTextBlockStyle}"
+                                               Margin="16,4"/>
+                                </GridView.Header>
+                            </GridView>
+                        </SemanticZoom.ZoomedOutView>
+                    </SemanticZoom>
                 </Grid>
             </PivotItem>
 
@@ -92,58 +131,101 @@
                     <TextBlock x:Name="TitleBlock" Text="{Binding [Viewer_StorageCamera], Source={StaticResource LocalizedStrings}}" Margin="0,8,0,0" Style="{StaticResource SubheaderTextBlockStyle}" FontWeight="Bold"/>
                 </PivotItem.Header>
                 <Grid>
-                    <TextBlock x:Name="UnsupportedMessage" Text="{Binding [Viewer_StorageAccessNotSupportedDetail], Source={StaticResource LocalizedStrings}}" TextWrapping="Wrap" VerticalAlignment="Center" Margin="36,0" Style="{StaticResource SubheaderTextBlockStyle}"/>
-                    <GridView x:Name="RemoteGrid" ItemsSource="{Binding Source={StaticResource RemoteSources}}" SelectionChanged="RemoteGrid_SelectionChanged" Loaded="RemoteGrid_Loaded" Unloaded="RemoteGrid_Unloaded">
-                        <GridView.ItemTemplate>
-                            <DataTemplate>
-                                <Grid Height="108" Width="116" Margin="2,2" Holding="Grid_Holding">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="48"/>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="48"/>
-                                    </Grid.ColumnDefinitions>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="*"/>
-                                        <RowDefinition Height="48"/>
-                                    </Grid.RowDefinitions>
-                                    <Grid.Background>
-                                        <SolidColorBrush Color="{StaticResource PhoneChromeColor}"/>
-                                    </Grid.Background>
-                                    <Image Grid.ColumnSpan="3" Grid.RowSpan="2" x:Name="RemoteThumbnailImage" Width="108" Height="108" Stretch="Uniform" Source="{Binding Path=ThumbnailImage}" Tapped="RemoteThumbnailImage_Tapped"/>
-                                    <Image Grid.Row="1" Grid.Column="0" Source="/Assets/Screen/protected.png" Visibility="{Binding ProtectedIconVisibility, Mode=OneTime}" IsHitTestVisible="False" CacheMode="BitmapCache" Margin="0,0,20,20"/>
-                                    <Image Grid.Row="1" Grid.Column="2" Source="/Assets/Screen/mode_movie.png" Visibility="{Binding MovieIconVisibility, Mode=OneTime}" IsHitTestVisible="False" CacheMode="BitmapCache" Margin="0,0,20,20"/>
-                                    <Border Grid.RowSpan="2" Grid.ColumnSpan="3" Visibility="{Binding UnselectableMaskVisibility, FallbackValue=Collapsed}">
-                                        <Border.Background>
-                                            <SolidColorBrush Color="{StaticResource PhoneControlDisabledColor}"/>
-                                        </Border.Background>
-                                    </Border>
-                                    <FlyoutBase.AttachedFlyout>
-                                        <MenuFlyout>
-                                            <MenuFlyoutItem Text="{Binding [Viewer_MenuPlayback], Source={StaticResource LocalizedStrings}}" Click="Playback_Click" />
-                                            <MenuFlyoutItem Text="{Binding [Viewer_MenuCopyToPhone], Source={StaticResource LocalizedStrings}}" Click="CopyToPhone_Click" Visibility="{Binding CopyToPhoneVisibility}"/>
-                                            <MenuFlyoutItem Text="{Binding [Viewer_MenuDelete], Source={StaticResource LocalizedStrings}}" Click="Delete_Click" Visibility="{Binding DeleteMenuVisiblity}" />
-                                        </MenuFlyout>
-                                    </FlyoutBase.AttachedFlyout>
-                                </Grid>
-                            </DataTemplate>
-                        </GridView.ItemTemplate>
-                        <GridView.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <ItemsWrapGrid Orientation="Horizontal" ItemHeight="100" ItemWidth="100"/>
-                            </ItemsPanelTemplate>
-                        </GridView.ItemsPanel>
-                        <GridView.GroupStyle>
-                            <GroupStyle HidesIfEmpty="True">
-                                <GroupStyle.HeaderTemplate>
+                    <TextBlock x:Name="UnsupportedMessage"
+                               Text="{Binding [Viewer_StorageAccessNotSupportedDetail], Source={StaticResource LocalizedStrings}}"
+                               TextWrapping="Wrap"
+                               VerticalAlignment="Center" Margin="36,0"
+                               Style="{StaticResource SubheaderTextBlockStyle}"/>
+                    <SemanticZoom x:Name="RemoteSemanticZoom">
+                        <SemanticZoom.ZoomedInView>
+                            <GridView x:Name="RemoteGrid"
+                                      ItemsSource="{Binding Source={StaticResource RemoteSources}}"
+                                      SelectionChanged="RemoteGrid_SelectionChanged"
+                                      ScrollViewer.IsHorizontalScrollChainingEnabled="False"
+                                      Loaded="RemoteGrid_Loaded"
+                                      Unloaded="RemoteGrid_Unloaded">
+                                <GridView.ItemTemplate>
                                     <DataTemplate>
-                                        <Grid>
-                                            <TextBlock Text="{Binding Key}" Style="{StaticResource GroupHeaderTextBlockStyle}"/>
+                                        <Grid Height="116" Width="116" Margin="2,2" Holding="RemoteGrid_Holding">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="48"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="48"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="*"/>
+                                                <RowDefinition Height="48"/>
+                                            </Grid.RowDefinitions>
+                                            <Grid.Background>
+                                                <SolidColorBrush Color="{StaticResource PhoneChromeColor}"/>
+                                            </Grid.Background>
+                                            <Image Grid.ColumnSpan="3" Grid.RowSpan="2" x:Name="RemoteThumbnailImage" Width="108" Height="108" Stretch="Uniform" Source="{Binding Path=ThumbnailImage}" Tapped="RemoteThumbnailImage_Tapped"/>
+                                            <Image Grid.Row="1" Grid.Column="0" Source="/Assets/Screen/protected.png" Visibility="{Binding ProtectedIconVisibility, Mode=OneTime}" IsHitTestVisible="False" CacheMode="BitmapCache" Margin="0,0,20,20"/>
+                                            <Image Grid.Row="1" Grid.Column="2" Source="/Assets/Screen/mode_movie.png" Visibility="{Binding MovieIconVisibility, Mode=OneTime}" IsHitTestVisible="False" CacheMode="BitmapCache" Margin="0,0,20,20"/>
+                                            <Border Grid.RowSpan="2" Grid.ColumnSpan="3" Visibility="{Binding UnselectableMaskVisibility, FallbackValue=Collapsed}">
+                                                <Border.Background>
+                                                    <SolidColorBrush Color="{StaticResource PhoneControlDisabledColor}"/>
+                                                </Border.Background>
+                                            </Border>
+                                            <FlyoutBase.AttachedFlyout>
+                                                <MenuFlyout>
+                                                    <MenuFlyoutItem Text="{Binding [Viewer_MenuPlayback], Source={StaticResource LocalizedStrings}}" Click="Playback_Click" />
+                                                    <MenuFlyoutItem Text="{Binding [Viewer_MenuCopyToPhone], Source={StaticResource LocalizedStrings}}" Click="CopyToPhone_Click" Visibility="{Binding CopyToPhoneVisibility}"/>
+                                                    <MenuFlyoutItem Text="{Binding [Viewer_MenuDelete], Source={StaticResource LocalizedStrings}}" Click="Delete_Click" Visibility="{Binding DeleteMenuVisiblity}" />
+                                                </MenuFlyout>
+                                            </FlyoutBase.AttachedFlyout>
                                         </Grid>
                                     </DataTemplate>
-                                </GroupStyle.HeaderTemplate>
-                            </GroupStyle>
-                        </GridView.GroupStyle>
-                    </GridView>
+                                </GridView.ItemTemplate>
+                                <GridView.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <ItemsWrapGrid Orientation="Horizontal" ItemHeight="100" ItemWidth="100"/>
+                                    </ItemsPanelTemplate>
+                                </GridView.ItemsPanel>
+                                <GridView.GroupStyle>
+                                    <GroupStyle HidesIfEmpty="True">
+                                        <GroupStyle.HeaderTemplate>
+                                            <DataTemplate>
+                                                <Grid>
+                                                    <TextBlock Text="{Binding Key}" Style="{StaticResource GroupHeaderTextBlockStyle}" Padding="8,0"/>
+                                                </Grid>
+                                            </DataTemplate>
+                                        </GroupStyle.HeaderTemplate>
+                                    </GroupStyle>
+                                </GridView.GroupStyle>
+                            </GridView>
+                        </SemanticZoom.ZoomedInView>
+                        <SemanticZoom.ZoomedOutView>
+                            <GridView ScrollViewer.IsVerticalScrollChainingEnabled="False"
+                                      Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+                                <GridView.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid Background="{ThemeResource ContentDialogDimmingThemeBrush}"
+                                              Height="188" Width ="188" Margin="8,8">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="40" />
+                                                <RowDefinition Height="*" />
+                                            </Grid.RowDefinitions>
+                                            <Image Source="{Binding Group.RandomThumbnail}"
+                                                   Grid.Row="0" Grid.RowSpan="2" />
+                                            <Border Background="{ThemeResource ContentDialogDimmingThemeBrush}"
+                                                    Grid.Row="0">
+                                                <TextBlock Text="{Binding Group.Key}"
+                                                       Style="{StaticResource GroupHeaderTextBlockStyle}"
+                                                       Padding="8,0" Margin="0,4,0,0"
+                                                       Foreground="{ThemeResource TextBoxForegroundHeaderThemeBrush}"/>
+                                            </Border>
+                                        </Grid>
+                                    </DataTemplate>
+                                </GridView.ItemTemplate>
+                                <GridView.Header>
+                                    <TextBlock Text="Album View"
+                                               Style="{StaticResource SubheaderTextBlockStyle}"
+                                               Margin="16,4"/>
+                                </GridView.Header>
+                            </GridView>
+                        </SemanticZoom.ZoomedOutView>
+                    </SemanticZoom>
                 </Grid>
             </PivotItem>
         </Pivot>

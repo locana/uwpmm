@@ -204,8 +204,8 @@ namespace Kazyx.Uwpmm.Pages
             UpdateStorageInfo();
             UnsupportedMessage.Visibility = Visibility.Collapsed;
 
-            RemoteGridSource = new DateGroupCollection();
-            LocalGridSource = new DateGroupCollection();
+            RemoteGridSource = new AlbumGroupCollection();
+            LocalGridSource = new AlbumGroupCollection(false);
 
             CloseMovieStream();
             MovieDrawer.DataContext = MovieStreamHelper.INSTANCE.MoviePlaybackData;
@@ -389,13 +389,17 @@ namespace Kazyx.Uwpmm.Pages
         private async void LoadLocalContents()
         {
             ChangeProgressText(SystemUtil.GetStringResource("Progress_LoadingLocalContents"));
+
+            var loader = new LocalContentsLoader();
+            loader.SingleContentLoaded += loader_SingleContentLoaded;
             try
             {
                 var library = KnownFolders.PicturesLibrary;
 
                 foreach (var folder in await library.GetFoldersAsync())
                 {
-                    await LoadContentsFrom(folder);
+                    DebugUtil.Log("Load from local picture folder: " + folder.Name);
+                    await loader.LoadContentsAsync(folder);
                 }
                 HideProgress();
             }
@@ -406,54 +410,15 @@ namespace Kazyx.Uwpmm.Pages
             }
         }
 
-        private async Task LoadContentsFrom(StorageFolder folder)
+        async void loader_SingleContentLoaded(object sender, SingleContentEventArgs e)
         {
-            var list = new List<StorageFile>();
-            await LoadPicturesRecursively(list, folder);
-
-            var thumbs = new List<Thumbnail>();
-            foreach (var file in list)
-            {
-                var content = new ContentInfo
-                {
-                    Protected = false,
-                    ContentType = ContentKind.StillImage,
-                };
-                thumbs.Add(new Thumbnail(folder.DisplayName, file, content));
-            }
             await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
-                DebugUtil.Log("Loaded local folder: " + folder.DisplayName);
                 if (LocalGridSource != null)
                 {
-                    LocalGridSource.AddRange(thumbs);
+                    LocalGridSource.Add(e.File);
                 }
             });
-        }
-
-        private async Task LoadPicturesRecursively(List<StorageFile> into, StorageFolder folder)
-        {
-            var files = await folder.GetFilesAsync();
-
-            foreach (var file in files)
-            {
-                switch (file.ContentType)
-                {
-                    case "image/jpeg":
-                    case "image/png":
-                    case "image/bmp":
-                    case "image/gif":
-                        into.Add(file);
-                        break;
-                    default:
-                        break;
-                }
-            }
-
-            foreach (var child in await folder.GetFoldersAsync())
-            {
-                await LoadPicturesRecursively(into, child);
-            }
         }
 
         private string CurrentUuid { set; get; }
@@ -497,9 +462,9 @@ namespace Kazyx.Uwpmm.Pages
 
         private CancellationTokenSource Canceller;
 
-        private DateGroupCollection RemoteGridSource;
+        private AlbumGroupCollection RemoteGridSource;
 
-        private DateGroupCollection LocalGridSource;
+        private AlbumGroupCollection LocalGridSource;
 
         private bool CheckRemoteCapability()
         {
@@ -1233,6 +1198,7 @@ namespace Kazyx.Uwpmm.Pages
         private void RemoteGrid_Loaded(object sender, RoutedEventArgs e)
         {
             RemoteSources.Source = RemoteGridSource;
+            (RemoteSemanticZoom.ZoomedOutView as ListViewBase).ItemsSource = RemoteSources.View.CollectionGroups;
         }
 
         private void RemoteGrid_Unloaded(object sender, RoutedEventArgs e)
@@ -1240,7 +1206,7 @@ namespace Kazyx.Uwpmm.Pages
             RemoteSources.Source = null;
         }
 
-        private void Grid_Holding(object sender, HoldingRoutedEventArgs e)
+        private void RemoteGrid_Holding(object sender, HoldingRoutedEventArgs e)
         {
             FlyoutBase.ShowAttachedFlyout(sender as FrameworkElement);
         }
@@ -1248,6 +1214,7 @@ namespace Kazyx.Uwpmm.Pages
         private void LocalGrid_Loaded(object sender, RoutedEventArgs e)
         {
             LocalSources.Source = LocalGridSource;
+            (LocalSemanticZoom.ZoomedOutView as ListViewBase).ItemsSource = LocalSources.View.CollectionGroups;
         }
 
         private void LocalGrid_Unloaded(object sender, RoutedEventArgs e)
