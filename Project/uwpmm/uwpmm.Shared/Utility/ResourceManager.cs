@@ -7,7 +7,7 @@ namespace Kazyx.Uwpmm.Utility
     {
         public static Brush AccentColorBrush
         {
-            get { return (Brush)Application.Current.Resources["PhoneAccentBrush"]; }
+            get { return (Brush)Application.Current.Resources["AccentColorBrush"]; }
         }
     }
 }

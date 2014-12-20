@@ -26,6 +26,6 @@
                        FontSize="22" Margin="0"/>
         </Grid>
         <TextBlock Grid.Row="1"  TextWrapping="Wrap" FontSize="20"
-                   Name="SettingGuide" Text="{Binding Guide, Mode=OneWay}" Margin="40, 0, 0,0" Foreground="{ThemeResource TextBoxDisabledForegroundThemeBrush}"/>
+                   Name="SettingGuide" Text="{Binding Guide, Mode=OneWay}" Margin="40, 0, 0,0" Foreground="{ThemeResource AppBarItemDisabledForegroundThemeBrush}"/>
     </Grid>
 </UserControl>

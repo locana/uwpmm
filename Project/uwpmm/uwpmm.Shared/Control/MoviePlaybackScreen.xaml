@@ -25,13 +25,13 @@
                 <ColumnDefinition Width="auto"/>
                 <ColumnDefinition Width="auto"/>
             </Grid.ColumnDefinitions>
-            <TextBlock Grid.Column="0" TextAlignment="Left" Text="{Binding FileName}" HorizontalAlignment="Stretch" VerticalAlignment="Center" Name="FileNameText" Foreground="{StaticResource PhoneForegroundBrush}" 
+            <TextBlock Grid.Column="0" TextAlignment="Left" Text="{Binding FileName}" HorizontalAlignment="Stretch" VerticalAlignment="Center" Name="FileNameText" Foreground="{StaticResource ApplicationForegroundThemeBrush}" 
                    FontSize="10"/>
-            <TextBlock Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" Name="PositionText" Foreground="{StaticResource PhoneForegroundBrush}" 
+            <TextBlock Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" Name="PositionText" Foreground="{StaticResource ApplicationForegroundThemeBrush}" 
                    FontSize="10"/>
-            <TextBlock Grid.Column="2" Text="/" HorizontalAlignment="Stretch" VerticalAlignment="Center" Name="TimeSeparator" Foreground="{StaticResource PhoneForegroundBrush}" 
+            <TextBlock Grid.Column="2" Text="/" HorizontalAlignment="Stretch" VerticalAlignment="Center" Name="TimeSeparator" Foreground="{StaticResource ApplicationForegroundThemeBrush}" 
                    FontSize="10"/>
-            <TextBlock Grid.Column="3" HorizontalAlignment="Stretch" VerticalAlignment="Center" Name="DurationText" Foreground="{StaticResource PhoneForegroundBrush}" 
+            <TextBlock Grid.Column="3" HorizontalAlignment="Stretch" VerticalAlignment="Center" Name="DurationText" Foreground="{StaticResource ApplicationForegroundThemeBrush}" 
                    FontSize="10"/>
         </Grid>
     </Grid>

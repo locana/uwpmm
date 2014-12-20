@@ -29,9 +29,11 @@
                 <PivotItem Name="Entrance" Loaded="Entrance_Loaded">
                     <Grid Name="EntrancePage">
                         <StackPanel>
-                            <TextBlock Text="MY APPLICATION" Style="{ThemeResource TitleTextBlockStyle}" Margin="0,0,0,30"/>
-                            <TextBlock Text="After connection established, swipe to right." />
-                            <TextBlock Name="NfcAvailable" Text="NFC is available on your phone. Touch to your camera to find the password." Visibility="Collapsed" />
+                            <TextBlock Text="Yet another remote app." Style="{ThemeResource TitleTextBlockStyle}" Margin="0,0,0,30" />
+                            <TextBlock Text="After connection established, swipe to right." FontSize="22" TextWrapping="WrapWholeWords" 
+                                       Style="{StaticResource BaseTextBlockStyle}"  />
+                            <TextBlock Name="NfcAvailable" Text="NFC is available on your phone. Touch to your camera to find the password."
+                                       Visibility="Collapsed" Style="{ThemeResource BaseTextBlockStyle}" TextWrapping="WrapWholeWords" />
                         </StackPanel>
                     </Grid>
                 </PivotItem>

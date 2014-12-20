@@ -11,14 +11,14 @@
 
     <Grid Name="LayoutRoot" Background="Transparent">
 
-        <Grid Name="ToastGrid" HorizontalAlignment="Stretch" VerticalAlignment="Top" Background="{ThemeResource PhoneAccentBrush}" Opacity="0">
+        <Grid Name="ToastGrid" HorizontalAlignment="Stretch" VerticalAlignment="Top" Background="{ThemeResource AccentColorBrush}" Opacity="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="auto"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <Image VerticalAlignment="Stretch"  HorizontalAlignment="Left" Source="{Binding Icon}" Grid.Column="0" Stretch="Fill" MaxHeight="70" />
             <TextBlock VerticalAlignment="Center" HorizontalAlignment="Stretch" Text="{Binding Text}" Grid.Column="1" TextWrapping="WrapWholeWords"
-                       Foreground="{ThemeResource ApplicationForegroundThemeBrush}" FontSize="{StaticResource TextStyleLargeFontSize}" Margin="6" />
+                       Foreground="{ThemeResource ApplicationForegroundThemeBrush}" FontSize="18" Margin="6" />
             <Grid.RenderTransform>
                 <TranslateTransform x:Name="SlideTransform"/>
             </Grid.RenderTransform>
