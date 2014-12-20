@@ -328,7 +328,7 @@ namespace Kazyx.Uwpmm.Pages
 
         private void UnlockPivot()
         {
-            if (TargetDevice != null && TargetDevice.Status.StorageAccessSupported)
+            if (TargetDevice != null && (TargetDevice.StorageAccessSupported || LOAD_DUMMY_CONTENTS))
             {
                 PivotRoot.IsLocked = false;
             }
@@ -434,10 +434,6 @@ namespace Kazyx.Uwpmm.Pages
 #if DEBUG
         private async void AddDummyContentsAsync()
         {
-            if (TargetDevice != null)
-            {
-                TargetDevice.Status.StorageAccessSupported = true;
-            }
             UnlockPivot();
 
             if (CurrentUuid == null)
@@ -1112,7 +1108,7 @@ namespace Kazyx.Uwpmm.Pages
             }
 
             var pivot = sender as Pivot;
-            pivot.IsLocked = TargetDevice == null || !TargetDevice.Status.StorageAccessSupported;
+            pivot.IsLocked = TargetDevice == null || !TargetDevice.StorageAccessSupported || !LOAD_DUMMY_CONTENTS;
         }
 
         private void PhotoScreen_ManipulationCompleted(object sender, ManipulationCompletedRoutedEventArgs e)

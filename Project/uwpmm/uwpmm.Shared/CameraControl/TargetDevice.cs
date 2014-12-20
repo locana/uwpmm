@@ -31,5 +31,10 @@ namespace Kazyx.Uwpmm.CameraControl
         {
             get { return _Status; }
         }
+
+        public bool StorageAccessSupported
+        {
+            get { return Api.AvContent != null; }
+        }
     }
 }

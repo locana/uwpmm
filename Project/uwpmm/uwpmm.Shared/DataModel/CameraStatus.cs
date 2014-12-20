@@ -549,18 +549,6 @@ namespace Kazyx.Uwpmm.DataModel
             }
             get { return _AutoPowerOff; }
         }
-
-        private bool _StorageAccessSupported = false;
-        public bool StorageAccessSupported
-        {
-            set
-            {
-                _StorageAccessSupported = value;
-                NotifyChangedOnUI("StorageAccessSupported");
-                // NotifyChangedOnUI("StorageAccessVisibility");
-            }
-            get { return _StorageAccessSupported; }
-        }
     }
 
     public enum AutoFocusType
