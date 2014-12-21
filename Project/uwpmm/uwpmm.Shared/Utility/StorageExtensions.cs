@@ -35,14 +35,19 @@ namespace Kazyx.Uwpmm.Utility
 #if WINDOWS_APP
             return await folder.TryGetItemAsync(filename) as StorageFile;
 #else
-            try
+            var tcs = new TaskCompletionSource<StorageFile>();
+            await Task.Factory.StartNew(async () =>
             {
-                return await folder.GetFileAsync(filename);
-            }
-            catch
-            {
-                return null;
-            }
+                try
+                {
+                    tcs.TrySetResult(await folder.GetFileAsync(filename));
+                }
+                catch
+                {
+                    tcs.TrySetResult(null);
+                }
+            }).ConfigureAwait(false);
+            return await tcs.Task.ConfigureAwait(false);
 #endif
         }
     }

@@ -51,16 +51,16 @@ namespace Kazyx.Uwpmm.Utility
             {
                 DebugUtil.Log("Delete all of thumbnail cache.");
 
-                await LoadCacheRoot();
-                await CacheFolder.DeleteDirectoryRecursiveAsync(false);
+                await LoadCacheRoot().ConfigureAwait(false);
+                await CacheFolder.DeleteDirectoryRecursiveAsync(false).ConfigureAwait(false);
             }
             else
             {
                 DebugUtil.Log("Delete thumbnail cache of " + uuid);
 
-                await LoadCacheRoot();
+                await LoadCacheRoot().ConfigureAwait(false);
                 var uuidRoot = await CacheFolder.GetFolderAsync(uuid.Replace(":", "-"));
-                await uuidRoot.DeleteDirectoryRecursiveAsync();
+                await uuidRoot.DeleteDirectoryRecursiveAsync().ConfigureAwait(false);
             }
         }
 
@@ -94,11 +94,10 @@ namespace Kazyx.Uwpmm.Utility
             var directory = uuid.Replace(":", "-") + "/";
             var filename = content.CreatedTime.Replace(":", "-").Replace("/", "-") + "--" + Path.GetFileName(uri.LocalPath);
 
-            await LoadCacheRoot();
+            await LoadCacheRoot().ConfigureAwait(false);
             var folder = await CacheFolder.CreateFolderAsync(directory, CreationCollisionOption.OpenIfExists);
 
-            DebugUtil.Log("Checking file: " + filename);
-            var file = await folder.TryGetFileAsync(filename);
+            var file = await folder.TryGetFileAsync(filename).ConfigureAwait(false);
             if (file != null)
             {
                 return file;
@@ -119,7 +118,7 @@ namespace Kazyx.Uwpmm.Utility
                 }
             }
             TryRunTask();
-            return await tcs.Task;
+            return await tcs.Task.ConfigureAwait(false);
         }
 
         private void TryRunTask()
@@ -163,7 +162,7 @@ namespace Kazyx.Uwpmm.Utility
             public async Task DownloadAsync(HttpClient client)
             {
 
-                var file = await folder.TryGetFileAsync(filename);
+                var file = await folder.TryGetFileAsync(filename).ConfigureAwait(false);
                 if (file != null)
                 {
                     tcs.TrySetResult(file);
@@ -173,18 +172,18 @@ namespace Kazyx.Uwpmm.Utility
                 DebugUtil.Log("Start downloading: " + uri);
                 try
                 {
-                    var res = await client.GetAsync(uri, HttpCompletionOption.ResponseContentRead);
+                    var res = await client.GetAsync(uri, HttpCompletionOption.ResponseContentRead).ConfigureAwait(false);
                     if (res.StatusCode != HttpStatusCode.OK)
                     {
                         tcs.TrySetResult(null);
                     }
-                    using (var stream = await res.Content.ReadAsStreamAsync())
+                    using (var stream = await res.Content.ReadAsStreamAsync().ConfigureAwait(false))
                     {
                         DebugUtil.Log("Writing: " + filename);
                         var dst = await folder.CreateFileAsync(filename, CreationCollisionOption.OpenIfExists);
-                        using (var outStream = await dst.OpenStreamForWriteAsync())
+                        using (var outStream = await dst.OpenStreamForWriteAsync().ConfigureAwait(false))
                         {
-                            await stream.CopyToAsync(outStream);
+                            await stream.CopyToAsync(outStream).ConfigureAwait(false);
                         }
                         tcs.TrySetResult(dst);
                     }

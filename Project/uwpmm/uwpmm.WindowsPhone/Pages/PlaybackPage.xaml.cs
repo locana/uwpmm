@@ -1,4 +1,5 @@
-﻿using Kazyx.RemoteApi.AvContent;
+﻿using Kazyx.DeviceDiscovery;
+using Kazyx.RemoteApi.AvContent;
 using Kazyx.RemoteApi.Camera;
 using Kazyx.Uwpmm.CameraControl;
 using Kazyx.Uwpmm.Common;
@@ -56,6 +57,7 @@ namespace Kazyx.Uwpmm.Pages
                     RemoteGridSource.SelectivityFactor = SelectivityFactor.CopyToPhone;
                 }
                 RemoteGrid.SelectionMode = ListViewSelectionMode.Multiple;
+                UpdateInnerState(ViewerState.RemoteSelecting);
             });
             CommandBarManager.SetEvent(AppBarItem.DeleteMultiple, (sender, e) =>
             {
@@ -65,6 +67,7 @@ namespace Kazyx.Uwpmm.Pages
                     RemoteGridSource.SelectivityFactor = SelectivityFactor.Delete;
                 }
                 RemoteGrid.SelectionMode = ListViewSelectionMode.Multiple;
+                UpdateInnerState(ViewerState.RemoteSelecting);
             });
             CommandBarManager.SetEvent(AppBarItem.ShowDetailInfo, (sender, e) =>
             {
@@ -99,6 +102,8 @@ namespace Kazyx.Uwpmm.Pages
                                 DebugUtil.Log("Nothing to do for current SelectivityFactor");
                                 break;
                         }
+                        RemoteGrid.SelectionMode = ListViewSelectionMode.None;
+                        UpdateInnerState(ViewerState.RemoteSingle);
                         break;
                     default:
                         DebugUtil.Log("Nothing to do for current InnerState");
@@ -214,12 +219,6 @@ namespace Kazyx.Uwpmm.Pages
 
             LoadLocalContents();
 
-#if DEBUG
-            if (LOAD_DUMMY_CONTENTS)
-            {
-                AddDummyContentsAsync();
-            }
-#endif
             PictureDownloader.Instance.Failed += OnDLError;
             PictureDownloader.Instance.Fetched += OnFetched;
             PictureDownloader.Instance.QueueStatusUpdated += OnFetchingImages;
@@ -229,6 +228,13 @@ namespace Kazyx.Uwpmm.Pages
             {
                 TargetDevice = devices[0]; // TODO choise of device should be exposed to user.
             }
+
+#if DEBUG
+            if (LOAD_DUMMY_CONTENTS)
+            {
+                AddDummyContentsAsync();
+            }
+#endif
 
             if (TargetDevice != null)
             {
@@ -298,7 +304,7 @@ namespace Kazyx.Uwpmm.Pages
 
             await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
-                switch (InnerState)
+                switch (state)
                 {
                     case ViewerState.RemoteSelecting:
                         BottomAppBar = CommandBarManager.Clear().Icon(AppBarItem.Ok).CreateNew(0.5);
@@ -334,7 +340,11 @@ namespace Kazyx.Uwpmm.Pages
 
         private static bool ShouldLockPivot(TargetDevice device)
         {
-            return device == null || (!device.StorageAccessSupported && !LOAD_DUMMY_CONTENTS);
+            if (LOAD_DUMMY_CONTENTS)
+            {
+                return false;
+            }
+            return !(device != null && device.StorageAccessSupported);
         }
 
         private bool IsRemoteInitialized = false;
@@ -410,7 +420,7 @@ namespace Kazyx.Uwpmm.Pages
                 foreach (var folder in await library.GetFoldersAsync())
                 {
                     DebugUtil.Log("Load from local picture folder: " + folder.Name);
-                    await loader.LoadContentsAsync(folder);
+                    await loader.LoadContentsAsync(folder).ConfigureAwait(false);
                 }
                 HideProgress();
             }
@@ -423,7 +433,7 @@ namespace Kazyx.Uwpmm.Pages
 
         async void loader_SingleContentLoaded(object sender, SingleContentEventArgs e)
         {
-            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            await Dispatcher.RunAsync(CoreDispatcherPriority.High, () =>
             {
                 if (LocalGridSource != null)
                 {
@@ -437,30 +447,27 @@ namespace Kazyx.Uwpmm.Pages
 #if DEBUG
         private async void AddDummyContentsAsync()
         {
-            if (CurrentUuid == null)
-            {
-                CurrentUuid = DummyContentsGenerator.RandomUuid();
-            }
+            CurrentUuid = DummyContentsGenerator.RandomUuid();
 
             for (int i = 0; i < 1; i++)
             {
-                foreach (var date in DummyContentsGenerator.RandomDateList(5))
+                foreach (var date in DummyContentsGenerator.RandomDateList(10))
                 {
                     var list = new List<Thumbnail>();
                     foreach (var content in DummyContentsGenerator.RandomContentList(30))
                     {
                         list.Add(new Thumbnail(CurrentUuid, date, content));
                     }
-                    await Task.Delay(500);
-                    await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                    await Dispatcher.RunAsync(CoreDispatcherPriority.High, () =>
                     {
                         if (RemoteGridSource != null)
                         {
                             RemoteGridSource.AddRange(list);
                         }
                     });
+                    await Task.Delay(500).ConfigureAwait(false);
                 }
-                await Task.Delay(500);
+                await Task.Delay(500).ConfigureAwait(false);
             }
         }
 #endif
@@ -489,7 +496,7 @@ namespace Kazyx.Uwpmm.Pages
             return true;
         }
 
-        private async void OnStorageAvailabilityChanged(bool availability)
+        private void OnStorageAvailabilityChanged(bool availability)
         {
             DebugUtil.Log("RemoteViewerPage: OnStorageAvailabilityChanged - " + availability);
 
@@ -510,17 +517,13 @@ namespace Kazyx.Uwpmm.Pages
                 DeleteRemoteGridFacially();
                 ShowToast(SystemUtil.GetStringResource("Viewer_StorageDetached"));
                 UpdateInnerState(ViewerState.RemoteNoMedia);
-                if (TargetDevice != null && TargetDevice.Udn != null)
-                {
-                    await ThumbnailCacheLoader.INSTANCE.DeleteCache(TargetDevice.Udn);
-                }
             }
         }
 
         private async void DeleteRemoteGridFacially()
         {
             IsRemoteInitialized = false;
-            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => { RemoteGridSource.Clear(); });
+            await Dispatcher.RunAsync(CoreDispatcherPriority.High, () => { RemoteGridSource.Clear(); });
         }
 
         private bool _StorageAvailable = false;
@@ -612,7 +615,7 @@ namespace Kazyx.Uwpmm.Pages
                 list.Add(new Thumbnail(TargetDevice.Udn, args.DateInfo, content));
             }
 
-            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            await Dispatcher.RunAsync(CoreDispatcherPriority.High, () =>
             {
                 if (RemoteGridSource != null)
                 {
@@ -639,13 +642,21 @@ namespace Kazyx.Uwpmm.Pages
             });
         }
 
-        private async void OnFetched(StorageFile file)
+        private async void OnFetched(StorageFolder folder, StorageFile file)
         {
             if (InnerState == ViewerState.OutOfPage) return;
 
             DebugUtil.Log("ViewerPage: OnFetched");
-            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            await Dispatcher.RunAsync(CoreDispatcherPriority.High, () =>
             {
+
+                var content = new ContentInfo
+                {
+                    Protected = false,
+                    ContentType = ContentKind.StillImage,
+                };
+                var thumb = new Thumbnail(folder.DisplayName, file, content);
+                LocalGridSource.Add(thumb);
                 /*
                 var groups = LocalImageGrid.DataContext as ThumbnailGroup;
                 if (groups == null)
@@ -785,6 +796,11 @@ namespace Kazyx.Uwpmm.Pages
                         UpdateInnerState(ViewerState.RemoteUnsupported);
                         ShowToast(SystemUtil.GetStringResource("Viewer_StorageAccessNotSupported"));
                         UnsupportedMessage.Visibility = Visibility.Visible;
+
+                        if (LOAD_DUMMY_CONTENTS)
+                        {
+                            UpdateInnerState(ViewerState.RemoteSingle);
+                        }
                     }
                     break;
             }

@@ -117,7 +117,7 @@ namespace Kazyx.Uwpmm.Pages
             PictureDownloader.Instance.Fetched -= OnFetchdImage;
         }
 
-        private async void OnFetchdImage(StorageFile file)
+        private async void OnFetchdImage(StorageFolder folder, StorageFile file)
         {
             var stream = await file.OpenReadAsync();
             await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>

@@ -6,6 +6,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Threading;
+using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
 using Windows.UI.Core;
@@ -109,20 +110,9 @@ namespace Kazyx.Uwpmm.DataModel
 
         public string GroupTitle { private set; get; }
 
-        private StorageFile _CacheFile = null;
-        public StorageFile CacheFile
-        {
-            set
-            {
-                _CacheFile = value;
-                NotifyChangedOnUI("CacheFile");
-                NotifyChangedOnUI("ThumbnailImage");
-                NotifyChangedOnUI("LargeImage");
-            }
-            get { return _CacheFile; }
-        }
+        public StorageFile CacheFile { private set; get; }
 
-        private async void LoadCachedThumbnailImageAsync(ImageMode mode)
+        private async Task LoadCachedThumbnailImageAsync(ImageMode mode)
         {
             var file = CacheFile;
             if (file == null)
@@ -135,15 +125,12 @@ namespace Kazyx.Uwpmm.DataModel
             {
                 using (var stream = await file.GetThumbnailAsync(ThumbnailMode.ListView))
                 {
-                    DebugUtil.Log("Set source async.");
-                    await SystemUtil.GetCurrentDispatcher().RunAsync(CoreDispatcherPriority.Normal, async () =>
-                    {
-                        var bmp = new BitmapImage();
-                        bmp.CreateOptions = BitmapCreateOptions.None;
-                        await bmp.SetSourceAsync(stream);
-                        if (ImageMode.Image == mode) { ThumbnailImage = bmp; }
-                        else { LargeImage = bmp; }
-                    });
+                    var bmp = new BitmapImage();
+                    bmp.CreateOptions = BitmapCreateOptions.None;
+                    await bmp.SetSourceAsync(stream);
+
+                    if (ImageMode.Image == mode) { ThumbnailImage = bmp; }
+                    else { LargeImage = bmp; }
                 }
             }
             catch { DebugUtil.Log("Failed to load thumbnail from cache."); }
@@ -186,18 +173,16 @@ namespace Kazyx.Uwpmm.DataModel
             }
             if (tmp != null)
             {
-                DebugUtil.Log("Return loaded BitmapImage.");
                 return tmp;
             }
 
             if (CacheFile == null)
             {
-                FetchThumbnailAsync();
+                var task = FetchThumbnailAsync().ConfigureAwait(false);
             }
             else
             {
-                DebugUtil.Log("Load BitmapImage from cache async.");
-                LoadCachedThumbnailImageAsync(mode);
+                var task = LoadCachedThumbnailImageAsync(mode).ConfigureAwait(false);
             }
 
             return null;
@@ -209,12 +194,13 @@ namespace Kazyx.Uwpmm.DataModel
             Album,
         }
 
-        private async void FetchThumbnailAsync()
+        private async Task FetchThumbnailAsync()
         {
             try
             {
-                DebugUtil.Log("Trying to fetch thumbnail image");
-                CacheFile = await ThumbnailCacheLoader.INSTANCE.LoadCacheFileAsync(DeviceUuid, Source);
+                var file = await ThumbnailCacheLoader.INSTANCE.LoadCacheFileAsync(DeviceUuid, Source);
+                CacheFile = file;
+                await LoadCachedThumbnailImageAsync(ImageMode.Image);
             }
             catch (Exception e)
             {

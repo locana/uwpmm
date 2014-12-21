@@ -44,14 +44,14 @@ namespace Kazyx.Uwpmm.Utility
 
             foreach (var child in await folder.GetFoldersAsync())
             {
-                await LoadPicturesRecursively(into, child);
+                await LoadPicturesRecursively(into, child).ConfigureAwait(false);
             }
         }
 
         public async Task LoadContentsAsync(StorageFolder folder)
         {
             var list = new List<StorageFile>();
-            await LoadPicturesRecursively(list, folder);
+            await LoadPicturesRecursively(list, folder).ConfigureAwait(false);
 
             var thumbs = new List<Thumbnail>();
             foreach (var file in list)

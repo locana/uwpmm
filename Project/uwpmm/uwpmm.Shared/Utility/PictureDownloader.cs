@@ -25,14 +25,14 @@ namespace Kazyx.Uwpmm.Utility
             get { return instance; }
         }
 
-        public Action<StorageFile> Fetched;
+        public Action<StorageFolder, StorageFile> Fetched;
 
         public Action<ImageFetchError> Failed;
 
-        protected void OnFetched(StorageFile file)
+        protected void OnFetched(StorageFolder folder, StorageFile file)
         {
             DebugUtil.Log("PictureSyncManager: OnFetched");
-            Fetched.Raise(file);
+            Fetched.Raise(folder, file);
         }
 
         protected void OnFailed(ImageFetchError error)
@@ -84,7 +84,7 @@ namespace Kazyx.Uwpmm.Utility
             DebugUtil.Log("Download picture: " + req.Uri.OriginalString);
             try
             {
-                var res = await HttpClient.GetAsync(req.Uri, HttpCompletionOption.ResponseContentRead);
+                var res = await HttpClient.GetAsync(req.Uri, HttpCompletionOption.ResponseContentRead).ConfigureAwait(false);
                 switch (res.StatusCode)
                 {
                     case HttpStatusCode.OK:
@@ -97,7 +97,7 @@ namespace Kazyx.Uwpmm.Utility
                         return;
                 }
 
-                using (var resStream = await res.Content.ReadAsStreamAsync())
+                using (var resStream = await res.Content.ReadAsStreamAsync().ConfigureAwait(false))
                 {
                     var library = KnownFolders.PicturesLibrary;
 
@@ -120,7 +120,7 @@ namespace Kazyx.Uwpmm.Utility
                             }
                         }
                     }
-                    req.Completed.Raise(file);
+                    req.Completed.Raise(folder, file);
                     return;
                 }
             }
@@ -137,7 +137,7 @@ namespace Kazyx.Uwpmm.Utility
     {
         public Uri Uri;
         // public Geoposition GeoPosition;
-        public Action<StorageFile> Completed;
+        public Action<StorageFolder, StorageFile> Completed;
         public Action<ImageFetchError> Error;
     }
 

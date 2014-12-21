@@ -187,14 +187,14 @@ namespace Kazyx.Uwpmm.Pages
             InitializeUI();
             InitializeProximityDevice();
 
-            PictureDownloader.Instance.Fetched += async (storage) =>
+            PictureDownloader.Instance.Fetched += async (folder, file) =>
             {
-                var thumb = await storage.GetThumbnailAsync(ThumbnailMode.ListView, 100);
+                var thumb = await file.GetThumbnailAsync(ThumbnailMode.ListView, 100);
                 await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
                 {
                     var image = new BitmapImage();
                     image.SetSource(thumb);
-                    var path = storage.Path.Split('\\');
+                    var path = file.Path.Split('\\');
                     var name = '\\' + path[path.Length - 2] + '\\' + path[path.Length - 1];
                     Toast.PushToast(new Control.ToastContent() { Text = "Picture downloaded successfully!" + name, Icon = image });
                     thumb.Dispose();
