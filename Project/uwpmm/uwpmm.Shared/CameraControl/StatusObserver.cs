@@ -109,6 +109,14 @@ namespace Kazyx.Uwpmm.CameraControl
             if (status.EvInfo != null) { target.EvInfo = status.EvInfo; }
             if (status.CameraStatus != null) { target.Status = status.CameraStatus; }
             if (status.StorageInfo != null) { target.Storages = status.StorageInfo; }
+            if (status.BatteryInfo != null) { target.BatteryInfo = status.BatteryInfo; }
+            if (status.FNumber != null) { target.FNumber = status.FNumber; }
+            if (status.ShutterSpeed != null) { target.ShutterSpeed = status.ShutterSpeed; }
+            if (status.EvInfo != null) { target.EvInfo = status.EvInfo; }
+            if (status.ISOSpeedRate != null) { target.ISOSpeedRate = status.ISOSpeedRate; }
+            if (status.ProgramShiftActivated != null) { target.ProgramShiftActivated = (bool)status.ProgramShiftActivated; }
+            if (status.RecordingTimeSec != null) { target.RecordingTimeSec = status.RecordingTimeSec; }
+            if (status.NumberOfShots != null) { target.NumberOfShots = status.NumberOfShots; }
 
             if (status.StillImageSize != null)
             {

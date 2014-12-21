@@ -277,6 +277,7 @@ namespace Kazyx.Uwpmm.Pages
             screenViewData = new LiveviewScreenViewData(target);
             Liveview.DataContext = screenViewData;
             ShutterButton.DataContext = screenViewData;
+            BatteryStatusDisplay.DataContext = target.Status;
             _FocusFrameSurface.ClearFrames();
         }
 

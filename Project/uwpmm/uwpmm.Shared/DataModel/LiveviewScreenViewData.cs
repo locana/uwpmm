@@ -27,6 +27,7 @@ namespace Kazyx.Uwpmm.DataModel
                 NotifyChangedOnUI("ExposureModeImage");
                 NotifyChangedOnUI("MemoryCardStatusImage");
                 NotifyChangedOnUI("RecordbaleAmount");
+
             };
             Device.Api.AvailiableApisUpdated += (sender, e) =>
             {

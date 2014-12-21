@@ -9,5 +9,10 @@ namespace Kazyx.Uwpmm.Utility
         {
             get { return (Brush)Application.Current.Resources["AccentColorBrush"]; }
         }
+
+        public static Brush ForegroundBrush
+        {
+            get { return (Brush)Application.Current.Resources["ApplicationForegroundThemeBrush"]; }
+        }
     }
 }

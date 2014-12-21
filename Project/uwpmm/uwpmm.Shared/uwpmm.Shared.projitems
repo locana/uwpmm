@@ -26,6 +26,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)Control\AppBarContent.xaml.cs">
       <DependentUpon>AppBarContent.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Control\BatteryStatus.xaml.cs">
+      <DependentUpon>BatteryStatus.xaml</DependentUpon>
+    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Control\CheckBoxSetting.xaml.cs">
       <DependentUpon>CheckBoxSetting.xaml</DependentUpon>
     </Compile>
@@ -106,6 +109,7 @@
     <Content Include="$(MSBuildThisFileDirectory)Assets\AppBar\sync.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\Camera.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\License.txt" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\LiveviewScreen\battery_info.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\LiveviewScreen\Camcorder.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\LiveviewScreen\Camera.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\LiveviewScreen\ContShootingButton.png" />
@@ -160,6 +164,10 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="$(MSBuildThisFileDirectory)Control\AppBarContent.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Control\BatteryStatus.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
