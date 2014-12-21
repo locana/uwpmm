@@ -29,5 +29,21 @@ namespace Kazyx.Uwpmm.Utility
                 await root.DeleteAsync(StorageDeleteOption.PermanentDelete);
             }
         }
+
+        public static async Task<StorageFile> TryGetFileAsync(this StorageFolder folder, string filename)
+        {
+#if WINDOWS_APP
+            return await folder.TryGetItemAsync(filename) as StorageFile;
+#else
+            try
+            {
+                return await folder.GetFileAsync(filename);
+            }
+            catch
+            {
+                return null;
+            }
+#endif
+        }
     }
 }

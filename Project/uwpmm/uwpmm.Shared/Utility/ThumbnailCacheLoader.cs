@@ -97,12 +97,12 @@ namespace Kazyx.Uwpmm.Utility
             await LoadCacheRoot();
             var folder = await CacheFolder.CreateFolderAsync(directory, CreationCollisionOption.OpenIfExists);
 
-            try
+            DebugUtil.Log("Checking file: " + filename);
+            var file = await folder.TryGetFileAsync(filename);
+            if (file != null)
             {
-                DebugUtil.Log("Checking file: " + filename);
-                return await folder.GetFileAsync(filename);
+                return file;
             }
-            catch { }
 
             var tcs = new TaskCompletionSource<StorageFile>();
 
@@ -162,14 +162,12 @@ namespace Kazyx.Uwpmm.Utility
 
             public async Task DownloadAsync(HttpClient client)
             {
-                try
+
+                var file = await folder.TryGetFileAsync(filename);
+                if (file != null)
                 {
-                    DebugUtil.Log("Re-Checking file: " + filename);
-                    var file = await folder.GetFileAsync(filename);
                     tcs.TrySetResult(file);
-                    return;
                 }
-                catch { }
 
                 DebugUtil.Log("Start downloading: " + uri);
                 try
