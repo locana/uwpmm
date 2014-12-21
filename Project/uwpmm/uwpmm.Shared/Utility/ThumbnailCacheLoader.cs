@@ -167,6 +167,7 @@ namespace Kazyx.Uwpmm.Utility
                 if (file != null)
                 {
                     tcs.TrySetResult(file);
+                    return;
                 }
 
                 DebugUtil.Log("Start downloading: " + uri);
