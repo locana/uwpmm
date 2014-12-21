@@ -188,7 +188,7 @@ namespace Kazyx.Uwpmm.Pages
         /// </summary>
         /// <param name="e">Provides data for navigation methods and event
         /// handlers that cannot cancel the navigation request.</param>
-        protected override void OnNavigatedTo(NavigationEventArgs e)
+        protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
             this.navigationHelper.OnNavigatedTo(e);
 
@@ -201,7 +201,6 @@ namespace Kazyx.Uwpmm.Pages
             UpdateInnerState(ViewerState.Local);
 
             DeleteRemoteGridFacially();
-            UpdateStorageInfo();
             UnsupportedMessage.Visibility = Visibility.Collapsed;
 
             RemoteGridSource = new AlbumGroupCollection();
@@ -233,6 +232,8 @@ namespace Kazyx.Uwpmm.Pages
 
             if (TargetDevice != null)
             {
+                await TargetDevice.Observer.Start();
+                UpdateStorageInfo();
                 TargetDevice.Status.PropertyChanged += Status_PropertyChanged;
             }
             MovieStreamHelper.INSTANCE.StreamClosed += MovieStreamHelper_StreamClosed;
@@ -326,12 +327,14 @@ namespace Kazyx.Uwpmm.Pages
             });
         }
 
-        private void UnlockPivot()
+        private void DefaultPivotLockState()
         {
-            if (TargetDevice != null && (TargetDevice.StorageAccessSupported || LOAD_DUMMY_CONTENTS))
-            {
-                PivotRoot.IsLocked = false;
-            }
+            PivotRoot.IsLocked = ShouldLockPivot(TargetDevice);
+        }
+
+        private static bool ShouldLockPivot(TargetDevice device)
+        {
+            return device == null || (!device.StorageAccessSupported && !LOAD_DUMMY_CONTENTS);
         }
 
         private bool IsRemoteInitialized = false;
@@ -359,7 +362,7 @@ namespace Kazyx.Uwpmm.Pages
             MovieStreamHelper.INSTANCE.Finish();
             await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
-                UnlockPivot();
+                DefaultPivotLockState();
                 MovieScreen.Reset();
                 MovieDrawer.Visibility = Visibility.Collapsed;
             });
@@ -434,8 +437,6 @@ namespace Kazyx.Uwpmm.Pages
 #if DEBUG
         private async void AddDummyContentsAsync()
         {
-            UnlockPivot();
-
             if (CurrentUuid == null)
             {
                 CurrentUuid = DummyContentsGenerator.RandomUuid();
@@ -697,7 +698,7 @@ namespace Kazyx.Uwpmm.Pages
             }
             else
             {
-                UnlockPivot();
+                DefaultPivotLockState();
                 HideProgress();
                 IsViewingDetail = false;
                 PhotoScreen.Visibility = Visibility.Collapsed;
@@ -1102,13 +1103,7 @@ namespace Kazyx.Uwpmm.Pages
 
         private void PivotRoot_Loaded(object sender, RoutedEventArgs e)
         {
-            if (LOAD_DUMMY_CONTENTS)
-            {
-                return;
-            }
-
-            var pivot = sender as Pivot;
-            pivot.IsLocked = TargetDevice == null || !TargetDevice.StorageAccessSupported || !LOAD_DUMMY_CONTENTS;
+            DefaultPivotLockState();
         }
 
         private void PhotoScreen_ManipulationCompleted(object sender, ManipulationCompletedRoutedEventArgs e)
