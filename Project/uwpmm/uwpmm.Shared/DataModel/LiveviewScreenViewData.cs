@@ -27,6 +27,8 @@ namespace Kazyx.Uwpmm.DataModel
                 NotifyChangedOnUI("ExposureModeImage");
                 NotifyChangedOnUI("MemoryCardStatusImage");
                 NotifyChangedOnUI("RecordbaleAmount");
+                NotifyChangedOnUI("RecordingCount");
+                NotifyChangedOnUI("RecordingCountVisibility");
 
             };
             Device.Api.AvailiableApisUpdated += (sender, e) =>
@@ -274,6 +276,48 @@ namespace Kazyx.Uwpmm.DataModel
                     }
                 }
                 return "";
+            }
+        }
+
+        public string RecordingCount
+        {
+            get
+            {
+                if (Device.Status.ShootMode == null) { return ""; }
+                switch (Device.Status.ShootMode.Current)
+                {
+                    case ShootModeParam.Movie:
+                    case ShootModeParam.Audio:
+                        if (Device.Status.RecordingTimeSec < 0) { return ""; }
+                        var min = Device.Status.RecordingTimeSec / 60;
+                        var sec = Device.Status.RecordingTimeSec - min * 60;
+                        return min.ToString("##00") + ":" + sec.ToString("00");
+                    case ShootModeParam.Interval:
+                        if (Device.Status.NumberOfShots < 0) { return ""; }
+                        return Device.Status.NumberOfShots + " pics.";
+                }
+                return "";
+            }
+        }
+
+        public Visibility RecordingCountVisibility
+        {
+            get
+            {
+                if (Device.Status.ShootMode == null) { return Visibility.Collapsed; }
+                switch (Device.Status.ShootMode.Current)
+                {
+                    case ShootModeParam.Movie:
+                        if (Device.Status.RecordingTimeSec >= 0 && Device.Status.Status == EventParam.MvRecording) { return Visibility.Visible; }
+                        break;
+                    case ShootModeParam.Audio:
+                        if (Device.Status.RecordingTimeSec >= 0 && Device.Status.Status == EventParam.AuRecording) { return Visibility.Visible; }
+                        break;
+                    case ShootModeParam.Interval:
+                        if (Device.Status.NumberOfShots >= 0 && Device.Status.Status == EventParam.ItvRecording) { return Visibility.Visible; }
+                        break;
+                }
+                return Visibility.Collapsed;
             }
         }
     }

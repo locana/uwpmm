@@ -517,7 +517,7 @@ namespace Kazyx.Uwpmm.DataModel
             get { return _BatteryInfo; }
         }
 
-        private int _RecordingTimeSec;
+        private int _RecordingTimeSec = -1;
         public int RecordingTimeSec
         {
             set
@@ -528,7 +528,7 @@ namespace Kazyx.Uwpmm.DataModel
             get { return _RecordingTimeSec; }
         }
 
-        private int _NumberOfShots;
+        private int _NumberOfShots = -1;
         public int NumberOfShots
         {
             set
