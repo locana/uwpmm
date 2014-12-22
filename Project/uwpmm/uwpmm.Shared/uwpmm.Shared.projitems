@@ -110,6 +110,10 @@
     <Content Include="$(MSBuildThisFileDirectory)Assets\Camera.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\License.txt" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\LiveviewScreen\battery_info.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\LiveviewScreen\battery_info_charging_background.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\LiveviewScreen\battery_info_charging_foreground.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\LiveviewScreen\battery_info_nearend_background.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\LiveviewScreen\battery_info_nearend_foreground.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\LiveviewScreen\Camcorder.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\LiveviewScreen\Camera.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\LiveviewScreen\ContShootingButton.png" />

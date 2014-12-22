@@ -12,6 +12,15 @@
     <Grid Name="LayoutRoot" Visibility="Visible" SizeChanged="LayoutRoot_SizeChanged">
         <Rectangle Name="Background" HorizontalAlignment="Left" VerticalAlignment="Stretch" Margin="24"  Width="315" Fill="{StaticResource ApplicationPageBackgroundThemeBrush}" />
         <Rectangle Name="Amount" HorizontalAlignment="Left" VerticalAlignment="Stretch" Margin="40" Fill="{StaticResource ApplicationForegroundThemeBrush}" Width="149"/>
-        <Image Source="/Assets/LiveviewScreen/battery_info.png"/>
+        <Image Name="Frame_normal" Source="/Assets/LiveviewScreen/battery_info.png"/>
+        <Image Name="Frame_NearEnd_Background" Source="/Assets/LiveviewScreen/battery_info_nearend_background.png"/>
+        <Image Name="Frame_Charging_Background" Source="/Assets/LiveviewScreen/battery_info_charging_background.png"/>
+
+        <Image Name="Frame_NearEnd_Foreground" Source="/Assets/LiveviewScreen/battery_info_nearend_foreground.png">
+            <!--todo: find some way to mask with accent color.-->
+        </Image>
+        <Image Name="Frame_Charging_Foreground" Source="/Assets/LiveviewScreen/battery_info_charging_foreground.png" >
+            <!--todo: find some way to mask with accent color.-->
+        </Image>
     </Grid>
 </UserControl>

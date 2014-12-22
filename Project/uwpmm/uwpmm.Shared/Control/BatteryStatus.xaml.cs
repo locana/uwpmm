@@ -34,16 +34,14 @@ namespace Kazyx.Uwpmm.Control
             typeof(BatteryStatus),
             new PropertyMetadata(null, new PropertyChangedCallback(BatteryStatus.BatteryInfoUpdated)));
 
-        private static void BatteryInfoUpdated(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            (d as BatteryStatus).BatteryInfo = (List<BatteryInfo>)e.NewValue;
-        }
+        private static void BatteryInfoUpdated(DependencyObject d, DependencyPropertyChangedEventArgs e) { }
 
         private void UpdateBatteryLevelDisplay(List<BatteryInfo> info)
         {
             if (info == null || FindFirstActiveBattery(info) == null)
             {
                 LayoutRoot.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                return;
             }
             else
             {
@@ -60,18 +58,38 @@ namespace Kazyx.Uwpmm.Control
 
             if (batt.LevelDenominator > 0)
             {
+                Amount.Visibility = Windows.UI.Xaml.Visibility.Visible;
                 double level = (double)batt.LevelNumerator / (double)batt.LevelDenominator;
                 Amount.Width = level * MAX_AMOUNT_WIDTH * w;
                 Background.Width = level * MAX_AMOUNT_WIDTH * w + (bg_offset - offset) * 2;
             }
-
-            if (batt.Status == RemoteApi.Camera.BatteryStatus.NearEnd)
-            {
-                Amount.Fill = ResourceManager.AccentColorBrush;
-            }
             else
             {
-                Amount.Fill = ResourceManager.ForegroundBrush;
+                Amount.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+            }
+
+            Frame_normal.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+            Frame_Charging_Background.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+            Frame_Charging_Foreground.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+            Frame_NearEnd_Background.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+            Frame_NearEnd_Foreground.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+
+            switch (batt.AdditionalStatus)
+            {
+                case RemoteApi.Camera.BatteryStatus.NearEnd:
+                    Amount.Fill = ResourceManager.AccentColorBrush;
+                    Frame_NearEnd_Background.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                    Frame_NearEnd_Foreground.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                    break;
+                case RemoteApi.Camera.BatteryStatus.Charging:
+                    Amount.Fill = ResourceManager.ForegroundBrush;
+                    Frame_Charging_Background.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                    Frame_Charging_Foreground.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                    break;
+                default:
+                    Frame_normal.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                    Amount.Fill = ResourceManager.ForegroundBrush;
+                    break;
             }
         }
 
@@ -82,7 +100,6 @@ namespace Kazyx.Uwpmm.Control
                 switch (b.Status)
                 {
                     case RemoteApi.Camera.BatteryStatus.Active:
-                    case RemoteApi.Camera.BatteryStatus.NearEnd:
                         return b;
                 }
             }

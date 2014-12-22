@@ -277,7 +277,7 @@ namespace Kazyx.Uwpmm.Pages
             screenViewData = new LiveviewScreenViewData(target);
             Liveview.DataContext = screenViewData;
             ShutterButton.DataContext = screenViewData;
-            BatteryStatusDisplay.DataContext = target.Status;
+            BatteryStatusDisplay.DataContext = target.Status.BatteryInfo;
             _FocusFrameSurface.ClearFrames();
         }
 
@@ -415,6 +415,9 @@ namespace Kazyx.Uwpmm.Pages
                     {
                         PictureDownloader.Instance.Enqueue(new Uri(url, UriKind.Absolute));
                     }
+                    break;
+                case "BatteryInfo":
+                    BatteryStatusDisplay.BatteryInfo = status.BatteryInfo;
                     break;
                 default:
                     break;
