@@ -4,6 +4,7 @@ using Kazyx.Uwpmm.CameraControl;
 using Kazyx.Uwpmm.Utility;
 using System;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 namespace Kazyx.Uwpmm.DataModel
 {
@@ -30,12 +31,69 @@ namespace Kazyx.Uwpmm.DataModel
                 NotifyChangedOnUI("RecordingCount");
                 NotifyChangedOnUI("RecordingCountVisibility");
 
+
+
+                //NotifyChangedOnUI("MaxProgramShift");
+                //NotifyChangedOnUI("MinProgramShift");
+                //NotifyChangedOnUI("ProgramShiftVisibility");
+                NotifyChangedOnUI("EvVisibility");
+                NotifyChangedOnUI("EvDisplayValue");
+                //if (Device.Api.Capability.IsAvailable("setExposureCompensation"))
+                //{
+                //    //NotifyChangedOnUI("MinEvIndex");
+                //    //NotifyChangedOnUI("MaxEvIndex");
+                //    //NotifyChangedOnUI("CurrentEvIndex");
+                //NotifyChangedOnUI("MinEvLabel");
+                //NotifyChangedOnUI("MaxEvLabel");
+                //}
+                NotifyChangedOnUI("FnumberVisibility");
+                NotifyChangedOnUI("FnumberDisplayValue");
+
+                //if (Device.Api.Capability.IsAvailable("setFNumber"))
+                //{
+                //    NotifyChangedOnUI("MaxFNumberIndex");
+                //    NotifyChangedOnUI("CurrentFNumberIndex");
+                //    NotifyChangedOnUI("MaxFNumberLabel");
+                //    NotifyChangedOnUI("MinFNumberLabel");
+                //}
+
+                NotifyChangedOnUI("ISOVisibility");
+                NotifyChangedOnUI("ISODisplayValue");
+
+                //if (Device.Api.Capability.IsAvailable("setIsoSpeedRate"))
+                //{
+                //    NotifyChangedOnUI("MaxIsoIndex");
+                //    NotifyChangedOnUI("CurrentIsoIndex");
+                //    NotifyChangedOnUI("MinIsoLabel");
+                //    NotifyChangedOnUI("MaxIsoLabel");
+                //}
+                NotifyChangedOnUI("ShutterSpeedVisibility");
+                NotifyChangedOnUI("ShutterSpeedDisplayValue");
+
+                //if (Device.Api.Capability.IsAvailable("setShutterSpeed"))
+                //{
+                //    NotifyChangedOnUI("MaxShutterSpeedIndex");
+                //    NotifyChangedOnUI("CurrentShutterSpeedIndex");
+                //    NotifyChangedOnUI("MaxShutterSpeedLabel");
+                //    NotifyChangedOnUI("MinShutterSpeedLabel");
+                //}
             };
             Device.Api.AvailiableApisUpdated += (sender, e) =>
             {
                 NotifyChangedOnUI("ZoomInterfacesVisibility");
                 NotifyChangedOnUI("ShutterButtonEnabled");
                 NotifyChangedOnUI("RecDisplayVisibility");
+                NotifyChangedOnUI("FNumberBrush");
+                NotifyChangedOnUI("ShutterSpeedBrush");
+                NotifyChangedOnUI("EvBrush");
+                NotifyChangedOnUI("IsoBrush");
+                NotifyChangedOnUI("ShutterSpeedVisibility");
+                NotifyChangedOnUI("ShutterSpeedDisplayValue");
+                NotifyChangedOnUI("ISOVisibility");
+                NotifyChangedOnUI("ISODisplayValue");
+                NotifyChangedOnUI("FnumberVisibility");
+                NotifyChangedOnUI("FnumberDisplayValue");
+                NotifyChangedOnUI("EvVisibility");
             };
         }
 
@@ -318,6 +376,174 @@ namespace Kazyx.Uwpmm.DataModel
                         break;
                 }
                 return Visibility.Collapsed;
+            }
+        }
+
+
+        public Visibility ShutterSpeedVisibility
+        {
+            get
+            {
+                if (Device.Status == null || Device.Status.ShutterSpeed == null || Device.Status.ShutterSpeed.Current == null || !Device.Api.Capability.IsAvailable("getShutterSpeed")) { return Visibility.Collapsed; }
+                else { return Visibility.Visible; }
+            }
+        }
+
+        public string ShutterSpeedDisplayValue
+        {
+            get
+            {
+                if (Device.Status == null || Device.Status.ShutterSpeed == null || Device.Status.ShutterSpeed.Current == null)
+                {
+                    return "--";
+                }
+                else
+                {
+                    return Device.Status.ShutterSpeed.Current;
+                }
+            }
+        }
+
+        public Visibility ISOVisibility
+        {
+            get
+            {
+                if (Device.Status == null || Device.Status.ISOSpeedRate == null || Device.Status.ISOSpeedRate.Current == null || !Device.Api.Capability.IsAvailable("getIsoSpeedRate")) { return Visibility.Collapsed; }
+                else { return Visibility.Visible; }
+            }
+        }
+
+        public string ISODisplayValue
+        {
+            get
+            {
+                if (Device.Status == null || Device.Status.ISOSpeedRate == null || Device.Status.ISOSpeedRate.Current == null) { return "ISO: --"; }
+                else { return "ISO " + Device.Status.ISOSpeedRate.Current; }
+            }
+        }
+
+        public Visibility ProgramShiftVisibility
+        {
+            get
+            {
+                if (Device.Status == null || Device.Status.ProgramShiftRange == null || Device.Status.ExposureMode == null || Device.Status.ExposureMode.Current != ExposureMode.Program) { return Visibility.Collapsed; }
+                else { return Visibility.Visible; }
+            }
+        }
+
+        private int _ProgramShift = 0;
+        public int ProgramShift
+        {
+            get
+            {
+                if (Device.Status == null || !Device.Status.ProgramShiftActivated)
+                {
+                    _ProgramShift = 0;
+                }
+                return _ProgramShift;
+            }
+            set
+            {
+                _ProgramShift = value;
+            }
+        }
+
+        public int MaxProgramShift
+        {
+            get
+            {
+                if (Device.Status == null || Device.Status.ProgramShiftRange == null) { return 0; }
+                else { return Device.Status.ProgramShiftRange.Max; }
+            }
+        }
+
+        public int MinProgramShift
+        {
+            get
+            {
+                if (Device.Status == null || Device.Status.ProgramShiftRange == null) { return 0; }
+                else { return Device.Status.ProgramShiftRange.Min; }
+            }
+        }
+
+        public Visibility FnumberVisibility
+        {
+            get
+            {
+                if (Device.Status == null || Device.Status.FNumber == null || Device.Status.FNumber.Current == null || !Device.Api.Capability.IsAvailable("getFNumber")) { return Visibility.Collapsed; }
+                else { return Visibility.Visible; }
+            }
+        }
+
+        public string FnumberDisplayValue
+        {
+            get
+            {
+                if (Device.Status == null || Device.Status.FNumber == null || Device.Status.FNumber.Current == null) { return "F--"; }
+                else { return "F" + Device.Status.FNumber.Current; }
+            }
+        }
+
+        public Visibility EvVisibility
+        {
+            get
+            {
+                if (Device.Status == null || Device.Status.EvInfo == null || !Device.Api.Capability.IsAvailable("getExposureCompensation")) { return Visibility.Collapsed; }
+                else { return Visibility.Visible; }
+            }
+        }
+
+
+        public Brush FNumberBrush
+        {
+            get
+            {
+                if (Device.Status == null || !Device.Api.Capability.IsAvailable("setFNumber")) { return ResourceManager.ForegroundBrush; }
+                else { return ResourceManager.AccentColorBrush; }
+            }
+        }
+
+        public Brush ShutterSpeedBrush
+        {
+            get
+            {
+                if (Device.Status == null || !Device.Api.Capability.IsAvailable("setShutterSpeed")) { return ResourceManager.ForegroundBrush; }
+                else { return ResourceManager.AccentColorBrush; }
+            }
+        }
+
+        public Brush EvBrush
+        {
+            get
+            {
+                if (Device.Status == null || !Device.Api.Capability.IsAvailable("setExposureCompensation")) { return ResourceManager.ForegroundBrush; }
+                else { return ResourceManager.AccentColorBrush; }
+            }
+        }
+
+        public Brush IsoBrush
+        {
+            get
+            {
+                if (Device.Status == null || !Device.Api.Capability.IsAvailable("setIsoSpeedRate")) { return ResourceManager.ForegroundBrush; }
+                else { return ResourceManager.AccentColorBrush; }
+            }
+        }
+
+        public string EvDisplayValue
+        {
+            get
+            {
+                if (Device.Status == null || Device.Status.EvInfo == null) { return ""; }
+                else
+                {
+                    var value = EvConverter.GetEv(Device.Status.EvInfo.CurrentIndex, Device.Status.EvInfo.Candidate.IndexStep);
+                    var strValue = Math.Round(value, 1, MidpointRounding.AwayFromZero).ToString("0.0");
+
+                    if (value < 0) { return "EV " + strValue; }
+                    else if (value == 0.0f) { return "EV " + strValue; }
+                    else { return "EV +" + strValue; }
+                }
             }
         }
     }
