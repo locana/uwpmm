@@ -92,6 +92,7 @@
                                 <RowDefinition Height="auto"/>
                                 <RowDefinition Height="auto"/>
                                 <RowDefinition Height="auto"/>
+                                <RowDefinition Height="auto"/>
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="auto"/>
@@ -138,6 +139,16 @@
                                            Style="{StaticResource ShootingParamStyle}"   Grid.Column="2"/>
                                 <TextBlock Name="ISO" Foreground="{Binding IsoBrush}" Visibility="{Binding ISOVisibility, FallbackValue=Collapsed}" Text="{Binding ISODisplayValue}" 
                                            Style="{StaticResource ShootingParamStyle}"  Grid.Column="3"/>
+                            </Grid>
+                            <Grid x:Name="ShootingParamSliders" Grid.Row="3" Grid.ColumnSpan="3">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="auto"/>
+                                    <RowDefinition Height="auto"/>
+                                    <RowDefinition Height="auto"/>
+                                </Grid.RowDefinitions>
+                                <controls:ShootingParamSlider x:Name="FnumberSlider" Parameter="{Binding FNumber}" Visibility="{Binding FNumberSliderVisibility}" />
+                                <controls:ShootingParamSlider x:Name="SSSlider" Parameter="{Binding ShutterSpeed}" Grid.Row="1" Visibility="{Binding ShutterSpeedSliderVisibility}"/>
+                                <controls:ShootingParamSlider x:Name="ISOSlider" Parameter="{Binding ISOSpeedRate}" Grid.Row="2" Visibility="{Binding ISOSliderVisibility}"/>
                             </Grid>
                         </Grid>
                         <ScrollViewer Name="ControlPanelScrollViewer" Margin="28,0,0,0" Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Right" Width="200"

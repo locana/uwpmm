@@ -376,6 +376,29 @@ namespace Kazyx.Uwpmm.Pages
                     _FocusFrameSurface.SelfDrawTouchAFFrame = true;
                 }
                 else { _FocusFrameSurface.SelfDrawTouchAFFrame = false; }
+
+                ShootingParamSliders.DataContext = target.Status;
+                // FnumberSlider.DataContext = screenViewData; ;
+                FnumberSlider.SliderOperated += async (s, arg) =>
+                {
+                    DebugUtil.Log("Fnumber operated: " + arg.Selected);
+                    try { await target.Api.Camera.SetFNumberAsync(arg.Selected); }
+                    catch (RemoteApiException) { }
+                };
+                // SSSlider.DataContext = screenViewData;
+                SSSlider.SliderOperated += async (s, arg) =>
+                {
+                    DebugUtil.Log("SS operated: " + arg.Selected);
+                    try { await target.Api.Camera.SetShutterSpeedAsync(arg.Selected); }
+                    catch (RemoteApiException) { }
+                };
+                // ISOSlider.DataContext = screenViewData;
+                ISOSlider.SliderOperated += async (s, arg) =>
+                {
+                    DebugUtil.Log("ISO operated: " + arg.Selected);
+                    try { await target.Api.Camera.SetISOSpeedAsync(arg.Selected); }
+                    catch (RemoteApiException) { }
+                };
             });
         }
 

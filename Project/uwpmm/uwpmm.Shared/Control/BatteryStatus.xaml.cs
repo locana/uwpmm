@@ -61,7 +61,8 @@ namespace Kazyx.Uwpmm.Control
                 Amount.Visibility = Windows.UI.Xaml.Visibility.Visible;
                 double level = (double)batt.LevelNumerator / (double)batt.LevelDenominator;
                 Amount.Width = level * MAX_AMOUNT_WIDTH * w;
-                Background.Width = level * MAX_AMOUNT_WIDTH * w + (bg_offset - offset) * 2;
+                if (level == 0) { Background.Width = 0; }
+                else { Background.Width = level * MAX_AMOUNT_WIDTH * w + (bg_offset - offset) * 2; }
             }
             else
             {

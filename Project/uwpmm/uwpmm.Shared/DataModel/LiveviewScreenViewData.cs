@@ -30,53 +30,14 @@ namespace Kazyx.Uwpmm.DataModel
                 NotifyChangedOnUI("RecordbaleAmount");
                 NotifyChangedOnUI("RecordingCount");
                 NotifyChangedOnUI("RecordingCountVisibility");
-
-
-
-                //NotifyChangedOnUI("MaxProgramShift");
-                //NotifyChangedOnUI("MinProgramShift");
-                //NotifyChangedOnUI("ProgramShiftVisibility");
                 NotifyChangedOnUI("EvVisibility");
                 NotifyChangedOnUI("EvDisplayValue");
-                //if (Device.Api.Capability.IsAvailable("setExposureCompensation"))
-                //{
-                //    //NotifyChangedOnUI("MinEvIndex");
-                //    //NotifyChangedOnUI("MaxEvIndex");
-                //    //NotifyChangedOnUI("CurrentEvIndex");
-                //NotifyChangedOnUI("MinEvLabel");
-                //NotifyChangedOnUI("MaxEvLabel");
-                //}
                 NotifyChangedOnUI("FnumberVisibility");
                 NotifyChangedOnUI("FnumberDisplayValue");
-
-                //if (Device.Api.Capability.IsAvailable("setFNumber"))
-                //{
-                //    NotifyChangedOnUI("MaxFNumberIndex");
-                //    NotifyChangedOnUI("CurrentFNumberIndex");
-                //    NotifyChangedOnUI("MaxFNumberLabel");
-                //    NotifyChangedOnUI("MinFNumberLabel");
-                //}
-
                 NotifyChangedOnUI("ISOVisibility");
                 NotifyChangedOnUI("ISODisplayValue");
-
-                //if (Device.Api.Capability.IsAvailable("setIsoSpeedRate"))
-                //{
-                //    NotifyChangedOnUI("MaxIsoIndex");
-                //    NotifyChangedOnUI("CurrentIsoIndex");
-                //    NotifyChangedOnUI("MinIsoLabel");
-                //    NotifyChangedOnUI("MaxIsoLabel");
-                //}
                 NotifyChangedOnUI("ShutterSpeedVisibility");
                 NotifyChangedOnUI("ShutterSpeedDisplayValue");
-
-                //if (Device.Api.Capability.IsAvailable("setShutterSpeed"))
-                //{
-                //    NotifyChangedOnUI("MaxShutterSpeedIndex");
-                //    NotifyChangedOnUI("CurrentShutterSpeedIndex");
-                //    NotifyChangedOnUI("MaxShutterSpeedLabel");
-                //    NotifyChangedOnUI("MinShutterSpeedLabel");
-                //}
             };
             Device.Api.AvailiableApisUpdated += (sender, e) =>
             {
@@ -94,6 +55,9 @@ namespace Kazyx.Uwpmm.DataModel
                 NotifyChangedOnUI("FnumberVisibility");
                 NotifyChangedOnUI("FnumberDisplayValue");
                 NotifyChangedOnUI("EvVisibility");
+                NotifyChangedOnUI("FNumberSliderVisibility");
+                NotifyChangedOnUI("ShutterSpeedSliderVisibility");
+                NotifyChangedOnUI("ISOSliderVisibility");
             };
         }
 
@@ -520,6 +484,16 @@ namespace Kazyx.Uwpmm.DataModel
                     else { return "EV +" + strValue; }
                 }
             }
+        }
+
+        public Visibility FNumberSliderVisibility { get { return ShooringParamSliderVisibility("setFNumber"); } }
+        public Visibility ShutterSpeedSliderVisibility { get { return ShooringParamSliderVisibility("setShutterSpeed"); } }
+        public Visibility ISOSliderVisibility { get { return ShooringParamSliderVisibility("setIsoSpeedRate"); } }
+
+        private Visibility ShooringParamSliderVisibility(string api)
+        {
+            if (Device.Api == null || !Device.Api.Capability.IsAvailable(api)) { return Visibility.Collapsed; }
+            else { return Visibility.Visible; }
         }
     }
 }
