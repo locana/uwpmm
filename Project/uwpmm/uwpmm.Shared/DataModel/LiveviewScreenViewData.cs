@@ -494,40 +494,15 @@ namespace Kazyx.Uwpmm.DataModel
         }
 
 
-        public Brush FNumberBrush
-        {
-            get
-            {
-                if (Device.Status == null || !Device.Api.Capability.IsAvailable("setFNumber")) { return ResourceManager.ForegroundBrush; }
-                else { return ResourceManager.AccentColorBrush; }
-            }
-        }
+        public Brush FNumberBrush { get { return ShootingParamBrush("setFNumber"); } }
+        public Brush ShutterSpeedBrush { get { return ShootingParamBrush("setShutterSpeed"); } }
+        public Brush EvBrush { get { return ShootingParamBrush("setExposureCompensation"); } }
+        public Brush IsoBrush { get { return ShootingParamBrush("setIsoSpeedRate"); } }
 
-        public Brush ShutterSpeedBrush
+        private Brush ShootingParamBrush(string api)
         {
-            get
-            {
-                if (Device.Status == null || !Device.Api.Capability.IsAvailable("setShutterSpeed")) { return ResourceManager.ForegroundBrush; }
-                else { return ResourceManager.AccentColorBrush; }
-            }
-        }
-
-        public Brush EvBrush
-        {
-            get
-            {
-                if (Device.Status == null || !Device.Api.Capability.IsAvailable("setExposureCompensation")) { return ResourceManager.ForegroundBrush; }
-                else { return ResourceManager.AccentColorBrush; }
-            }
-        }
-
-        public Brush IsoBrush
-        {
-            get
-            {
-                if (Device.Status == null || !Device.Api.Capability.IsAvailable("setIsoSpeedRate")) { return ResourceManager.ForegroundBrush; }
-                else { return ResourceManager.AccentColorBrush; }
-            }
+            if (Device.Api == null || !Device.Api.Capability.IsAvailable(api)) { return ResourceManager.ForegroundBrush; }
+            else { return ResourceManager.AccentColorBrush; }
         }
 
         public string EvDisplayValue
