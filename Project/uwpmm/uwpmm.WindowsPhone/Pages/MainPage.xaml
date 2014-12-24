@@ -4,10 +4,16 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Kazyx.Uwpmm.Pages"
+    xmlns:util="using:Kazyx.Uwpmm.Utility"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Loaded="Page_Loaded">
+    
+    <Page.Resources>
+        <util:BoolToVisibilityConverter x:Key="B2VConverter" />
+        <util:BoolToVisibilityReverseConverter x:Key="B2VRConverter" />
+    </Page.Resources>
 
     <Grid x:Name="LayoutRoot">
 
@@ -146,9 +152,9 @@
                                     <RowDefinition Height="auto"/>
                                     <RowDefinition Height="auto"/>
                                 </Grid.RowDefinitions>
-                                <controls:ShootingParamSlider x:Name="FnumberSlider" Parameter="{Binding FNumber}" Visibility="{Binding FNumberSliderVisibility}" />
-                                <controls:ShootingParamSlider x:Name="SSSlider" Parameter="{Binding ShutterSpeed}" Grid.Row="1" Visibility="{Binding ShutterSpeedSliderVisibility}"/>
-                                <controls:ShootingParamSlider x:Name="ISOSlider" Parameter="{Binding ISOSpeedRate}" Grid.Row="2" Visibility="{Binding ISOSliderVisibility}"/>
+                                <controls:ShootingParamSlider x:Name="FnumberSlider" Parameter="{Binding Status.FNumber}" Visibility="{Binding Path=Liveview.IsSetFNumberAvailable, Converter={StaticResource B2VConverter}}" />
+                                <controls:ShootingParamSlider x:Name="SSSlider" Parameter="{Binding Status.ShutterSpeed}" Grid.Row="1" Visibility="{Binding Path=Liveview.IsSetShutterSpeedAvailable, Converter={StaticResource B2VConverter}}"/>
+                                <controls:ShootingParamSlider x:Name="ISOSlider" Parameter="{Binding Status.ISOSpeedRate}" Grid.Row="2" Visibility="{Binding Path=Liveview.IsSetIsoSpeedRateAvailable, Converter={StaticResource B2VConverter}}"/>
                             </Grid>
                         </Grid>
                         <ScrollViewer Name="ControlPanelScrollViewer" Margin="28,0,0,0" Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Right" Width="200"

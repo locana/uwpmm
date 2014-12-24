@@ -38,6 +38,8 @@ namespace Kazyx.Uwpmm.DataModel
                 NotifyChangedOnUI("ISODisplayValue");
                 NotifyChangedOnUI("ShutterSpeedVisibility");
                 NotifyChangedOnUI("ShutterSpeedDisplayValue");
+
+
             };
             Device.Api.AvailiableApisUpdated += (sender, e) =>
             {
@@ -55,9 +57,10 @@ namespace Kazyx.Uwpmm.DataModel
                 NotifyChangedOnUI("FnumberVisibility");
                 NotifyChangedOnUI("FnumberDisplayValue");
                 NotifyChangedOnUI("EvVisibility");
-                NotifyChangedOnUI("FNumberSliderVisibility");
-                NotifyChangedOnUI("ShutterSpeedSliderVisibility");
-                NotifyChangedOnUI("ISOSliderVisibility");
+                NotifyChangedOnUI("IsSetFNumberAvailable");
+                NotifyChangedOnUI("IsSetShutterSpeedAvailable");
+                NotifyChangedOnUI("IsSetIsoSpeedRateAvailable");
+
             };
         }
 
@@ -486,14 +489,17 @@ namespace Kazyx.Uwpmm.DataModel
             }
         }
 
-        public Visibility FNumberSliderVisibility { get { return ShooringParamSliderVisibility("setFNumber"); } }
-        public Visibility ShutterSpeedSliderVisibility { get { return ShooringParamSliderVisibility("setShutterSpeed"); } }
-        public Visibility ISOSliderVisibility { get { return ShooringParamSliderVisibility("setIsoSpeedRate"); } }
+        public bool IsSetFNumberAvailable { get { return IsShootingParamAvailable("setFNumber"); } }
+        public bool IsSetShutterSpeedAvailable { get { return IsShootingParamAvailable("setShutterSpeed"); } }
+        public bool IsSetIsoSpeedRateAvailable { get { return IsShootingParamAvailable("setIsoSpeedRate"); } }
 
-        private Visibility ShooringParamSliderVisibility(string api)
-        {
-            if (Device.Api == null || !Device.Api.Capability.IsAvailable(api)) { return Visibility.Collapsed; }
-            else { return Visibility.Visible; }
-        }
+        private bool IsShootingParamAvailable(string api) { return Device.Api != null && Device.Api.Capability.IsAvailable(api); }
+    }
+
+    public class ShootingParamViewData
+    {
+        public ShootingParamViewData() { }
+        public LiveviewScreenViewData Liveview { get; set; }
+        public CameraStatus Status { get; set; }
     }
 }
