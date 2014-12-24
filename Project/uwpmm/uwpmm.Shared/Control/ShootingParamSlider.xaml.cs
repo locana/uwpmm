@@ -4,6 +4,8 @@ using System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Imaging;
 
 // The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
 
@@ -40,6 +42,8 @@ namespace Kazyx.Uwpmm.Control
                 (d as ShootingParamSlider).UpdateDisplay<string>(e.NewValue as Capability<string>);
             }
         }
+
+        public ImageSource IconSource { set { SettingImage.Source = value; } }
 
         void UpdateDisplay<T>(Capability<T> parameter)
         {
