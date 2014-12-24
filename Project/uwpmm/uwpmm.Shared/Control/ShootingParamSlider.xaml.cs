@@ -3,9 +3,8 @@ using Kazyx.Uwpmm.Utility;
 using System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Imaging;
 
 // The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
 
@@ -16,6 +15,17 @@ namespace Kazyx.Uwpmm.Control
         public ShootingParamSlider()
         {
             this.InitializeComponent();
+            Slider.AddHandler(PointerReleasedEvent, new PointerEventHandler(Slider_PointerReleased), true);
+        }
+
+        public event EventHandler<ShootingParameterChangedEventArgs> SliderOperated;
+        private void Slider_PointerReleased(object sender, PointerRoutedEventArgs e)
+        {
+            var selected = (int)Math.Round((sender as Slider).Value);
+            (sender as Slider).Value = selected;
+            DebugUtil.Log("Slider released: " + selected);
+            if (Parameter == null || selected < 0 || selected >= Parameter.Candidates.Count) { return; }
+            if (SliderOperated != null) { SliderOperated(this, new ShootingParameterChangedEventArgs() { Selected = Parameter.Candidates[selected] }); }
         }
 
         public Capability<string> Parameter
@@ -60,14 +70,6 @@ namespace Kazyx.Uwpmm.Control
             }
             MinLabel.Text = parameter.Candidates[0].ToString();
             MaxLabel.Text = parameter.Candidates[parameter.Candidates.Count - 1].ToString();
-        }
-
-        public event EventHandler<ShootingParameterChangedEventArgs> SliderOperated;
-        private void Slider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
-        {
-            var selected = (int)Math.Round(e.NewValue);
-            if (Parameter == null || selected < 0 || selected >= Parameter.Candidates.Count) { return; }
-            if (SliderOperated != null) { SliderOperated(this, new ShootingParameterChangedEventArgs() { Selected = Parameter.Candidates[selected] }); }
         }
     }
 
