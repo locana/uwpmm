@@ -14,6 +14,9 @@
         <CollectionViewSource x:Name="RemoteSources" IsSourceGrouped="True" />
         <CollectionViewSource x:Name="LocalSources" IsSourceGrouped="True" />
 
+        <util:BoolToVisibilityConverter x:Key="B2VConverter" />
+        <util:BoolToVisibilityReverseConverter x:Key="B2VRConverter" />
+
         <Storyboard x:Name="ShowTitleBlockAnimation">
             <DoubleAnimation Duration="0:0:0.5" From="0.0" To="0.9" Storyboard.TargetProperty="Opacity" Storyboard.TargetName="TitleBlock" />
         </Storyboard>
@@ -32,7 +35,8 @@
         <Pivot x:Name="PivotRoot" SelectionChanged="Pivot_SelectionChanged" Loaded="PivotRoot_Loaded">
             <PivotItem Margin="0,-16,0,0">
                 <PivotItem.Header>
-                    <TextBlock Text="{Binding [Viewer_StoragePhone], Source={StaticResource LocalizedStrings}}" Margin="0,8,0,0" Style="{StaticResource SubheaderTextBlockStyle}" FontWeight="Bold"/>
+                    <TextBlock Text="{Binding [Viewer_StoragePhone], Source={StaticResource LocalizedStrings}}" Margin="0,8,0,0"
+                               Style="{StaticResource SubheaderTextBlockStyle}" FontWeight="Bold"/>
                 </PivotItem.Header>
                 <Grid>
                     <SemanticZoom x:Name="LocalSemanticZoom">
@@ -58,9 +62,13 @@
                                             <Grid.Background>
                                                 <SolidColorBrush Color="{StaticResource PhoneChromeColor}"/>
                                             </Grid.Background>
-                                            <Image Grid.ColumnSpan="3" Grid.RowSpan="2" x:Name="LocalThumbnailImage" Width="108" Height="108" Stretch="Uniform" Source="{Binding Path=ThumbnailImage}" Tapped="LocalThumbnailImage_Tapped"/>
-                                            <Image Grid.Row="1" Grid.Column="2" Source="/Assets/Screen/mode_movie.png" Visibility="{Binding MovieIconVisibility, Mode=OneTime}" IsHitTestVisible="False" CacheMode="BitmapCache" Margin="0,0,20,20"/>
-                                            <Border Grid.RowSpan="2" Grid.ColumnSpan="3" Visibility="{Binding UnselectableMaskVisibility, FallbackValue=Collapsed}">
+                                            <Image Grid.ColumnSpan="3" Grid.RowSpan="2" x:Name="LocalThumbnailImage" Width="108" Height="108" Stretch="Uniform"
+                                                   Source="{Binding Path=ThumbnailImage}" Tapped="LocalThumbnailImage_Tapped"/>
+                                            <Image Grid.Row="1" Grid.Column="2" Source="/Assets/Screen/mode_movie.png"
+                                                   Visibility="{Binding IsMovie, Converter={StaticResource B2VConverter}}"
+                                                   IsHitTestVisible="False" CacheMode="BitmapCache" Margin="0,0,20,20"/>
+                                            <Border Grid.RowSpan="2" Grid.ColumnSpan="3"
+                                                    Visibility="{Binding IsSelectable, Converter={StaticResource B2VRConverter}}">
                                                 <Border.Background>
                                                     <SolidColorBrush Color="{StaticResource PhoneControlDisabledColor}"/>
                                                 </Border.Background>
@@ -128,7 +136,8 @@
 
             <PivotItem Margin="0,-16,0,0">
                 <PivotItem.Header>
-                    <TextBlock x:Name="TitleBlock" Text="{Binding [Viewer_StorageCamera], Source={StaticResource LocalizedStrings}}" Margin="0,8,0,0" Style="{StaticResource SubheaderTextBlockStyle}" FontWeight="Bold"/>
+                    <TextBlock x:Name="TitleBlock" Text="{Binding [Viewer_StorageCamera], Source={StaticResource LocalizedStrings}}"
+                               Margin="0,8,0,0" Style="{StaticResource SubheaderTextBlockStyle}" FontWeight="Bold"/>
                 </PivotItem.Header>
                 <Grid>
                     <TextBlock x:Name="UnsupportedMessage"
@@ -159,10 +168,16 @@
                                             <Grid.Background>
                                                 <SolidColorBrush Color="{StaticResource PhoneChromeColor}"/>
                                             </Grid.Background>
-                                            <Image Grid.ColumnSpan="3" Grid.RowSpan="2" x:Name="RemoteThumbnailImage" Width="108" Height="108" Stretch="Uniform" Source="{Binding Path=ThumbnailImage}" Tapped="RemoteThumbnailImage_Tapped"/>
-                                            <Image Grid.Row="1" Grid.Column="0" Source="/Assets/Screen/protected.png" Visibility="{Binding ProtectedIconVisibility, Mode=OneTime}" IsHitTestVisible="False" CacheMode="BitmapCache" Margin="0,0,20,20"/>
-                                            <Image Grid.Row="1" Grid.Column="2" Source="/Assets/Screen/mode_movie.png" Visibility="{Binding MovieIconVisibility, Mode=OneTime}" IsHitTestVisible="False" CacheMode="BitmapCache" Margin="0,0,20,20"/>
-                                            <Border Grid.RowSpan="2" Grid.ColumnSpan="3" Visibility="{Binding UnselectableMaskVisibility, FallbackValue=Collapsed}">
+                                            <Image Grid.ColumnSpan="3" Grid.RowSpan="2" x:Name="RemoteThumbnailImage" Width="108" Height="108" Stretch="Uniform"
+                                                   Source="{Binding Path=ThumbnailImage}" Tapped="RemoteThumbnailImage_Tapped"/>
+                                            <Image Grid.Row="1" Grid.Column="0" Source="/Assets/Screen/protected.png"
+                                                   Visibility="{Binding Path=Source.Protected, Converter={StaticResource B2VConverter}}"
+                                                   IsHitTestVisible="False" CacheMode="BitmapCache" Margin="0,0,20,20"/>
+                                            <Image Grid.Row="1" Grid.Column="2" Source="/Assets/Screen/mode_movie.png"
+                                                   Visibility="{Binding IsMovie, Converter={StaticResource B2VConverter}}"
+                                                   IsHitTestVisible="False" CacheMode="BitmapCache" Margin="0,0,20,20"/>
+                                            <Border Grid.RowSpan="2" Grid.ColumnSpan="3"
+                                                    Visibility="{Binding IsSelectable, Converter={StaticResource B2VRConverter}}">
                                                 <Border.Background>
                                                     <SolidColorBrush Color="{StaticResource PhoneControlDisabledColor}"/>
                                                 </Border.Background>
@@ -170,8 +185,10 @@
                                             <FlyoutBase.AttachedFlyout>
                                                 <MenuFlyout>
                                                     <MenuFlyoutItem Text="{Binding [Viewer_MenuPlayback], Source={StaticResource LocalizedStrings}}" Click="Playback_Click" />
-                                                    <MenuFlyoutItem Text="{Binding [Viewer_MenuCopyToPhone], Source={StaticResource LocalizedStrings}}" Click="CopyToPhone_Click" Visibility="{Binding CopyToPhoneVisibility}"/>
-                                                    <MenuFlyoutItem Text="{Binding [Viewer_MenuDelete], Source={StaticResource LocalizedStrings}}" Click="Delete_Click" Visibility="{Binding DeleteMenuVisiblity}" />
+                                                    <MenuFlyoutItem Text="{Binding [Viewer_MenuCopyToPhone], Source={StaticResource LocalizedStrings}}" Click="CopyToPhone_Click"
+                                                                    Visibility="{Binding IsMovie, Converter={StaticResource B2VRConverter}}"/>
+                                                    <MenuFlyoutItem Text="{Binding [Viewer_MenuDelete], Source={StaticResource LocalizedStrings}}" Click="Delete_Click"
+                                                                    Visibility="{Binding Path=Source.Protected, Converter={StaticResource B2VRConverter}}" />
                                                 </MenuFlyout>
                                             </FlyoutBase.AttachedFlyout>
                                         </Grid>

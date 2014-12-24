@@ -9,8 +9,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
-using Windows.UI.Core;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media.Imaging;
 
 namespace Kazyx.Uwpmm.DataModel
@@ -34,15 +32,7 @@ namespace Kazyx.Uwpmm.DataModel
 
         public ContentInfo Source { private set; get; }
 
-        public Visibility ProtectedIconVisibility
-        {
-            get
-            {
-                return Source.Protected ? Visibility.Visible : Visibility.Collapsed;
-            }
-        }
-
-        public Visibility MovieIconVisibility
+        public bool IsMovie
         {
             get
             {
@@ -50,28 +40,10 @@ namespace Kazyx.Uwpmm.DataModel
                 {
                     case ContentKind.MovieMp4:
                     case ContentKind.MovieXavcS:
-                        return Visibility.Visible;
+                        return true;
                     default:
-                        return Visibility.Collapsed;
+                        return false;
                 }
-            }
-        }
-
-        public Visibility CopyToPhoneVisibility
-        {
-            get { if (MovieIconVisibility == Visibility.Collapsed) { return Visibility.Visible; } else { return Visibility.Collapsed; } }
-        }
-
-        public Visibility DeleteMenuVisiblity
-        {
-            get { if (ProtectedIconVisibility == Visibility.Collapsed) { return Visibility.Visible; } else { return Visibility.Collapsed; } }
-        }
-
-        public Visibility UnselectableMaskVisibility
-        {
-            get
-            {
-                return IsSelectable ? Visibility.Collapsed : Visibility.Visible;
             }
         }
 
@@ -96,9 +68,9 @@ namespace Kazyx.Uwpmm.DataModel
                     case SelectivityFactor.None:
                         return true;
                     case SelectivityFactor.CopyToPhone:
-                        return MovieIconVisibility == Visibility.Collapsed;
+                        return !IsMovie;
                     case SelectivityFactor.Delete:
-                        return ProtectedIconVisibility == Visibility.Collapsed;
+                        return !Source.Protected;
                     default:
                         throw new NotImplementedException("Unknown SelectivityFactor");
                 }
