@@ -35,6 +35,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)Control\ComboBoxSetting.xaml.cs">
       <DependentUpon>ComboBoxSetting.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Control\EvSlider.xaml.cs">
+      <DependentUpon>EvSlider.xaml</DependentUpon>
+    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Control\FocusFrameSurface.xaml.cs">
       <DependentUpon>FocusFrameSurface.xaml</DependentUpon>
     </Compile>
@@ -188,6 +191,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="$(MSBuildThisFileDirectory)Control\ComboBoxSetting.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Control\EvSlider.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

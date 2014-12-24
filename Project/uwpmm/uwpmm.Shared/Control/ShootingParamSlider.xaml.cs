@@ -32,13 +32,13 @@ namespace Kazyx.Uwpmm.Control
         {
             set
             {
-                SetValue(PrameterProperty, value);
+                SetValue(ParameterProperty, value);
                 UpdateDisplay<string>(value);
             }
-            get { return (Capability<string>)GetValue(PrameterProperty); }
+            get { return (Capability<string>)GetValue(ParameterProperty); }
         }
 
-        public static readonly DependencyProperty PrameterProperty = DependencyProperty.Register(
+        public static readonly DependencyProperty ParameterProperty = DependencyProperty.Register(
             "Parameter",
             typeof(Capability<string>),
             typeof(ShootingParamSlider),

@@ -38,8 +38,6 @@ namespace Kazyx.Uwpmm.DataModel
                 NotifyChangedOnUI("ISODisplayValue");
                 NotifyChangedOnUI("ShutterSpeedVisibility");
                 NotifyChangedOnUI("ShutterSpeedDisplayValue");
-
-
             };
             Device.Api.AvailiableApisUpdated += (sender, e) =>
             {
@@ -60,7 +58,7 @@ namespace Kazyx.Uwpmm.DataModel
                 NotifyChangedOnUI("IsSetFNumberAvailable");
                 NotifyChangedOnUI("IsSetShutterSpeedAvailable");
                 NotifyChangedOnUI("IsSetIsoSpeedRateAvailable");
-
+                NotifyChangedOnUI("IsSetEVAvailable");
             };
         }
 
@@ -492,6 +490,7 @@ namespace Kazyx.Uwpmm.DataModel
         public bool IsSetFNumberAvailable { get { return IsShootingParamAvailable("setFNumber"); } }
         public bool IsSetShutterSpeedAvailable { get { return IsShootingParamAvailable("setShutterSpeed"); } }
         public bool IsSetIsoSpeedRateAvailable { get { return IsShootingParamAvailable("setIsoSpeedRate"); } }
+        public bool IsSetEVAvailable { get { return IsShootingParamAvailable("getExposureCompensation"); } }
 
         private bool IsShootingParamAvailable(string api) { return Device.Api != null && Device.Api.Capability.IsAvailable(api); }
     }
