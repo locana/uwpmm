@@ -1,5 +1,4 @@
-﻿using Kazyx.DeviceDiscovery;
-using Kazyx.ImageStream;
+﻿using Kazyx.ImageStream;
 using Kazyx.RemoteApi;
 using Kazyx.RemoteApi.Camera;
 using Kazyx.Uwpmm.CameraControl;
@@ -14,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
+using System.Threading.Tasks;
 using Windows.Networking.Proximity;
 using Windows.Phone.UI.Input;
 using Windows.Storage.FileProperties;
@@ -272,13 +272,19 @@ namespace Kazyx.Uwpmm.Pages
             }
         }
 
-        private void LiveViewPageLoaded()
+        private async void LiveViewPageLoaded()
         {
             screenViewData = new LiveviewScreenViewData(target);
             Liveview.DataContext = screenViewData;
             ShutterButton.DataContext = screenViewData;
             BatteryStatusDisplay.DataContext = target.Status.BatteryInfo;
             _FocusFrameSurface.ClearFrames();
+
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+            {
+                await Task.Delay(TimeSpan.FromMilliseconds(500));
+                PivotRoot.IsLocked = true;
+            });
         }
 
         private void LiveViewPageUnloaded()
@@ -480,6 +486,7 @@ namespace Kazyx.Uwpmm.Pages
 
         private void GoToEntranceScreen()
         {
+            PivotRoot.IsLocked = false;
             PivotRoot.SelectedIndex = 0;
         }
 
