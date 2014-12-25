@@ -59,6 +59,7 @@ namespace Kazyx.Uwpmm.DataModel
                 NotifyChangedOnUI("IsAvailableGetIsoSpeedRate");
                 NotifyChangedOnUI("IsAvailableGetEV");
                 NotifyChangedOnUI("IsShootingParamAvailable");
+                NotifyChangedOnUI("IsShootingParamSettingAvailable");
             };
         }
 
@@ -401,6 +402,7 @@ namespace Kazyx.Uwpmm.DataModel
             else { return ResourceManager.AccentColorBrush; }
         }
 
+        public bool IsShootingParamSettingAvailable { get { return IsSetFNumberAvailable || IsSetShutterSpeedAvailable || IsSetIsoSpeedRateAvailable || IsSetEVAvailable; } }
         public bool IsSetFNumberAvailable { get { return IsShootingParamAvailable("setFNumber"); } }
         public bool IsSetShutterSpeedAvailable { get { return IsShootingParamAvailable("setShutterSpeed"); } }
         public bool IsSetIsoSpeedRateAvailable { get { return IsShootingParamAvailable("setIsoSpeedRate"); } }

@@ -130,6 +130,11 @@
                                     <Image Source="/Assets/LiveviewScreen/ZoomIn.png" Margin="0"  />
                                 </Button>
                             </Grid>
+
+                            <Button  Tapped="Button_Tapped" Grid.ColumnSpan="3" Grid.RowSpan="2" HorizontalAlignment="Center" VerticalAlignment="Bottom"
+                                     MinWidth="1" BorderThickness="0" Padding="0" Visibility="{Binding IsShootingParamSettingAvailable, FallbackValue=Collapsed, Converter={StaticResource B2VConverter}}">
+                                <Image x:Name="OpenSliderImage" Source="/Assets/LiveviewScreen/OpenSlider.png" Width="50" Height="50" Margin="12,0,12,-10" />
+                            </Button>
                             <Grid x:Name="ShootingParams" Grid.Row="2" Grid.ColumnSpan="3" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Opacity="0.7"
                                   Visibility="{Binding IsShootingParamDisplayAvailable, FallbackValue=Collapsed, Converter={StaticResource B2VConverter}}">
                                 <Grid.ColumnDefinitions>
@@ -147,7 +152,7 @@
                                 <TextBlock Name="ISO" Foreground="{Binding IsoBrush}" Visibility="{Binding IsAvailableGetEV, FallbackValue=Collapsed, Converter={StaticResource B2VConverter}}" Text="{Binding ISODisplayValue}" 
                                            Style="{StaticResource ShootingParamStyle}"  Grid.Column="3"/>
                             </Grid>
-                            <Grid x:Name="ShootingParamSliders" Grid.Row="3" Grid.ColumnSpan="3" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Opacity="0.7">
+                            <Grid x:Name="ShootingParamSliders" Grid.Row="3" Grid.ColumnSpan="3" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Opacity="0.7" Visibility="Collapsed">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="auto"/>
                                     <RowDefinition Height="auto"/>

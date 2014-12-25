@@ -141,6 +141,7 @@
     <Content Include="$(MSBuildThisFileDirectory)Assets\LiveviewScreen\mode_photo.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\LiveviewScreen\Music.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\LiveviewScreen\no_memory_card.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\LiveviewScreen\OpenSlider.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\LiveviewScreen\ProgramShift.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\LiveviewScreen\rec.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\LiveviewScreen\ShutterSpeed.png" />

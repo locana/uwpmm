@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Foundation;
 using Windows.Networking.Proximity;
 using Windows.Phone.UI.Input;
 using Windows.Storage.FileProperties;
@@ -22,6 +23,8 @@ using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 
@@ -965,6 +968,40 @@ namespace Kazyx.Uwpmm.Pages
         private void HideSettingAnimation_Completed(object sender, object e)
         {
             AppSettingPanel.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+        }
+
+        private void Button_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            if (ShootingParamSliders.Visibility == Windows.UI.Xaml.Visibility.Visible)
+            {
+                ShootingParamSliders.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                StartOpenSliderAnimation(180, 0);
+            }
+            else
+            {
+                ShootingParamSliders.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                StartOpenSliderAnimation(0, 180);
+            }
+        }
+
+        public void StartOpenSliderAnimation(double from, double to)
+        {
+            var duration = new Duration(TimeSpan.FromMilliseconds(200));
+            var sb = new Storyboard() { Duration = duration };
+            var da = new DoubleAnimation() { Duration = duration };
+
+            sb.Children.Add(da);
+
+            var rt = new RotateTransform();
+
+            Storyboard.SetTarget(da, rt);
+            Storyboard.SetTargetProperty(da, "Angle");
+            da.From = from;
+            da.To = to;
+
+            OpenSliderImage.RenderTransform = rt;
+            OpenSliderImage.RenderTransformOrigin = new Point(0.5, 0.5);
+            sb.Begin();
         }
     }
 }
