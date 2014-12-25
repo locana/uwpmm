@@ -83,9 +83,9 @@
                                 <Image Source="{Binding ShootModeImage, Mode=OneWay}" />
                                 <Image Source="{Binding ExposureModeImage, Mode=OneWay}" Grid.Column="1" Margin="3"/>
                                 <Image Name="RecDisplay" Source="/Assets/LiveviewScreen/rec.png" Grid.Column="2" Margin="3"
-                                   Visibility="{Binding RecDisplayVisibility, Mode=OneWay, FallbackValue=Collapsed}"/>
+                                   Visibility="{Binding IsRecording, FallbackValue=Collapsed, Converter={StaticResource B2VConverter}}"/>
                                 <TextBlock Text="{Binding RecordingCount}" Grid.Column="3" FontSize="16" VerticalAlignment="Center" Margin="3"
-                                           Visibility="{Binding RecordingCountVisibility}"/>
+                                           Visibility="{Binding IsRecordingCountAvailable, FallbackValue=Collapsed, Converter={StaticResource B2VConverter}}"/>
                                 <Image Source="{Binding MemoryCardStatusImage}" Grid.Column="5" Margin="3"/>
                                 <TextBlock Text="{Binding RecordbaleAmount}" Grid.Column="6" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="3,3,6,3"/>
                                 <controls:BatteryStatus x:Name="BatteryStatusDisplay" Grid.Column="7" BatteryInfo="{Binding Mode=OneWay}" Height="22" Width="44" VerticalAlignment="Center" />
@@ -113,10 +113,10 @@
                                     <Image Source="{Binding ShutterButtonImage}" Margin="8"/>
                                 </Button>
                             </Grid>
-                            <controls:ZoomBar Grid.Column="0" Grid.Row="0" Height="13" Margin="16,4,4,4"  VerticalAlignment="Bottom" Visibility="{Binding ZoomInterfacesVisibility}"
+                            <controls:ZoomBar Grid.Column="0" Grid.Row="0" Height="13" Margin="16,4,4,4"  VerticalAlignment="Bottom" Visibility="{Binding IsZoomAvailable, FallbackValue=Collapsed, Converter={StaticResource B2VConverter}}"
                                               PositionInCurrentBox="{Binding ZoomPositionInCurrentBox, Mode=OneWay, FallbackValue=0}" CurrentBoxIndex="{Binding ZoomBoxIndex, Mode=OneWay, FallbackValue=0}"
                                               TotalBoxNum="{Binding ZoomBoxNum, Mode=OneWay, FallbackValue=1}" Width="140"  />
-                            <Grid  Grid.Column="0" Grid.Row="1" Height="60" Visibility="{Binding ZoomInterfacesVisibility}" Margin="16,0,0,0">
+                            <Grid  Grid.Column="0" Grid.Row="1" Height="60" Visibility="{Binding IsZoomAvailable, FallbackValue=Collapsed, Converter={StaticResource B2VConverter}}" Margin="16,0,0,0">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="*"/>
@@ -130,20 +130,21 @@
                                     <Image Source="/Assets/LiveviewScreen/ZoomIn.png" Margin="0"  />
                                 </Button>
                             </Grid>
-                            <Grid x:Name="ShootingParams" Grid.Row="2" Grid.ColumnSpan="3" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Opacity="0.7">
+                            <Grid x:Name="ShootingParams" Grid.Row="2" Grid.ColumnSpan="3" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Opacity="0.7"
+                                  Visibility="{Binding IsShootingParamDisplayAvailable, FallbackValue=Collapsed, Converter={StaticResource B2VConverter}}">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
-                                <TextBlock Name="ShutterSpeed" Foreground="{Binding ShutterSpeedBrush}" Visibility="{Binding ShutterSpeedVisibility, FallbackValue=Collapsed}" Text="{Binding ShutterSpeedDisplayValue}"  
+                                <TextBlock Name="ShutterSpeed" Foreground="{Binding ShutterSpeedBrush}" Visibility="{Binding IsAvailableGetShutterSpeed, FallbackValue=Collapsed, Converter={StaticResource B2VConverter}}" Text="{Binding ShutterSpeedDisplayValue}"  
                                            Style="{StaticResource ShootingParamStyle}" Grid.Column="0"/>
-                                <TextBlock Name="Fnumber" Foreground="{Binding FNumberBrush}"  Visibility="{Binding FnumberVisibility, FallbackValue=Collapsed}" Text="{Binding FnumberDisplayValue}" 
+                                <TextBlock Name="Fnumber" Foreground="{Binding FNumberBrush}"  Visibility="{Binding IsAvailableGetFNumber, FallbackValue=Collapsed, Converter={StaticResource B2VConverter}}" Text="{Binding FnumberDisplayValue}" 
                                            Style="{StaticResource ShootingParamStyle}" Grid.Column="1"/>
-                                <TextBlock Name="Ev" Foreground="{Binding EvBrush}" Visibility="{Binding EvVisibility, FallbackValue=Collapsed}" Text="{Binding EvDisplayValue}" 
+                                <TextBlock Name="Ev" Foreground="{Binding EvBrush}" Visibility="{Binding IsAvailableGetIsoSpeedRate, FallbackValue=Collapsed, Converter={StaticResource B2VConverter}}" Text="{Binding EvDisplayValue}" 
                                            Style="{StaticResource ShootingParamStyle}"   Grid.Column="2"/>
-                                <TextBlock Name="ISO" Foreground="{Binding IsoBrush}" Visibility="{Binding ISOVisibility, FallbackValue=Collapsed}" Text="{Binding ISODisplayValue}" 
+                                <TextBlock Name="ISO" Foreground="{Binding IsoBrush}" Visibility="{Binding IsAvailableGetEV, FallbackValue=Collapsed, Converter={StaticResource B2VConverter}}" Text="{Binding ISODisplayValue}" 
                                            Style="{StaticResource ShootingParamStyle}"  Grid.Column="3"/>
                             </Grid>
                             <Grid x:Name="ShootingParamSliders" Grid.Row="3" Grid.ColumnSpan="3" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Opacity="0.7">
@@ -203,7 +204,7 @@
                             </ScrollViewer.Resources>
                             <StackPanel x:Name="ControlPanel" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
                         </ScrollViewer>
-                        <Grid Name="ProcessingDisplay" HorizontalAlignment="Stretch" VerticalAlignment="Center" Height="80" Visibility="{Binding ProgressDisplayVisibility, Mode=OneWay, FallbackValue=Collapsed}">
+                        <Grid Name="ProcessingDisplay" HorizontalAlignment="Stretch" VerticalAlignment="Center" Height="80" Visibility="{Binding Processing, Mode=OneWay, FallbackValue=Collapsed, Converter={StaticResource B2VConverter}}">
                             <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Opacity="0.5"
                                        Fill="{ThemeResource ApplicationPageBackgroundThemeBrush}"/>
                             <ProgressBar HorizontalAlignment="Stretch" IsIndeterminate="True"/>

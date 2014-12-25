@@ -3,7 +3,6 @@ using Kazyx.RemoteApi.Camera;
 using Kazyx.Uwpmm.CameraControl;
 using Kazyx.Uwpmm.Utility;
 using System;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 namespace Kazyx.Uwpmm.DataModel
@@ -22,14 +21,14 @@ namespace Kazyx.Uwpmm.DataModel
                 NotifyChangedOnUI("ZoomBoxNum");
                 NotifyChangedOnUI("ShutterButtonImage");
                 NotifyChangedOnUI("ShutterButtonEnabled");
-                NotifyChangedOnUI("RecDisplayVisibility");
-                NotifyChangedOnUI("ProgressDisplayVisibility");
+                NotifyChangedOnUI("IsRecording");
+                NotifyChangedOnUI("Processing");
                 NotifyChangedOnUI("ShootModeImage");
                 NotifyChangedOnUI("ExposureModeImage");
                 NotifyChangedOnUI("MemoryCardStatusImage");
                 NotifyChangedOnUI("RecordbaleAmount");
                 NotifyChangedOnUI("RecordingCount");
-                NotifyChangedOnUI("RecordingCountVisibility");
+                NotifyChangedOnUI("IsRecordingCountAvailable");
                 NotifyChangedOnUI("EvVisibility");
                 NotifyChangedOnUI("EvDisplayValue");
                 NotifyChangedOnUI("FnumberVisibility");
@@ -41,24 +40,25 @@ namespace Kazyx.Uwpmm.DataModel
             };
             Device.Api.AvailiableApisUpdated += (sender, e) =>
             {
-                NotifyChangedOnUI("ZoomInterfacesVisibility");
+                NotifyChangedOnUI("IsZoomAvailable");
                 NotifyChangedOnUI("ShutterButtonEnabled");
-                NotifyChangedOnUI("RecDisplayVisibility");
+                NotifyChangedOnUI("IsRecording");
                 NotifyChangedOnUI("FNumberBrush");
                 NotifyChangedOnUI("ShutterSpeedBrush");
                 NotifyChangedOnUI("EvBrush");
                 NotifyChangedOnUI("IsoBrush");
-                NotifyChangedOnUI("ShutterSpeedVisibility");
                 NotifyChangedOnUI("ShutterSpeedDisplayValue");
-                NotifyChangedOnUI("ISOVisibility");
                 NotifyChangedOnUI("ISODisplayValue");
-                NotifyChangedOnUI("FnumberVisibility");
                 NotifyChangedOnUI("FnumberDisplayValue");
-                NotifyChangedOnUI("EvVisibility");
                 NotifyChangedOnUI("IsSetFNumberAvailable");
                 NotifyChangedOnUI("IsSetShutterSpeedAvailable");
                 NotifyChangedOnUI("IsSetIsoSpeedRateAvailable");
                 NotifyChangedOnUI("IsSetEVAvailable");
+                NotifyChangedOnUI("IsAvailableGetShutterSpeed");
+                NotifyChangedOnUI("IsAvailableGetFNumber");
+                NotifyChangedOnUI("IsAvailableGetIsoSpeedRate");
+                NotifyChangedOnUI("IsAvailableGetEV");
+                NotifyChangedOnUI("IsShootingParamAvailable");
             };
         }
 
@@ -203,46 +203,39 @@ namespace Kazyx.Uwpmm.DataModel
             }
         }
 
-        public Visibility ZoomInterfacesVisibility
-        {
-            get
-            {
-                if (Device.Api.Capability.IsAvailable("actZoom")) { return Visibility.Visible; }
-                return Visibility.Collapsed;
-            }
-        }
+        public bool IsZoomAvailable { get { return Device.Api.Capability != null && Device.Api.Capability.IsAvailable("actZoom"); } }
 
-        public Visibility RecDisplayVisibility
+        public bool IsRecording
         {
             get
             {
-                if (Device.Status == null) { return Visibility.Collapsed; }
+                if (Device.Status == null) { return false; }
                 switch (Device.Status.Status)
                 {
                     case EventParam.MvRecording:
                     case EventParam.AuRecording:
                     case EventParam.ItvRecording:
-                        return Visibility.Visible;
+                        return true;
                 }
-
-                return Visibility.Collapsed;
+                return false;
             }
         }
 
-        public Visibility ProgressDisplayVisibility
+        public bool Processing
         {
             get
             {
-                if (Device.Status == null) { return Visibility.Visible; }
+
+                if (Device.Status == null) { return true; }
                 switch (Device.Status.Status)
                 {
                     case EventParam.Idle:
                     case EventParam.MvRecording:
                     case EventParam.AuRecording:
                     case EventParam.ItvRecording:
-                        return Visibility.Collapsed;
+                        return false;
                 }
-                return Visibility.Visible;
+                return true;
             }
         }
 
@@ -323,36 +316,29 @@ namespace Kazyx.Uwpmm.DataModel
             }
         }
 
-        public Visibility RecordingCountVisibility
+        public bool IsRecordingCountAvailable
         {
             get
             {
-                if (Device.Status.ShootMode == null) { return Visibility.Collapsed; }
+                if (Device.Status.ShootMode == null) { return false; }
                 switch (Device.Status.ShootMode.Current)
                 {
                     case ShootModeParam.Movie:
-                        if (Device.Status.RecordingTimeSec >= 0 && Device.Status.Status == EventParam.MvRecording) { return Visibility.Visible; }
-                        break;
+                        return Device.Status.RecordingTimeSec >= 0 && Device.Status.Status == EventParam.MvRecording;
                     case ShootModeParam.Audio:
-                        if (Device.Status.RecordingTimeSec >= 0 && Device.Status.Status == EventParam.AuRecording) { return Visibility.Visible; }
-                        break;
+                        return Device.Status.RecordingTimeSec >= 0 && Device.Status.Status == EventParam.AuRecording;
                     case ShootModeParam.Interval:
-                        if (Device.Status.NumberOfShots >= 0 && Device.Status.Status == EventParam.ItvRecording) { return Visibility.Visible; }
-                        break;
+                        return Device.Status.NumberOfShots >= 0 && Device.Status.Status == EventParam.ItvRecording;
                 }
-                return Visibility.Collapsed;
+                return false;
             }
         }
 
-
-        public Visibility ShutterSpeedVisibility
-        {
-            get
-            {
-                if (Device.Status == null || Device.Status.ShutterSpeed == null || Device.Status.ShutterSpeed.Current == null || !Device.Api.Capability.IsAvailable("getShutterSpeed")) { return Visibility.Collapsed; }
-                else { return Visibility.Visible; }
-            }
-        }
+        public bool IsShootingParamDisplayAvailable { get { return IsAvailableGetEV || IsAvailableGetFNumber || IsAvailableGetIsoSpeedRate || IsAvailableGetShutterSpeed; } }
+        public bool IsAvailableGetShutterSpeed { get { return Device.Status != null && Device.Status.ShutterSpeed != null && Device.Status.ShutterSpeed.Current != null && Device.Api.Capability.IsAvailable("getShutterSpeed"); } }
+        public bool IsAvailableGetFNumber { get { return Device.Status != null && Device.Status.FNumber != null && Device.Status.FNumber.Current != null && Device.Api.Capability.IsAvailable("getFNumber"); } }
+        public bool IsAvailableGetIsoSpeedRate { get { return Device.Status != null && Device.Status.ISOSpeedRate != null && Device.Status.ISOSpeedRate.Current != null && Device.Api.Capability.IsAvailable("getIsoSpeedRate"); } }
+        public bool IsAvailableGetEV { get { return Device.Status != null && Device.Status.EvInfo != null && Device.Api.Capability.IsAvailable("getExposureCompensation"); } }
 
         public string ShutterSpeedDisplayValue
         {
@@ -369,74 +355,12 @@ namespace Kazyx.Uwpmm.DataModel
             }
         }
 
-        public Visibility ISOVisibility
-        {
-            get
-            {
-                if (Device.Status == null || Device.Status.ISOSpeedRate == null || Device.Status.ISOSpeedRate.Current == null || !Device.Api.Capability.IsAvailable("getIsoSpeedRate")) { return Visibility.Collapsed; }
-                else { return Visibility.Visible; }
-            }
-        }
-
         public string ISODisplayValue
         {
             get
             {
-                if (Device.Status == null || Device.Status.ISOSpeedRate == null || Device.Status.ISOSpeedRate.Current == null) { return "ISO: --"; }
+                if (Device.Status == null || Device.Status.ISOSpeedRate == null || Device.Status.ISOSpeedRate.Current == null) { return ""; }
                 else { return "ISO " + Device.Status.ISOSpeedRate.Current; }
-            }
-        }
-
-        public Visibility ProgramShiftVisibility
-        {
-            get
-            {
-                if (Device.Status == null || Device.Status.ProgramShiftRange == null || Device.Status.ExposureMode == null || Device.Status.ExposureMode.Current != ExposureMode.Program) { return Visibility.Collapsed; }
-                else { return Visibility.Visible; }
-            }
-        }
-
-        private int _ProgramShift = 0;
-        public int ProgramShift
-        {
-            get
-            {
-                if (Device.Status == null || !Device.Status.ProgramShiftActivated)
-                {
-                    _ProgramShift = 0;
-                }
-                return _ProgramShift;
-            }
-            set
-            {
-                _ProgramShift = value;
-            }
-        }
-
-        public int MaxProgramShift
-        {
-            get
-            {
-                if (Device.Status == null || Device.Status.ProgramShiftRange == null) { return 0; }
-                else { return Device.Status.ProgramShiftRange.Max; }
-            }
-        }
-
-        public int MinProgramShift
-        {
-            get
-            {
-                if (Device.Status == null || Device.Status.ProgramShiftRange == null) { return 0; }
-                else { return Device.Status.ProgramShiftRange.Min; }
-            }
-        }
-
-        public Visibility FnumberVisibility
-        {
-            get
-            {
-                if (Device.Status == null || Device.Status.FNumber == null || Device.Status.FNumber.Current == null || !Device.Api.Capability.IsAvailable("getFNumber")) { return Visibility.Collapsed; }
-                else { return Visibility.Visible; }
             }
         }
 
@@ -447,27 +371,6 @@ namespace Kazyx.Uwpmm.DataModel
                 if (Device.Status == null || Device.Status.FNumber == null || Device.Status.FNumber.Current == null) { return "F--"; }
                 else { return "F" + Device.Status.FNumber.Current; }
             }
-        }
-
-        public Visibility EvVisibility
-        {
-            get
-            {
-                if (Device.Status == null || Device.Status.EvInfo == null || !Device.Api.Capability.IsAvailable("getExposureCompensation")) { return Visibility.Collapsed; }
-                else { return Visibility.Visible; }
-            }
-        }
-
-
-        public Brush FNumberBrush { get { return ShootingParamBrush("setFNumber"); } }
-        public Brush ShutterSpeedBrush { get { return ShootingParamBrush("setShutterSpeed"); } }
-        public Brush EvBrush { get { return ShootingParamBrush("setExposureCompensation"); } }
-        public Brush IsoBrush { get { return ShootingParamBrush("setIsoSpeedRate"); } }
-
-        private Brush ShootingParamBrush(string api)
-        {
-            if (Device.Api == null || !Device.Api.Capability.IsAvailable(api)) { return ResourceManager.ForegroundBrush; }
-            else { return ResourceManager.AccentColorBrush; }
         }
 
         public string EvDisplayValue
@@ -485,6 +388,17 @@ namespace Kazyx.Uwpmm.DataModel
                     else { return "EV +" + strValue; }
                 }
             }
+        }
+
+        public Brush FNumberBrush { get { return ShootingParamBrush("setFNumber"); } }
+        public Brush ShutterSpeedBrush { get { return ShootingParamBrush("setShutterSpeed"); } }
+        public Brush EvBrush { get { return ShootingParamBrush("setExposureCompensation"); } }
+        public Brush IsoBrush { get { return ShootingParamBrush("setIsoSpeedRate"); } }
+
+        private Brush ShootingParamBrush(string api)
+        {
+            if (Device.Api == null || !Device.Api.Capability.IsAvailable(api)) { return ResourceManager.ForegroundBrush; }
+            else { return ResourceManager.AccentColorBrush; }
         }
 
         public bool IsSetFNumberAvailable { get { return IsShootingParamAvailable("setFNumber"); } }
