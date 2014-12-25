@@ -9,7 +9,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Loaded="Page_Loaded">
-    
+
     <Page.Resources>
         <util:BoolToVisibilityConverter x:Key="B2VConverter" />
         <util:BoolToVisibilityReverseConverter x:Key="B2VRConverter" />
@@ -84,10 +84,10 @@
                                 <Image Source="{Binding ExposureModeImage, Mode=OneWay}" Grid.Column="1" Margin="3"/>
                                 <Image Name="RecDisplay" Source="/Assets/LiveviewScreen/rec.png" Grid.Column="2" Margin="3"
                                    Visibility="{Binding IsRecording, FallbackValue=Collapsed, Converter={StaticResource B2VConverter}}"/>
-                                <TextBlock Text="{Binding RecordingCount}" Grid.Column="3" FontSize="16" VerticalAlignment="Center" Margin="3"
+                                <TextBlock Text="{Binding RecordingCount}" Grid.Column="3" FontSize="16" VerticalAlignment="Center" Margin="3,6,3,3"
                                            Visibility="{Binding IsRecordingCountAvailable, FallbackValue=Collapsed, Converter={StaticResource B2VConverter}}"/>
                                 <Image Source="{Binding MemoryCardStatusImage}" Grid.Column="5" Margin="3"/>
-                                <TextBlock Text="{Binding RecordbaleAmount}" Grid.Column="6" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="3,3,6,3"/>
+                                <TextBlock Text="{Binding RecordbaleAmount}" Grid.Column="6" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="3,6,6,3"/>
                                 <controls:BatteryStatus x:Name="BatteryStatusDisplay" Grid.Column="7" BatteryInfo="{Binding Mode=OneWay}" Height="22" Width="44" VerticalAlignment="Center" />
                             </Grid>
                             <controls:Histogram Margin="6,6" HorizontalAlignment="Left" VerticalAlignment="Center" x:Name="HistogramControl" Width="120" Height="90" Grid.Row="2"
