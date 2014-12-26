@@ -29,6 +29,9 @@
         <Storyboard x:Name="HideSettingAnimation">
             <DoubleAnimation Duration="0:0:0.1" From="0.9" To="0.0" Storyboard.TargetProperty="Opacity" Storyboard.TargetName="AppSettings" />
         </Storyboard>
+
+        <control:GridViewItemSelectivityBinder
+            x:Key="GridViewItemSelectivityBinder" />
     </Page.Resources>
 
     <Grid x:Name="LayoutRoot">
@@ -46,7 +49,8 @@
                                       SelectionChanged="LocalGrid_SelectionChanged"
                                       ScrollViewer.IsHorizontalScrollChainingEnabled="False"
                                       Loaded="LocalGrid_Loaded"
-                                      Unloaded="LocalGrid_Unloaded">
+                                      Unloaded="LocalGrid_Unloaded"
+                                      ItemContainerStyleSelector="{StaticResource GridViewItemSelectivityBinder}">
                                 <GridView.ItemTemplate>
                                     <DataTemplate>
                                         <Grid Height="116" Width="116" Margin="2,2" Holding="LocalGrid_Holding">
@@ -152,7 +156,8 @@
                                       SelectionChanged="RemoteGrid_SelectionChanged"
                                       ScrollViewer.IsHorizontalScrollChainingEnabled="False"
                                       Loaded="RemoteGrid_Loaded"
-                                      Unloaded="RemoteGrid_Unloaded">
+                                      Unloaded="RemoteGrid_Unloaded"
+                                      ItemContainerStyleSelector="{StaticResource GridViewItemSelectivityBinder}">
                                 <GridView.ItemTemplate>
                                     <DataTemplate>
                                         <Grid Height="116" Width="116" Margin="2,2" Holding="RemoteGrid_Holding">
@@ -191,6 +196,7 @@
                                                                     Visibility="{Binding Path=Source.Protected, Converter={StaticResource B2VRConverter}}" />
                                                 </MenuFlyout>
                                             </FlyoutBase.AttachedFlyout>
+
                                         </Grid>
                                     </DataTemplate>
                                 </GridView.ItemTemplate>

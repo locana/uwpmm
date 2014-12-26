@@ -35,6 +35,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Control\ComboBoxSetting.xaml.cs">
       <DependentUpon>ComboBoxSetting.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Control\GridViewItemSelectivityBinder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Control\EvSlider.xaml.cs">
       <DependentUpon>EvSlider.xaml</DependentUpon>
     </Compile>

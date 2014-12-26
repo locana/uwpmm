@@ -54,7 +54,6 @@ namespace Kazyx.Uwpmm.DataModel
             {
                 factor = value;
                 NotifyChanged("IsSelectable");
-                NotifyChanged("UnselectableMaskVisibility");
             }
             get { return factor; }
         }
@@ -75,7 +74,6 @@ namespace Kazyx.Uwpmm.DataModel
                         throw new NotImplementedException("Unknown SelectivityFactor");
                 }
             }
-            //get { return MovieIconVisibility == Visibility.Collapsed; }
         }
 
         private string DeviceUuid { set; get; }
