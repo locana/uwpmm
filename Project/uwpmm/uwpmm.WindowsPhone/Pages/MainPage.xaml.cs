@@ -379,12 +379,7 @@ namespace Kazyx.Uwpmm.Pages
                     ControlPanel.Children.Add(panel);
                 }
 
-                if (!target.Api.Capability.IsSupported("setLiveviewFrameInfo"))
-                {
-                    // For devices which does not support to transfer focus frame info, draw focus frame itself.
-                    _FocusFrameSurface.SelfDrawTouchAFFrame = true;
-                }
-                else { _FocusFrameSurface.SelfDrawTouchAFFrame = false; }
+                SetupFocusFrame();
 
                 ShootingParamSliders.DataContext = new ShootingParamViewData() { Status = target.Status, Liveview = screenViewData };
                 FnumberSlider.SliderOperated += async (s, arg) =>
@@ -412,6 +407,16 @@ namespace Kazyx.Uwpmm.Pages
                     catch (RemoteApiException) { }
                 };
             });
+        }
+
+        private void SetupFocusFrame()
+        {
+            if (!target.Api.Capability.IsSupported("setLiveviewFrameInfo") && target.Api.Capability.IsAvailable("setTouchAFPosition"))
+            {
+                // For devices which does not support to transfer focus frame info, draw focus frame itself.
+                _FocusFrameSurface.SelfDrawTouchAFFrame = true;
+            }
+            else { _FocusFrameSurface.SelfDrawTouchAFFrame = false; }
         }
 
         void Status_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -453,6 +458,9 @@ namespace Kazyx.Uwpmm.Pages
                     break;
                 case "BatteryInfo":
                     BatteryStatusDisplay.BatteryInfo = status.BatteryInfo;
+                    break;
+                case "AvailableApis":
+                    SetupFocusFrame();
                     break;
                 default:
                     break;
