@@ -1,5 +1,4 @@
-﻿using Kazyx.DeviceDiscovery;
-using Kazyx.RemoteApi.AvContent;
+﻿using Kazyx.RemoteApi.AvContent;
 using Kazyx.RemoteApi.Camera;
 using Kazyx.Uwpmm.CameraControl;
 using Kazyx.Uwpmm.Common;
@@ -52,21 +51,13 @@ namespace Kazyx.Uwpmm.Pages
             CommandBarManager.SetEvent(AppBarItem.DownloadMultiple, (sender, e) =>
             {
                 DebugUtil.Log("Download clicked");
-                if (RemoteGridSource != null)
-                {
-                    RemoteGridSource.SelectivityFactor = SelectivityFactor.CopyToPhone;
-                }
-                RemoteGrid.SelectionMode = ListViewSelectionMode.Multiple;
+                UpdateRemoteSelectionMode(SelectivityFactor.CopyToPhone);
                 UpdateInnerState(ViewerState.RemoteSelecting);
             });
             CommandBarManager.SetEvent(AppBarItem.DeleteMultiple, (sender, e) =>
             {
                 DebugUtil.Log("Delete clicked");
-                if (RemoteGridSource != null)
-                {
-                    RemoteGridSource.SelectivityFactor = SelectivityFactor.Delete;
-                }
-                RemoteGrid.SelectionMode = ListViewSelectionMode.Multiple;
+                UpdateRemoteSelectionMode(SelectivityFactor.Delete);
                 UpdateInnerState(ViewerState.RemoteSelecting);
             });
             CommandBarManager.SetEvent(AppBarItem.ShowDetailInfo, (sender, e) =>
@@ -102,7 +93,7 @@ namespace Kazyx.Uwpmm.Pages
                                 DebugUtil.Log("Nothing to do for current SelectivityFactor");
                                 break;
                         }
-                        RemoteGrid.SelectionMode = ListViewSelectionMode.None;
+                        UpdateRemoteSelectionMode(SelectivityFactor.None);
                         UpdateInnerState(ViewerState.RemoteSingle);
                         break;
                     default:
@@ -244,6 +235,21 @@ namespace Kazyx.Uwpmm.Pages
             }
             MovieStreamHelper.INSTANCE.StreamClosed += MovieStreamHelper_StreamClosed;
             MovieStreamHelper.INSTANCE.StatusChanged += MovieStream_StatusChanged;
+        }
+
+        private void UpdateRemoteSelectionMode(SelectivityFactor factor)
+        {
+            RemoteGridSource.SelectivityFactor = factor;
+            switch (factor)
+            {
+                case SelectivityFactor.None:
+                    RemoteGrid.SelectionMode = ListViewSelectionMode.None;
+                    break;
+                case SelectivityFactor.CopyToPhone:
+                case SelectivityFactor.Delete:
+                    RemoteGrid.SelectionMode = ListViewSelectionMode.Multiple;
+                    break;
+            }
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
@@ -763,7 +769,7 @@ namespace Kazyx.Uwpmm.Pages
 
         private void Pivot_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            RemoteGrid.SelectionMode = ListViewSelectionMode.None;
+            UpdateRemoteSelectionMode(SelectivityFactor.None);
             var pivot = sender as Pivot;
             switch (pivot.SelectedIndex)
             {
@@ -822,7 +828,6 @@ namespace Kazyx.Uwpmm.Pages
                 contents.ContentUris.Add(data.Source.Uri);
             }
             DeleteContents(contents);
-            RemoteGrid.SelectionMode = ListViewSelectionMode.None;
         }
 
         private void FetchSelectedImages()
@@ -844,7 +849,6 @@ namespace Kazyx.Uwpmm.Pages
                     DebugUtil.Log(e.StackTrace);
                 }
             }
-            RemoteGrid.SelectionMode = ListViewSelectionMode.None;
         }
 
         private void EnqueueImageDownload(Thumbnail source)
@@ -906,24 +910,6 @@ namespace Kazyx.Uwpmm.Pages
             }
         }
         */
-        /*
-        private void PhoneApplicationPage_OrientationChanged(object sender, OrientationChangedEventArgs e)
-        {
-            DebugUtil.Log("Orientation changed: " + e.Orientation);
-            switch (e.Orientation)
-            {
-                case PageOrientation.LandscapeLeft:
-                    MovieScreen.Margin = new Thickness(12, 12, 72, 12);
-                    break;
-                case PageOrientation.LandscapeRight:
-                    MovieScreen.Margin = new Thickness(72, 12, 12, 12);
-                    break;
-                case PageOrientation.Portrait:
-                    MovieScreen.Margin = new Thickness(12);
-                    break;
-            }
-        }
-         * */
 
         private void Playback_Click(object sender, RoutedEventArgs e)
         {

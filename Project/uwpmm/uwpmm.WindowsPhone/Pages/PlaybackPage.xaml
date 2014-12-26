@@ -74,7 +74,7 @@
                                             <Border Grid.RowSpan="2" Grid.ColumnSpan="3"
                                                     Visibility="{Binding IsSelectable, Converter={StaticResource B2VRConverter}}">
                                                 <Border.Background>
-                                                    <SolidColorBrush Color="{StaticResource PhoneControlDisabledColor}"/>
+                                                    <SolidColorBrush Color="{ThemeResource ContentDialogDimmingColor}"/>
                                                 </Border.Background>
                                             </Border>
                                             <FlyoutBase.AttachedFlyout>
@@ -184,7 +184,7 @@
                                             <Border Grid.RowSpan="2" Grid.ColumnSpan="3"
                                                     Visibility="{Binding IsSelectable, Converter={StaticResource B2VRConverter}}">
                                                 <Border.Background>
-                                                    <SolidColorBrush Color="{StaticResource PhoneControlDisabledColor}"/>
+                                                    <SolidColorBrush Color="{ThemeResource ContentDialogDimmingColor}"/>
                                                 </Border.Background>
                                             </Border>
                                             <FlyoutBase.AttachedFlyout>
