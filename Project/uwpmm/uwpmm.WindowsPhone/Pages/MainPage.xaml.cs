@@ -406,6 +406,12 @@ namespace Kazyx.Uwpmm.Pages
                     try { await target.Api.Camera.SetEvIndexAsync(arg.Selected); }
                     catch (RemoteApiException) { }
                 };
+                ProgramShiftSlider.SliderOperated += async (s, arg) =>
+                {
+                    DebugUtil.Log("Program shift operated: " + arg.OperatedStep);
+                    try { await target.Api.Camera.SetProgramShiftAsync(arg.OperatedStep); }
+                    catch (RemoteApiException) { }
+                };
             });
         }
 

@@ -158,6 +158,7 @@
                                     <RowDefinition Height="auto"/>
                                     <RowDefinition Height="auto"/>
                                     <RowDefinition Height="auto"/>
+                                    <RowDefinition Height="auto"/>
                                 </Grid.RowDefinitions>
                                 <controls:ShootingParamSlider x:Name="FnumberSlider" IconSource="/Assets/LiveviewScreen/aperture.png"
                                                               Parameter="{Binding Status.FNumber}" Visibility="{Binding Path=Liveview.IsSetFNumberAvailable, Converter={StaticResource B2VConverter}}" />
@@ -167,6 +168,8 @@
                                                               Parameter="{Binding Status.ISOSpeedRate}" Grid.Row="2" Visibility="{Binding Path=Liveview.IsSetIsoSpeedRateAvailable, Converter={StaticResource B2VConverter}}"/>
                                 <controls:EvSlider x:Name="EvSlider" IconSource="/Assets/LiveviewScreen/EVComp.png"
                                                               Parameter="{Binding Status.EvInfo}" Grid.Row="3" Visibility="{Binding Path=Liveview.IsSetEVAvailable, Converter={StaticResource B2VConverter}}"/>
+                                <controls:ProgramShiftSlider x:Name="ProgramShiftSlider" Grid.Row="4" Visibility="{Binding Path=Liveview.IsProgramShiftAvailable, Converter={StaticResource B2VConverter}}"
+                                                             IconSource="/Assets/LiveviewScreen/ProgramShift.png"/>
                             </Grid>
                         </Grid>
                         <ScrollViewer Name="ControlPanelScrollViewer" Margin="28,0,0,0" Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Right" Width="200"

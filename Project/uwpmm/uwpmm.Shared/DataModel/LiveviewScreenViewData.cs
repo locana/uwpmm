@@ -60,6 +60,7 @@ namespace Kazyx.Uwpmm.DataModel
                 NotifyChangedOnUI("IsAvailableGetEV");
                 NotifyChangedOnUI("IsShootingParamAvailable");
                 NotifyChangedOnUI("IsShootingParamSettingAvailable");
+                NotifyChangedOnUI("IsProgramShiftAvailable");
             };
         }
 
@@ -142,6 +143,7 @@ namespace Kazyx.Uwpmm.DataModel
                     case ExposureMode.Superior:
                         return IAPlusModeImage;
                     case ExposureMode.Program:
+                        if (Device.Status.ProgramShiftActivated) { return PShiftModeImage; }
                         return PModeImage;
                     case ExposureMode.Aperture:
                         return AModeImage;
@@ -407,8 +409,9 @@ namespace Kazyx.Uwpmm.DataModel
         public bool IsSetShutterSpeedAvailable { get { return IsShootingParamAvailable("setShutterSpeed"); } }
         public bool IsSetIsoSpeedRateAvailable { get { return IsShootingParamAvailable("setIsoSpeedRate"); } }
         public bool IsSetEVAvailable { get { return IsShootingParamAvailable("getExposureCompensation"); } }
-
         private bool IsShootingParamAvailable(string api) { return Device.Api != null && Device.Api.Capability.IsAvailable(api); }
+
+        public bool IsProgramShiftAvailable { get { return Device.Api != null && Device.Api.Capability.IsAvailable("setProgramShift"); } }
     }
 
     public class ShootingParamViewData

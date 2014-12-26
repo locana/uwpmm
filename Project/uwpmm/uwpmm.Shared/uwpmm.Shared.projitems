@@ -53,6 +53,12 @@
     <Compile Include="$(MSBuildThisFileDirectory)Control\PhotoPlaybackScreen.xaml.cs">
       <DependentUpon>PhotoPlaybackScreen.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Control\ProgramShiftSlider.xaml.cs">
+      <DependentUpon>ProgramShiftSlider.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Control\PullReleaseBar.xaml.cs">
+      <DependentUpon>PullReleaseBar.xaml</DependentUpon>
+    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Control\SettingSection.xaml.cs">
       <DependentUpon>SettingSection.xaml</DependentUpon>
     </Compile>
@@ -143,6 +149,7 @@
     <Content Include="$(MSBuildThisFileDirectory)Assets\LiveviewScreen\no_memory_card.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\LiveviewScreen\OpenSlider.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\LiveviewScreen\ProgramShift.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\LiveviewScreen\ProgramShift_cursor.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\LiveviewScreen\rec.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\LiveviewScreen\ShutterSpeed.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\LiveviewScreen\Stop.png" />
@@ -216,6 +223,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="$(MSBuildThisFileDirectory)Control\PhotoPlaybackScreen.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Control\ProgramShiftSlider.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Control\PullReleaseBar.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
