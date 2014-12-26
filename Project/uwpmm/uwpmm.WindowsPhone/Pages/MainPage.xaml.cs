@@ -984,20 +984,6 @@ namespace Kazyx.Uwpmm.Pages
             AppSettingPanel.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
         }
 
-        private void Button_Tapped(object sender, TappedRoutedEventArgs e)
-        {
-            if (ShootingParamSliders.Visibility == Windows.UI.Xaml.Visibility.Visible)
-            {
-                ShootingParamSliders.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-                StartOpenSliderAnimation(180, 0);
-            }
-            else
-            {
-                ShootingParamSliders.Visibility = Windows.UI.Xaml.Visibility.Visible;
-                StartOpenSliderAnimation(0, 180);
-            }
-        }
-
         public void StartOpenSliderAnimation(double from, double to)
         {
             var duration = new Duration(TimeSpan.FromMilliseconds(200));
@@ -1016,6 +1002,31 @@ namespace Kazyx.Uwpmm.Pages
             OpenSliderImage.RenderTransform = rt;
             OpenSliderImage.RenderTransformOrigin = new Point(0.5, 0.5);
             sb.Begin();
+        }
+
+        private void Grid_ManipulationCompleted(object sender, ManipulationCompletedRoutedEventArgs e)
+        {
+            OpenCloseSliders();
+        }
+
+        private void Grid_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            OpenCloseSliders();
+        }
+
+        private void OpenCloseSliders()
+        {
+            DebugUtil.Log("Manipulation completed.");
+            if (ShootingParamSliders.Visibility == Windows.UI.Xaml.Visibility.Visible)
+            {
+                ShootingParamSliders.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                StartOpenSliderAnimation(180, 0);
+            }
+            else
+            {
+                ShootingParamSliders.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                StartOpenSliderAnimation(0, 180);
+            }
         }
     }
 }
