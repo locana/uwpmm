@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Kazyx.Uwpmm.Utility;
+using System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
@@ -79,11 +80,14 @@ namespace Kazyx.Uwpmm.Control
             var accm = e.Cumulative;
             //DebugUtil.Log("accm: " + accm.Translation.X);
             var vel = e.Velocities;
-            //DebugUtil.Log("v: " + vel.Linear.X);
+            var margin = 10;
+            var transX = Math.Max(-(LayoutRoot.ActualWidth / 2 - margin), accm.Translation.X);
+            //DebugUtil.Log("pull " + LayoutRoot.ActualWidth + " " + accm.Translation.X +" "+transX);
+            transX = Math.Min(LayoutRoot.ActualWidth / 2 - margin, transX);
 
-            Cursor.Margin = new Thickness(InitialCursorMargin.Left + accm.Translation.X, 0, 0, 0); ;
-            CurrentValueText.Margin = new Thickness(InitialLabelMargin.Left + accm.Translation.X, 0, 0, 0);
-            DynamicBar.X2 = LayoutRoot.ActualWidth / 2 + accm.Translation.X;
+            Cursor.Margin = new Thickness(InitialCursorMargin.Left + transX, 0, 0, 0); ;
+            CurrentValueText.Margin = new Thickness(InitialLabelMargin.Left + transX, 0, 0, 0);
+            DynamicBar.X2 = LayoutRoot.ActualWidth / 2 + transX;
 
             var length = Math.Abs(DynamicBar.X2 - DynamicBar.X1);
             DynamicBar.Opacity = length / (LayoutRoot.ActualWidth / 2);
