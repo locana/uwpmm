@@ -1,0 +1,12 @@
+﻿using System.Collections.Generic;
+
+namespace Kazyx.Uwpmm.UPnP
+{
+    public class UpnpDevice
+    {
+        public string FriendlyName { get; set; }
+        public string ModelName { get; set; }
+        public string UDN { get; set; }
+        public List<UpnpService> Services { get; set; }
+    }
+}
