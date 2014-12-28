@@ -1,10 +1,8 @@
 ﻿using Kazyx.Uwpmm.Utility;
 using System;
-using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using System.Xml.Linq;
-using Windows.Networking;
 using Windows.Web.Http;
 
 namespace Kazyx.Uwpmm.UPnP
@@ -63,7 +61,7 @@ namespace Kazyx.Uwpmm.UPnP
                 var res = await response.Content.ReadAsStringAsync();
                 DebugUtil.Log(res);
                 Response.TryThrowErrorCode(res);
-                throw new SoapException((int)response.StatusCode);
+                throw new SoapException((int)response.StatusCode, "Http status code");
             }
         }
     }

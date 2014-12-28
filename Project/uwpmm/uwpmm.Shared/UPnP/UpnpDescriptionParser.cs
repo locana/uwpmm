@@ -7,11 +7,10 @@ namespace Kazyx.Uwpmm.UPnP
     public class UpnpDescriptionParser
     {
         private const string NS_UPNP = "{urn:schemas-upnp-org:device-1-0}";
-        //private const string NS_UPNP = "";
 
         public static UpnpDevice ParseDescription(XDocument xml, Uri location)
         {
-            var rootAddress = ConvertLocationToRootUrl(location);
+            var rootAddress = ConvertLocationToRootAddress(location);
 
             var device = xml.Root.Element(NS_UPNP + "device");
             var services = device.Element(NS_UPNP + "serviceList");
@@ -20,7 +19,6 @@ namespace Kazyx.Uwpmm.UPnP
             var mn = device.Element(NS_UPNP + "modelName").Value;
 
             var result = new List<UpnpService>();
-            //foreach (var service in services.Elements("service"))
             foreach (var service in services.Elements())
             {
                 result.Add(new UpnpService
@@ -44,7 +42,7 @@ namespace Kazyx.Uwpmm.UPnP
             };
         }
 
-        private static string ConvertLocationToRootUrl(Uri location)
+        private static string ConvertLocationToRootAddress(Uri location)
         {
             return "http://" + location.Host + ":" + location.Port;
         }

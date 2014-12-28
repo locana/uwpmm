@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Kazyx.Uwpmm.Utility
+namespace Kazyx.Uwpmm.UPnP
 {
     public class BoolConversionHelper
     {

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Text;
+﻿using System.Text;
 using System.Xml.Linq;
 
 namespace Kazyx.Uwpmm.UPnP
@@ -43,6 +42,7 @@ namespace Kazyx.Uwpmm.UPnP
         public static void TryThrowErrorCode(string responseBody)
         {
             int code = -1;
+            string message = "";
             try
             {
                 if (responseBody == null)
@@ -56,10 +56,11 @@ namespace Kazyx.Uwpmm.UPnP
                 var detail = fault.Element("detail");
                 var error = detail.Element(NS_CTL + "UPnPError");
                 code = int.Parse(error.Element(NS_CTL + "errorCode").Value);
+                message = error.Element(NS_CTL + "errorDescription").Value;
             }
             catch { return; }
 
-            throw new SoapException(code);
+            throw new SoapException(code, message);
         }
 
         public static XElement GetBodyOrThrowError(XDocument root)
@@ -73,7 +74,8 @@ namespace Kazyx.Uwpmm.UPnP
             var detail = fault.Element("detail");
             var error = detail.Element(NS_CTL + "UPnPError");
             var code = int.Parse(error.Element(NS_CTL + "errorCode").Value);
-            throw new SoapException(code);
+            var message = error.Element(NS_CTL + "errorDescription").Value;
+            throw new SoapException(code, message);
         }
     }
 }

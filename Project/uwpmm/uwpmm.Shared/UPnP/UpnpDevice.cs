@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Windows.Networking;
 
 namespace Kazyx.Uwpmm.UPnP
 {

@@ -1,6 +1,4 @@
-﻿using Kazyx.Uwpmm.Utility;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Xml.Linq;
 
 namespace Kazyx.Uwpmm.UPnP.ContentDirectory
