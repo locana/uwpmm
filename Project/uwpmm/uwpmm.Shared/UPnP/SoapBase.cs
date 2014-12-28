@@ -9,22 +9,22 @@ namespace Kazyx.Uwpmm.UPnP
         public abstract string URN { get; }
         public abstract string ActionName { get; }
 
-        public string SoapHeader { get { return "SOAPACTION: \"" + URN + "#" + ActionName + "\""; } }
+        public string SoapHeader { get { return "\"" + URN + "#" + ActionName + "\""; } }
 
         public string BuildMessage()
         {
             var builder = new StringBuilder();
 
-            builder.Append("<?xml version=\"1.0\" encoding=\"utf-8\"?>")
-                .Append("<s:Envelope s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\" xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\">")
-                .Append("<s:Body>")
-                .Append("<u:").Append(ActionName).Append("\"").Append(URN).Append("\">");
+            builder.Append("<?xml version=\"1.0\" encoding=\"utf-8\"?>").Append("\r\n")
+                .Append("<s:Envelope s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\" xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\">").Append("\r\n")
+                .Append("<s:Body>").Append("\r\n")
+                .Append("<u:").Append(ActionName).Append(" xmlns:u=\"").Append(URN).Append("\">").Append("\r\n");
 
             AppendSpecificMessage(builder);
 
-            builder.Append("</u:").Append(ActionName).Append(">")
-                .Append("</s:Body>")
-                .Append("</s:Envelope>");
+            builder.Append("</u:").Append(ActionName).Append(">").Append("\r\n")
+                .Append("</s:Body>").Append("\r\n")
+                .Append("</s:Envelope>").Append("\r\n");
 
             return builder.ToString();
         }
@@ -37,5 +37,43 @@ namespace Kazyx.Uwpmm.UPnP
     public abstract class Response
     {
         protected const string NS_S = "{http://schemas.xmlsoap.org/soap/envelope/}";
+
+        protected const string NS_CTL = "{urn:schemas-upnp-org:control-1-0}";
+
+        public static void TryThrowErrorCode(string responseBody)
+        {
+            int code = -1;
+            try
+            {
+                if (responseBody == null)
+                {
+                    return;
+                }
+                var root = XDocument.Parse(responseBody);
+
+                var body = root.Root.Element(NS_S + "Body");
+                var fault = body.Element(NS_S + "Fault");
+                var detail = fault.Element("detail");
+                var error = detail.Element(NS_CTL + "UPnPError");
+                code = int.Parse(error.Element(NS_CTL + "errorCode").Value);
+            }
+            catch { return; }
+
+            throw new SoapException(code);
+        }
+
+        public static XElement GetBodyOrThrowError(XDocument root)
+        {
+            var body = root.Root.Element(NS_S + "Body");
+            var fault = body.Element(NS_S + "Fault");
+            if (fault == null)
+            {
+                return body;
+            }
+            var detail = fault.Element("detail");
+            var error = detail.Element(NS_CTL + "UPnPError");
+            var code = int.Parse(error.Element(NS_CTL + "errorCode").Value);
+            throw new SoapException(code);
+        }
     }
 }
