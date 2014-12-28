@@ -12,7 +12,7 @@ namespace Kazyx.Uwpmm.Utility
         private static GeopositionManager _GeopositionManager = new GeopositionManager();
 
         internal Geoposition LatestPosition { get; set; }
-        internal Action<GeopositionEventArgs> GeopositionUpdated;
+        internal event EventHandler<GeopositionEventArgs> GeopositionUpdated;
 
         private Geolocator _Geolocator;
         private DispatcherTimer _Timer;
@@ -27,15 +27,15 @@ namespace Kazyx.Uwpmm.Utility
             get { return _LocationAllowed; }
         }
 
-        private bool _Enable = false;
-        internal bool Enable
+        private bool _Enabled = false;
+        internal bool Enabled
         {
-            get { return _Enable; }
+            get { return _Enabled; }
             set
             {
-                _Enable = value;
-                if (value)
+                if (!_Enabled && value)
                 {
+                    _Enabled = value;
                     Task.Factory.StartNew(async () => // Not to await in the set property
                     {
                         var dispatcher = SystemUtil.GetCurrentDispatcher();
@@ -50,6 +50,7 @@ namespace Kazyx.Uwpmm.Utility
                 }
                 else
                 {
+                    _Enabled = false;
                     Stop();
                 }
             }
@@ -71,20 +72,44 @@ namespace Kazyx.Uwpmm.Utility
                 return;
             }
             _Geolocator.DesiredAccuracy = PositionAccuracy.Default;
-            _Geolocator.MovementThreshold = 10;
-            _Geolocator.ReportInterval = 60000;
-            // _Geolocator.StatusChanged += geolocator_StatusChanged;
+
+            //_Geolocator.MovementThreshold = 10;    
+            _Geolocator.ReportInterval = 3000;
+
+            _Geolocator.PositionChanged += _Geolocator_PositionChanged;
+            _Geolocator.StatusChanged += _Geolocator_StatusChanged;
             // _Geolocator.PositionChanged += geolocator_PositionChanged;
-            await UpdateGeoposition();
-            _Timer.Start();
+            //await UpdateGeoposition();
+            //_Timer.Start();
         }
 
-        /*
-        private async void OnTimerTick(object sender, EventArgs e)
+        void _Geolocator_StatusChanged(Geolocator sender, StatusChangedEventArgs args)
         {
-            await UpdateGeoposition();
+            switch (args.Status)
+            {
+                case PositionStatus.Disabled:
+                    OnGeopositionUpdated(new GeopositionEventArgs() { UpdatedPosition = LatestPosition, Status = GeopositiomManagerStatus.Unauthorized });
+                    break;
+                case PositionStatus.Initializing:
+                case PositionStatus.NoData:
+                    OnGeopositionUpdated(new GeopositionEventArgs() { UpdatedPosition = LatestPosition, Status = GeopositiomManagerStatus.Acquiring });
+                    break;
+                case PositionStatus.Ready:
+                    OnGeopositionUpdated(new GeopositionEventArgs() { UpdatedPosition = LatestPosition, Status = GeopositiomManagerStatus.OK });
+                    break;
+                default:
+                case PositionStatus.NotInitialized:
+                case PositionStatus.NotAvailable:
+                    OnGeopositionUpdated(new GeopositionEventArgs() { UpdatedPosition = LatestPosition, Status = GeopositiomManagerStatus.Failed });
+                break;
+            }
         }
-         * */
+
+        void _Geolocator_PositionChanged(Geolocator sender, PositionChangedEventArgs args)
+        {
+            LatestPosition = args.Position;
+            OnGeopositionUpdated(new GeopositionEventArgs() { UpdatedPosition = LatestPosition, Status = GeopositiomManagerStatus.OK });
+        }
 
         private async Task UpdateGeoposition()
         {
@@ -135,7 +160,7 @@ namespace Kazyx.Uwpmm.Utility
 
         protected void OnGeopositionUpdated(GeopositionEventArgs e)
         {
-            GeopositionUpdated.Raise(e);
+            GeopositionUpdated.Invoke(this, e);
         }
 
         internal async Task<Geoposition> AcquireGeoPosition()
@@ -159,7 +184,7 @@ namespace Kazyx.Uwpmm.Utility
 
         async void _Timer_Tick(object sender, object e)
         {
-            await UpdateGeoposition();
+            //await UpdateGeoposition();
         }
 
         public static GeopositionManager GetInstance()

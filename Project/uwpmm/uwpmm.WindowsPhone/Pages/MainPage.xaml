@@ -79,6 +79,7 @@
                                     <ColumnDefinition Width="auto"/>
                                     <ColumnDefinition Width="auto"/>
                                     <ColumnDefinition Width="auto"/>
+                                    <ColumnDefinition Width="auto"/>
                                 </Grid.ColumnDefinitions>
                                 <Image Source="{Binding ShootModeImage, Mode=OneWay}" />
                                 <Image Source="{Binding ExposureModeImage, Mode=OneWay}" Grid.Column="1" Margin="3"/>
@@ -89,6 +90,8 @@
                                 <Image Source="{Binding MemoryCardStatusImage}" Grid.Column="5" Margin="3"/>
                                 <TextBlock Text="{Binding RecordbaleAmount}" Grid.Column="6" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="3,6,6,3"/>
                                 <controls:BatteryStatus x:Name="BatteryStatusDisplay" Grid.Column="7" BatteryInfo="{Binding Mode=OneWay}" Height="22" Width="44" VerticalAlignment="Center" />
+                                <Image Source="{Binding GeopositionStatusImage}" Grid.Column="8" VerticalAlignment="Center" 
+                                       Visibility="{Binding GeopositionEnabled, FallbackValue=Collapsed, Converter={StaticResource B2VConverter}}"/>
                             </Grid>
                             <controls:Histogram Margin="6,6" HorizontalAlignment="Left" VerticalAlignment="Center" x:Name="HistogramControl" Width="120" Height="90" Grid.Row="2"
                                                 Visibility="{Binding HistogramVisibility}"/>

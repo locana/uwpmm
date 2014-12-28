@@ -24,7 +24,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{A9C178
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NtNfcLibUniversal", "..\modules\NtNfcLib\NtNfcLib\NtNfcLibUniversal.csproj", "{7ED7F13A-227A-4837-8A1E-561CFF5926CD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NtNfcLibUniversal", "..\modules\NtNfcLib\NtNfcLib\NtNfcLibUniversal.csproj", "{8EB425CC-DA01-4016-916A-31CF5BF11835}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NtImageProcessorUniversal", "..\modules\NtImageLib\NtImageProcessor\NtImageProcessorUniversal.csproj", "{81167EAF-409D-457E-A8C6-77C830340773}"
 EndProject
@@ -119,16 +119,16 @@ Global
 		{A1246C04-298D-4189-8AC8-2105288D2EC6}.Release|ARM.ActiveCfg = Release|Any CPU
 		{A1246C04-298D-4189-8AC8-2105288D2EC6}.Release|x64.ActiveCfg = Release|Any CPU
 		{A1246C04-298D-4189-8AC8-2105288D2EC6}.Release|x86.ActiveCfg = Release|Any CPU
-		{7ED7F13A-227A-4837-8A1E-561CFF5926CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7ED7F13A-227A-4837-8A1E-561CFF5926CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7ED7F13A-227A-4837-8A1E-561CFF5926CD}.Debug|ARM.ActiveCfg = Debug|Any CPU
-		{7ED7F13A-227A-4837-8A1E-561CFF5926CD}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{7ED7F13A-227A-4837-8A1E-561CFF5926CD}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{7ED7F13A-227A-4837-8A1E-561CFF5926CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7ED7F13A-227A-4837-8A1E-561CFF5926CD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7ED7F13A-227A-4837-8A1E-561CFF5926CD}.Release|ARM.ActiveCfg = Release|Any CPU
-		{7ED7F13A-227A-4837-8A1E-561CFF5926CD}.Release|x64.ActiveCfg = Release|Any CPU
-		{7ED7F13A-227A-4837-8A1E-561CFF5926CD}.Release|x86.ActiveCfg = Release|Any CPU
+		{8EB425CC-DA01-4016-916A-31CF5BF11835}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8EB425CC-DA01-4016-916A-31CF5BF11835}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8EB425CC-DA01-4016-916A-31CF5BF11835}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{8EB425CC-DA01-4016-916A-31CF5BF11835}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{8EB425CC-DA01-4016-916A-31CF5BF11835}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{8EB425CC-DA01-4016-916A-31CF5BF11835}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8EB425CC-DA01-4016-916A-31CF5BF11835}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8EB425CC-DA01-4016-916A-31CF5BF11835}.Release|ARM.ActiveCfg = Release|Any CPU
+		{8EB425CC-DA01-4016-916A-31CF5BF11835}.Release|x64.ActiveCfg = Release|Any CPU
+		{8EB425CC-DA01-4016-916A-31CF5BF11835}.Release|x86.ActiveCfg = Release|Any CPU
 		{81167EAF-409D-457E-A8C6-77C830340773}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{81167EAF-409D-457E-A8C6-77C830340773}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{81167EAF-409D-457E-A8C6-77C830340773}.Debug|ARM.ActiveCfg = Debug|Any CPU

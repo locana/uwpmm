@@ -117,7 +117,7 @@ namespace Kazyx.Uwpmm.Pages
             PictureDownloader.Instance.Fetched -= OnFetchdImage;
         }
 
-        private async void OnFetchdImage(StorageFolder folder, StorageFile file)
+        private async void OnFetchdImage(StorageFolder folder, StorageFile file, GeotaggingResult geotaggingResult)
         {
             var stream = await file.OpenReadAsync();
             await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
@@ -194,7 +194,7 @@ namespace Kazyx.Uwpmm.Pages
         private async void Button_Click(object sender, RoutedEventArgs e)
         {
             if (target == null) return;
-            await SequentialOperation.TakePicture(target.Api);
+            await SequentialOperation.TakePicture(target.Api, null);
         }
 
         private async void ZoomOut_Tapped(object sender, TappedRoutedEventArgs e)

@@ -648,7 +648,7 @@ namespace Kazyx.Uwpmm.Pages
             });
         }
 
-        private async void OnFetched(StorageFolder folder, StorageFile file)
+        private async void OnFetched(StorageFolder folder, StorageFile file, GeotaggingResult geotaggingResult)
         {
             if (InnerState == ViewerState.OutOfPage) return;
 
@@ -674,7 +674,7 @@ namespace Kazyx.Uwpmm.Pages
             });
         }
 
-        private void OnDLError(ImageFetchError error)
+        private void OnDLError(ImageFetchError error, GeotaggingResult geotaggingResult)
         {
             DebugUtil.Log("ViewerPage: OnDLError");
             // TODO show toast according to error cause...

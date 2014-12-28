@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Devices.Geolocation;
 using Windows.Foundation;
 using Windows.Networking.Proximity;
 using Windows.Phone.UI.Input;
@@ -123,6 +124,8 @@ namespace Kazyx.Uwpmm.Pages
         #endregion
 
         CommandBarManager _CommandBarManager = new CommandBarManager();
+        Geolocator _Geolocator = new Geolocator();
+        Geoposition CachedPosition = null;
 
         bool ControlPanelDisplayed = false;
 
@@ -190,7 +193,7 @@ namespace Kazyx.Uwpmm.Pages
             InitializeUI();
             InitializeProximityDevice();
 
-            PictureDownloader.Instance.Fetched += async (folder, file) =>
+            PictureDownloader.Instance.Fetched += async (folder, file, tagResult) =>
             {
                 var thumb = await file.GetThumbnailAsync(ThumbnailMode.ListView, 100);
                 await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
@@ -199,15 +202,61 @@ namespace Kazyx.Uwpmm.Pages
                     image.SetSource(thumb);
                     var path = file.Path.Split('\\');
                     var name = '\\' + path[path.Length - 2] + '\\' + path[path.Length - 1];
-                    Toast.PushToast(new Control.ToastContent() { Text = "Picture downloaded successfully!" + name, Icon = image });
+                    var text = "Picture downloaded successfully!";
+                    switch (tagResult)
+                    {
+                        case GeotaggingResult.OK:
+                            text = "Picture is geotagged and downloaded successfully!";
+                            break;
+                        case GeotaggingResult.GeotagAlreadyExists:
+                            text = "Geotag is already exists in taken image. Just saved.";
+                            break;
+                        case GeotaggingResult.UnExpectedError:
+                            text = "Failed geotagging. Just saved.";
+                            break;
+                    }
+                    Toast.PushToast(new Control.ToastContent() { Text = text + name, Icon = image });
                     thumb.Dispose();
                 });
             };
 
-            PictureDownloader.Instance.Failed += (err) =>
+            PictureDownloader.Instance.Failed += (err, tagResult) =>
             {
-                ShowError("Failed to download or save the picture.\n" + err);
+                ShowError("Failed to download or save the picture.\n" + err + " " + tagResult);
             };
+        }
+
+        private void EnableGeolocator()
+        {
+            _Geolocator.DesiredAccuracy = PositionAccuracy.Default;
+            _Geolocator.ReportInterval = 3000;
+
+            _Geolocator.PositionChanged += _Geolocator_PositionChanged;
+            _Geolocator.StatusChanged += _Geolocator_StatusChanged;
+            screenViewData.GeopositionEnabled = true;
+        }
+
+        private void DisableGeolocator()
+        {
+            _Geolocator.StatusChanged -= _Geolocator_StatusChanged;
+            _Geolocator.PositionChanged -= _Geolocator_PositionChanged;
+            CachedPosition = null;
+            screenViewData.GeopositionEnabled = false;
+        }
+
+        void _Geolocator_StatusChanged(Geolocator sender, StatusChangedEventArgs args)
+        {
+            screenViewData.GeopositionStatus = args.Status;
+            if (args.Status != PositionStatus.Ready)
+            {
+                this.CachedPosition = null;
+            }
+        }
+
+        private void _Geolocator_PositionChanged(Geolocator sender, PositionChangedEventArgs args)
+        {
+            CachedPosition = args.Position;
+            DebugUtil.Log("position: " + args.Position.Coordinate.Point.Position.Longitude + " " + args.Position.Coordinate.Point.Position.Latitude);
         }
 
         void InitializeUI()
@@ -282,6 +331,9 @@ namespace Kazyx.Uwpmm.Pages
             ShutterButton.DataContext = screenViewData;
             BatteryStatusDisplay.DataContext = target.Status.BatteryInfo;
             _FocusFrameSurface.ClearFrames();
+
+            if (ApplicationSettings.GetInstance().GeotagEnabled) { EnableGeolocator(); }
+            else { DisableGeolocator(); }
 
             await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
             {
@@ -459,7 +511,7 @@ namespace Kazyx.Uwpmm.Pages
                 case "PictureUrls":
                     foreach (var url in status.PictureUrls)
                     {
-                        PictureDownloader.Instance.Enqueue(new Uri(url, UriKind.Absolute));
+                        PictureDownloader.Instance.Enqueue(new Uri(url, UriKind.Absolute), CachedPosition);
                     }
                     break;
                 case "BatteryInfo":
@@ -661,7 +713,7 @@ namespace Kazyx.Uwpmm.Pages
                 {
                     try
                     {
-                        await SequentialOperation.TakePicture(target.Api);
+                        await SequentialOperation.TakePicture(target.Api, CachedPosition);
                         if (!ApplicationSettings.GetInstance().IsPostviewTransferEnabled)
                         {
                             ShowToast("Captured!");
@@ -901,7 +953,12 @@ namespace Kazyx.Uwpmm.Pages
 
             geoSetting = new AppSettingData<bool>("Add geotag", "geotag",
                 () => { return ApplicationSettings.GetInstance().GeotagEnabled; },
-                enabled => { ApplicationSettings.GetInstance().GeotagEnabled = enabled; GeopositionManager.GetInstance().Enable = enabled; });
+                enabled =>
+                {
+                    ApplicationSettings.GetInstance().GeotagEnabled = enabled;
+                    if (enabled) { EnableGeolocator(); }
+                    else { DisableGeolocator(); }
+                });
             image_settings.Add(new CheckBoxSetting(geoSetting));
 
             var display_settings = new SettingSection("Display");

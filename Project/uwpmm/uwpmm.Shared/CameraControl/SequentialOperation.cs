@@ -90,12 +90,12 @@ namespace Kazyx.Uwpmm.CameraControl
             return await OpenLiveviewStream(api, liveview);
         }
 
-        public static async Task<bool> TakePicture(DeviceApiHolder api)
+        public static async Task<bool> TakePicture(DeviceApiHolder api, Windows.Devices.Geolocation.Geoposition position)
         {
-            return await TakePicture(api, false);
+            return await TakePicture(api, position, false);
         }
 
-        private static async Task<bool> TakePicture(DeviceApiHolder api, bool awaiting = false)
+        private static async Task<bool> TakePicture(DeviceApiHolder api, Windows.Devices.Geolocation.Geoposition position, bool awaiting = false)
         {
             DebugUtil.Log("Taking picture sequence");
             try
@@ -110,7 +110,7 @@ namespace Kazyx.Uwpmm.CameraControl
                         try
                         {
                             var uri = new Uri(url);
-                            PictureDownloader.Instance.Enqueue(uri);
+                            PictureDownloader.Instance.Enqueue(uri, position);
                         }
                         catch (Exception e)
                         {
@@ -135,7 +135,7 @@ namespace Kazyx.Uwpmm.CameraControl
                 }
             }
             DebugUtil.Log("Take picture timeout: await for completion");
-            return await TakePicture(api, true);
+            return await TakePicture(api, position, true);
         }
     }
 }

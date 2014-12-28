@@ -55,5 +55,13 @@ namespace Kazyx.Uwpmm.Utility
                 action(p1, p2);
             }
         }
+
+        public static void Raise<T1, T2, T3>(this Action<T1, T2, T3> action, T1 p1, T2 p2, T3 p3)
+        {
+            if (action != null)
+            {
+                action(p1, p2, p3);
+            }
+        }
     }
 }

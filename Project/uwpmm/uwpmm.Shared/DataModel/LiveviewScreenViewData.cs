@@ -3,6 +3,7 @@ using Kazyx.RemoteApi.Camera;
 using Kazyx.Uwpmm.CameraControl;
 using Kazyx.Uwpmm.Utility;
 using System;
+using Windows.Devices.Geolocation;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 namespace Kazyx.Uwpmm.DataModel
@@ -412,6 +413,53 @@ namespace Kazyx.Uwpmm.DataModel
         private bool IsShootingParamAvailable(string api) { return Device.Api != null && Device.Api.Capability.IsAvailable(api); }
 
         public bool IsProgramShiftAvailable { get { return Device.Api != null && Device.Api.Capability.IsAvailable("setProgramShift"); } }
+
+        private static readonly BitmapImage GeoInfoStatusImage_OK = new BitmapImage(new Uri("ms-appx:///Assets/LiveviewScreen/GeoInfoStatus_OK.png", UriKind.Absolute));
+        private static readonly BitmapImage GeoInfoStatusImage_NG = new BitmapImage(new Uri("ms-appx:///Assets/LiveviewScreen/GeoInfoStatus_NG.png", UriKind.Absolute));
+        private static readonly BitmapImage GeoInfoStatusImage_Updating = new BitmapImage(new Uri("ms-appx:///Assets/LiveviewScreen/GeoInfoStatus_Updating.png", UriKind.Absolute));
+
+        private PositionStatus _GeopositionStatus = PositionStatus.Disabled;
+        public PositionStatus GeopositionStatus
+        {
+            get { return _GeopositionStatus; }
+            set
+            {
+                _GeopositionStatus = value;
+                NotifyChangedOnUI("GeopositionStatusImage");
+                DebugUtil.Log("Geoposition status: " + value);
+            }
+        }
+
+        public BitmapImage GeopositionStatusImage
+        {
+            get
+            {
+                switch (GeopositionStatus)
+                {
+                    case PositionStatus.Disabled:
+                    case PositionStatus.NotAvailable:
+                    case PositionStatus.NotInitialized:
+                        return GeoInfoStatusImage_NG;
+                    case PositionStatus.Initializing:
+                    case PositionStatus.NoData:
+                        return GeoInfoStatusImage_Updating;
+                    case PositionStatus.Ready:
+                        return GeoInfoStatusImage_OK;
+                }
+                return null;
+            }
+        }
+
+        private bool _GeopositionEnabled;
+        public bool GeopositionEnabled
+        {
+            get { return _GeopositionEnabled; }
+            set
+            {
+                _GeopositionEnabled = value;
+                NotifyChangedOnUI("GeopositionEnabled");
+            }
+        }
     }
 
     public class ShootingParamViewData
