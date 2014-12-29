@@ -41,7 +41,7 @@ namespace Kazyx.Uwpmm.UPnP
 
             var content = new HttpStringContent(body);
             content.Headers["Content-Type"] = "text/xml";
-            HttpClient.DefaultRequestHeaders.Add("SOAPAction", request.SoapHeader);
+            request.UpdateSoapActionHeader(HttpClient.DefaultRequestHeaders);
 
             var uri = new Uri(RootAddress + ControlUrl);
 
@@ -52,6 +52,7 @@ namespace Kazyx.Uwpmm.UPnP
             {
                 var res = await response.Content.ReadAsStringAsync();
                 res = WebUtility.HtmlDecode(res);
+                System.Diagnostics.Debug.WriteLine(res);
                 DebugUtil.Log(res);
                 return request.ParseResponse(XDocument.Parse(res));
             }

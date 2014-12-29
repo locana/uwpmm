@@ -1,5 +1,7 @@
 ﻿using System.Text;
 using System.Xml.Linq;
+using Windows.Web.Http;
+using Windows.Web.Http.Headers;
 
 namespace Kazyx.Uwpmm.UPnP
 {
@@ -26,6 +28,12 @@ namespace Kazyx.Uwpmm.UPnP
                 .Append("</s:Envelope>").Append("\r\n");
 
             return builder.ToString();
+        }
+
+        public void UpdateSoapActionHeader(HttpRequestHeaderCollection headers)
+        {
+            headers.Clear();
+            headers.Add("SOAPAction", SoapHeader);
         }
 
         protected abstract void AppendSpecificMessage(StringBuilder builder);

@@ -18,13 +18,14 @@ namespace Kazyx.Uwpmm.UPnP
             var fn = device.Element(NS_UPNP + "friendlyName").Value;
             var mn = device.Element(NS_UPNP + "modelName").Value;
 
-            var result = new List<UpnpService>();
+            var result = new Dictionary<string, UpnpService>();
             foreach (var service in services.Elements())
             {
-                result.Add(new UpnpService
+                var key = service.Element(NS_UPNP + "serviceType").Value;
+                result.Add(key, new UpnpService
                 {
                     RootAddress = rootAddress,
-                    ServiceType = service.Element(NS_UPNP + "serviceType").Value,
+                    ServiceType = key,
                     ServiceId = service.Element(NS_UPNP + "serviceId").Value,
                     ScpdUrl = service.Element(NS_UPNP + "SCPDURL").Value,
                     ControlUrl = service.Element(NS_UPNP + "controlURL").Value,

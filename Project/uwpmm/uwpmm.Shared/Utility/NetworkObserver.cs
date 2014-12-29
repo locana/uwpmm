@@ -1,7 +1,9 @@
 ﻿using Kazyx.DeviceDiscovery;
 using Kazyx.Uwpmm.CameraControl;
+using Kazyx.Uwpmm.UPnP;
 using System;
 using System.Collections.Generic;
+using System.Xml.Linq;
 
 namespace Kazyx.Uwpmm.Utility
 {
@@ -14,23 +16,41 @@ namespace Kazyx.Uwpmm.Utility
             get { return sInstance; }
         }
 
+        private SsdpDiscovery discovery = new SsdpDiscovery();
+        private SsdpDiscovery cdsDiscovery = new SsdpDiscovery();
+
         private NetworkObserver()
         {
             discovery.SonyCameraDeviceDiscovered += discovery_SonyCameraDeviceDiscovered;
+            cdsDiscovery.DescriptionObtained += cdsDiscovery_DescriptionObtained;
         }
 
         private List<TargetDevice> devices = new List<TargetDevice>();
 
-        public List<TargetDevice> Devices
+        public List<TargetDevice> CameraDevices
         {
             get { return new List<TargetDevice>(devices); }
         }
 
-        public event EventHandler<DeviceEventArgs> Discovered;
+        private List<UpnpDevice> cdServices = new List<UpnpDevice>();
+
+        public List<UpnpDevice> CdsServices
+        {
+            get { return new List<UpnpDevice>(cdServices); }
+        }
+
+        public event EventHandler<CameraDeviceEventArgs> CameraDiscovered;
 
         protected void OnDiscovered(TargetDevice device)
         {
-            Discovered.Raise(this, new DeviceEventArgs { Device = device });
+            CameraDiscovered.Raise(this, new CameraDeviceEventArgs { CameraDevice = device });
+        }
+
+        public event EventHandler<CdServiceEventArgs> CdsDiscovered;
+
+        protected void OnDiscovered(UpnpDevice device)
+        {
+            CdsDiscovered.Raise(this, new CdServiceEventArgs { CdService = device });
         }
 
         void discovery_SonyCameraDeviceDiscovered(object sender, SonyCameraDeviceEventArgs e)
@@ -41,26 +61,59 @@ namespace Kazyx.Uwpmm.Utility
             OnDiscovered(device);
         }
 
-        private SsdpDiscovery discovery = new SsdpDiscovery();
+        void cdsDiscovery_DescriptionObtained(object sender, DeviceDescriptionEventArgs e)
+        {
+            try
+            {
+                var device = UpnpDescriptionParser.ParseDescription(XDocument.Parse(e.Description), e.Location);
+                foreach (var service in device.Services)
+                {
+                    DebugUtil.Log("Service: " + service.Key);
+                    if (service.Key == URN.ContentDirectory)
+                    {
+                        DebugUtil.Log("CDS found. Notify discovered.");
+                        OnDiscovered(device);
+                        break;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                DebugUtil.Log("failed to parse upnp device description.");
+                DebugUtil.Log(ex.StackTrace);
+            }
+        }
 
         public void ForceOffline(TargetDevice device)
         {
             devices.Remove(device);
         }
 
+        public void ForceOffline(UpnpDevice device)
+        {
+            cdServices.Remove(device);
+        }
+
         public void Search()
         {
             discovery.SearchSonyCameraDevices();
+            cdsDiscovery.SearchUpnpDevices("urn:schemas-upnp-org:service:ContentDirectory:1");
         }
 
         public void Clear()
         {
             devices.Clear();
+            cdServices.Clear();
         }
     }
 
-    public class DeviceEventArgs : EventArgs
+    public class CdServiceEventArgs : EventArgs
     {
-        public TargetDevice Device { set; get; }
+        public UpnpDevice CdService { set; get; }
+    }
+
+    public class CameraDeviceEventArgs : EventArgs
+    {
+        public TargetDevice CameraDevice { set; get; }
     }
 }

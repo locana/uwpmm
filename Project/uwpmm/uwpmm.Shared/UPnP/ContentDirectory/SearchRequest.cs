@@ -3,12 +3,12 @@ using System.Xml.Linq;
 
 namespace Kazyx.Uwpmm.UPnP.ContentDirectory
 {
-    public class BrowseRequest : ContentDirectoryRequest
+    public class SearchRequest : ContentDirectoryRequest
     {
-        public override string ActionName { get { return "Browse"; } }
+        public override string ActionName { get { return "Search"; } }
 
-        public string ObjectID { get; set; }
-        public BrowseFlag BrowseFlag { get; set; }
+        public string ContainerID { get; set; }
+        public string SearchCriteria { get; set; }
         public string Filter { get { return ""; } }
         public int StartingIndex { get; set; }
         public int RequestedCount { get; set; }
@@ -16,8 +16,8 @@ namespace Kazyx.Uwpmm.UPnP.ContentDirectory
 
         protected override void AppendSpecificMessage(StringBuilder builder)
         {
-            builder.Append("<ObjectID>").Append(ObjectID).Append("</ObjectID>").Append("\r\n");
-            builder.Append("<BrowseFlag>").Append(BrowseFlag.ToString()).Append("</BrowseFlag>").Append("\r\n");
+            builder.Append("<ContainerID>").Append(ContainerID).Append("</ContainerID>").Append("\r\n");
+            builder.Append("<SearchCriteria>").Append(SearchCriteria).Append("</SearchCriteria>").Append("\r\n");
             builder.Append("<Filter>").Append(Filter).Append("</Filter>").Append("\r\n");
             builder.Append("<StartingIndex>").Append(StartingIndex).Append("</StartingIndex>").Append("\r\n");
             builder.Append("<RequestedCount>").Append(RequestedCount).Append("</RequestedCount>").Append("\r\n");

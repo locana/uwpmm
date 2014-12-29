@@ -125,7 +125,7 @@ namespace Kazyx.Uwpmm.CameraControl
             return list;
         }
 
-        private const int CONTENT_LOOP_STEP = 50;
+        public const int CONTENT_LOOP_STEP = 50;
 
         public static async Task GetDateListAsEventsAsync(AvContentApiClient av, string uri, Action<DateListEventArgs> handler, CancellationTokenSource cancel = null)
         {

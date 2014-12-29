@@ -15,8 +15,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)CameraControl\PlaybackModeDlnaHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CameraControl\MovieStreamHelper.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)CameraControl\PlaybackModeSequence.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CameraControl\PlaybackModeHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CameraControl\ProductType.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CameraControl\TargetDevice.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CameraControl\DeviceApiHolder.cs" />
@@ -87,18 +88,22 @@
     <Compile Include="$(MSBuildThisFileDirectory)DataModel\PlaybackSource.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)LocalizedStrings.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Settings\SettingPanelBuilder.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UPnP\ContentDirectory\RetrievedContents.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UPnP\ContentDirectory\SearchCapabilities.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UPnP\ContentDirectory\GetSearchCapabilitiesRequest.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UPnP\ContentDirectory\SearchRequest.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UPnP\ConversionHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UPnP\ContentDirectory\BrowseRequest.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)UPnP\ContentDirectory\BrowseResponse.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UPnP\ContentDirectory\ContentDirectory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UPnP\ContentDirectory\Params.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UPnP\SoapBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UPnP\SoapException.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UPnP\UpnpDefinitions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UPnP\UpnpDevice.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UPnP\UpnpError.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UPnP\UpnpService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UPnP\UpnpDescriptionParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\ApplicationSettingNames.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Utility\BoolConversionHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\BoolToVisibilityConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\DebugUtil.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\DummyContentsGenerator.cs" />

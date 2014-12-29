@@ -3,19 +3,18 @@ using System.Xml.Linq;
 
 namespace Kazyx.Uwpmm.UPnP.ContentDirectory
 {
-    public class BrowseResponse : ContentDirectoryResponse
+    public class RetrievedContents : ContentDirectoryResponse
     {
         public int NumberReturned { get; private set; }
         public int TotalMatches { get; private set; }
         public string UpdateID { get; private set; }
 
-        public List<Container> Containers { get; private set; }
-        public List<Item> Items { get; private set; }
+        public Result Result { get; private set; }
 
-        public static BrowseResponse Parse(XDocument xml)
+        public static RetrievedContents Parse(XDocument xml, string action)
         {
             var body = GetBodyOrThrowError(xml);
-            var res = body.Element(NS_U + "BrowseResponse");
+            var res = body.Element(NS_U + action + "Response");
             var result = res.Element("Result");
             var root = result.Element(NS_DIDL + "DIDL-Lite");
 
@@ -30,8 +29,12 @@ namespace Kazyx.Uwpmm.UPnP.ContentDirectory
                 {
                     Id = element.Attribute("id").Value,
                     ParentId = element.Attribute("parentID").Value,
-                    Restricted = BoolConversionHelper.From(element.Attribute("restricted").Value),
                     Title = element.Element(NS_DC + "title").Value,
+                    Class = element.Element(NS_UPNP + "class").Value,
+                    Restricted = BoolConversionHelper.Parse(element.Attribute("restricted")),
+                    // ChildCount = OptionalValueHelper.ParseInt(element.Attribute("childCount"), -1),
+                    ChildCount = (int?)element.Attribute("childCount"),
+                    WriteStatus = (string)element.Element(NS_DIDL + "writeStatus"),
                 };
                 containers.Add(container);
             }
@@ -43,16 +46,21 @@ namespace Kazyx.Uwpmm.UPnP.ContentDirectory
                 {
                     Id = element.Attribute("id").Value,
                     ParentId = element.Attribute("parentID").Value,
-                    Restricted = BoolConversionHelper.From(element.Attribute("restricted").Value),
                     Title = element.Element(NS_DC + "title").Value,
+                    Class = element.Element(NS_UPNP + "class").Value,
+                    Restricted = BoolConversionHelper.Parse(element.Attribute("restricted")),
+                    WriteStatus = (string)element.Element(NS_DIDL + "writeStatus"),
                 };
                 items.Add(item);
             }
 
-            return new BrowseResponse
+            return new RetrievedContents
             {
-                Containers = containers,
-                Items = items,
+                Result = new Result
+                {
+                    Containers = containers,
+                    Items = items,
+                },
                 NumberReturned = numReturned,
                 TotalMatches = total,
                 UpdateID = updateId,

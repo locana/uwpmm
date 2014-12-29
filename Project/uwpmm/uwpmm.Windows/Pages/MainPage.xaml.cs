@@ -107,7 +107,7 @@ namespace Kazyx.Uwpmm.Pages
 
         private void pageRoot_Loaded(object sender, RoutedEventArgs e)
         {
-            NetworkObserver.INSTANCE.Discovered += NetworkObserver_Discovered;
+            NetworkObserver.INSTANCE.CameraDiscovered += NetworkObserver_Discovered;
             NetworkObserver.INSTANCE.Search();
             PictureDownloader.Instance.Fetched += OnFetchdImage;
         }
@@ -134,9 +134,9 @@ namespace Kazyx.Uwpmm.Pages
         private ImageDataSource liveview_data = new ImageDataSource();
         private ImageDataSource postview_data = new ImageDataSource();
 
-        async void NetworkObserver_Discovered(object sender, DeviceEventArgs e)
+        async void NetworkObserver_Discovered(object sender, CameraDeviceEventArgs e)
         {
-            var target = e.Device;
+            var target = e.CameraDevice;
             try
             {
                 await SequentialOperation.SetUp(target, liveview);
