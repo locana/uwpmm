@@ -7,9 +7,14 @@ namespace Kazyx.Uwpmm.UPnP.ContentDirectory
     {
         public override string ActionName { get { return "Browse"; } }
 
+        public BrowseRequest()
+        {
+            Filter = "*";
+        }
+
         public string ObjectID { get; set; }
         public BrowseFlag BrowseFlag { get; set; }
-        public string Filter { get { return ""; } }
+        public string Filter { get; set; }
         public int StartingIndex { get; set; }
         public int RequestedCount { get; set; }
         public string SortCriteria { get { return ""; } }

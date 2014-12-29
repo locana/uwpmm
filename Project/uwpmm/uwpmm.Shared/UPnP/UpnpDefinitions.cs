@@ -13,4 +13,12 @@ namespace Kazyx.Uwpmm.UPnP
         public const string VideoItem = "object.item.videoItem";
         public const string AudioItem = "object.item.audioItem";
     }
+
+    public class DlnaProfileName
+    {
+        public const string JpegLarge = "JPEG_LRG";
+        public const string JpegMedium = "JPEG_MED";
+        public const string JpegSmall = "JPEG_SM";
+        public const string JpegThumbnail = "JPEG_TN";
+    }
 }
