@@ -402,9 +402,6 @@ namespace Kazyx.Uwpmm.Pages
         async void NetworkObserver_Discovered(object sender, DeviceEventArgs e)
         {
             var target = e.Device;
-            target.Api.SupportedApisUpdated += api_SupportedApisUpdated;
-            target.Api.AvailiableApisUpdated += api_AvailiableApisUpdated;
-
             try
             {
                 await SequentialOperation.SetUp(target, liveview);
@@ -533,19 +530,6 @@ namespace Kazyx.Uwpmm.Pages
         void ShowCancelTouchAFButton()
         {
             this.BottomAppBar = _CommandBarManager.Icon(AppBarItem.CancelTouchAF).CreateNew(0.6);
-        }
-
-        async void api_AvailiableApisUpdated(object sender, AvailableApiEventArgs e)
-        {
-            if (target == null) { return; }
-            if (ApplicationSettings.GetInstance().RequestFocusFrameInfo && e.AvailableApis.Contains("setLiveviewFrameInfo"))
-            {
-                await target.Api.Camera.SetLiveviewFrameInfo(new FrameInfoSetting() { TransferFrameInfo = true });
-            }
-        }
-
-        private void api_SupportedApisUpdated(object sender, SupportedApiEventArgs e)
-        {
         }
 
         private void GoToLiveviewScreen()
@@ -1073,7 +1057,6 @@ namespace Kazyx.Uwpmm.Pages
 
         private void OpenCloseSliders()
         {
-            DebugUtil.Log("Manipulation completed.");
             if (ShootingParamSliders.Visibility == Windows.UI.Xaml.Visibility.Visible)
             {
                 ShootingParamSliders.Visibility = Windows.UI.Xaml.Visibility.Collapsed;

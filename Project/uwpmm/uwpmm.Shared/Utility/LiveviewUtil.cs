@@ -47,7 +47,7 @@ namespace Kazyx.Uwpmm.Utility
                         Histogram.CreateHistogram(writableImage);
                     });
                 }
-                else
+                else if (Histogram.IsRunning)
                 {
                     DebugUtil.Log("Histogram creating. skip.");
                 }
