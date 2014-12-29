@@ -14,36 +14,36 @@ namespace Kazyx.Uwpmm.UPnP.ContentDirectory
 
         public static BrowseResponse Parse(XDocument xml)
         {
-            var body = xml.Root.Element(NS_S + "Body");
+            var body = GetBodyOrThrowError(xml);
             var res = body.Element(NS_U + "BrowseResponse");
             var result = res.Element("Result");
-            var root = result.Element("DIDL-Lite");
+            var root = result.Element(NS_DIDL + "DIDL-Lite");
 
             var numReturned = int.Parse(res.Element("NumberReturned").Value);
             var total = int.Parse(res.Element("TotalMatches").Value);
             var updateId = res.Element("UpdateID").Value;
 
             var containers = new List<Container>();
-            foreach (var element in root.Elements("container"))
+            foreach (var element in root.Elements(NS_DIDL + "container"))
             {
                 var container = new Container
                 {
                     Id = element.Attribute("id").Value,
                     ParentId = element.Attribute("parentID").Value,
-                    Restricted = bool.Parse(element.Attribute("restricted").Value),
+                    Restricted = BoolConversionHelper.From(element.Attribute("restricted").Value),
                     Title = element.Element(NS_DC + "title").Value,
                 };
                 containers.Add(container);
             }
 
             var items = new List<Item>();
-            foreach (var element in root.Elements("item"))
+            foreach (var element in root.Elements(NS_DIDL + "item"))
             {
                 var item = new Item
                 {
                     Id = element.Attribute("id").Value,
                     ParentId = element.Attribute("parentID").Value,
-                    Restricted = bool.Parse(element.Attribute("restricted").Value),
+                    Restricted = BoolConversionHelper.From(element.Attribute("restricted").Value),
                     Title = element.Element(NS_DC + "title").Value,
                 };
                 items.Add(item);

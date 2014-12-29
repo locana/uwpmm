@@ -6,10 +6,13 @@ namespace Kazyx.Uwpmm.UPnP
     {
         public int StatusCode { private set; get; }
 
-        public SoapException(int code)
+        public string Description { private set; get; }
+
+        public SoapException(int code, string description)
             : base()
         {
             StatusCode = code;
+            Description = description;
         }
     }
 }

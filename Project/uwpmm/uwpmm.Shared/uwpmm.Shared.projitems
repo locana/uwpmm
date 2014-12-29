@@ -94,9 +94,11 @@
     <Compile Include="$(MSBuildThisFileDirectory)UPnP\SoapBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UPnP\SoapException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UPnP\UpnpDevice.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UPnP\UpnpError.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UPnP\UpnpService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UPnP\UpnpDescriptionParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\ApplicationSettingNames.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utility\BoolConversionHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\BoolToVisibilityConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\DebugUtil.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\DummyContentsGenerator.cs" />

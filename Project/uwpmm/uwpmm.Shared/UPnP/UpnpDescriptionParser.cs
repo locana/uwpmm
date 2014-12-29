@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Xml.Linq;
 
 namespace Kazyx.Uwpmm.UPnP
@@ -7,8 +8,10 @@ namespace Kazyx.Uwpmm.UPnP
     {
         private const string NS_UPNP = "{urn:schemas-upnp-org:device-1-0}";
 
-        public static UpnpDevice ParseDescription(XDocument xml)
+        public static UpnpDevice ParseDescription(XDocument xml, Uri location)
         {
+            var rootAddress = ConvertLocationToRootAddress(location);
+
             var device = xml.Root.Element(NS_UPNP + "device");
             var services = device.Element(NS_UPNP + "serviceList");
             var udn = device.Element(NS_UPNP + "UDN").Value;
@@ -16,25 +19,32 @@ namespace Kazyx.Uwpmm.UPnP
             var mn = device.Element(NS_UPNP + "modelName").Value;
 
             var result = new List<UpnpService>();
-            foreach (var service in services.Elements("service"))
+            foreach (var service in services.Elements())
             {
                 result.Add(new UpnpService
                 {
-                    ServiceType = service.Element("serviceType").Value,
-                    ServiceId = service.Element("serviceId").Value,
-                    ScpdUrl = service.Element("SCPDURL").Value,
-                    ControlUrl = service.Element("controlURL").Value,
-                    EventSubUrl = service.Element("eventSubURL").Value,
+                    RootAddress = rootAddress,
+                    ServiceType = service.Element(NS_UPNP + "serviceType").Value,
+                    ServiceId = service.Element(NS_UPNP + "serviceId").Value,
+                    ScpdUrl = service.Element(NS_UPNP + "SCPDURL").Value,
+                    ControlUrl = service.Element(NS_UPNP + "controlURL").Value,
+                    EventSubUrl = service.Element(NS_UPNP + "eventSubURL").Value,
                 });
             }
 
             return new UpnpDevice
             {
+                RootAddress = rootAddress,
                 FriendlyName = fn,
                 ModelName = mn,
                 UDN = udn,
                 Services = result
             };
+        }
+
+        private static string ConvertLocationToRootAddress(Uri location)
+        {
+            return "http://" + location.Host + ":" + location.Port;
         }
     }
 }
