@@ -88,6 +88,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)DataModel\PlaybackSource.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)LocalizedStrings.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Settings\SettingPanelBuilder.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UPnP\ContentDirectory\DestroyObjectRequest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UPnP\ContentDirectory\RetrievedContents.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UPnP\ContentDirectory\SearchCapabilities.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UPnP\ContentDirectory\GetSearchCapabilitiesRequest.cs" />
@@ -103,6 +104,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)UPnP\UpnpError.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UPnP\UpnpService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UPnP\UpnpDescriptionParser.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UPnP\ValueLessResponse.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\ApplicationSettingNames.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\BoolToVisibilityConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\DebugUtil.cs" />

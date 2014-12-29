@@ -581,10 +581,10 @@ Please check internet connection status</value>
     <value>Failed to refresh camera contents list</value>
   </data>
   <data name="Viewer_Header_SelectingToDelete" xml:space="preserve">
-    <value>Selecting contents to delete</value>
+    <value>Selecting to delete...</value>
   </data>
   <data name="Viewer_Header_SelectingToDownload" xml:space="preserve">
-    <value>Selecting contents to download</value>
+    <value>Selecting to download...</value>
   </data>
   <data name="Viewer_MenuCopyToPhone" xml:space="preserve">
     <value>Copy to phone storage</value>
@@ -1051,5 +1051,8 @@ Please update to the latest at PlayMemories Camera Apps store.</value>
   </data>
   <data name="White" xml:space="preserve">
     <value>White</value>
+  </data>
+  <data name="Viewer_Header_GroupView" xml:space="preserve">
+    <value>Jump to group</value>
   </data>
 </root>

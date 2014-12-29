@@ -35,7 +35,7 @@
     </Page.Resources>
 
     <Grid x:Name="LayoutRoot">
-        <Pivot x:Name="PivotRoot" SelectionChanged="Pivot_SelectionChanged" Loaded="PivotRoot_Loaded">
+        <Pivot x:Name="PivotRoot" SelectionChanged="Pivot_SelectionChanged" Loaded="PivotRoot_Loaded" Margin="0,-24,0,0">
             <PivotItem Margin="0,-16,0,0">
                 <PivotItem.Header>
                     <TextBlock Text="{Binding [Viewer_StoragePhone], Source={StaticResource LocalizedStrings}}" Margin="0,8,0,0"
@@ -53,7 +53,8 @@
                                       ItemContainerStyleSelector="{StaticResource GridViewItemSelectivityBinder}">
                                 <GridView.ItemTemplate>
                                     <DataTemplate>
-                                        <Grid Height="116" Width="116" Margin="2,2" Holding="LocalGrid_Holding">
+                                        <Grid Height="116" Width="116" Margin="2,2" Holding="LocalGrid_Holding"
+                                              Background="{ThemeResource ContentDialogBackgroundThemeBrush}">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="48"/>
                                                 <ColumnDefinition Width="*"/>
@@ -63,9 +64,6 @@
                                                 <RowDefinition Height="*"/>
                                                 <RowDefinition Height="48"/>
                                             </Grid.RowDefinitions>
-                                            <Grid.Background>
-                                                <SolidColorBrush Color="{StaticResource PhoneChromeColor}"/>
-                                            </Grid.Background>
                                             <Image Grid.ColumnSpan="3" Grid.RowSpan="2" x:Name="LocalThumbnailImage" Width="108" Height="108" Stretch="Uniform"
                                                    Source="{Binding Path=ThumbnailImage}" Tapped="LocalThumbnailImage_Tapped"/>
                                             <Image Grid.Row="1" Grid.Column="2" Source="/Assets/Screen/mode_movie.png"
@@ -105,11 +103,11 @@
                             </GridView>
                         </SemanticZoom.ZoomedInView>
                         <SemanticZoom.ZoomedOutView>
-                            <GridView ScrollViewer.IsVerticalScrollChainingEnabled="False"
+                            <GridView ScrollViewer.IsVerticalScrollChainingEnabled="False" Padding="0,16,0,0"
                                       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
                                 <GridView.ItemTemplate>
                                     <DataTemplate>
-                                        <Grid Background="{ThemeResource ContentDialogDimmingThemeBrush}"
+                                        <Grid Background="{ThemeResource ContentDialogBackgroundThemeBrush}"
                                               Height="188" Width ="188" Margin="8,8">
                                             <Grid.RowDefinitions>
                                                 <RowDefinition Height="40" />
@@ -128,9 +126,9 @@
                                     </DataTemplate>
                                 </GridView.ItemTemplate>
                                 <GridView.Header>
-                                    <TextBlock Text="Album View"
-                                               Style="{StaticResource SubheaderTextBlockStyle}"
-                                               Margin="16,4"/>
+                                    <TextBlock Text="{Binding [Viewer_Header_GroupView], Source={StaticResource LocalizedStrings}}"
+                                            Style="{StaticResource SubheaderTextBlockStyle}"
+                                            Margin="18,0,0,2" VerticalAlignment="Bottom"/>
                                 </GridView.Header>
                             </GridView>
                         </SemanticZoom.ZoomedOutView>
@@ -160,7 +158,8 @@
                                       ItemContainerStyleSelector="{StaticResource GridViewItemSelectivityBinder}">
                                 <GridView.ItemTemplate>
                                     <DataTemplate>
-                                        <Grid Height="116" Width="116" Margin="2,2" Holding="RemoteGrid_Holding">
+                                        <Grid Height="116" Width="116" Margin="2,2" Holding="RemoteGrid_Holding"
+                                              Background="{ThemeResource ContentDialogBackgroundThemeBrush}">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="48"/>
                                                 <ColumnDefinition Width="*"/>
@@ -170,9 +169,6 @@
                                                 <RowDefinition Height="*"/>
                                                 <RowDefinition Height="48"/>
                                             </Grid.RowDefinitions>
-                                            <Grid.Background>
-                                                <SolidColorBrush Color="{StaticResource PhoneChromeColor}"/>
-                                            </Grid.Background>
                                             <Image Grid.ColumnSpan="3" Grid.RowSpan="2" x:Name="RemoteThumbnailImage" Width="108" Height="108" Stretch="Uniform"
                                                    Source="{Binding Path=ThumbnailImage}" Tapped="RemoteThumbnailImage_Tapped"/>
                                             <Image Grid.Row="1" Grid.Column="0" Source="/Assets/Screen/protected.png"
@@ -196,7 +192,6 @@
                                                                     Visibility="{Binding Path=Source.Protected, Converter={StaticResource B2VRConverter}}" />
                                                 </MenuFlyout>
                                             </FlyoutBase.AttachedFlyout>
-
                                         </Grid>
                                     </DataTemplate>
                                 </GridView.ItemTemplate>
@@ -210,7 +205,8 @@
                                         <GroupStyle.HeaderTemplate>
                                             <DataTemplate>
                                                 <Grid Margin="0,8,0,0">
-                                                    <TextBlock Text="{Binding Key}" Style="{StaticResource GroupHeaderTextBlockStyle}" Padding="8,0"/>
+                                                    <TextBlock Text="{Binding Key}"
+                                                               Style="{StaticResource GroupHeaderTextBlockStyle}" Padding="8,0"/>
                                                 </Grid>
                                             </DataTemplate>
                                         </GroupStyle.HeaderTemplate>
@@ -220,10 +216,10 @@
                         </SemanticZoom.ZoomedInView>
                         <SemanticZoom.ZoomedOutView>
                             <GridView ScrollViewer.IsVerticalScrollChainingEnabled="False"
-                                      Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+                                      Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Padding="0,16,0,0">
                                 <GridView.ItemTemplate>
                                     <DataTemplate>
-                                        <Grid Background="{ThemeResource ContentDialogDimmingThemeBrush}"
+                                        <Grid Background="{ThemeResource ContentDialogBackgroundThemeBrush}"
                                               Height="188" Width ="188" Margin="8,8">
                                             <Grid.RowDefinitions>
                                                 <RowDefinition Height="40" />
@@ -242,9 +238,9 @@
                                     </DataTemplate>
                                 </GridView.ItemTemplate>
                                 <GridView.Header>
-                                    <TextBlock Text="Album View"
-                                               Style="{StaticResource SubheaderTextBlockStyle}"
-                                               Margin="16,4"/>
+                                    <TextBlock Text="{Binding [Viewer_Header_GroupView], Source={StaticResource LocalizedStrings}}"
+                                            Style="{StaticResource SubheaderTextBlockStyle}"
+                                            Margin="18,0,0,2" VerticalAlignment="Bottom"/>
                                 </GridView.Header>
                             </GridView>
                         </SemanticZoom.ZoomedOutView>
@@ -252,16 +248,13 @@
                 </Grid>
             </PivotItem>
         </Pivot>
-        <Border x:Name="HeaderBlocker" Height="74" VerticalAlignment="Top" Visibility="Collapsed">
-            <Border.Background>
-                <SolidColorBrush Color="{StaticResource PhoneBackgroundColor}"/>
-            </Border.Background>
-            <TextBlock x:Name="HeaderBlockerText" VerticalAlignment="Center" Style="{StaticResource SubheaderTextBlockStyle}" />
+        <Border x:Name="HeaderBlocker" Height="56" VerticalAlignment="Top"
+                Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+            <TextBlock x:Name="HeaderBlockerText" VerticalAlignment="Bottom"
+                       Style="{StaticResource SubheaderTextBlockStyle}" Margin="18,0,0,2" />
         </Border>
 
-        <control:PhotoPlaybackScreen x:Name="PhotoScreen" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0"
-                                          ManipulationStarted="PhotoScreen_ManipulationStarted" ManipulationDelta="PhotoScreen_ManipulationDelta" ManipulationCompleted="PhotoScreen_ManipulationCompleted" >
-        </control:PhotoPlaybackScreen>
+        <control:PhotoPlaybackScreen x:Name="PhotoScreen" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0"/>
 
         <Border x:Name="MovieDrawer" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="Collapsed">
             <!--
@@ -271,10 +264,8 @@
             <control:MoviePlaybackScreen x:Name="MovieScreen" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="12"/>
         </Border>
 
-        <Grid Name="AppSettingPanel" Visibility="Collapsed" >
-            <Grid.Background>
-                <SolidColorBrush Color="{StaticResource PhoneBackgroundColor}"/>
-            </Grid.Background>
+        <Grid Name="AppSettingPanel" Visibility="Collapsed"
+              Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" >
             <ScrollViewer >
                 <StackPanel Name="AppSettings" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="-12,0,0,0" >
                 </StackPanel>

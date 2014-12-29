@@ -248,10 +248,17 @@ namespace Kazyx.Uwpmm.Pages
             {
                 case SelectivityFactor.None:
                     RemoteGrid.SelectionMode = ListViewSelectionMode.None;
+                    HeaderBlocker.Visibility = Visibility.Collapsed;
                     break;
                 case SelectivityFactor.CopyToPhone:
+                    RemoteGrid.SelectionMode = ListViewSelectionMode.Multiple;
+                    HeaderBlocker.Visibility = Visibility.Visible;
+                    HeaderBlockerText.Text = SystemUtil.GetStringResource("Viewer_Header_SelectingToDownload");
+                    break;
                 case SelectivityFactor.Delete:
                     RemoteGrid.SelectionMode = ListViewSelectionMode.Multiple;
+                    HeaderBlocker.Visibility = Visibility.Visible;
+                    HeaderBlockerText.Text = SystemUtil.GetStringResource("Viewer_Header_SelectingToDelete");
                     break;
             }
         }
@@ -865,45 +872,6 @@ namespace Kazyx.Uwpmm.Pages
             });
         }
 
-        /*
-        private void RemoteImageGrid_IsSelectionEnabledChanged(object sender, DependencyPropertyChangedEventArgs e)
-        {
-            var selector = (sender as LongListMultiSelector);
-            if (!selector.IsSelectionEnabled && GridSource != null)
-            {
-                GridSource.SelectivityFactor = SelectivityFactor.None;
-                HeaderBlocker.Visibility = Visibility.Collapsed;
-                UnlockPivot();
-            }
-            if (selector.IsSelectionEnabled && GridSource != null)
-            {
-                switch (GridSource.SelectivityFactor)
-                {
-                    case SelectivityFactor.CopyToPhone:
-                        HeaderBlockerText.Text = SystemUtil.GetStringResource("Viewer_Header_SelectingToDownload");
-                        HeaderBlocker.Visibility = Visibility.Visible;
-                        break;
-                    case SelectivityFactor.Delete:
-                        HeaderBlockerText.Text = SystemUtil.GetStringResource("Viewer_Header_SelectingToDelete");
-                        HeaderBlocker.Visibility = Visibility.Visible;
-                        break;
-                }
-                PivotRoot.IsLocked = true;
-            }
-            if (PivotRoot.SelectedIndex == 1)
-            {
-                if (selector.IsSelectionEnabled)
-                {
-                    UpdateInnerState(ViewerState.RemoteMulti);
-                }
-                else
-                {
-                    UpdateInnerState(ViewerState.RemoteSingle);
-                }
-            }
-        }
-        */
-
         private void Playback_Click(object sender, RoutedEventArgs e)
         {
             var item = sender as MenuFlyoutItem;
@@ -1109,21 +1077,6 @@ namespace Kazyx.Uwpmm.Pages
         private void PivotRoot_Loaded(object sender, RoutedEventArgs e)
         {
             DefaultPivotLockState();
-        }
-
-        private void PhotoScreen_ManipulationCompleted(object sender, ManipulationCompletedRoutedEventArgs e)
-        {
-            // PhotoScreen.viewport_ManipulationCompleted(sender, e);
-        }
-
-        private void PhotoScreen_ManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
-        {
-            // PhotoScreen.viewport_ManipulationDelta(sender, e);
-        }
-
-        private void PhotoScreen_ManipulationStarted(object sender, ManipulationStartedRoutedEventArgs e)
-        {
-            // PhotoScreen.viewport_ManipulationStarted(sender, e);
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
