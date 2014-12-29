@@ -466,7 +466,7 @@ namespace Kazyx.Uwpmm.Pages
                     var list = new List<Thumbnail>();
                     foreach (var content in DummyContentsGenerator.RandomContentList(30))
                     {
-                        list.Add(new Thumbnail(CurrentUuid, date, content));
+                        list.Add(new Thumbnail(date.Title, content, CurrentUuid));
                     }
                     await Dispatcher.RunAsync(CoreDispatcherPriority.High, () =>
                     {
@@ -622,7 +622,7 @@ namespace Kazyx.Uwpmm.Pages
             var list = new List<Thumbnail>();
             foreach (var content in args.ContentList)
             {
-                list.Add(new Thumbnail(TargetDevice.Udn, args.DateInfo, content));
+                list.Add(new Thumbnail(args.DateInfo.Title, content, TargetDevice.Udn));
             }
 
             await Dispatcher.RunAsync(CoreDispatcherPriority.High, () =>
@@ -659,22 +659,13 @@ namespace Kazyx.Uwpmm.Pages
             DebugUtil.Log("ViewerPage: OnFetched");
             await Dispatcher.RunAsync(CoreDispatcherPriority.High, () =>
             {
-
                 var content = new ContentInfo
                 {
                     Protected = false,
                     ContentType = ContentKind.StillImage,
                 };
-                var thumb = new Thumbnail(folder.DisplayName, file, content);
+                var thumb = new Thumbnail(folder.DisplayName, content, file);
                 LocalGridSource.Add(thumb);
-                /*
-                var groups = LocalImageGrid.DataContext as ThumbnailGroup;
-                if (groups == null)
-                {
-                    return;
-                }
-                groups.Group.Insert(0, new ThumbnailData(pic));
-                 * */
             });
         }
 
@@ -746,13 +737,6 @@ namespace Kazyx.Uwpmm.Pages
         {
             PhotoScreen.ReleaseImage();
             SetStillDetailVisibility(false);
-            // poor codes to avoid LongListMultiSelector freezing
-            /*
-            LocalImageGrid.Margin = new Thickness(0.1);
-            LocalImageGrid.UpdateLayout();
-            LocalImageGrid.Margin = new Thickness(0);
-            LocalImageGrid.UpdateLayout();
-             * */
         }
 
         private bool IsViewingDetail = false;
@@ -829,7 +813,12 @@ namespace Kazyx.Uwpmm.Pages
             foreach (var item in items)
             {
                 var data = item as Thumbnail;
-                contents.ContentUris.Add(data.Source.Uri);
+                if (data.Source is WebApiContentInfo)
+                {
+                    var info = data.Source as WebApiContentInfo;
+                    contents.ContentUris.Add(info.Uri);
+                }
+                // TODO for UPnP content
             }
             DeleteContents(contents);
         }
@@ -1000,7 +989,13 @@ namespace Kazyx.Uwpmm.Pages
 
                     if (av != null)
                     {
-                        if (content.Source.RemotePlaybackAvailable)
+                        var item = content.Source as WebApiContentInfo;
+                        if (item == null)
+                        {
+                            DebugUtil.Log("This is UPnP content");
+                            break;
+                        }
+                        if (item.RemotePlaybackAvailable)
                         {
                             PivotRoot.IsLocked = true;
                             UpdateInnerState(ViewerState.RemoteMoviePlayback);
@@ -1008,7 +1003,7 @@ namespace Kazyx.Uwpmm.Pages
                             ChangeProgressText(SystemUtil.GetStringResource("Progress_OpeningMovieStream"));
                             var started = await MovieStreamHelper.INSTANCE.Start(av, new PlaybackContent
                             {
-                                Uri = content.Source.Uri,
+                                Uri = item.Uri,
                                 RemotePlayType = RemotePlayMode.SimpleStreaming
                             }, content.Source.Name);
                             if (!started)
@@ -1025,7 +1020,7 @@ namespace Kazyx.Uwpmm.Pages
                     }
                     else
                     {
-                        DebugUtil.Log("Not ready to start stream: " + content.Source.Uri);
+                        DebugUtil.Log("Not ready to start stream");
                         ShowToast(SystemUtil.GetStringResource("Viewer_NoAvContentApi"));
                     }
                     break;
@@ -1050,12 +1045,16 @@ namespace Kazyx.Uwpmm.Pages
         private void Delete_Click(object sender, RoutedEventArgs e)
         {
             var item = sender as MenuFlyoutItem;
-            var data = item.DataContext as Thumbnail;
-
-            var contents = new TargetContents();
-            contents.ContentUris = new List<string>();
-            contents.ContentUris.Add(data.Source.Uri);
-            DeleteContents(contents);
+            var content = (item.DataContext as Thumbnail).Source;
+            if (content is WebApiContentInfo)
+            {
+                var data = content as WebApiContentInfo;
+                var contents = new TargetContents();
+                contents.ContentUris = new List<string>();
+                contents.ContentUris.Add(data.Uri);
+                DeleteContents(contents);
+            }
+            // TODO for UPnP content
         }
 
         private async void DeleteContents(TargetContents contents)

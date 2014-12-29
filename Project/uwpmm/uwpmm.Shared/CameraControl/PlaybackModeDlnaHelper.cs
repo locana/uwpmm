@@ -1,4 +1,6 @@
-﻿using Kazyx.Uwpmm.UPnP;
+﻿using Kazyx.RemoteApi.AvContent;
+using Kazyx.Uwpmm.DataModel;
+using Kazyx.Uwpmm.UPnP;
 using Kazyx.Uwpmm.UPnP.ContentDirectory;
 using Kazyx.Uwpmm.Utility;
 using System;
@@ -89,15 +91,72 @@ namespace Kazyx.Uwpmm.CameraControl
             }
         }
 
-        public static Resource GetThumbnailResource(IList<Resource> resources)
+        public static UpnpContentInfo Translate(Item source)
         {
-            if (resources.Count == 0)
+            if (source.Resources.Count == 0)
             {
                 return null;
             }
 
+            return new UpnpContentInfo
+            {
+                Id = source.Id,
+                ContentType = source.Class == Class.ImageItem ? ContentKind.StillImage : ContentKind.Unknown,
+                CreatedTime = source.Date,
+                Name = source.Title,
+                Protected = source.Restricted,
+                OriginalUrl = GetOriginalImageResource(source).ResourceUrl,
+                LargeUrl = GetLargeImageResource(source).ResourceUrl,
+                ThumbnailUrl = GetThumbnailResource(source).ResourceUrl,
+            };
+        }
+
+        private static Resource GetLargeImageResource(Item item)
+        {
+            foreach (var res in item.Resources)
+            {
+                if (res.ProtocolInfo == null)
+                {
+                    continue;
+                }
+                if (res.ProtocolInfo.MimeType == "image/jpeg" && res.ProtocolInfo.DlnaProfileName == DlnaProfileName.JpegLarge)
+                {
+                    return res;
+                }
+            }
+
+            if (item.Class == Class.ImageItem)
+            {
+                return item.Resources[0];
+            }
+            return null;
+        }
+
+        private static Resource GetOriginalImageResource(Item item)
+        {
+            foreach (var res in item.Resources)
+            {
+                if (res.ProtocolInfo == null)
+                {
+                    continue;
+                }
+                if (res.ProtocolInfo.MimeType == "image/jpeg" && res.ProtocolInfo.IsOriginalContent)
+                {
+                    return res;
+                }
+            }
+
+            if (item.Class == Class.ImageItem)
+            {
+                return item.Resources[0];
+            }
+            return null;
+        }
+
+        private static Resource GetThumbnailResource(Item item)
+        {
             Resource result = null;
-            foreach (var res in resources)
+            foreach (var res in item.Resources)
             {
                 if (res.ProtocolInfo == null)
                 {

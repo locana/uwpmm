@@ -22,10 +22,19 @@ namespace Kazyx.Uwpmm.DataModel
         public string OriginalUrl { set; get; }
         public string LargeUrl { set; get; }
         public string ThumbnailUrl { set; get; }
-        public string Uri { set; get; }
         public string ContentType { set; get; }
         public string CreatedTime { set; get; }
         public bool Protected { set; get; }
+    }
+
+    public class WebApiContentInfo : ContentInfo
+    {
+        public string Uri { set; get; }
         public bool RemotePlaybackAvailable { set; get; }
+    }
+
+    public class UpnpContentInfo : ContentInfo
+    {
+        public string Id { set; get; }
     }
 }

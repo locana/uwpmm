@@ -15,14 +15,14 @@ namespace Kazyx.Uwpmm.DataModel
 {
     public class Thumbnail : ObservableBase
     {
-        public Thumbnail(string uuid, DateInfo date, ContentInfo content)
+        public Thumbnail(string groupTitle, ContentInfo content, string uuid)
         {
-            GroupTitle = date.Title;
+            GroupTitle = groupTitle;
             Source = content;
             DeviceUuid = uuid;
         }
 
-        public Thumbnail(string groupTitle, StorageFile localfile, ContentInfo content)
+        public Thumbnail(string groupTitle, ContentInfo content, StorageFile localfile)
         {
             GroupTitle = groupTitle;
             CacheFile = localfile;

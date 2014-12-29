@@ -61,7 +61,7 @@ namespace Kazyx.Uwpmm.Utility
                     Protected = false,
                     ContentType = ContentKind.StillImage,
                 };
-                var thumb = new Thumbnail(folder.DisplayName, file, content);
+                var thumb = new Thumbnail(folder.DisplayName, content, file);
                 OnContentLoaded(thumb);
                 thumbs.Add(thumb);
             }

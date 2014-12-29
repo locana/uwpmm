@@ -218,7 +218,7 @@ namespace Kazyx.Uwpmm.CameraControl
                     && content.ImageContent.OriginalContents != null
                     && content.ImageContent.OriginalContents.Count > 0)
                 {
-                    var contentInfo = new ContentInfo
+                    var contentInfo = new WebApiContentInfo
                     {
                         Name = RemoveExtension(content.ImageContent.OriginalContents[0].FileName),
                         LargeUrl = content.ImageContent.LargeImageUrl,
