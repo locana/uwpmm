@@ -12,6 +12,7 @@ This application will be released Windows Phone store.
 
  ``` bash
  git clone git@github.com:locana/uwpmm.git
+ cd uwpmm
  git submodule update --init
  ```
 
