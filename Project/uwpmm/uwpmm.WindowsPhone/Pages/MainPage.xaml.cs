@@ -428,7 +428,7 @@ namespace Kazyx.Uwpmm.Pages
                     ControlPanel.Children.Add(panel);
                 }
 
-                SetupFocusFrame();
+                SetupFocusFrame(ApplicationSettings.GetInstance().RequestFocusFrameInfo);
 
                 ShootingParamSliders.DataContext = new ShootingParamViewData() { Status = target.Status, Liveview = screenViewData };
                 FnumberSlider.SliderOperated += async (s, arg) =>
@@ -464,9 +464,14 @@ namespace Kazyx.Uwpmm.Pages
             });
         }
 
-        private void SetupFocusFrame()
+        private async void SetupFocusFrame(bool RequestFocusFrameEnabled)
         {
-            if (!target.Api.Capability.IsSupported("setLiveviewFrameInfo") && target.Api.Capability.IsAvailable("setTouchAFPosition"))
+            if (RequestFocusFrameEnabled && target.Api.Capability.IsAvailable("setLiveviewFrameInfo"))
+            {
+                await target.Api.Camera.SetLiveviewFrameInfo(new FrameInfoSetting() { TransferFrameInfo = true });
+            }
+
+            if (RequestFocusFrameEnabled && !target.Api.Capability.IsSupported("setLiveviewFrameInfo") && target.Api.Capability.IsAvailable("setTouchAFPosition"))
             {
                 // For devices which does not support to transfer focus frame info, draw focus frame itself.
                 _FocusFrameSurface.SelfDrawTouchAFFrame = true;
@@ -515,7 +520,7 @@ namespace Kazyx.Uwpmm.Pages
                     BatteryStatusDisplay.BatteryInfo = status.BatteryInfo;
                     break;
                 case "AvailableApis":
-                    SetupFocusFrame();
+                    SetupFocusFrame(ApplicationSettings.GetInstance().RequestFocusFrameInfo);
                     break;
                 default:
                     break;
@@ -947,6 +952,7 @@ namespace Kazyx.Uwpmm.Pages
                 enabled =>
                 {
                     ApplicationSettings.GetInstance().RequestFocusFrameInfo = enabled;
+                    SetupFocusFrame(enabled);
                     if (!enabled) { _FocusFrameSurface.ClearFrames(); }
                 });
             display_settings.Add(new CheckBoxSetting(FocusFrameSetting));
