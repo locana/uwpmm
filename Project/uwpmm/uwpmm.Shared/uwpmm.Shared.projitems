@@ -206,6 +206,7 @@
     <Content Include="$(MSBuildThisFileDirectory)Assets\Screen\protected.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\Screen\rec.png" />
     <PRIResource Include="$(MSBuildThisFileDirectory)Strings\en-US\Resources.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\ja-JP\Resources.resw" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="$(MSBuildThisFileDirectory)Control\AppBarContent.xaml">

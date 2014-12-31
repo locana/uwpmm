@@ -202,17 +202,17 @@ namespace Kazyx.Uwpmm.Pages
                     image.SetSource(thumb);
                     var path = file.Path.Split('\\');
                     var name = '\\' + path[path.Length - 2] + '\\' + path[path.Length - 1];
-                    var text = "Picture downloaded successfully!";
+                    var text = SystemUtil.GetStringResource("Message_ImageDL_Succeed");
                     switch (tagResult)
                     {
                         case GeotaggingResult.OK:
-                            text = "Picture is geotagged and downloaded successfully!";
+                            text = SystemUtil.GetStringResource("Message_ImageDL_Succeed_withGeotag");
                             break;
                         case GeotaggingResult.GeotagAlreadyExists:
-                            text = "Geotag is already exists in taken image. Just saved.";
+                            text = SystemUtil.GetStringResource("ErrorMessage_ImageDL_DuplicatedGeotag");
                             break;
                         case GeotaggingResult.UnExpectedError:
-                            text = "Failed geotagging. Just saved.";
+                            text = SystemUtil.GetStringResource("ErrorMessage_ImageDL_Geotagging");
                             break;
                     }
                     Toast.PushToast(new Control.ToastContent() { Text = text + name, Icon = image });
@@ -222,7 +222,7 @@ namespace Kazyx.Uwpmm.Pages
 
             PictureDownloader.Instance.Failed += (err, tagResult) =>
             {
-                ShowError("Failed to download or save the picture.\n" + err + " " + tagResult);
+                ShowError(SystemUtil.GetStringResource("ErrorMessage_ImageDL_Other") + err + " " + tagResult);
             };
         }
 
@@ -409,7 +409,7 @@ namespace Kazyx.Uwpmm.Pages
             catch (Exception ex)
             {
                 DebugUtil.Log("Failed setup: " + ex.Message);
-                ShowError("Failed to establish connection with your camera device.");
+                ShowError(SystemUtil.GetStringResource("ErrorMessage_fatal"));
                 return;
             }
 
@@ -652,10 +652,10 @@ namespace Kazyx.Uwpmm.Pages
                             switch (result)
                             {
                                 case Utility.PeriodicalShootingTask.ShootingResult.Skipped:
-                                    ShowToast("Skipped.");
+                                    ShowToast(SystemUtil.GetStringResource("PeriodicalShooting_Skipped"));
                                     break;
                                 case Utility.PeriodicalShootingTask.ShootingResult.Succeed:
-                                    ShowToast("Captured!");
+                                    ShowToast(SystemUtil.GetStringResource("Message_ImageCapture_Succeed"));
                                     break;
                             };
                         });
@@ -667,13 +667,13 @@ namespace Kazyx.Uwpmm.Pages
                             switch (reason)
                             {
                                 case Utility.PeriodicalShootingTask.StopReason.ShootingFailed:
-                                    ShowToast("Failed to shoot. Stop interval shooting.");
+                                    ShowError(SystemUtil.GetStringResource("ErrorMessage_Interval"));
                                     break;
                                 case Utility.PeriodicalShootingTask.StopReason.SkipLimitExceeded:
-                                    ShowToast("Something wrong. The device looks not ready to shoot.");
+                                    ShowError(SystemUtil.GetStringResource("PeriodicalShooting_SkipLimitExceed"));
                                     break;
                                 case Utility.PeriodicalShootingTask.StopReason.RequestedByUser:
-                                    ShowToast("Stopped interval shooting.");
+                                    ShowToast(SystemUtil.GetStringResource("PeriodicalShooting_StoppedByUser"));
                                     break;
                             };
                         });
@@ -686,7 +686,9 @@ namespace Kazyx.Uwpmm.Pages
                             if (status.IsRunning)
                             {
                                 PeriodicalShootingStatus.Visibility = Windows.UI.Xaml.Visibility.Visible;
-                                PeriodicalShootingStatusText.Text = "Taking photo every " + status.Interval + " sec. " + status.Count + " pics taken.";
+                                PeriodicalShootingStatusText.Text = SystemUtil.GetStringResource("PeriodicalShooting_Status")
+                                    .Replace("__INTERVAL__", status.Interval.ToString())
+                                    .Replace("__PHOTO_NUM__", status.Count.ToString());
                             }
                             else { PeriodicalShootingStatus.Visibility = Windows.UI.Xaml.Visibility.Collapsed; }
                         });
@@ -700,13 +702,13 @@ namespace Kazyx.Uwpmm.Pages
                         await SequentialOperation.TakePicture(target.Api, CachedPosition);
                         if (!ApplicationSettings.GetInstance().IsPostviewTransferEnabled)
                         {
-                            ShowToast("Captured!");
+                            ShowToast(SystemUtil.GetStringResource("Message_ImageCapture_Succeed"));
                         }
                     }
                     catch (RemoteApiException ex)
                     {
                         DebugUtil.Log(ex.StackTrace);
-                        ShowError("Failed to take a picture.");
+                        ShowError(SystemUtil.GetStringResource("ErrorMessage_shootingFailure"));
                     }
                 }
             }
@@ -718,7 +720,7 @@ namespace Kazyx.Uwpmm.Pages
                     catch (RemoteApiException ex)
                     {
                         DebugUtil.Log(ex.StackTrace);
-                        ShowError("Failed to start movie recording.");
+                        ShowError(SystemUtil.GetStringResource("ErrorMessage_shootingFailure"));
                     }
                 }
                 else if (target.Status.Status == EventParam.MvRecording)
@@ -727,7 +729,7 @@ namespace Kazyx.Uwpmm.Pages
                     catch (RemoteApiException ex)
                     {
                         DebugUtil.Log(ex.StackTrace);
-                        ShowError("Failed to stop movie recording.");
+                        ShowError(SystemUtil.GetStringResource("ErrorMessage_fatal"));
                     }
                 }
             }
@@ -739,7 +741,7 @@ namespace Kazyx.Uwpmm.Pages
                     catch (RemoteApiException ex)
                     {
                         DebugUtil.Log(ex.StackTrace);
-                        ShowError("Failed to start audio recording.");
+                        ShowError(SystemUtil.GetStringResource("ErrorMessage_shootingFailure"));
                     }
                 }
                 else if (target.Status.Status == EventParam.AuRecording)
@@ -748,7 +750,7 @@ namespace Kazyx.Uwpmm.Pages
                     catch (RemoteApiException ex)
                     {
                         DebugUtil.Log(ex.StackTrace);
-                        ShowError("Failed to stop audio recording.");
+                        ShowError(SystemUtil.GetStringResource("ErrorMessage_fatal"));
                     }
                 }
             }
@@ -760,7 +762,7 @@ namespace Kazyx.Uwpmm.Pages
                     catch (RemoteApiException ex)
                     {
                         DebugUtil.Log(ex.StackTrace);
-                        ShowError("Failed to start interval recording.");
+                        ShowError(SystemUtil.GetStringResource("ErrorMessage_shootingFailure"));
                     }
                 }
                 else if (target.Status.Status == EventParam.ItvRecording)
@@ -769,7 +771,7 @@ namespace Kazyx.Uwpmm.Pages
                     catch (RemoteApiException ex)
                     {
                         DebugUtil.Log(ex.StackTrace);
-                        ShowError("Failed to stop interval recording.");
+                        ShowError(SystemUtil.GetStringResource("ErrorMessage_fatal"));
                     }
                 }
             }
@@ -844,30 +846,11 @@ namespace Kazyx.Uwpmm.Pages
 
             var err = "";
 
-            try
-            {
-                ndefRecords = parser.Parse();
-            }
-            catch (NoSonyNdefRecordException)
-            {
-                // err = AppResources.ErrorMessage_CantFindSonyRecord;
-                err = "No Sony camera info found.";
-            }
-            catch (NoNdefRecordException)
-            {
-                err = "No NDEF record.";
-                // err = AppResources.ErrorMessage_ParseNFC;
-            }
-            catch (NdefParseException)
-            {
-                err = "Failed to parse the data.";
-                // err = AppResources.ErrorMessage_ParseNFC;
-            }
-            catch (Exception)
-            {
-                err = "Something wrong.";
-                // err = AppResources.ErrorMessage_fatal;
-            }
+            try { ndefRecords = parser.Parse(); }
+            catch (NoSonyNdefRecordException) { err = SystemUtil.GetStringResource("ErrorMessage_CantFindSonyRecord"); }
+            catch (NoNdefRecordException) { err = SystemUtil.GetStringResource("ErrorMessage_ParseNFC"); }
+            catch (NdefParseException) { err = SystemUtil.GetStringResource("ErrorMessage_ParseNFC"); }
+            catch (Exception) { err = SystemUtil.GetStringResource("ErrorMessage_fatal"); }
 
             if (err != "")
             {
@@ -886,7 +869,7 @@ namespace Kazyx.Uwpmm.Pages
                             // TODO: find any easy way to connect the camera
                             // Clipboard.SetText(r.Password);
                             var sb = new StringBuilder();
-                            sb.Append("Found NFC tag!");
+                            sb.Append(SystemUtil.GetStringResource("Message_NFC_succeed"));
                             sb.Append(System.Environment.NewLine);
                             sb.Append(System.Environment.NewLine);
                             sb.Append("SSID: ");
@@ -926,16 +909,16 @@ namespace Kazyx.Uwpmm.Pages
 
         private void InitializeAppSettingPanel()
         {
-            var image_settings = new SettingSection("Image settings");
+            var image_settings = new SettingSection(SystemUtil.GetStringResource("SettingSection_Image"));
 
             AppSettings.Children.Add(image_settings);
 
             image_settings.Add(new CheckBoxSetting(
-                new AppSettingData<bool>("Save image after shooting", "postview",
+                new AppSettingData<bool>(SystemUtil.GetStringResource("PostviewTransferSetting"), SystemUtil.GetStringResource("Guide_ReceiveCapturedImage"),
                 () => { return ApplicationSettings.GetInstance().IsPostviewTransferEnabled; },
                 enabled => { ApplicationSettings.GetInstance().IsPostviewTransferEnabled = enabled; })));
 
-            geoSetting = new AppSettingData<bool>("Add geotag", "geotag",
+            geoSetting = new AppSettingData<bool>(SystemUtil.GetStringResource("AddGeotag"), SystemUtil.GetStringResource("AddGeotag_guide"),
                 () => { return ApplicationSettings.GetInstance().GeotagEnabled; },
                 enabled =>
                 {
@@ -945,21 +928,21 @@ namespace Kazyx.Uwpmm.Pages
                 });
             image_settings.Add(new CheckBoxSetting(geoSetting));
 
-            var display_settings = new SettingSection("Display");
+            var display_settings = new SettingSection(SystemUtil.GetStringResource("SettingSection_Display"));
 
             AppSettings.Children.Add(display_settings);
 
             display_settings.Add(new CheckBoxSetting(
-                new AppSettingData<bool>("Show button to take image", "button",
+                new AppSettingData<bool>(SystemUtil.GetStringResource("DisplayTakeImageButtonSetting"), SystemUtil.GetStringResource("Guide_DisplayTakeImageButtonSetting"),
                 () => { return ApplicationSettings.GetInstance().IsShootButtonDisplayed; },
                 enabled => { ApplicationSettings.GetInstance().IsShootButtonDisplayed = enabled; })));
 
             display_settings.Add(new CheckBoxSetting(
-                new AppSettingData<bool>("Show histogram", "",
+                new AppSettingData<bool>(SystemUtil.GetStringResource("DisplayHistogram"), SystemUtil.GetStringResource("Guide_Histogram"),
                 () => { return ApplicationSettings.GetInstance().IsHistogramDisplayed; },
                 enabled => { ApplicationSettings.GetInstance().IsHistogramDisplayed = enabled; })));
 
-            FocusFrameSetting = new AppSettingData<bool>("Show focus frame", "",
+            FocusFrameSetting = new AppSettingData<bool>(SystemUtil.GetStringResource("FocusFrameDisplay"), SystemUtil.GetStringResource("Guide_FocusFrameDisplay"),
                 () => { return ApplicationSettings.GetInstance().RequestFocusFrameInfo; },
                 enabled =>
                 {
@@ -969,7 +952,7 @@ namespace Kazyx.Uwpmm.Pages
             display_settings.Add(new CheckBoxSetting(FocusFrameSetting));
 
             display_settings.Add(new ComboBoxSetting(
-                new AppSettingData<int>("Framing grids setting", "you can select various types of framing assist lines",
+                new AppSettingData<int>(SystemUtil.GetStringResource("FramingGrids"), SystemUtil.GetStringResource("Guide_FramingGrids"),
                     () => { return ApplicationSettings.GetInstance().GridTypeIndex; },
                     setting =>
                     {
@@ -981,7 +964,7 @@ namespace Kazyx.Uwpmm.Pages
                     SettingValueConverter.FromFramingGrid(ApplicationSettings.GetInstance().GridTypeSettings.ToArray())
                     )));
 
-            gridColorSetting = new AppSettingData<int>("Color", null,
+            gridColorSetting = new AppSettingData<int>(SystemUtil.GetStringResource("FramingGridColor"), null,
                     () => { return ApplicationSettings.GetInstance().GridColorIndex; },
                     setting =>
                     {
@@ -991,7 +974,7 @@ namespace Kazyx.Uwpmm.Pages
                     SettingValueConverter.FromFramingGridColor(ApplicationSettings.GetInstance().GridColorSettings.ToArray()));
             display_settings.Add(new ComboBoxSetting(gridColorSetting));
 
-            fibonacciOriginSetting = new AppSettingData<int>("Origin", null,
+            fibonacciOriginSetting = new AppSettingData<int>(SystemUtil.GetStringResource("FibonacciSpiralOrigin"), null,
                 () => { return ApplicationSettings.GetInstance().FibonacciOriginIndex; },
                 setting =>
                 {
