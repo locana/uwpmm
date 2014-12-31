@@ -12,17 +12,17 @@
 
     <UserControl.Resources>
         <DataTemplate x:Key="VerticalItemTemplate">
-            <Grid Margin="2" HorizontalAlignment="Center" Width="224" VerticalAlignment="Center" Background="{ThemeResource AppBarItemDisabledForegroundThemeBrush}" >
+            <Grid Margin="-7,-6,0,-6" HorizontalAlignment="Center" Width="224" VerticalAlignment="Center" Background="Transparent" Opacity="0.7" >
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
-                <Border Margin="0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="{ThemeResource AppBarItemDisabledForegroundThemeBrush}" >
-                    <TextBlock Grid.Row="0" Text="{Binding Name}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="18,1,0,1" TextWrapping="Wrap" 
+                <Border Margin="0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="{ThemeResource AppBarItemPointerOverBackgroundThemeBrush}" >
+                    <TextBlock Grid.Row="0" Text="{Binding Name}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="12,1,0,1" TextWrapping="Wrap" 
                                FontSize="18" Foreground="{ThemeResource ApplicationForegroundThemeBrush}" />
                 </Border>
-                <ListBox Grid.Row="1" x:Name="Values" Margin="0" HorizontalAlignment="Stretch"  VerticalAlignment="Stretch" ItemsSource="{Binding ValuesList}"  
-                         IsHitTestVisible="False" ItemTemplate="{StaticResource DetailInfoTemplate}" Background="{ThemeResource AppBarItemDisabledForegroundThemeBrush}" />
+                <ListBox Grid.Row="1" x:Name="Values" Margin="12,0,0,0" HorizontalAlignment="Stretch"  VerticalAlignment="Stretch" ItemsSource="{Binding ValuesList}"  
+                         IsHitTestVisible="False" ItemTemplate="{StaticResource DetailInfoTemplate}" Background="Transparent" />
             </Grid>
         </DataTemplate>
     </UserControl.Resources>
@@ -45,10 +45,10 @@
                 <ColumnDefinition Width="4*"/>
                 <ColumnDefinition Width="auto"/>
             </Grid.ColumnDefinitions>
-            <ScrollViewer Name="DetailInfoPanel" Width="230" HorizontalAlignment="Center" VerticalAlignment="Stretch" Grid.Column="1" Margin="0" Opacity="0.8"
-                      Visibility="Collapsed" Background="{ThemeResource AppBarItemDisabledForegroundThemeBrush}" >
-                <ListBox x:Name="DetailInfoList" Margin="0,22,6,62" HorizontalAlignment="Stretch"  VerticalAlignment="Stretch" ItemsSource="{Binding EntryList}"  
-                         IsHitTestVisible="False" ItemTemplate="{StaticResource VerticalItemTemplate}" Background="{ThemeResource AppBarItemDisabledForegroundThemeBrush}" />
+            <ScrollViewer Name="DetailInfoPanel" Width="230" HorizontalAlignment="Center" VerticalAlignment="Stretch" Grid.Column="1" Margin="0" Opacity="0.7"
+                      Visibility="Collapsed" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" >
+                <ListBox x:Name="DetailInfoList" Margin="0,28,0,22" HorizontalAlignment="Stretch"  VerticalAlignment="Stretch" ItemsSource="{Binding EntryList}" 
+                         IsHitTestVisible="False" ItemTemplate="{StaticResource VerticalItemTemplate}" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"  />
             </ScrollViewer>
         </Grid>
     </Grid>
