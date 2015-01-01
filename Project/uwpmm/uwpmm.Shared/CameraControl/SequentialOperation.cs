@@ -4,6 +4,7 @@ using Kazyx.Uwpmm.DataModel;
 using Kazyx.Uwpmm.Utility;
 using System;
 using System.Threading.Tasks;
+using Windows.Devices.Geolocation;
 
 namespace Kazyx.Uwpmm.CameraControl
 {
@@ -15,21 +16,21 @@ namespace Kazyx.Uwpmm.CameraControl
             try
             {
                 await device.Api.RetrieveApiList();
-                var info = await device.Api.Camera.GetApplicationInfoAsync();
+                var info = await device.Api.Camera.GetApplicationInfoAsync().ConfigureAwait(false);
                 device.Api.Capability.Version = new ServerVersion(info.Version);
-                device.Api.Capability.AvailableApis = await device.Api.Camera.GetAvailableApiListAsync();
+                device.Api.Capability.AvailableApis = await device.Api.Camera.GetAvailableApiListAsync().ConfigureAwait(false);
 
                 if (device.Api.Capability.IsSupported("startRecMode"))
                 {
-                    await device.Api.Camera.StartRecModeAsync();
+                    await device.Api.Camera.StartRecModeAsync().ConfigureAwait(false);
                 }
                 if (device.Api.Capability.IsAvailable("startLiveview"))
                 {
-                    var res = await OpenLiveviewStream(device.Api, liveview);
+                    var res = await OpenLiveviewStream(device.Api, liveview).ConfigureAwait(false);
                     if (!res)
                     {
                         DebugUtil.Log("Failed to open liveview connection.");
-                        throw new Exception();
+                        throw new Exception("Failed to open liveview connection.");
                     }
                 }
 
@@ -37,12 +38,13 @@ namespace Kazyx.Uwpmm.CameraControl
                 {
                     try
                     {
-                        await device.Api.System.SetCurrentTimeAsync(DateTimeOffset.UtcNow, (int)DateTimeOffset.Now.Offset.TotalMinutes);
+                        await device.Api.System.SetCurrentTimeAsync( //
+                            DateTimeOffset.UtcNow, (int)DateTimeOffset.Now.Offset.TotalMinutes).ConfigureAwait(false);
                     }
-                    catch (RemoteApiException) { }
+                    catch (RemoteApiException) { } // This API always fails on some models.
                 }
 
-                await device.Observer.Start();
+                await device.Observer.Start().ConfigureAwait(false);
             }
             catch (RemoteApiException e)
             {
@@ -56,12 +58,17 @@ namespace Kazyx.Uwpmm.CameraControl
             DebugUtil.Log("Open liveview stream");
             try
             {
-                var url = await api.Camera.StartLiveviewAsync();
-                return await liveview.OpenConnection(new Uri(url));
+                var url = await api.Camera.StartLiveviewAsync().ConfigureAwait(false);
+                return await liveview.OpenConnection(new Uri(url)).ConfigureAwait(false);
             }
             catch (RemoteApiException e)
             {
                 DebugUtil.Log("Failed to startLiveview: " + e.code);
+                return false;
+            }
+            catch (Exception e)
+            {
+                DebugUtil.Log("Unknown error while opening liveview stream: " + e.StackTrace);
                 return false;
             }
         }
@@ -72,7 +79,7 @@ namespace Kazyx.Uwpmm.CameraControl
             try
             {
                 liveview.CloseConnection();
-                await api.Camera.StopLiveviewAsync();
+                await api.Camera.StopLiveviewAsync().ConfigureAwait(false);
                 return true;
             }
             catch (RemoteApiException e)
@@ -86,21 +93,23 @@ namespace Kazyx.Uwpmm.CameraControl
         {
             DebugUtil.Log("Reopen liveview stream");
             liveview.CloseConnection();
-            await Task.Delay(2000);
-            return await OpenLiveviewStream(api, liveview);
+            await Task.Delay(2000).ConfigureAwait(false);
+            return await OpenLiveviewStream(api, liveview).ConfigureAwait(false);
         }
 
-        public static async Task<bool> TakePicture(DeviceApiHolder api, Windows.Devices.Geolocation.Geoposition position)
+        public static async Task<bool> TakePicture(DeviceApiHolder api, Geoposition position)
         {
-            return await TakePicture(api, position, false);
+            return await TakePicture(api, position, false).ConfigureAwait(false);
         }
 
-        private static async Task<bool> TakePicture(DeviceApiHolder api, Windows.Devices.Geolocation.Geoposition position, bool awaiting = false)
+        private static async Task<bool> TakePicture(DeviceApiHolder api, Geoposition position, bool awaiting = false)
         {
             DebugUtil.Log("Taking picture sequence");
             try
             {
-                var urls = awaiting ? await api.Camera.AwaitTakePictureAsync() : await api.Camera.ActTakePictureAsync();
+                var urls = awaiting //
+                    ? await api.Camera.AwaitTakePictureAsync().ConfigureAwait(false) //
+                    : await api.Camera.ActTakePictureAsync().ConfigureAwait(false);
                 DebugUtil.Log("Success taking picture");
 
                 if (ApplicationSettings.GetInstance().IsPostviewTransferEnabled)
@@ -135,7 +144,7 @@ namespace Kazyx.Uwpmm.CameraControl
                 }
             }
             DebugUtil.Log("Take picture timeout: await for completion");
-            return await TakePicture(api, position, true);
+            return await TakePicture(api, position, true).ConfigureAwait(false);
         }
     }
 }

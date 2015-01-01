@@ -12,6 +12,8 @@ using NtNfcLib;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Devices.Geolocation;
@@ -261,7 +263,7 @@ namespace Kazyx.Uwpmm.Pages
 
         void InitializeUI()
         {
-            HistogramControl.Init(Control.Histogram.ColorType.White, 1500);
+            HistogramControl.Init(Histogram.ColorType.White, 1500);
 
             HistogramCreator = null;
             HistogramCreator = new HistogramCreator(HistogramCreator.HistogramResolution.Resolution_128);
@@ -352,7 +354,7 @@ namespace Kazyx.Uwpmm.Pages
             CreateEntranceAppBar();
         }
 
-        void HardwareButtons_BackPressed(object sender, Windows.Phone.UI.Input.BackPressedEventArgs e)
+        void HardwareButtons_BackPressed(object sender, BackPressedEventArgs e)
         {
             if (PivotRoot.SelectedIndex == 0)
             {
@@ -656,10 +658,10 @@ namespace Kazyx.Uwpmm.Pages
                         {
                             switch (result)
                             {
-                                case Utility.PeriodicalShootingTask.ShootingResult.Skipped:
+                                case PeriodicalShootingTask.ShootingResult.Skipped:
                                     ShowToast(SystemUtil.GetStringResource("PeriodicalShooting_Skipped"));
                                     break;
-                                case Utility.PeriodicalShootingTask.ShootingResult.Succeed:
+                                case PeriodicalShootingTask.ShootingResult.Succeed:
                                     ShowToast(SystemUtil.GetStringResource("Message_ImageCapture_Succeed"));
                                     break;
                             };
@@ -671,13 +673,13 @@ namespace Kazyx.Uwpmm.Pages
                         {
                             switch (reason)
                             {
-                                case Utility.PeriodicalShootingTask.StopReason.ShootingFailed:
+                                case PeriodicalShootingTask.StopReason.ShootingFailed:
                                     ShowError(SystemUtil.GetStringResource("ErrorMessage_Interval"));
                                     break;
-                                case Utility.PeriodicalShootingTask.StopReason.SkipLimitExceeded:
+                                case PeriodicalShootingTask.StopReason.SkipLimitExceeded:
                                     ShowError(SystemUtil.GetStringResource("PeriodicalShooting_SkipLimitExceed"));
                                     break;
-                                case Utility.PeriodicalShootingTask.StopReason.RequestedByUser:
+                                case PeriodicalShootingTask.StopReason.RequestedByUser:
                                     ShowToast(SystemUtil.GetStringResource("PeriodicalShooting_StoppedByUser"));
                                     break;
                             };
@@ -690,12 +692,12 @@ namespace Kazyx.Uwpmm.Pages
                             DebugUtil.Log("Status updated: " + status.Count);
                             if (status.IsRunning)
                             {
-                                PeriodicalShootingStatus.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                                PeriodicalShootingStatus.Visibility = Visibility.Visible;
                                 PeriodicalShootingStatusText.Text = SystemUtil.GetStringResource("PeriodicalShooting_Status")
                                     .Replace("__INTERVAL__", status.Interval.ToString())
                                     .Replace("__PHOTO_NUM__", status.Count.ToString());
                             }
-                            else { PeriodicalShootingStatus.Visibility = Windows.UI.Xaml.Visibility.Collapsed; }
+                            else { PeriodicalShootingStatus.Visibility = Visibility.Collapsed; }
                         });
                     };
                     PeriodicalShootingTask.Start();
@@ -811,13 +813,13 @@ namespace Kazyx.Uwpmm.Pages
             {
                 ProximityDevice = ProximityDevice.GetDefault();
             }
-            catch (System.IO.FileNotFoundException)
+            catch (FileNotFoundException)
             {
                 ProximityDevice = null;
                 DebugUtil.Log("Caught ununderstandable exception. ");
                 return;
             }
-            catch (System.Runtime.InteropServices.COMException)
+            catch (COMException)
             {
                 ProximityDevice = null;
                 DebugUtil.Log("Caught ununderstandable exception. ");
@@ -841,7 +843,7 @@ namespace Kazyx.Uwpmm.Pages
                 return;
             }
 
-            NfcAvailable.Visibility = Windows.UI.Xaml.Visibility.Visible;
+            NfcAvailable.Visibility = Visibility.Visible;
         }
 
         private async void ProximityMessageReceivedHandler(ProximityDevice sender, ProximityMessage message)
@@ -901,7 +903,7 @@ namespace Kazyx.Uwpmm.Pages
         private void OpenAppSettingPanel()
         {
             // TODO: cancel touch AF and close other panels.
-            AppSettingPanel.Visibility = Windows.UI.Xaml.Visibility.Visible;
+            AppSettingPanel.Visibility = Visibility.Visible;
             ShowSettingAnimation.Begin();
             this.BottomAppBar = _CommandBarManager.Clear().Icon(AppBarItem.Ok).CreateNew(0.6);
         }
@@ -1011,7 +1013,7 @@ namespace Kazyx.Uwpmm.Pages
 
         private void HideSettingAnimation_Completed(object sender, object e)
         {
-            AppSettingPanel.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+            AppSettingPanel.Visibility = Visibility.Collapsed;
         }
 
         public void StartOpenSliderAnimation(double from, double to)
@@ -1046,14 +1048,14 @@ namespace Kazyx.Uwpmm.Pages
 
         private void OpenCloseSliders()
         {
-            if (ShootingParamSliders.Visibility == Windows.UI.Xaml.Visibility.Visible)
+            if (ShootingParamSliders.Visibility == Visibility.Visible)
             {
-                ShootingParamSliders.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                ShootingParamSliders.Visibility = Visibility.Collapsed;
                 StartOpenSliderAnimation(180, 0);
             }
             else
             {
-                ShootingParamSliders.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                ShootingParamSliders.Visibility = Visibility.Visible;
                 StartOpenSliderAnimation(0, 180);
             }
         }

@@ -35,6 +35,9 @@ namespace Kazyx.Uwpmm.DataModel
 
     public class UpnpContentInfo : ContentInfo
     {
+        /// <summary>
+        /// Object ID of the content
+        /// </summary>
         public string Id { set; get; }
     }
 }

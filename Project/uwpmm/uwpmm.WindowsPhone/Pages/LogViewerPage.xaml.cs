@@ -7,6 +7,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using Kazyx.Uwpmm.Common;
 using Windows.UI.Core;
+using Windows.UI.Xaml.Input;
 
 namespace Kazyx.Uwpmm.Pages
 {
@@ -129,7 +130,7 @@ namespace Kazyx.Uwpmm.Pages
 #endif
         }
 
-        private void LogContent_Tapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
+        private void LogContent_Tapped(object sender, TappedRoutedEventArgs e)
         {
 #if DEBUG
             var textblock = sender as TextBlock;

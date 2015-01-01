@@ -1,4 +1,5 @@
-﻿using Kazyx.Uwpmm.CameraControl;
+﻿using Kazyx.RemoteApi.Camera;
+using Kazyx.Uwpmm.CameraControl;
 using System;
 using System.Collections.Generic;
 using Windows.UI.Xaml;
@@ -59,7 +60,7 @@ namespace Kazyx.Uwpmm.Utility
             foreach (var device in TargetDevices)
             {
                 if (device == null || device.Status == null || device.Api == null) { continue; }
-                if (device.Status.Status != RemoteApi.Camera.EventParam.Idle)
+                if (device.Status.Status != EventParam.Idle)
                 {
                     isSkipped = true;
                     continue;
