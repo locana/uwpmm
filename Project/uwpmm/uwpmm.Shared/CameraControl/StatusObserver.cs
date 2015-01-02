@@ -116,6 +116,9 @@ namespace Kazyx.Uwpmm.CameraControl
             if (status.ISOSpeedRate != null) { target.ISOSpeedRate = status.ISOSpeedRate; }
             if (status.RecordingTimeSec >= 0) { target.RecordingTimeSec = status.RecordingTimeSec; }
             if (status.NumberOfShots >= 0) { target.NumberOfShots = status.NumberOfShots; }
+            if (status.ContShootingMode != null) { target.ContShootingMode = status.ContShootingMode; }
+            if (status.ContShootingSpeed != null) { target.ContShootingSpeed = status.ContShootingSpeed; }
+
 
             if (status.StillImageSize != null)
             {

@@ -38,6 +38,9 @@ namespace Kazyx.Uwpmm.Settings
             Panels.Add("setShootMode", BuildComboBoxPanel("ShootMode", "ShootMode", OnShootModeChanged));
             Panels.Add("setExposureMode", BuildComboBoxPanel("ExposureMode", "ExposureMode", OnExposureModeChanged));
             Panels.Add("setFocusMode", BuildComboBoxPanel("FocusMode", "FocusMode", OnFocusModeChanged));
+            Panels.Add("setContShootingMode", BuildComboBoxPanel("ContShootingMode", "ContShootingMode", OnContShootingModeChanged));
+            Panels.Add("setContShootingSpeed", BuildComboBoxPanel("ContShootingSpeed", "ContShootingSpeed", OnContShootingSpeedChanged));
+
             Panels.Add("setWhiteBalance", BuildComboBoxPanel("WhiteBalance", "WhiteBalance", OnWhiteBalanceChanged));
             Panels.Add("ColorTemperture", BuildColorTemperturePanel());
             Panels.Add("setMovieQuality", BuildComboBoxPanel("MovieQuality", "MovieQuality", OnMovieQualityChanged));
@@ -134,6 +137,18 @@ namespace Kazyx.Uwpmm.Settings
         private async void OnStillImageSizeChanged(object sender, object e)
         {
             await OnSelectionChanged(sender, Status.StillImageSize, Api.Camera.SetStillImageSizeAsync);
+        }
+
+        private async void OnContShootingModeChanged(object sender, object e)
+        {
+            await OnSelectionChanged(sender, Status.ContShootingMode,
+                async (mode) => { await Api.Camera.SetContShootingModeAsync(new ContinuousShootSetting() { Mode = mode }); });
+        }
+
+        private async void OnContShootingSpeedChanged(object sender, object e)
+        {
+            await OnSelectionChanged(sender, Status.ContShootingSpeed,
+                async (mode) => { await Api.Camera.SetContShootingSpeedAsync(new ContinuousShootSpeedSetting() { Mode = mode }); });
         }
 
         private async void OnWhiteBalanceChanged(object sender, object e)

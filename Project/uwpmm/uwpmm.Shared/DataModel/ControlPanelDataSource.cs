@@ -279,7 +279,7 @@ namespace Kazyx.Uwpmm.DataModel
         }
 
 
-        public int CpSelectedIndexViewAngle
+        public int SelectedIndexViewAngle
         {
             get
             {
@@ -291,7 +291,7 @@ namespace Kazyx.Uwpmm.DataModel
             }
         }
 
-        public List<string> CpCandidatesViewAngle
+        public List<string> CandidatesViewAngle
         {
             get
             {
@@ -299,7 +299,7 @@ namespace Kazyx.Uwpmm.DataModel
             }
         }
 
-        public bool CpIsAvailableViewAngle
+        public bool IsAvailableViewAngle
         {
             get
             {
@@ -308,7 +308,7 @@ namespace Kazyx.Uwpmm.DataModel
             }
         }
 
-        public int CpSelectedIndexSteadyMode
+        public int SelectedIndexSteadyMode
         {
             get
             {
@@ -320,7 +320,7 @@ namespace Kazyx.Uwpmm.DataModel
             }
         }
 
-        public List<string> CpCandidatesSteadyMode
+        public List<string> CandidatesSteadyMode
         {
             get
             {
@@ -328,7 +328,7 @@ namespace Kazyx.Uwpmm.DataModel
             }
         }
 
-        public bool CpIsAvailableSteadyMode
+        public bool IsAvailableSteadyMode
         {
             get
             {
@@ -337,7 +337,7 @@ namespace Kazyx.Uwpmm.DataModel
             }
         }
 
-        public int CpSelectedIndexMovieQuality
+        public int SelectedIndexMovieQuality
         {
             get
             {
@@ -349,7 +349,7 @@ namespace Kazyx.Uwpmm.DataModel
             }
         }
 
-        public List<string> CpCandidatesMovieQuality
+        public List<string> CandidatesMovieQuality
         {
             get
             {
@@ -357,7 +357,7 @@ namespace Kazyx.Uwpmm.DataModel
             }
         }
 
-        public bool CpIsAvailableMovieQuality
+        public bool IsAvailableMovieQuality
         {
             get
             {
@@ -366,7 +366,7 @@ namespace Kazyx.Uwpmm.DataModel
             }
         }
 
-        public int CpSelectedIndexFlashMode
+        public int SelectedIndexFlashMode
         {
             get
             {
@@ -378,7 +378,7 @@ namespace Kazyx.Uwpmm.DataModel
             }
         }
 
-        public List<string> CpCandidatesFlashMode
+        public List<string> CandidatesFlashMode
         {
             get
             {
@@ -386,7 +386,7 @@ namespace Kazyx.Uwpmm.DataModel
             }
         }
 
-        public bool CpIsAvailableFlashMode
+        public bool IsAvailableFlashMode
         {
             get
             {
@@ -395,7 +395,7 @@ namespace Kazyx.Uwpmm.DataModel
             }
         }
 
-        public int CpSelectedIndexFocusMode
+        public int SelectedIndexFocusMode
         {
             get
             {
@@ -407,7 +407,7 @@ namespace Kazyx.Uwpmm.DataModel
             }
         }
 
-        public List<string> CpCandidatesFocusMode
+        public List<string> CandidatesFocusMode
         {
             get
             {
@@ -415,12 +415,68 @@ namespace Kazyx.Uwpmm.DataModel
             }
         }
 
-        public bool CpIsAvailableFocusMode
+        public bool IsAvailableFocusMode
         {
             get
             {
                 return Device.Api.Capability.IsAvailable("setFocusMode") &&
                     Device.Status.FocusMode != null;
+            }
+        }
+
+        public bool IsAvailableContShootingMode
+        {
+            get
+            {
+                return Device.Api.Capability.IsAvailable("setContShootingMode") && Device.Status.ContShootingMode != null;
+            }
+        }
+
+        public int SelectedIndexContShootingMode
+        {
+            get
+            {
+                return SettingValueConverter.GetSelectedIndex(Device.Status.ContShootingMode);
+            }
+            set
+            {
+                ParameterUtil.SetSelectedAsCurrent(Device.Status.ContShootingMode, value);
+            }
+        }
+
+        public List<string> CandidatesContShootingMode
+        {
+            get
+            {
+                return SettingValueConverter.FromContShootingMode(Device.Status.ContShootingMode).Candidates;
+            }
+        }
+
+        public bool IsAvailableContShootingSpeed
+        {
+            get
+            {
+                return Device.Api.Capability.IsAvailable("setContShootingSpeed") && Device.Status.ContShootingSpeed != null;
+            }
+        }
+
+        public int SelectedIndexContShootingSpeed
+        {
+            get
+            {
+                return SettingValueConverter.GetSelectedIndex(Device.Status.ContShootingSpeed);
+            }
+            set
+            {
+                ParameterUtil.SetSelectedAsCurrent(Device.Status.ContShootingSpeed, value);
+            }
+        }
+
+        public List<string> CandidatesContShootingSpeed
+        {
+            get
+            {
+                return SettingValueConverter.FromContShootingSpeed(Device.Status.ContShootingSpeed).Candidates;
             }
         }
     }
