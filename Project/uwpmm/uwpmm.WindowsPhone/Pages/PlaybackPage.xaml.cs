@@ -349,10 +349,14 @@ namespace Kazyx.Uwpmm.Pages
         {
             MovieStreamHelper.INSTANCE.StreamClosed -= MovieStreamHelper_StreamClosed;
             MovieStreamHelper.INSTANCE.StatusChanged -= MovieStream_StatusChanged;
+
             if (TargetDevice != null)
             {
                 TargetDevice.Status.PropertyChanged -= Status_PropertyChanged;
+                TargetDevice = null;
             }
+            UpnpDevice = null;
+
             PictureDownloader.Instance.Failed -= OnDLError;
             PictureDownloader.Instance.Fetched -= OnFetched;
             PictureDownloader.Instance.QueueStatusUpdated -= OnFetchingImages;
@@ -392,7 +396,10 @@ namespace Kazyx.Uwpmm.Pages
             set
             {
                 _TargetDevice = value;
-                RemoteTitleBlock.Text = value.FriendlyName;
+                if (value != null)
+                {
+                    RemoteTitleBlock.Text = value.FriendlyName;
+                }
             }
             get { return _TargetDevice; }
         }
@@ -403,7 +410,10 @@ namespace Kazyx.Uwpmm.Pages
             set
             {
                 _UpnpDevice = value;
-                RemoteTitleBlock.Text = value.FriendlyName;
+                if (value != null)
+                {
+                    RemoteTitleBlock.Text = value.FriendlyName;
+                }
             }
             get { return _UpnpDevice; }
         }
