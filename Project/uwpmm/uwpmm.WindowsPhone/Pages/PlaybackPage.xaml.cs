@@ -247,13 +247,6 @@ namespace Kazyx.Uwpmm.Pages
                 NetworkObserver.INSTANCE.Search();
             }
 
-#if DEBUG
-            if (LOAD_DUMMY_CONTENTS)
-            {
-                var task = AddDummyContentsAsync();
-            }
-#endif
-
             if (TargetDevice != null)
             {
                 await TargetDevice.Observer.Start();
@@ -813,11 +806,13 @@ namespace Kazyx.Uwpmm.Pages
                         UpdateInnerState(ViewerState.RemoteUnsupported);
                         ShowToast(SystemUtil.GetStringResource("Viewer_StorageAccessNotSupported"));
                         UnsupportedMessage.Visibility = Visibility.Visible;
-
+#if DEBUG
                         if (LOAD_DUMMY_CONTENTS)
                         {
+                            var task = AddDummyContentsAsync();
                             UpdateInnerState(ViewerState.RemoteSingle);
                         }
+#endif
                     }
                     break;
             }
