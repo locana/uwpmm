@@ -22,6 +22,8 @@ namespace Kazyx.Uwpmm.Playback
         {
             var CurrentUuid = DummyContentsLoader.RandomUuid();
 
+            await Task.Delay(500).ConfigureAwait(false);
+
             foreach (var date in RandomDateList(10))
             {
                 await Task.Delay(500).ConfigureAwait(false);

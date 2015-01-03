@@ -94,6 +94,8 @@ namespace Kazyx.Uwpmm.Utility
             var directory = uuid.Replace(":", "-") + "/";
             var filename = content.CreatedTime.Replace(":", "-").Replace("/", "-") + "--" + Path.GetFileName(uri.LocalPath);
 
+            DebugUtil.Log("Loading " + content.ThumbnailUrl + " into " + directory);
+
             await LoadCacheRoot().ConfigureAwait(false);
             var folder = await CacheFolder.CreateFolderAsync(directory, CreationCollisionOption.OpenIfExists);
 
@@ -195,6 +197,5 @@ namespace Kazyx.Uwpmm.Utility
                 }
             }
         }
-
     }
 }

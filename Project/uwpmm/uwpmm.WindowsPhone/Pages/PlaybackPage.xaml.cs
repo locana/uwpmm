@@ -37,7 +37,7 @@ namespace Kazyx.Uwpmm.Pages
     {
         private NavigationHelper navigationHelper;
 
-        private const bool LOAD_DUMMY_CONTENTS = false;
+        private const bool LOAD_DUMMY_CONTENTS = true;
 
         private HttpClient HttpClient = new HttpClient();
 
@@ -508,7 +508,7 @@ namespace Kazyx.Uwpmm.Pages
         private async Task AddDummyContentsAsync()
         {
             var loader = new DummyContentsLoader();
-            loader.PartLoaded += DummyContentsLoader_PartLoaded;
+            loader.PartLoaded += RemoteContentsLoader_PartLoaded;
 
             try
             {
@@ -516,21 +516,8 @@ namespace Kazyx.Uwpmm.Pages
             }
             finally
             {
-                loader.PartLoaded -= DummyContentsLoader_PartLoaded;
+                loader.PartLoaded -= RemoteContentsLoader_PartLoaded;
             }
-        }
-
-        async void DummyContentsLoader_PartLoaded(object sender, ContentsLoadedEventArgs e)
-        {
-            if (InnerState == ViewerState.OutOfPage) return;
-
-            await Dispatcher.RunAsync(CoreDispatcherPriority.High, () =>
-            {
-                if (RemoteGridSource != null)
-                {
-                    RemoteGridSource.AddRange(e.Contents);
-                }
-            });
         }
 #endif
 
@@ -663,6 +650,7 @@ namespace Kazyx.Uwpmm.Pages
             {
                 if (RemoteGridSource != null)
                 {
+                    DebugUtil.Log("Adding " + e.Contents.Count + " contents to RemoteGrid");
                     RemoteGridSource.AddRange(e.Contents);
                 }
             });
