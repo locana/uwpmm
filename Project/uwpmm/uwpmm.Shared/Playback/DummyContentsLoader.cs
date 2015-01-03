@@ -18,7 +18,7 @@ namespace Kazyx.Uwpmm.Playback
             random = new Random();
         }
 
-        public override async Task Start(CancellationTokenSource cancel)
+        public override async Task Load(CancellationTokenSource cancel)
         {
             var CurrentUuid = DummyContentsLoader.RandomUuid();
 

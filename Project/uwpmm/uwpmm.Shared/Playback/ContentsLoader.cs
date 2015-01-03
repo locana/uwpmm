@@ -33,7 +33,7 @@ namespace Kazyx.Uwpmm.Playback
             Cancelled.Raise(this, null);
         }
 
-        public abstract Task Start(CancellationTokenSource cancel);
+        public abstract Task Load(CancellationTokenSource cancel);
     }
 
     public class ContentsLoadedEventArgs : EventArgs

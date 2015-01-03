@@ -487,7 +487,7 @@ namespace Kazyx.Uwpmm.Pages
             loader.SingleContentLoaded += LocalContentsLoader_SingleContentLoaded;
             try
             {
-                await loader.Start(Canceller);
+                await loader.Load(Canceller);
                 HideProgress();
             }
             catch
@@ -518,7 +518,7 @@ namespace Kazyx.Uwpmm.Pages
 
             try
             {
-                await loader.Start(Canceller);
+                await loader.Load(Canceller);
             }
             finally
             {
@@ -630,7 +630,7 @@ namespace Kazyx.Uwpmm.Pages
 
                 try
                 {
-                    await loader.Start(Canceller).ConfigureAwait(false);
+                    await loader.Load(Canceller).ConfigureAwait(false);
                     DebugUtil.Log("RemoteApiContentsLoader completed");
                     HideProgress();
                 }

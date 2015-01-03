@@ -23,7 +23,7 @@ namespace Kazyx.Uwpmm.Playback
             Udn = device.Udn;
         }
 
-        public override async Task Start(CancellationTokenSource cancel)
+        public override async Task Load(CancellationTokenSource cancel)
         {
             if (!await IsStorageSupportedAsync().ConfigureAwait(false))
             {
@@ -45,18 +45,19 @@ namespace Kazyx.Uwpmm.Playback
                 throw new NoStorageException();
             }
 
-            await GetDateListAsEventsAsync(storages[0], async (dates) =>
+            await GetDateListSeparatelyAsync(storages[0], async (dates) =>
             {
                 foreach (var date in dates)
                 {
-                    DebugUtil.Log("Loading: " + date.Title);
-                    await GetContentsOfDayAsEventsAsync(date, true, (e2) =>
+                    await GetContentsOfDaySeparatelyAsync(date, true, (e2) =>
                     {
+                        DebugUtil.Log(e2.Count + " contents fetched");
                         var list = new List<Thumbnail>();
                         foreach (var content in e2)
                         {
                             list.Add(new Thumbnail(content, Udn));
                         }
+
                         OnPartLoaded(list);
                     }, cancel).ConfigureAwait(false);
                 }
@@ -94,9 +95,9 @@ namespace Kazyx.Uwpmm.Playback
             return list;
         }
 
-        private async Task GetDateListAsEventsAsync(string uri, Action<IList<DateInfo>> handler, CancellationTokenSource cancel)
+        private async Task GetDateListSeparatelyAsync(string uri, Action<IList<DateInfo>> handler, CancellationTokenSource cancel)
         {
-            DebugUtil.Log("Loading DateList");
+            DebugUtil.Log("Loading number of Dates");
 
             var count = await AvContentApi.GetContentCountAsync(new CountingTarget
             {
@@ -104,7 +105,7 @@ namespace Kazyx.Uwpmm.Playback
                 Uri = uri,
             }).ConfigureAwait(false);
 
-            DebugUtil.Log(count + " dates exist.");
+            DebugUtil.Log(count.NumOfContents + " dates exist.");
 
             if (cancel != null && cancel.IsCancellationRequested)
             {
@@ -152,7 +153,7 @@ namespace Kazyx.Uwpmm.Playback
             return list;
         }
 
-        private async Task GetContentsOfDayAsEventsAsync(DateInfo date, bool includeMovies, Action<IList<ContentInfo>> handler, CancellationTokenSource cancel)
+        private async Task GetContentsOfDaySeparatelyAsync(DateInfo date, bool includeMovies, Action<IList<ContentInfo>> handler, CancellationTokenSource cancel)
         {
             DebugUtil.Log("Loading: " + date.Title);
 
@@ -162,7 +163,7 @@ namespace Kazyx.Uwpmm.Playback
                 Uri = date.Uri,
             }).ConfigureAwait(false);
 
-            DebugUtil.Log(count + " contents exist.");
+            DebugUtil.Log(count.NumOfContents + " contents exist.");
 
             var loops = count.NumOfContents / CONTENT_LOOP_STEP + (count.NumOfContents % CONTENT_LOOP_STEP == 0 ? 0 : 1);
 
