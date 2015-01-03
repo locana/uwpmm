@@ -12,12 +12,6 @@ namespace Kazyx.Uwpmm.CameraControl
 {
     public class DeviceApiHolder
     {
-        public string UDN { private set; get; }
-
-        public string DeviceName { private set; get; }
-
-        public string FriendlyName { private set; get; }
-
         public CameraApiClient Camera { private set; get; }
 
         public SystemApiClient System { private set; get; }
@@ -26,10 +20,6 @@ namespace Kazyx.Uwpmm.CameraControl
 
         public DeviceApiHolder(SonyCameraDeviceInfo info)
         {
-            UDN = info.UDN;
-            DeviceName = info.ModelName;
-            FriendlyName = info.FriendlyName;
-
             if (info.Endpoints.ContainsKey("camera"))
             {
                 try
@@ -55,7 +45,7 @@ namespace Kazyx.Uwpmm.CameraControl
                 catch { };
             }
 
-            if (FriendlyName == "DSC-QX10")
+            if (info.FriendlyName == "DSC-QX10")
             {
                 ProductType = ProductType.DSC_QX10;
             }

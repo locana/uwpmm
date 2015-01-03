@@ -587,7 +587,7 @@ Please check internet connection status</value>
     <value>Selecting to download...</value>
   </data>
   <data name="Viewer_MenuCopyToPhone" xml:space="preserve">
-    <value>Copy to phone storage</value>
+    <value>Copy to local storage</value>
   </data>
   <data name="Viewer_MenuDelete" xml:space="preserve">
     <value>Delete</value>
@@ -1035,7 +1035,7 @@ Please update to the latest at PlayMemories Camera Apps store.</value>
     <value>Application info</value>
   </data>
   <data name="Viewer_StoragePhone" xml:space="preserve">
-    <value>Phone storage</value>
+    <value>Local storage</value>
   </data>
   <data name="Black" xml:space="preserve">
     <value>Black</value>

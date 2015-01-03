@@ -5,6 +5,8 @@ using Kazyx.Uwpmm.Common;
 using Kazyx.Uwpmm.Control;
 using Kazyx.Uwpmm.DataModel;
 using Kazyx.Uwpmm.Playback;
+using Kazyx.Uwpmm.UPnP;
+using Kazyx.Uwpmm.UPnP.ContentDirectory;
 using Kazyx.Uwpmm.Utility;
 using NtImageProcessor.MetaData.Misc;
 using System;
@@ -241,24 +243,63 @@ namespace Kazyx.Uwpmm.Pages
             PictureDownloader.Instance.QueueStatusUpdated += OnFetchingImages;
 
             var devices = NetworkObserver.INSTANCE.CameraDevices;
+            var dlna = NetworkObserver.INSTANCE.CdsServices;
             if (devices.Count > 0)
             {
+                DebugUtil.Log("Apply " + devices[0].FriendlyName + " as target");
                 TargetDevice = devices[0]; // TODO choise of device should be exposed to user.
+                await SetUpRemoteApiDevice();
+            }
+            else if (dlna.Count > 0)
+            {
+                DebugUtil.Log("Apply " + dlna[0].FriendlyName + " as target");
+                UpnpDevice = dlna[0];
             }
             else
             {
+                DebugUtil.Log("No target device detected. Search again.");
+                NetworkObserver.INSTANCE.CdsDiscovered += NetworkObserver_CdsDiscovered;
+                NetworkObserver.INSTANCE.CameraDiscovered += NetworkObserver_CameraDiscovered;
                 NetworkObserver.INSTANCE.Search();
             }
 
-            if (TargetDevice != null)
-            {
-                await TargetDevice.Observer.Start();
-                UpdateStorageInfo();
-                TargetDevice.Status.PropertyChanged += Status_PropertyChanged;
-                MovieStreamHelper.INSTANCE.MoviePlaybackData.SeekAvailable = TargetDevice.Api.Capability.IsSupported("seekStreamingPosition");
-            }
+            await DefaultPivotLockState();
+
             MovieStreamHelper.INSTANCE.StreamClosed += MovieStreamHelper_StreamClosed;
             MovieStreamHelper.INSTANCE.StatusChanged += MovieStream_StatusChanged;
+        }
+
+        private async void NetworkObserver_CameraDiscovered(object sender, CameraDeviceEventArgs e)
+        {
+            DebugUtil.Log("NetworkObserver_CameraDiscovered: " + e.CameraDevice.FriendlyName);
+            NetworkObserver.INSTANCE.CdsDiscovered -= NetworkObserver_CdsDiscovered;
+            NetworkObserver.INSTANCE.CameraDiscovered -= NetworkObserver_CameraDiscovered;
+            await Dispatcher.RunAsync(CoreDispatcherPriority.High, () =>
+            {
+                TargetDevice = e.CameraDevice;
+            });
+            await SetUpRemoteApiDevice();
+            await DefaultPivotLockState();
+        }
+
+        private async Task SetUpRemoteApiDevice()
+        {
+            await TargetDevice.Observer.Start();
+            UpdateStorageInfo();
+            TargetDevice.Status.PropertyChanged += Status_PropertyChanged;
+            MovieStreamHelper.INSTANCE.MoviePlaybackData.SeekAvailable = TargetDevice.Api.Capability.IsSupported("seekStreamingPosition");
+        }
+
+        async void NetworkObserver_CdsDiscovered(object sender, CdServiceEventArgs e)
+        {
+            DebugUtil.Log("NetworkObserver_CdsDiscovered: " + e.CdService.FriendlyName);
+            NetworkObserver.INSTANCE.CdsDiscovered -= NetworkObserver_CdsDiscovered;
+            NetworkObserver.INSTANCE.CameraDiscovered -= NetworkObserver_CameraDiscovered;
+            await Dispatcher.RunAsync(CoreDispatcherPriority.High, () =>
+            {
+                UpnpDevice = e.CdService;
+            });
+            await DefaultPivotLockState();
         }
 
         private void UpdateRemoteSelectionMode(SelectivityFactor factor)
@@ -345,8 +386,27 @@ namespace Kazyx.Uwpmm.Pages
 
         #endregion
 
+        private TargetDevice _TargetDevice = null;
+        private TargetDevice TargetDevice
+        {
+            set
+            {
+                _TargetDevice = value;
+                RemoteTitleBlock.Text = value.FriendlyName;
+            }
+            get { return _TargetDevice; }
+        }
 
-        private TargetDevice TargetDevice { set; get; }
+        private UpnpDevice _UpnpDevice = null;
+        private UpnpDevice UpnpDevice
+        {
+            set
+            {
+                _UpnpDevice = value;
+                RemoteTitleBlock.Text = value.FriendlyName;
+            }
+            get { return _UpnpDevice; }
+        }
 
         private StatusBar statusBar = StatusBar.GetForCurrentView();
 
@@ -395,18 +455,34 @@ namespace Kazyx.Uwpmm.Pages
             });
         }
 
-        private void DefaultPivotLockState()
+        private async Task DefaultPivotLockState()
         {
-            PivotRoot.IsLocked = ShouldLockPivot(TargetDevice);
+            await Dispatcher.RunAsync(CoreDispatcherPriority.High, () =>
+            {
+                PivotRoot.IsLocked = !ShouldUnlockPivot(TargetDevice, UpnpDevice);
+            });
         }
 
-        private static bool ShouldLockPivot(TargetDevice device)
+        private static bool ShouldUnlockPivot(TargetDevice device, UpnpDevice upnp)
         {
             if (LOAD_DUMMY_CONTENTS)
             {
-                return false;
+                DebugUtil.Log("Unlock Pivot: Dummy contents mode enabled.");
+                return true;
             }
-            return !(device != null && device.StorageAccessSupported);
+            if (device != null && device.StorageAccessSupported)
+            {
+                DebugUtil.Log("Unlock Pivot: Remote API device available.");
+                return true;
+            }
+            if (upnp != null)
+            {
+                DebugUtil.Log("Unlock Pivot: DLNA device available.");
+                return true;
+            }
+
+            DebugUtil.Log("Lock Pivot: no available target.");
+            return false;
         }
 
         private bool IsRemoteInitialized = false;
@@ -527,19 +603,22 @@ namespace Kazyx.Uwpmm.Pages
 
         private bool CheckRemoteCapability()
         {
-            if (TargetDevice == null)
+            if (TargetDevice == null && UpnpDevice == null)
             {
                 DebugUtil.Log("Device not found");
                 return false;
             }
 
-            if (TargetDevice.Api.AvContent == null)
+            if (TargetDevice != null && TargetDevice.Api.AvContent != null)
             {
-                DebugUtil.Log("AvContent service is not supported");
-                return false;
+                return true;
+            }
+            if (UpnpDevice != null)
+            {
+                return true;
             }
 
-            return true;
+            return false;
         }
 
         private void OnStorageAvailabilityChanged(bool availability)
@@ -590,11 +669,50 @@ namespace Kazyx.Uwpmm.Pages
         private async void InitializeRemote()
         {
             IsRemoteInitialized = true;
-            if (TargetDevice == null)
-            {
-                return;
-            }
 
+            if (TargetDevice != null)
+            {
+                await InitializeRemoteApiDevice();
+            }
+            else if (UpnpDevice != null)
+            {
+                await InitializeDlnaDevice();
+            }
+        }
+
+        private async Task InitializeDlnaDevice()
+        {
+            var loader = new DlnaContentsLoader(UpnpDevice);
+            loader.PartLoaded += RemoteContentsLoader_PartLoaded;
+
+            ChangeProgressText(SystemUtil.GetStringResource("Progress_FetchingContents"));
+
+            try
+            {
+                await loader.Load(Canceller).ConfigureAwait(false);
+                DebugUtil.Log("DlnaContentsLoader completed");
+                if (RemoteGridSource.Count == 0)
+                {
+                    // TODO
+                    ShowToast("Remote storage is empty");
+                }
+                HideProgress();
+            }
+            catch (SoapException e)
+            {
+                DebugUtil.Log("SoapException while loading: " + e.StatusCode);
+                HideProgress();
+                // TODO
+                ShowToast("Image item search is failed");
+            }
+            finally
+            {
+                loader.PartLoaded -= RemoteContentsLoader_PartLoaded;
+            }
+        }
+
+        private async Task InitializeRemoteApiDevice()
+        {
             try
             {
                 ChangeProgressText(SystemUtil.GetStringResource("Progress_ChangingCameraState"));
@@ -710,7 +828,7 @@ namespace Kazyx.Uwpmm.Pages
             }
         }
 
-        private void SetStillDetailVisibility(bool visible)
+        private async void SetStillDetailVisibility(bool visible)
         {
             if (visible)
             {
@@ -731,7 +849,7 @@ namespace Kazyx.Uwpmm.Pages
             }
             else
             {
-                DefaultPivotLockState();
+                await DefaultPivotLockState();
                 HideProgress();
                 IsViewingDetail = false;
                 PhotoScreen.Visibility = Visibility.Collapsed;
@@ -799,6 +917,11 @@ namespace Kazyx.Uwpmm.Pages
                                 UpdateInnerState(ViewerState.RemoteSingle);
                                 InitializeRemote();
                             }
+                            else if (UpnpDevice != null)
+                            {
+                                UpdateInnerState(ViewerState.RemoteSingle);
+                                InitializeRemote();
+                            }
                             else
                             {
                                 ShowToast(SystemUtil.GetStringResource("Viewer_NoStorage"));
@@ -811,14 +934,14 @@ namespace Kazyx.Uwpmm.Pages
                         UpdateInnerState(ViewerState.RemoteUnsupported);
                         ShowToast(SystemUtil.GetStringResource("Viewer_StorageAccessNotSupported"));
                         UnsupportedMessage.Visibility = Visibility.Visible;
-#if DEBUG
-                        if (LOAD_DUMMY_CONTENTS)
-                        {
-                            var task = AddDummyContentsAsync();
-                            UpdateInnerState(ViewerState.RemoteSingle);
-                        }
-#endif
                     }
+#if DEBUG
+                    if (LOAD_DUMMY_CONTENTS)
+                    {
+                        var task = AddDummyContentsAsync();
+                        UpdateInnerState(ViewerState.RemoteSingle);
+                    }
+#endif
                     break;
             }
         }
@@ -833,6 +956,7 @@ namespace Kazyx.Uwpmm.Pages
                 return;
             }
             var contents = new TargetContents();
+            var dlna = new List<string>();
             contents.ContentUris = new List<string>();
             foreach (var item in items)
             {
@@ -842,15 +966,19 @@ namespace Kazyx.Uwpmm.Pages
                     var info = data.Source as RemoteApiContentInfo;
                     contents.ContentUris.Add(info.Uri);
                 }
-                // TODO for UPnP content
+                else if (data.Source is DlnaContentInfo)
+                {
+                    var info = data.Source as DlnaContentInfo;
+                    dlna.Add(info.Id);
+                }
             }
             await DeleteRemoteApiContents(contents);
+            await DeleteDlnaContentsAsync(dlna);
 
             foreach (var item in items)
             {
                 var data = item as Thumbnail;
-                var ret = RemoteGridSource.Remove(data);
-                if (!ret) { DebugUtil.Log("Failed to delete from source"); }
+                RemoteGridSource.Remove(data);
             }
         }
 
@@ -872,8 +1000,7 @@ namespace Kazyx.Uwpmm.Pages
                     try
                     {
                         await data.CacheFile.DeleteAsync();
-                        var ret = LocalGridSource.Remove(data);
-                        if (!ret) { DebugUtil.Log("Failed to delete from source"); }
+                        LocalGridSource.Remove(data);
                     }
                     catch (Exception e)
                     {
@@ -1069,6 +1196,7 @@ namespace Kazyx.Uwpmm.Pages
             var item = sender as MenuFlyoutItem;
             var thumb = item.DataContext as Thumbnail;
             var content = thumb.Source;
+
             if (content is RemoteApiContentInfo)
             {
                 var data = content as RemoteApiContentInfo;
@@ -1077,7 +1205,14 @@ namespace Kazyx.Uwpmm.Pages
                 contents.ContentUris.Add(data.Uri);
                 var task = DeleteRemoteApiContents(contents);
             }
-            // TODO for UPnP content
+            else if (content is DlnaContentInfo)
+            {
+                var data = content as DlnaContentInfo;
+                var list = new List<string>();
+                list.Add(data.Id);
+                var task = DeleteDlnaContentsAsync(list);
+            }
+
             RemoteGridSource.Remove(thumb);
         }
 
@@ -1085,6 +1220,7 @@ namespace Kazyx.Uwpmm.Pages
         {
             if (TargetDevice == null || TargetDevice.Api == null)
             {
+                //TODO
                 ShowToast("Camera device does not exist anymore");
                 return;
             }
@@ -1107,6 +1243,32 @@ namespace Kazyx.Uwpmm.Pages
             else
             {
                 DebugUtil.Log("Not ready to delete contents");
+            }
+        }
+
+        private async Task DeleteDlnaContentsAsync(IList<string> objectIdList)
+        {
+            if (UpnpDevice == null)
+            {
+                //TODO
+                ShowToast("Upnp device does not exist anymore");
+                return;
+            }
+
+            var cds = UpnpDevice.Services[URN.ContentDirectory];
+            foreach (var id in objectIdList)
+            {
+                try
+                {
+                    await cds.Control(new DestroyObjectRequest
+                    {
+                        ObjectID = id,
+                    });
+                }
+                catch (SoapException e)
+                {
+                    DebugUtil.Log("Failed to delete " + e.StatusCode);
+                }
             }
         }
 
@@ -1321,8 +1483,7 @@ namespace Kazyx.Uwpmm.Pages
                 try
                 {
                     await data.CacheFile.DeleteAsync();
-                    var ret = LocalGridSource.Remove(data);
-                    if (!ret) { DebugUtil.Log("Failed to delete from source"); }
+                    LocalGridSource.Remove(data);
                 }
                 catch (Exception ex)
                 {

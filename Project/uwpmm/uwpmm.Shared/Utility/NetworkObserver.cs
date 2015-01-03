@@ -55,8 +55,7 @@ namespace Kazyx.Uwpmm.Utility
 
         void discovery_SonyCameraDeviceDiscovered(object sender, SonyCameraDeviceEventArgs e)
         {
-            var api = new DeviceApiHolder(e.SonyCameraDevice);
-            var device = new TargetDevice(e.SonyCameraDevice.UDN, api);
+            var device = new TargetDevice(e.SonyCameraDevice);
             devices.Add(device);
             OnDiscovered(device);
         }
@@ -66,12 +65,14 @@ namespace Kazyx.Uwpmm.Utility
             try
             {
                 var device = UpnpDescriptionParser.ParseDescription(XDocument.Parse(e.Description), e.Location);
+
                 foreach (var service in device.Services)
                 {
                     DebugUtil.Log("Service: " + service.Key);
                     if (service.Key == URN.ContentDirectory)
                     {
                         DebugUtil.Log("CDS found. Notify discovered.");
+                        cdServices.Add(device);
                         OnDiscovered(device);
                         break;
                     }
