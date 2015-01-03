@@ -259,7 +259,7 @@ namespace Kazyx.Uwpmm.Pages
                 await TargetDevice.Observer.Start();
                 UpdateStorageInfo();
                 TargetDevice.Status.PropertyChanged += Status_PropertyChanged;
-                TargetDevice.Api.AvailiableApisUpdated += Api_AvailiableApisUpdated;
+                MovieStreamHelper.INSTANCE.MoviePlaybackData.SeekAvailable = TargetDevice.Api.Capability.IsSupported("seekStreamingPosition");
             }
             MovieStreamHelper.INSTANCE.StreamClosed += MovieStreamHelper_StreamClosed;
             MovieStreamHelper.INSTANCE.StatusChanged += MovieStream_StatusChanged;
@@ -315,7 +315,6 @@ namespace Kazyx.Uwpmm.Pages
             if (TargetDevice != null)
             {
                 TargetDevice.Status.PropertyChanged -= Status_PropertyChanged;
-                TargetDevice.Api.AvailiableApisUpdated -= Api_AvailiableApisUpdated;
             }
             PictureDownloader.Instance.Failed -= OnDLError;
             PictureDownloader.Instance.Fetched -= OnFetched;
@@ -346,11 +345,6 @@ namespace Kazyx.Uwpmm.Pages
             UpdateInnerState(ViewerState.OutOfPage);
 
             this.navigationHelper.OnNavigatedFrom(e);
-        }
-
-        void Api_AvailiableApisUpdated(object sender, AvailableApiEventArgs e)
-        {
-            MovieStreamHelper.INSTANCE.MoviePlaybackData.SeekAvailable = TargetDevice.Api.Capability.IsAvailable("seekStreamingPosition");
         }
 
         #endregion
@@ -650,7 +644,7 @@ namespace Kazyx.Uwpmm.Pages
                 }
                 finally
                 {
-                    loader.PartLoaded -= RemoteContentsLoader_PartLoaded;
+                    //loader.PartLoaded -= RemoteContentsLoader_PartLoaded;
                 }
             }
             catch (Exception e)

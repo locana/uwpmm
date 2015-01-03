@@ -11,13 +11,13 @@
 
     <Grid x:Name="LayoutRoot" Background="Transparent">
         <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="18"/>
-            <RowDefinition Height="32"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="30"/>
         </Grid.RowDefinitions>
         <Image Grid.Row="0" Name="Screen" Source="{Binding Image}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
-        <ProgressBar Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Name="ProgressBar" Minimum="0.0" Maximum="1.0"/>
-        <Slider Grid.Row="1"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Name="SeekBar" Visibility="Collapsed"
+        <ProgressBar Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" Name="ProgressBar" Minimum="0.0" Maximum="1.0" Margin="3,6" Height="4"/>
+        <Slider Grid.Row="1"  HorizontalAlignment="Stretch" VerticalAlignment="Center" Name="SeekBar" Visibility="Collapsed" Margin="3,6" Height="20"
                 Minimum="0.0" Maximum="1.0"/>
         <Grid Grid.Row="2" Name="PlaybackInfo" Visibility="Visible" >
             <Grid.ColumnDefinitions>
@@ -27,13 +27,13 @@
                 <ColumnDefinition Width="auto"/>
             </Grid.ColumnDefinitions>
             <TextBlock Grid.Column="0" TextAlignment="Left" Text="{Binding FileName}" HorizontalAlignment="Stretch" VerticalAlignment="Center" Name="FileNameText" Foreground="{StaticResource ApplicationForegroundThemeBrush}" 
-                   FontSize="10"/>
+                   FontSize="16"/>
             <TextBlock Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" Name="PositionText" Foreground="{StaticResource ApplicationForegroundThemeBrush}" 
-                   FontSize="10"/>
+                   FontSize="16"/>
             <TextBlock Grid.Column="2" Text="/" HorizontalAlignment="Stretch" VerticalAlignment="Center" Name="TimeSeparator" Foreground="{StaticResource ApplicationForegroundThemeBrush}" 
-                   FontSize="10"/>
+                   FontSize="16"/>
             <TextBlock Grid.Column="3" HorizontalAlignment="Stretch" VerticalAlignment="Center" Name="DurationText" Foreground="{StaticResource ApplicationForegroundThemeBrush}" 
-                   FontSize="10"/>
+                   FontSize="16"/>
         </Grid>
     </Grid>
 </UserControl>

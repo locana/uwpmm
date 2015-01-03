@@ -45,8 +45,8 @@ namespace Kazyx.Uwpmm.Control
 
         private static void OnCurrentPositionChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            // (d as MoviePlaybackScreen).CurrentPosition = (TimeSpan)e.NewValue;
-            DebugUtil.Log("Current position updated: " + ((TimeSpan)e.NewValue).TotalSeconds);
+            //DebugUtil.Log("Current position updated: " + ((TimeSpan)e.NewValue).TotalSeconds);
+            (d as MoviePlaybackScreen).UpdatePlaybackPosition((TimeSpan)e.NewValue, (d as MoviePlaybackScreen).Duration);
         }
 
         void UpdatePlaybackPosition(TimeSpan current, TimeSpan duration)
@@ -82,8 +82,8 @@ namespace Kazyx.Uwpmm.Control
 
         private static void OnDurationChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            DebugUtil.Log("Duration updated: " + ((TimeSpan)e.NewValue).TotalSeconds);
-            // (d as MoviePlaybackScreen).Duration = (TimeSpan)e.NewValue;
+            //DebugUtil.Log("Duration updated: " + ((TimeSpan)e.NewValue).TotalSeconds);
+            (d as MoviePlaybackScreen).UpdateDurationDisplay((TimeSpan)e.NewValue);
         }
 
         void UpdateDurationDisplay(TimeSpan duration)
@@ -121,7 +121,8 @@ namespace Kazyx.Uwpmm.Control
 
         private static void OnSeekAvailabilityChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            DebugUtil.Log("Seek availability changed: " + (bool)(e.NewValue));
+            //DebugUtil.Log("Seek availability changed: " + (bool)(e.NewValue));
+            (d as MoviePlaybackScreen).UpdateBarDisplay((bool)(e.NewValue));
         }
 
         public bool SeekAvailable
