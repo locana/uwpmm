@@ -114,6 +114,13 @@ namespace Kazyx.Uwpmm.CameraControl
                     Capability.AddSupported(method);
                 }
             }
+            if (AvContent != null)
+            {
+                foreach (var method in await AvContent.GetMethodTypesAsync())
+                {
+                    Capability.AddSupported(method);
+                }
+            }
 
             if (SupportedApisUpdated != null)
             {
