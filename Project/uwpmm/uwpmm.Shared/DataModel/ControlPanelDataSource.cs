@@ -41,6 +41,17 @@ namespace Kazyx.Uwpmm.DataModel
                 NotifyChangedOnUI("IsAvailableFlashMode");
                 NotifyChangedOnUI("IsAvailableSteadyMode");
                 NotifyChangedOnUI("IsAvailableViewAngle");
+                NotifyChangedOnUI("IsAvailableZoomSetting");
+                NotifyChangedOnUI("IsAvailableSceneSelection");
+                NotifyChangedOnUI("IsAvailableTrackingFocus");
+                NotifyChangedOnUI("IsAvailableStillQuality");
+                NotifyChangedOnUI("IsAvailableMovieFormat");
+                NotifyChangedOnUI("IsAvailableFlipMode");
+                NotifyChangedOnUI("IsAvailableIntervalTime");
+                NotifyChangedOnUI("IsAvailableColorSetting");
+                NotifyChangedOnUI("IsAvailableInfraredRemoteControl");
+                NotifyChangedOnUI("IsAvailableTvColorSystem");
+                NotifyChangedOnUI("IsAvailableAutoPowerOff");
             };
             Device.Api.ServerVersionDetected += (sender, e) =>
             {
@@ -424,14 +435,6 @@ namespace Kazyx.Uwpmm.DataModel
             }
         }
 
-        public bool IsAvailableContShootingMode
-        {
-            get
-            {
-                return Device.Api.Capability.IsAvailable("setContShootingMode") && Device.Status.ContShootingMode != null;
-            }
-        }
-
         public int SelectedIndexContShootingMode
         {
             get
@@ -452,11 +455,11 @@ namespace Kazyx.Uwpmm.DataModel
             }
         }
 
-        public bool IsAvailableContShootingSpeed
+        public bool IsAvailableContShootingMode
         {
             get
             {
-                return Device.Api.Capability.IsAvailable("setContShootingSpeed") && Device.Status.ContShootingSpeed != null;
+                return Device.Api.Capability.IsAvailable("setContShootingMode") && Device.Status.ContShootingMode != null;
             }
         }
 
@@ -477,6 +480,322 @@ namespace Kazyx.Uwpmm.DataModel
             get
             {
                 return SettingValueConverter.FromContShootingSpeed(Device.Status.ContShootingSpeed).Candidates;
+            }
+        }
+
+        public bool IsAvailableContShootingSpeed
+        {
+            get
+            {
+                return Device.Api.Capability.IsAvailable("setContShootingSpeed") && Device.Status.ContShootingSpeed != null;
+            }
+        }
+
+        public int SelectedIndexZoomSetting
+        {
+            get
+            {
+                return SettingValueConverter.GetSelectedIndex(Device.Status.ZoomSetting);
+            }
+            set
+            {
+                ParameterUtil.SetSelectedAsCurrent(Device.Status.ZoomSetting, value);
+            }
+        }
+
+        public List<string> CandidatesZoomSetting
+        {
+            get
+            {
+                return SettingValueConverter.FromZoomSetting(Device.Status.ZoomSetting).Candidates;
+            }
+        }
+
+        public bool IsAvailableZoomSetting
+        {
+            get
+            {
+                return Device.Api.Capability.IsAvailable("setZoomSetting") && Device.Status.ZoomSetting != null;
+            }
+        }
+
+        public int SelectedIndexSceneSelection
+        {
+            get
+            {
+                return SettingValueConverter.GetSelectedIndex(Device.Status.SceneSelection);
+            }
+            set
+            {
+                ParameterUtil.SetSelectedAsCurrent(Device.Status.SceneSelection, value);
+            }
+        }
+
+        public List<string> CandidatesSceneSelection
+        {
+            get
+            {
+                return SettingValueConverter.FromSceneSelection(Device.Status.SceneSelection).Candidates;
+            }
+        }
+
+        public bool IsAvailableSceneSelection
+        {
+            get
+            {
+                return Device.Api.Capability.IsAvailable("setSceneSelection") && Device.Status.SceneSelection != null;
+            }
+        }
+
+        public int SelectedIndexTrackingFocus
+        {
+            get
+            {
+                return SettingValueConverter.GetSelectedIndex(Device.Status.TrackingFocus);
+            }
+            set
+            {
+                ParameterUtil.SetSelectedAsCurrent(Device.Status.TrackingFocus, value);
+            }
+        }
+
+        public List<string> CandidatesTrackingFocus
+        {
+            get
+            {
+                return SettingValueConverter.FromTrackingFocus(Device.Status.TrackingFocus).Candidates;
+            }
+        }
+
+        public bool IsAvailableTrackingFocus
+        {
+            get
+            {
+                return Device.Api.Capability.IsAvailable("setTrackingFocus") && Device.Status.TrackingFocus != null;
+            }
+        }
+
+        public int SelectedIndexStillQuality
+        {
+            get
+            {
+                return SettingValueConverter.GetSelectedIndex(Device.Status.StillQuality);
+            }
+            set
+            {
+                ParameterUtil.SetSelectedAsCurrent(Device.Status.StillQuality, value);
+            }
+        }
+
+        public List<string> CandidatesStillQuality
+        {
+            get
+            {
+                return SettingValueConverter.FromStillQuality(Device.Status.StillQuality).Candidates;
+            }
+        }
+
+        public bool IsAvailableStillQuality
+        {
+            get
+            {
+                return Device.Api.Capability.IsAvailable("setStillQuality") && Device.Status.StillQuality != null;
+            }
+        }
+
+        public int SelectedIndexMovieFormat
+        {
+            get
+            {
+                return SettingValueConverter.GetSelectedIndex(Device.Status.MovieFormat);
+            }
+            set
+            {
+                ParameterUtil.SetSelectedAsCurrent(Device.Status.MovieFormat, value);
+            }
+        }
+
+        public List<string> CandidatesMovieFormat
+        {
+            get
+            {
+                return SettingValueConverter.FromMovieFormat(Device.Status.MovieFormat).Candidates;
+            }
+        }
+
+        public bool IsAvailableMovieFormat
+        {
+            get
+            {
+                return Device.Api.Capability.IsAvailable("setMovieFormat") && Device.Status.MovieFormat != null;
+            }
+        }
+
+        public int SelectedIndexFlipMode
+        {
+            get
+            {
+                return SettingValueConverter.GetSelectedIndex(Device.Status.FlipMode);
+            }
+            set
+            {
+                ParameterUtil.SetSelectedAsCurrent(Device.Status.FlipMode, value);
+            }
+        }
+
+        public List<string> CandidatesFlipMode
+        {
+            get
+            {
+                return SettingValueConverter.FromFlipMode(Device.Status.FlipMode).Candidates;
+            }
+        }
+
+        public bool IsAvailableFlipMode
+        {
+            get
+            {
+                return Device.Api.Capability.IsAvailable("setFlipMode") && Device.Status.FlipMode != null;
+            }
+        }
+
+        public int SelectedIndexIntervalTime
+        {
+            get
+            {
+                return SettingValueConverter.GetSelectedIndex(Device.Status.IntervalTime);
+            }
+            set
+            {
+                ParameterUtil.SetSelectedAsCurrent(Device.Status.IntervalTime, value);
+            }
+        }
+
+        public List<string> CandidatesIntervalTime
+        {
+            get
+            {
+                return SettingValueConverter.FromIntervalTime(Device.Status.IntervalTime).Candidates;
+            }
+        }
+
+        public bool IsAvailableIntervalTime
+        {
+            get
+            {
+                return Device.Api.Capability.IsAvailable("setIntervalTime") && Device.Status.IntervalTime != null;
+            }
+        }
+
+        public int SelectedIndexColorSetting
+        {
+            get
+            {
+                return SettingValueConverter.GetSelectedIndex(Device.Status.ColorSetting);
+            }
+            set
+            {
+                ParameterUtil.SetSelectedAsCurrent(Device.Status.ColorSetting, value);
+            }
+        }
+
+        public List<string> CandidatesColorSetting
+        {
+            get
+            {
+                return SettingValueConverter.FromColorSetting(Device.Status.ColorSetting).Candidates;
+            }
+        }
+
+        public bool IsAvailableColorSetting
+        {
+            get
+            {
+                return Device.Api.Capability.IsAvailable("setColorSetting") && Device.Status.ColorSetting != null;
+            }
+        }
+
+        public int SelectedIndexInfraredRemoteControl
+        {
+            get
+            {
+                return SettingValueConverter.GetSelectedIndex(Device.Status.InfraredRemoteControl);
+            }
+            set
+            {
+                ParameterUtil.SetSelectedAsCurrent(Device.Status.InfraredRemoteControl, value);
+            }
+        }
+
+        public List<string> CandidatesInfraredRemoteControl
+        {
+            get
+            {
+                return SettingValueConverter.FromInfraredRemoteControl(Device.Status.InfraredRemoteControl).Candidates;
+            }
+        }
+
+        public bool IsAvailableInfraredRemoteControl
+        {
+            get
+            {
+                return Device.Api.Capability.IsAvailable("setInfraredRemoteControl") && Device.Status.InfraredRemoteControl != null;
+            }
+        }
+
+        public int SelectedIndexTvColorSystem
+        {
+            get
+            {
+                return SettingValueConverter.GetSelectedIndex(Device.Status.TvColorSystem);
+            }
+            set
+            {
+                ParameterUtil.SetSelectedAsCurrent(Device.Status.TvColorSystem, value);
+            }
+        }
+
+        public List<string> CandidatesTvColorSystem
+        {
+            get
+            {
+                return SettingValueConverter.FromTvColorSystem(Device.Status.TvColorSystem).Candidates;
+            }
+        }
+
+        public bool IsAvailableTvColorSystem
+        {
+            get
+            {
+                return Device.Api.Capability.IsAvailable("setTvColorSystem") && Device.Status.TvColorSystem != null;
+            }
+        }
+
+        public int SelectedIndexAutoPowerOff
+        {
+            get
+            {
+                return SettingValueConverter.GetSelectedIndex(Device.Status.AutoPowerOff);
+            }
+            set
+            {
+                ParameterUtil.SetSelectedAsCurrent(Device.Status.AutoPowerOff, value);
+            }
+        }
+
+        public List<string> CandidatesAutoPowerOff
+        {
+            get
+            {
+                return SettingValueConverter.FromAutoPowerOff(Device.Status.AutoPowerOff).Candidates;
+            }
+        }
+
+        public bool IsAvailableAutoPowerOff
+        {
+            get
+            {
+                return Device.Api.Capability.IsAvailable("setAutoPowerOff") && Device.Status.AutoPowerOff != null;
             }
         }
     }

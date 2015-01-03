@@ -118,7 +118,18 @@ namespace Kazyx.Uwpmm.CameraControl
             if (status.NumberOfShots >= 0) { target.NumberOfShots = status.NumberOfShots; }
             if (status.ContShootingMode != null) { target.ContShootingMode = status.ContShootingMode; }
             if (status.ContShootingSpeed != null) { target.ContShootingSpeed = status.ContShootingSpeed; }
-
+            if (status.ZoomSetting != null) { target.ZoomSetting = status.ZoomSetting; }
+            if (status.SceneSelection != null) { target.SceneSelection = status.SceneSelection; }
+            if (status.TrackingFocusMode != null) { target.TrackingFocus = status.TrackingFocusMode; }
+            if (status.TrackingFocusStatus != null) { target.TrackingFocusStatus = status.TrackingFocusStatus; }
+            if (status.MovieFormat != null) { target.MovieFormat = status.MovieFormat; }
+            if (status.FlipMode != null) { target.FlipMode = status.FlipMode; }
+            if (status.IntervalTime != null) { target.FlipMode = status.FlipMode; }
+            if (status.ColorSetting != null) { target.ColorSetting = status.ColorSetting; }
+            if (status.IrRemoteControl != null) { target.InfraredRemoteControl = status.IrRemoteControl; }
+            if (status.TvColorSystem != null) { target.TvColorSystem = status.TvColorSystem; }
+            if (status.AutoPowerOff != null) { target.AutoPowerOff = status.AutoPowerOff; }
+            if (status.ImageQuality != null) { target.StillQuality = status.ImageQuality; }
 
             if (status.StillImageSize != null)
             {

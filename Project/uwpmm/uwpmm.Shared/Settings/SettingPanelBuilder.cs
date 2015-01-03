@@ -37,20 +37,33 @@ namespace Kazyx.Uwpmm.Settings
 
             Panels.Add("setShootMode", BuildComboBoxPanel("ShootMode", "ShootMode", OnShootModeChanged));
             Panels.Add("setExposureMode", BuildComboBoxPanel("ExposureMode", "ExposureMode", OnExposureModeChanged));
-            Panels.Add("setFocusMode", BuildComboBoxPanel("FocusMode", "FocusMode", OnFocusModeChanged));
+            Panels.Add("setFocusMode", BuildComboBoxPanel("FocusMode", "FocusMode", OnFocusModeChanged));           
+            Panels.Add("setTrackingFocus", BuildComboBoxPanel("TrackingFocus", "TrackingFocusMode", OnTrackingFocusChanged));
             Panels.Add("setContShootingMode", BuildComboBoxPanel("ContShootingMode", "ContShootingMode", OnContShootingModeChanged));
             Panels.Add("setContShootingSpeed", BuildComboBoxPanel("ContShootingSpeed", "ContShootingSpeed", OnContShootingSpeedChanged));
+            Panels.Add("setIntervalTime", BuildComboBoxPanel("IntervalTime", "IntervalTime1", OnIntervalTimeChanged));
+            Panels.Add("setFlashMode", BuildComboBoxPanel("FlashMode", "FlashMode", OnFlashModeChanged));
 
             Panels.Add("setWhiteBalance", BuildComboBoxPanel("WhiteBalance", "WhiteBalance", OnWhiteBalanceChanged));
             Panels.Add("ColorTemperture", BuildColorTemperturePanel());
+            Panels.Add("setColorSetting", BuildComboBoxPanel("ColorSetting", "ColorSetting", OnColorSettingChanged));
+            Panels.Add("setSceneSelection", BuildComboBoxPanel("SceneSelection", "SceneSelection", OnSceneSelectionChanged));
+
+            Panels.Add("setMovieFormat", BuildComboBoxPanel("MovieFormat", "MovieFormat", OnMovieFormatChanged));
             Panels.Add("setMovieQuality", BuildComboBoxPanel("MovieQuality", "MovieQuality", OnMovieQualityChanged));
-            Panels.Add("setSteadyMode", BuildComboBoxPanel("SteadyMode", "SteadyMode", OnSteadyModeChanged));
-            Panels.Add("setSelfTimer", BuildComboBoxPanel("SelfTimer", "SelfTimer", OnSelfTimerChanged));
             Panels.Add("setStillSize", BuildComboBoxPanel("StillImageSize", "StillImageSize", OnStillImageSizeChanged));
-            Panels.Add("setPostviewImageSize", BuildComboBoxPanel("PostviewSize", "Setting_PostViewImageSize", OnPostviewSizeChanged));
+            Panels.Add("setStillQuality", BuildComboBoxPanel("StillQuality", "StillQuality", OnStillQualityChanged));
+
             Panels.Add("setViewAngle", BuildComboBoxPanel("ViewAngle", "ViewAngle", OnViewAngleChanged));
+            Panels.Add("setSteadyMode", BuildComboBoxPanel("SteadyMode", "SteadyShot", OnSteadyModeChanged));
+            Panels.Add("setSelfTimer", BuildComboBoxPanel("SelfTimer", "SelfTimer", OnSelfTimerChanged));
             Panels.Add("setBeepMode", BuildComboBoxPanel("BeepMode", "BeepMode", OnBeepModeChanged));
-            Panels.Add("setFlashMode", BuildComboBoxPanel("FlashMode", "FlashMode", OnFlashModeChanged));
+            Panels.Add("setFlipMode", BuildComboBoxPanel("FlipMode", "FlipMode", OnFlipModeChanged));
+            Panels.Add("setZoomSetting", BuildComboBoxPanel("ZoomSetting", "ZoomSetting", OnZoomSettingChanged));
+            Panels.Add("setInfraredRemoteControl", BuildComboBoxPanel("InfraredRemoteControl", "InfraredRemoteControl", OnInfraredRemoteControlChanged));
+            Panels.Add("setPostviewImageSize", BuildComboBoxPanel("PostviewSize", "Setting_PostViewImageSize", OnPostviewSizeChanged));
+            Panels.Add("setAutoPowerOff", BuildComboBoxPanel("AutoPowerOff", "AutoPowerOff", OnAutoPowerOffChanged));
+            Panels.Add("setTvColorSystem", BuildComboBoxPanel("TvColorSystem", "TvColorSystem", OnTvColorSystemChanged));
 
             VisibilityBinding = new Binding()
             {
@@ -61,6 +74,7 @@ namespace Kazyx.Uwpmm.Settings
                 FallbackValue = Visibility.Collapsed
             };
         }
+
 
         public List<StackPanel> GetPanelsToShow()
         {
@@ -151,6 +165,71 @@ namespace Kazyx.Uwpmm.Settings
                 async (mode) => { await Api.Camera.SetContShootingSpeedAsync(new ContinuousShootSpeedSetting() { Mode = mode }); });
         }
 
+        private async void OnAutoPowerOffChanged(object sender, object e)
+        {
+            await OnSelectionChanged(sender, Status.AutoPowerOff,
+                async (time) => { await Api.Camera.SetAutoPowerOffAsync(new AutoPowerOff() { TimeInSeconds = time }); });
+        }
+
+        private async void OnTvColorSystemChanged(object sender, object e)
+        {
+            await OnSelectionChanged(sender, Status.TvColorSystem,
+                async (mode) => { await Api.Camera.SetTvColorSystemAsync(new TvColorSystem() { Mode = mode }); });
+        }
+
+        private async void OnInfraredRemoteControlChanged(object sender, object e)
+        {
+            await OnSelectionChanged(sender, Status.InfraredRemoteControl,
+                async (mode) => { await Api.Camera.SetInfraredRemoteControlAsync(new InfraredRemoteControl() { Mode = mode }); });
+        }
+
+        private async void OnColorSettingChanged(object sender, object e)
+        {
+            await OnSelectionChanged(sender, Status.ColorSetting,
+                async (mode) => { await Api.Camera.SetColorSettingAsync(new ColorSetting() { Mode = mode }); });
+        }
+
+        private async void OnIntervalTimeChanged(object sender, object e)
+        {
+            await OnSelectionChanged(sender, Status.IntervalTime,
+                async (time) => { await Api.Camera.SetIntervalTimeAsync(new IntervalTimeSetting() { TimeInSeconds = time }); });
+        }
+
+        private async void OnFlipModeChanged(object sender, object e)
+        {
+            await OnSelectionChanged(sender, Status.FlipMode,
+                async (mode) => { await Api.Camera.SetFlipSettingAsync(new FlipSetting() { Mode = mode }); });
+        }
+
+        private async void OnMovieFormatChanged(object sender, object e)
+        {
+            await OnSelectionChanged(sender, Status.MovieFormat,
+                async (mode) => { await Api.Camera.SetMovieFileFormatAsync(new MovieFormat() { Mode = mode }); });
+        }
+
+        private async void OnStillQualityChanged(object sender, object e)
+        {
+            await OnSelectionChanged(sender, Status.StillQuality,
+                async (mode) => { await Api.Camera.SetStillQualityAsync(new ImageQualitySetting() { Mode = mode }); });
+        }
+
+        private async void OnTrackingFocusChanged(object sender, object e)
+        {
+            await OnSelectionChanged(sender, Status.TrackingFocus,
+                async (mode) => { await Api.Camera.SetTrackingFocusAsync(new TrackingFocusSetting() { Mode = mode }); });
+        }
+
+        private async void OnSceneSelectionChanged(object sender, object e)
+        {
+            await OnSelectionChanged(sender, Status.SceneSelection,
+                async (mode) => { await Api.Camera.SetSceneSelectionAsync(new SceneSelectionSetting() { Mode = mode }); });
+        }
+
+        private async void OnZoomSettingChanged(object sender, object e)
+        {
+            await OnSelectionChanged(sender, Status.ZoomSetting,
+                async (mode) => { await Api.Camera.SetZoomSettingAsync(new ZoomSetting() { Mode = mode }); });
+        }
         private async void OnWhiteBalanceChanged(object sender, object e)
         {
             await OnComboBoxChanged(sender, Status.WhiteBalance,
