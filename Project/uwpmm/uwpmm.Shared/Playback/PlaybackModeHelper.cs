@@ -3,6 +3,7 @@ using Kazyx.RemoteApi.AvContent;
 using Kazyx.RemoteApi.Camera;
 using Kazyx.Uwpmm.DataModel;
 using Kazyx.Uwpmm.Utility;
+using System;
 using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
@@ -100,6 +101,35 @@ namespace Kazyx.Uwpmm.Playback
             }).ConfigureAwait(false);
             await av.StartStreamingAsync().ConfigureAwait(false);
             return uri.Url;
+        }
+
+        public static async Task PauseMovieStreamingAsync(AvContentApiClient av, MoviePlaybackData status)
+        {
+            await av.PauseStreamingAsync();
+        }
+
+        public static async Task StartMovieStreamingASync(AvContentApiClient av, MoviePlaybackData status)
+        {
+            await av.StartStreamingAsync();
+        }
+
+        public static async Task SeekMovieStreamingAsync(AvContentApiClient av, MoviePlaybackData status, TimeSpan seekTarget)
+        {
+            var originalStatus = status.StreamingStatus;
+
+            if (status.StreamingStatus == StreamStatus.Error || status.StreamingStatus == StreamStatus.Invalid) { return; }
+
+            if (status.StreamingStatus == StreamStatus.Started)
+            {
+                await PauseMovieStreamingAsync(av, status);
+            }
+
+            await av.SeekStreamingPositionAsync(new PlaybackPosition() { PositionMSec = (int)seekTarget.TotalMilliseconds });
+
+            if (originalStatus == StreamStatus.Started)
+            {
+                await StartMovieStreamingASync(av, status);
+            }
         }
     }
 }

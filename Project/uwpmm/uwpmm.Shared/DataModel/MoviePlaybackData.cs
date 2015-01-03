@@ -55,5 +55,33 @@ namespace Kazyx.Uwpmm.DataModel
                 }
             }
         }
+
+        private string _StreamingStatus;
+        public string StreamingStatus
+        {
+            get { return _StreamingStatus; }
+            set
+            {
+                if (_StreamingStatus != value)
+                {
+                    _StreamingStatus = value;
+                    NotifyChanged("StreamingStatus");
+                }
+            }
+        }
+
+        private string _StreamingStatusTransitionFactor;
+        public string StreamingStatusTransitionFactor
+        {
+            get { return _StreamingStatusTransitionFactor; }
+            set
+            {
+                if (_StreamingStatusTransitionFactor != value)
+                {
+                    _StreamingStatusTransitionFactor = value;
+                    NotifyChanged("StreamingStatusTransitionFactor");
+                }
+            }
+        }
     }
 }

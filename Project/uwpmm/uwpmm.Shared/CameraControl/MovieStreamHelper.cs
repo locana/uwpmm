@@ -173,4 +173,5 @@ namespace Kazyx.Uwpmm.CameraControl
     {
         public StreamingStatus Status { get; internal set; }
     }
+
 }

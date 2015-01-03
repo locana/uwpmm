@@ -139,7 +139,10 @@ namespace Kazyx.Uwpmm.Pages
 
             MovieScreen.SeekOperated += async (sender, arg) =>
             {
-                try { await TargetDevice.Api.AvContent.SeekStreamingPositionAsync(new PlaybackPosition() { PositionMSec = (int)arg.SeekPosition.TotalMilliseconds }); }
+                try
+                {
+                    await PlaybackModeHelper.SeekMovieStreamingAsync(TargetDevice.Api.AvContent, MovieStreamHelper.INSTANCE.MoviePlaybackData, arg.SeekPosition);
+                }
                 catch (RemoteApi.RemoteApiException) { }
             };
         }
@@ -430,6 +433,8 @@ namespace Kazyx.Uwpmm.Pages
                 default:
                     break;
             }
+            MovieStreamHelper.INSTANCE.MoviePlaybackData.StreamingStatus = e.Status.Status;
+            MovieStreamHelper.INSTANCE.MoviePlaybackData.StreamingStatusTransitionFactor = e.Status.Factor;
         }
 
         private async void CloseMovieStream()
