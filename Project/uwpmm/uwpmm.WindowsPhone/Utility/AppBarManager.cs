@@ -21,29 +21,29 @@ namespace Kazyx.Uwpmm.Utility
             switch (item)
             {
                 case AppBarItem.ControlPanel:
-                    return new AppBarButton() { Icon = new BitmapIcon() { UriSource = new Uri("ms-appx:///Assets/AppBar/appbar_cameraSetting.png", UriKind.Absolute) }, Label = "Camera settings" };
+                    return new AppBarButton() { Icon = new BitmapIcon() { UriSource = new Uri("ms-appx:///Assets/AppBar/appbar_cameraSetting.png", UriKind.Absolute) }, Label = SystemUtil.GetStringResource("AppBar_ControlPanel") };
                 case AppBarItem.AppSetting:
-                    return new AppBarButton() { Icon = new BitmapIcon() { UriSource = new Uri("ms-appx:///Assets/AppBar/feature.settings.png", UriKind.Absolute) }, Label = "Application settings" };
+                    return new AppBarButton() { Icon = new BitmapIcon() { UriSource = new Uri("ms-appx:///Assets/AppBar/feature.settings.png", UriKind.Absolute) }, Label = SystemUtil.GetStringResource("AppBar_AppSetting") };
                 case AppBarItem.CancelTouchAF:
-                    return new AppBarButton() { Icon = new BitmapIcon() { UriSource = new Uri("ms-appx:///Assets/AppBar/appbar_cancel.png", UriKind.Absolute) }, Label = "Cancel touch AF" };
+                    return new AppBarButton() { Icon = new BitmapIcon() { UriSource = new Uri("ms-appx:///Assets/AppBar/appbar_cancel.png", UriKind.Absolute) }, Label = SystemUtil.GetStringResource("AppBar_CancelTouchAf") };
                 case AppBarItem.AboutPage:
-                    return new AppBarButton() { Label = "About this application" };
+                    return new AppBarButton() { Label = SystemUtil.GetStringResource("About") };
                 case AppBarItem.LoggerPage:
                     return new AppBarButton() { Label = "Logger" };
                 case AppBarItem.PlaybackPage:
-                    return new AppBarButton() { Icon = new BitmapIcon() { UriSource = new Uri("ms-appx:///Assets/AppBar/appbar_playback.png", UriKind.Absolute) }, Label = "Playback mode" };
+                    return new AppBarButton() { Icon = new BitmapIcon() { UriSource = new Uri("ms-appx:///Assets/AppBar/appbar_playback.png", UriKind.Absolute) }, Label = SystemUtil.GetStringResource("AppBar_CameraRoll") };
                 case AppBarItem.DeleteMultiple:
-                    return new AppBarButton() { Icon = new BitmapIcon() { UriSource = new Uri("ms-appx:///Assets/AppBar/appbar_delete.png") }, Label = "Delete" };
+                    return new AppBarButton() { Icon = new BitmapIcon() { UriSource = new Uri("ms-appx:///Assets/AppBar/appbar_delete.png") }, Label = SystemUtil.GetStringResource("AppBar_Delete") };
                 case AppBarItem.DownloadMultiple:
-                    return new AppBarButton() { Icon = new BitmapIcon() { UriSource = new Uri("ms-appx:///Assets/AppBar/appbar_download.png") }, Label = "Download" };
+                    return new AppBarButton() { Icon = new BitmapIcon() { UriSource = new Uri("ms-appx:///Assets/AppBar/appbar_download.png") }, Label = SystemUtil.GetStringResource("AppBar_Download") };
                 case AppBarItem.ShowDetailInfo:
-                    return new AppBarButton() { Icon = new BitmapIcon() { UriSource = new Uri("ms-appx:///Assets/AppBar/appbar_display_info.png") }, Label = "Show info" };
+                    return new AppBarButton() { Icon = new BitmapIcon() { UriSource = new Uri("ms-appx:///Assets/AppBar/appbar_display_info.png") }, Label = SystemUtil.GetStringResource("ShowDetailInfo") };
                 case AppBarItem.HideDetailInfo:
-                    return new AppBarButton() { Icon = new BitmapIcon() { UriSource = new Uri("ms-appx:///Assets/AppBar/appbar_close_display.png") }, Label = "Hide info" };
+                    return new AppBarButton() { Icon = new BitmapIcon() { UriSource = new Uri("ms-appx:///Assets/AppBar/appbar_close_display.png") }, Label = SystemUtil.GetStringResource("HideDetailInfo") };
                 case AppBarItem.Ok:
-                    return new AppBarButton() { Icon = new BitmapIcon() { UriSource = new Uri("ms-appx:///Assets/AppBar/appbar_ok.png") }, Label = "OK" };
+                    return new AppBarButton() { Icon = new BitmapIcon() { UriSource = new Uri("ms-appx:///Assets/AppBar/appbar_ok.png") }, Label = SystemUtil.GetStringResource("AppBar_Exit") };
                 case AppBarItem.WifiSetting:
-                    return new AppBarButton() { Icon = new BitmapIcon() { UriSource = new Uri("ms-appx:///Assets/AppBar/appbar_wifi.png") }, Label = "Wi-Fi" };
+                    return new AppBarButton() { Icon = new BitmapIcon() { UriSource = new Uri("ms-appx:///Assets/AppBar/appbar_wifi.png") }, Label = SystemUtil.GetStringResource("WifiSettingLauncherButtonText") };
                 default:
                     throw new NotImplementedException();
             }

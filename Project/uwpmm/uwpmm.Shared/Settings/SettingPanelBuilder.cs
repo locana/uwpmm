@@ -37,7 +37,7 @@ namespace Kazyx.Uwpmm.Settings
 
             Panels.Add("setShootMode", BuildComboBoxPanel("ShootMode", "ShootMode", OnShootModeChanged));
             Panels.Add("setExposureMode", BuildComboBoxPanel("ExposureMode", "ExposureMode", OnExposureModeChanged));
-            Panels.Add("setFocusMode", BuildComboBoxPanel("FocusMode", "FocusMode", OnFocusModeChanged));           
+            Panels.Add("setFocusMode", BuildComboBoxPanel("FocusMode", "FocusMode", OnFocusModeChanged));
             Panels.Add("setTrackingFocus", BuildComboBoxPanel("TrackingFocus", "TrackingFocusMode", OnTrackingFocusChanged));
             Panels.Add("setContShootingMode", BuildComboBoxPanel("ContShootingMode", "ContShootingMode", OnContShootingModeChanged));
             Panels.Add("setContShootingSpeed", BuildComboBoxPanel("ContShootingSpeed", "ContShootingSpeed", OnContShootingSpeedChanged));
@@ -405,7 +405,7 @@ namespace Kazyx.Uwpmm.Settings
                 DebugUtil.Log("Interval updated: " + (int)(sender as Slider).Value);
             };
 
-            var parent = BuildBasicPanel("Interval shooting");
+            var parent = BuildBasicPanel(SystemUtil.GetStringResource("IntervalSetting"));
             parent.Children.Add(firstPanel);
             parent.Children.Add(slider);
 
