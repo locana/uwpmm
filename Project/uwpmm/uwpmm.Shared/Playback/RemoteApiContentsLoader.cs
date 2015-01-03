@@ -45,23 +45,7 @@ namespace Kazyx.Uwpmm.Playback
                 throw new NoStorageException();
             }
 
-            await GetDateListSeparatelyAsync(storages[0], async (dates) =>
-            {
-                foreach (var date in dates)
-                {
-                    await GetContentsOfDaySeparatelyAsync(date, true, (e2) =>
-                    {
-                        DebugUtil.Log(e2.Count + " contents fetched");
-                        var list = new List<Thumbnail>();
-                        foreach (var content in e2)
-                        {
-                            list.Add(new Thumbnail(content, Udn));
-                        }
-
-                        OnPartLoaded(list);
-                    }, cancel).ConfigureAwait(false);
-                }
-            }, cancel).ConfigureAwait(false);
+            await GetContentsByDateSeparatelyAsync(storages[0], cancel).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -95,7 +79,7 @@ namespace Kazyx.Uwpmm.Playback
             return list;
         }
 
-        private async Task GetDateListSeparatelyAsync(string uri, Action<IList<DateInfo>> handler, CancellationTokenSource cancel)
+        private async Task GetContentsByDateSeparatelyAsync(string uri, CancellationTokenSource cancel)
         {
             DebugUtil.Log("Loading number of Dates");
 
@@ -125,7 +109,11 @@ namespace Kazyx.Uwpmm.Playback
                     OnCancelled();
                     break;
                 }
-                handler.Invoke(dates);
+
+                foreach (var date in dates)
+                {
+                    await GetContentsOfDaySeparatelyAsync(date, true, cancel).ConfigureAwait(false);
+                }
             }
         }
 
@@ -153,7 +141,7 @@ namespace Kazyx.Uwpmm.Playback
             return list;
         }
 
-        private async Task GetContentsOfDaySeparatelyAsync(DateInfo date, bool includeMovies, Action<IList<ContentInfo>> handler, CancellationTokenSource cancel)
+        private async Task GetContentsOfDaySeparatelyAsync(DateInfo date, bool includeMovies, CancellationTokenSource cancel)
         {
             DebugUtil.Log("Loading: " + date.Title);
 
@@ -176,7 +164,15 @@ namespace Kazyx.Uwpmm.Playback
                     OnCancelled();
                     break;
                 }
-                handler.Invoke(contents);
+
+                DebugUtil.Log(contents.Count + " contents fetched");
+                var list = new List<Thumbnail>();
+                foreach (var content in contents)
+                {
+                    list.Add(new Thumbnail(content, Udn));
+                }
+
+                OnPartLoaded(list);
             }
         }
 
@@ -272,5 +268,11 @@ namespace Kazyx.Uwpmm.Playback
 
     public class StorageNotSupportedException : Exception
     {
+    }
+
+    public class DateInfo
+    {
+        public string Title { set; get; }
+        public string Uri { set; get; }
     }
 }

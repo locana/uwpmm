@@ -4,12 +4,6 @@ using System.Text;
 
 namespace Kazyx.Uwpmm.DataModel
 {
-    public class DateInfo
-    {
-        public string Title { set; get; }
-        public string Uri { set; get; }
-    }
-
     public class ContentInfo
     {
         /// <summary>
