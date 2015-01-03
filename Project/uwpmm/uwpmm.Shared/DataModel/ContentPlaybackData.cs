@@ -25,6 +25,8 @@ namespace Kazyx.Uwpmm.DataModel
         public string ContentType { set; get; }
         public string CreatedTime { set; get; }
         public bool Protected { set; get; }
+
+        public string GroupName { set; get; }
     }
 
     public class WebApiContentInfo : ContentInfo

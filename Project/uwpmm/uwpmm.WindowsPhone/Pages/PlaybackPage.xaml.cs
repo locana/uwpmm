@@ -4,6 +4,7 @@ using Kazyx.Uwpmm.CameraControl;
 using Kazyx.Uwpmm.Common;
 using Kazyx.Uwpmm.Control;
 using Kazyx.Uwpmm.DataModel;
+using Kazyx.Uwpmm.Playback;
 using Kazyx.Uwpmm.Utility;
 using NtImageProcessor.MetaData.Misc;
 using System;
@@ -57,8 +58,17 @@ namespace Kazyx.Uwpmm.Pages
             CommandBarManager.SetEvent(AppBarItem.DeleteMultiple, (sender, e) =>
             {
                 DebugUtil.Log("Delete clicked");
-                UpdateRemoteSelectionMode(SelectivityFactor.Delete);
-                UpdateInnerState(ViewerState.RemoteSelecting);
+                switch (InnerState)
+                {
+                    case ViewerState.Local:
+                        UpdateLocalSelectionMode(SelectivityFactor.Delete);
+                        UpdateInnerState(ViewerState.LocalSelecting);
+                        break;
+                    case ViewerState.RemoteSingle:
+                        UpdateRemoteSelectionMode(SelectivityFactor.Delete);
+                        UpdateInnerState(ViewerState.RemoteSelecting);
+                        break;
+                }
             });
             CommandBarManager.SetEvent(AppBarItem.ShowDetailInfo, (sender, e) =>
             {
@@ -82,11 +92,9 @@ namespace Kazyx.Uwpmm.Pages
                         switch (RemoteGridSource.SelectivityFactor)
                         {
                             case SelectivityFactor.CopyToPhone:
-                                UpdateInnerState(ViewerState.Sync);
                                 FetchSelectedImages();
                                 break;
                             case SelectivityFactor.Delete:
-                                UpdateInnerState(ViewerState.RemoteSingle);
                                 DeleteSelectedImages();
                                 break;
                             default:
@@ -95,6 +103,19 @@ namespace Kazyx.Uwpmm.Pages
                         }
                         UpdateRemoteSelectionMode(SelectivityFactor.None);
                         UpdateInnerState(ViewerState.RemoteSingle);
+                        break;
+                    case ViewerState.LocalSelecting:
+                        switch (LocalGridSource.SelectivityFactor)
+                        {
+                            case SelectivityFactor.Delete:
+                                DeleteSelectedLocalImages();
+                                break;
+                            default:
+                                DebugUtil.Log("Nothing to do for current SelectivityFactor");
+                                break;
+                        }
+                        UpdateLocalSelectionMode(SelectivityFactor.None);
+                        UpdateInnerState(ViewerState.Local);
                         break;
                     default:
                         DebugUtil.Log("Nothing to do for current InnerState");
@@ -196,6 +217,8 @@ namespace Kazyx.Uwpmm.Pages
 
             UpdateInnerState(ViewerState.Local);
 
+            Canceller = new CancellationTokenSource();
+
             DeleteRemoteGridFacially();
             UnsupportedMessage.Visibility = Visibility.Collapsed;
 
@@ -227,7 +250,7 @@ namespace Kazyx.Uwpmm.Pages
 #if DEBUG
             if (LOAD_DUMMY_CONTENTS)
             {
-                AddDummyContentsAsync();
+                var task = AddDummyContentsAsync();
             }
 #endif
 
@@ -257,6 +280,23 @@ namespace Kazyx.Uwpmm.Pages
                     break;
                 case SelectivityFactor.Delete:
                     RemoteGrid.SelectionMode = ListViewSelectionMode.Multiple;
+                    HeaderBlocker.Visibility = Visibility.Visible;
+                    HeaderBlockerText.Text = SystemUtil.GetStringResource("Viewer_Header_SelectingToDelete");
+                    break;
+            }
+        }
+
+        private void UpdateLocalSelectionMode(SelectivityFactor factor)
+        {
+            LocalGridSource.SelectivityFactor = factor;
+            switch (factor)
+            {
+                case SelectivityFactor.None:
+                    LocalGrid.SelectionMode = ListViewSelectionMode.None;
+                    HeaderBlocker.Visibility = Visibility.Collapsed;
+                    break;
+                case SelectivityFactor.Delete:
+                    LocalGrid.SelectionMode = ListViewSelectionMode.Multiple;
                     HeaderBlocker.Visibility = Visibility.Visible;
                     HeaderBlockerText.Text = SystemUtil.GetStringResource("Viewer_Header_SelectingToDelete");
                     break;
@@ -324,7 +364,11 @@ namespace Kazyx.Uwpmm.Pages
                 switch (state)
                 {
                     case ViewerState.RemoteSelecting:
+                    case ViewerState.LocalSelecting:
                         BottomAppBar = CommandBarManager.Clear().Icon(AppBarItem.Ok).CreateNew(0.5);
+                        break;
+                    case ViewerState.Local:
+                        BottomAppBar = CommandBarManager.Clear().Icon(AppBarItem.DeleteMultiple).CreateNew(0.5);
                         break;
                     case ViewerState.RemoteSingle:
                         BottomAppBar = CommandBarManager.Clear().Icon(AppBarItem.DownloadMultiple).Icon(AppBarItem.DeleteMultiple).Icon(AppBarItem.AppSetting).CreateNew(0.5);
@@ -432,13 +476,7 @@ namespace Kazyx.Uwpmm.Pages
             loader.SingleContentLoaded += loader_SingleContentLoaded;
             try
             {
-                var library = KnownFolders.PicturesLibrary;
-
-                foreach (var folder in await library.GetFoldersAsync())
-                {
-                    DebugUtil.Log("Load from local picture folder: " + folder.Name);
-                    await loader.LoadContentsAsync(folder).ConfigureAwait(false);
-                }
+                await loader.Start(Canceller);
                 HideProgress();
             }
             catch
@@ -462,7 +500,7 @@ namespace Kazyx.Uwpmm.Pages
         private string CurrentUuid { set; get; }
 
 #if DEBUG
-        private async void AddDummyContentsAsync()
+        private async Task AddDummyContentsAsync()
         {
             CurrentUuid = DummyContentsGenerator.RandomUuid();
 
@@ -473,7 +511,8 @@ namespace Kazyx.Uwpmm.Pages
                     var list = new List<Thumbnail>();
                     foreach (var content in DummyContentsGenerator.RandomContentList(30))
                     {
-                        list.Add(new Thumbnail(date.Title, content, CurrentUuid));
+                        content.GroupName = date.Title;
+                        list.Add(new Thumbnail(content, CurrentUuid));
                     }
                     await Dispatcher.RunAsync(CoreDispatcherPriority.High, () =>
                     {
@@ -572,26 +611,35 @@ namespace Kazyx.Uwpmm.Pages
                 await PlaybackModeHelper.MoveToContentTransferModeAsync(TargetDevice.Api.Camera, TargetDevice.Status, 20000);
 
                 ChangeProgressText(SystemUtil.GetStringResource("Progress_CheckingStorage"));
-                if (!await PlaybackModeHelper.IsStorageSupportedAsync(TargetDevice.Api.AvContent))
+
+                var loader = new RemoteApiContentsLoader(TargetDevice);
+                loader.PartLoaded += RemoteContentsLoader_PartLoaded;
+
+                ChangeProgressText(SystemUtil.GetStringResource("Progress_FetchingContents"));
+
+                try
+                {
+                    await loader.Start(Canceller).ConfigureAwait(false);
+                    HideProgress();
+                }
+                catch (StorageNotSupportedException)
                 {
                     // This will never happen no camera devices.
                     DebugUtil.Log("storage scheme is not supported");
+                    HideProgress();
                     ShowToast(SystemUtil.GetStringResource("Viewer_StorageAccessNotSupported"));
-                    return;
                 }
-
-                var storages = await PlaybackModeHelper.GetStoragesUriAsync(TargetDevice.Api.AvContent);
-                if (storages.Count == 0)
+                catch (NoStorageException)
                 {
                     DebugUtil.Log("No storages");
+                    HideProgress();
                     ShowToast(SystemUtil.GetStringResource("Viewer_NoStorage"));
                     return;
                 }
-
-                Canceller = new CancellationTokenSource();
-
-                ChangeProgressText(SystemUtil.GetStringResource("Progress_FetchingContents"));
-                await PlaybackModeHelper.GetDateListAsEventsAsync(TargetDevice.Api.AvContent, storages[0], OnDateListUpdated, Canceller);
+                finally
+                {
+                    loader.PartLoaded -= RemoteContentsLoader_PartLoaded;
+                }
             }
             catch (Exception e)
             {
@@ -601,42 +649,15 @@ namespace Kazyx.Uwpmm.Pages
             }
         }
 
-        private async void OnDateListUpdated(DateListEventArgs args)
+        async void RemoteContentsLoader_PartLoaded(object sender, ContentsCollectedEventArgs e)
         {
             if (InnerState == ViewerState.OutOfPage) return;
-
-            foreach (var date in args.DateList)
-            {
-                try
-                {
-                    ChangeProgressText(SystemUtil.GetStringResource("Progress_FetchingContents"));
-                    await PlaybackModeHelper.GetContentsOfDayAsEventsAsync(
-                        TargetDevice.Api.AvContent, date, true, OnContentListUpdated, Canceller);
-                    HideProgress();
-                }
-                catch (Exception e)
-                {
-                    DebugUtil.Log(e.StackTrace);
-                    // Ignore each error
-                }
-            }
-        }
-
-        private async void OnContentListUpdated(ContentListEventArgs args)
-        {
-            if (InnerState == ViewerState.OutOfPage) return;
-
-            var list = new List<Thumbnail>();
-            foreach (var content in args.ContentList)
-            {
-                list.Add(new Thumbnail(args.DateInfo.Title, content, TargetDevice.Udn));
-            }
 
             await Dispatcher.RunAsync(CoreDispatcherPriority.High, () =>
             {
                 if (RemoteGridSource != null)
                 {
-                    RemoteGridSource.AddRange(list);
+                    RemoteGridSource.AddRange(e.Contents);
                 }
             });
         }
@@ -670,8 +691,9 @@ namespace Kazyx.Uwpmm.Pages
                 {
                     Protected = false,
                     ContentType = ContentKind.StillImage,
+                    GroupName = folder.DisplayName,
                 };
-                var thumb = new Thumbnail(folder.DisplayName, content, file);
+                var thumb = new Thumbnail(content, file);
                 LocalGridSource.Add(thumb);
             });
         }
@@ -807,8 +829,9 @@ namespace Kazyx.Uwpmm.Pages
             }
         }
 
-        private void DeleteSelectedImages()
+        private async void DeleteSelectedImages()
         {
+            DebugUtil.Log("DeleteSelectedImages");
             var items = RemoteGrid.SelectedItems;
             if (items.Count == 0)
             {
@@ -827,7 +850,43 @@ namespace Kazyx.Uwpmm.Pages
                 }
                 // TODO for UPnP content
             }
-            DeleteContents(contents);
+            await DeleteContents(contents);
+
+            foreach (var item in items)
+            {
+                var data = item as Thumbnail;
+                var ret = RemoteGridSource.Remove(data);
+                if (!ret) { DebugUtil.Log("Failed to delete from source"); }
+            }
+        }
+
+        private async void DeleteSelectedLocalImages()
+        {
+            DebugUtil.Log("DeleteSelectedLocalImages");
+            var items = LocalGrid.SelectedItems;
+            if (items.Count == 0)
+            {
+                HideProgress();
+                return;
+            }
+
+            foreach (var item in new List<object>(items))
+            {
+                var data = item as Thumbnail;
+                if (data.CacheFile != null)
+                {
+                    try
+                    {
+                        await data.CacheFile.DeleteAsync();
+                        var ret = LocalGridSource.Remove(data);
+                        if (!ret) { DebugUtil.Log("Failed to delete from source"); }
+                    }
+                    catch (Exception e)
+                    {
+                        DebugUtil.Log("Failed to delete file: " + e.StackTrace);
+                    }
+                }
+            }
         }
 
         private void FetchSelectedImages()
@@ -876,10 +935,10 @@ namespace Kazyx.Uwpmm.Pages
         {
             var item = sender as MenuFlyoutItem;
             var content = item.DataContext as Thumbnail;
-            PlaybackContent(content);
+            var task = PlaybackContent(content);
         }
 
-        private async void PlaybackContent(Thumbnail content)
+        private async Task PlaybackContent(Thumbnail content)
         {
             if (content == null || content.Source == null || content.Source.ContentType == null)
             {
@@ -1013,19 +1072,21 @@ namespace Kazyx.Uwpmm.Pages
         private void Delete_Click(object sender, RoutedEventArgs e)
         {
             var item = sender as MenuFlyoutItem;
-            var content = (item.DataContext as Thumbnail).Source;
+            var thumb = item.DataContext as Thumbnail;
+            var content = thumb.Source;
             if (content is WebApiContentInfo)
             {
                 var data = content as WebApiContentInfo;
                 var contents = new TargetContents();
                 contents.ContentUris = new List<string>();
                 contents.ContentUris.Add(data.Uri);
-                DeleteContents(contents);
+                var task = DeleteContents(contents);
             }
             // TODO for UPnP content
+            RemoteGridSource.Remove(thumb);
         }
 
-        private async void DeleteContents(TargetContents contents)
+        private async Task DeleteContents(TargetContents contents)
         {
             if (TargetDevice == null || TargetDevice.Api == null)
             {
@@ -1113,6 +1174,13 @@ namespace Kazyx.Uwpmm.Pages
                 e.Handled = true;
             }
 
+            if (LocalGrid.SelectionMode == ListViewSelectionMode.Multiple)
+            {
+                DebugUtil.Log("Set selection mode none.");
+                LocalGrid.SelectionMode = ListViewSelectionMode.None;
+                e.Handled = true;
+            }
+
             if (AppSettingPanel.Visibility == Visibility.Visible)
             {
                 DebugUtil.Log("Close app setting panel.");
@@ -1130,10 +1198,20 @@ namespace Kazyx.Uwpmm.Pages
             }
             var image = sender as Image;
             var content = image.DataContext as Thumbnail;
-            PlaybackContent(content);
+            var task = PlaybackContent(content);
         }
 
         private void RemoteGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            GridSelectionChanged(sender, e, false);
+        }
+
+        private void LocalGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            GridSelectionChanged(sender, e, true);
+        }
+
+        private void GridSelectionChanged(object sender, SelectionChangedEventArgs e, bool isLocal)
         {
             var selector = sender as GridView;
             if (selector.SelectionMode == ListViewSelectionMode.Multiple)
@@ -1143,11 +1221,11 @@ namespace Kazyx.Uwpmm.Pages
                 DebugUtil.Log("Selected Items: " + contents.Count);
                 if (contents.Count > 0)
                 {
-                    UpdateInnerState(ViewerState.RemoteSelecting);
+                    UpdateInnerState(isLocal ? ViewerState.LocalSelecting : ViewerState.RemoteSelecting);
                 }
                 else
                 {
-                    UpdateInnerState(ViewerState.RemoteMulti);
+                    UpdateInnerState(isLocal ? ViewerState.LocalMulti : ViewerState.RemoteMulti);
                 }
             }
         }
@@ -1179,10 +1257,6 @@ namespace Kazyx.Uwpmm.Pages
             LocalSources.Source = null;
         }
 
-        private void LocalGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-        }
-
         private void LocalGrid_Holding(object sender, HoldingRoutedEventArgs e)
         {
             FlyoutBase.ShowAttachedFlyout(sender as FrameworkElement);
@@ -1190,6 +1264,12 @@ namespace Kazyx.Uwpmm.Pages
 
         private void LocalThumbnailImage_Tapped(object sender, TappedRoutedEventArgs e)
         {
+            if (LocalGrid.SelectionMode == ListViewSelectionMode.Multiple)
+            {
+                DebugUtil.Log("Ignore tap in multi-selection mode.");
+                return;
+            }
+
             var image = sender as Image;
             var content = image.DataContext as Thumbnail;
             DisplayLocalDetailImage(content);
@@ -1239,9 +1319,23 @@ namespace Kazyx.Uwpmm.Pages
             }
         }
 
-        private void LocalDelete_Click(object sender, RoutedEventArgs e)
+        private async void LocalDelete_Click(object sender, RoutedEventArgs e)
         {
-
+            var item = sender as MenuFlyoutItem;
+            var data = item.DataContext as Thumbnail;
+            if (data.CacheFile != null)
+            {
+                try
+                {
+                    await data.CacheFile.DeleteAsync();
+                    var ret = LocalGridSource.Remove(data);
+                    if (!ret) { DebugUtil.Log("Failed to delete from source"); }
+                }
+                catch (Exception ex)
+                {
+                    DebugUtil.Log("Failed to delete file: " + ex.StackTrace);
+                }
+            }
         }
     }
 
@@ -1249,12 +1343,13 @@ namespace Kazyx.Uwpmm.Pages
     {
         Local,
         LocalStillPlayback,
+        LocalMulti,
+        LocalSelecting,
         RemoteUnsupported,
         RemoteNoMedia,
         RemoteSingle,
         RemoteMulti,
         RemoteSelecting,
-        Sync,
         RemoteStillPlayback,
         RemoteMoviePlayback,
         AppSettings,

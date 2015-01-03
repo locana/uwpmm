@@ -15,9 +15,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="$(MSBuildThisFileDirectory)CameraControl\PlaybackModeDlnaHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CameraControl\MovieStreamHelper.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)CameraControl\PlaybackModeHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CameraControl\ProductType.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CameraControl\TargetDevice.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CameraControl\DeviceApiHolder.cs" />
@@ -87,6 +85,11 @@
     <Compile Include="$(MSBuildThisFileDirectory)DataModel\PhotoPlaybackData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataModel\PlaybackSource.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)LocalizedStrings.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Playback\ContentsLoader.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Playback\DlnaContentsLoader.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Playback\LocalContentsLoader.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Playback\PlaybackModeHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Playback\RemoteApiContentsLoader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Settings\SettingPanelBuilder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UPnP\ContentDirectory\DestroyObjectRequest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UPnP\ContentDirectory\RetrievedContents.cs" />
@@ -111,7 +114,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Utility\DummyContentsGenerator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\GeoPositionManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\LiveviewUtil.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Utility\LocalContentsLoader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\MetaDataValueConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\NetworkObserver.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\ParameterUtil.cs" />

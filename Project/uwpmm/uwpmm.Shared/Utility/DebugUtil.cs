@@ -38,7 +38,7 @@ namespace Kazyx.Uwpmm.Utility
                 LogBuilder.Append("\n");
                 if (LogBuilder.Length > MaxLength)
                 {
-                    Flush();
+                    var task = Flush();
                 }
             }
 #endif

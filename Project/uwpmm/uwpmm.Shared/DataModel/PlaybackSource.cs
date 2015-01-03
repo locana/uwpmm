@@ -15,16 +15,16 @@ namespace Kazyx.Uwpmm.DataModel
 {
     public class Thumbnail : ObservableBase
     {
-        public Thumbnail(string groupTitle, ContentInfo content, string uuid)
+        public Thumbnail(ContentInfo content, string uuid)
         {
-            GroupTitle = groupTitle;
+            GroupTitle = content.GroupName;
             Source = content;
             DeviceUuid = uuid;
         }
 
-        public Thumbnail(string groupTitle, ContentInfo content, StorageFile localfile)
+        public Thumbnail(ContentInfo content, StorageFile localfile)
         {
-            GroupTitle = groupTitle;
+            GroupTitle = content.GroupName;
             CacheFile = localfile;
             Source = content;
             DeviceUuid = "localhost";
@@ -237,6 +237,17 @@ namespace Kazyx.Uwpmm.DataModel
             OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, content, previous));
         }
 
+        new public bool Remove(Thumbnail content)
+        {
+            var index = IndexOf(content);
+            var removed = base.Remove(content);
+            if (removed)
+            {
+                OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, content, index));
+            }
+            return removed;
+        }
+
         new public void AddRange(IEnumerable<Thumbnail> contents)
         {
             var previous = Count;
@@ -297,6 +308,17 @@ namespace Kazyx.Uwpmm.DataModel
                     group.SelectivityFactor = value;
                 }
             }
+        }
+
+        public bool Remove(Thumbnail content)
+        {
+            var group = GetGroup(content.GroupTitle);
+            if (group == null)
+            {
+                DebugUtil.Log("Remove: group does not exist");
+                return false;
+            }
+            return group.Remove(content);
         }
 
         public void Add(Thumbnail content)
