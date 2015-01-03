@@ -644,7 +644,7 @@ namespace Kazyx.Uwpmm.Pages
                 }
                 finally
                 {
-                    //loader.PartLoaded -= RemoteContentsLoader_PartLoaded;
+                    loader.PartLoaded -= RemoteContentsLoader_PartLoaded;
                 }
             }
             catch (Exception e)
