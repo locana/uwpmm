@@ -33,6 +33,8 @@ namespace Kazyx.Uwpmm.Utility
                     target.Image = image;
                 });
 
+                if (Histogram == null) { return; }
+
                 if (ApplicationSettings.GetInstance().IsHistogramDisplayed && !Histogram.IsRunning)
                 {
                     await Dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
