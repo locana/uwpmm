@@ -1,6 +1,7 @@
 ﻿using Kazyx.ImageStream;
 using Kazyx.RemoteApi;
 using Kazyx.Uwpmm.DataModel;
+using Kazyx.Uwpmm.Playback;
 using Kazyx.Uwpmm.Utility;
 using System;
 using System.Threading.Tasks;
@@ -19,6 +20,12 @@ namespace Kazyx.Uwpmm.CameraControl
                 var info = await device.Api.Camera.GetApplicationInfoAsync().ConfigureAwait(false);
                 device.Api.Capability.Version = new ServerVersion(info.Version);
                 device.Api.Capability.AvailableApis = await device.Api.Camera.GetAvailableApiListAsync().ConfigureAwait(false);
+
+                if (device.Api.AvContent != null)
+                {
+                    DebugUtil.Log("This device support ContentsTransfer mode. Turn on Shooting mode at first.");
+                    await PlaybackModeHelper.MoveToShootingModeAsync(device.Api.Camera, device.Status).ConfigureAwait(false);
+                }
 
                 if (device.Api.Capability.IsSupported("startRecMode"))
                 {

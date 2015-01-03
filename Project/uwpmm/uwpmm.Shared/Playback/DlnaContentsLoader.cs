@@ -66,14 +66,14 @@ namespace Kazyx.Uwpmm.Playback
             return list;
         }
 
-        private static UpnpContentInfo Translate(Item source)
+        private static DlnaContentInfo Translate(Item source)
         {
             if (source.Resources.Count == 0)
             {
                 return null;
             }
 
-            return new UpnpContentInfo
+            return new DlnaContentInfo
             {
                 Id = source.Id,
                 ContentType = source.Class == Class.ImageItem ? ContentKind.StillImage : ContentKind.Unknown,

@@ -37,11 +37,13 @@ namespace Kazyx.Uwpmm.Playback
                         {
                             DebugUtil.Log("Camera state changed to " + nextState + " successfully.");
                             tcs.TrySetResult(true);
+                            return;
                         }
                         else if (EventParam.NotReady != current)
                         {
                             DebugUtil.Log("Unfortunately camera state changed to " + current);
                             tcs.TrySetResult(false);
+                            return;
                         }
                         DebugUtil.Log("It might be in transitioning state...");
                         break;
@@ -95,8 +97,8 @@ namespace Kazyx.Uwpmm.Playback
             {
                 Uri = contentUri,
                 RemotePlayType = RemotePlayMode.SimpleStreaming
-            });
-            await av.StartStreamingAsync();
+            }).ConfigureAwait(false);
+            await av.StartStreamingAsync().ConfigureAwait(false);
             return uri.Url;
         }
     }

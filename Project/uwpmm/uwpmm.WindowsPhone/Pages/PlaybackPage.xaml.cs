@@ -60,7 +60,7 @@ namespace Kazyx.Uwpmm.Pages
                 DebugUtil.Log("Delete clicked");
                 switch (InnerState)
                 {
-                    case ViewerState.Local:
+                    case ViewerState.LocalSingle:
                         UpdateLocalSelectionMode(SelectivityFactor.Delete);
                         UpdateInnerState(ViewerState.LocalSelecting);
                         break;
@@ -115,7 +115,7 @@ namespace Kazyx.Uwpmm.Pages
                                 break;
                         }
                         UpdateLocalSelectionMode(SelectivityFactor.None);
-                        UpdateInnerState(ViewerState.Local);
+                        UpdateInnerState(ViewerState.LocalSingle);
                         break;
                     default:
                         DebugUtil.Log("Nothing to do for current InnerState");
@@ -215,7 +215,7 @@ namespace Kazyx.Uwpmm.Pages
                 return;
             }
 
-            UpdateInnerState(ViewerState.Local);
+            UpdateInnerState(ViewerState.LocalSingle);
 
             Canceller = new CancellationTokenSource();
 
@@ -267,6 +267,8 @@ namespace Kazyx.Uwpmm.Pages
 
         private void UpdateRemoteSelectionMode(SelectivityFactor factor)
         {
+            if (RemoteGridSource == null) { return; }
+
             RemoteGridSource.SelectivityFactor = factor;
             switch (factor)
             {
@@ -289,6 +291,8 @@ namespace Kazyx.Uwpmm.Pages
 
         private void UpdateLocalSelectionMode(SelectivityFactor factor)
         {
+            if (LocalGridSource == null) { return; }
+
             LocalGridSource.SelectivityFactor = factor;
             switch (factor)
             {
@@ -339,8 +343,6 @@ namespace Kazyx.Uwpmm.Pages
 
             HideProgress();
 
-            CurrentUuid = null;
-
             UpdateInnerState(ViewerState.OutOfPage);
 
             this.navigationHelper.OnNavigatedFrom(e);
@@ -360,7 +362,7 @@ namespace Kazyx.Uwpmm.Pages
 
         CommandBarManager CommandBarManager = new CommandBarManager();
 
-        private ViewerState InnerState = ViewerState.Local;
+        private ViewerState InnerState = ViewerState.LocalSingle;
 
         private async void UpdateInnerState(ViewerState state)
         {
@@ -374,10 +376,12 @@ namespace Kazyx.Uwpmm.Pages
                     case ViewerState.LocalSelecting:
                         BottomAppBar = CommandBarManager.Clear().Icon(AppBarItem.Ok).CreateNew(0.5);
                         break;
-                    case ViewerState.Local:
+                    case ViewerState.LocalSingle:
+                        UpdateLocalSelectionMode(SelectivityFactor.None);
                         BottomAppBar = CommandBarManager.Clear().Icon(AppBarItem.DeleteMultiple).CreateNew(0.5);
                         break;
                     case ViewerState.RemoteSingle:
+                        UpdateRemoteSelectionMode(SelectivityFactor.None);
                         BottomAppBar = CommandBarManager.Clear().Icon(AppBarItem.DownloadMultiple).Icon(AppBarItem.DeleteMultiple).Icon(AppBarItem.AppSetting).CreateNew(0.5);
                         break;
                     case ViewerState.AppSettings:
@@ -480,7 +484,7 @@ namespace Kazyx.Uwpmm.Pages
             ChangeProgressText(SystemUtil.GetStringResource("Progress_LoadingLocalContents"));
 
             var loader = new LocalContentsLoader();
-            loader.SingleContentLoaded += loader_SingleContentLoaded;
+            loader.SingleContentLoaded += LocalContentsLoader_SingleContentLoaded;
             try
             {
                 await loader.Start(Canceller);
@@ -488,13 +492,15 @@ namespace Kazyx.Uwpmm.Pages
             }
             catch
             {
-                DebugUtil.Log("Failed to load local contents.");
+                //TODO
                 ShowToast("Failed to load local contents.");
             }
         }
 
-        async void loader_SingleContentLoaded(object sender, SingleContentEventArgs e)
+        async void LocalContentsLoader_SingleContentLoaded(object sender, SingleContentEventArgs e)
         {
+            if (InnerState == ViewerState.OutOfPage) return;
+
             await Dispatcher.RunAsync(CoreDispatcherPriority.High, () =>
             {
                 if (LocalGridSource != null)
@@ -504,34 +510,33 @@ namespace Kazyx.Uwpmm.Pages
             });
         }
 
-        private string CurrentUuid { set; get; }
-
 #if DEBUG
         private async Task AddDummyContentsAsync()
         {
-            CurrentUuid = DummyContentsGenerator.RandomUuid();
+            var loader = new DummyContentsLoader();
+            loader.PartLoaded += DummyContentsLoader_PartLoaded;
 
-            for (int i = 0; i < 1; i++)
+            try
             {
-                foreach (var date in DummyContentsGenerator.RandomDateList(10))
-                {
-                    var list = new List<Thumbnail>();
-                    foreach (var content in DummyContentsGenerator.RandomContentList(30))
-                    {
-                        content.GroupName = date.Title;
-                        list.Add(new Thumbnail(content, CurrentUuid));
-                    }
-                    await Dispatcher.RunAsync(CoreDispatcherPriority.High, () =>
-                    {
-                        if (RemoteGridSource != null)
-                        {
-                            RemoteGridSource.AddRange(list);
-                        }
-                    });
-                    await Task.Delay(500).ConfigureAwait(false);
-                }
-                await Task.Delay(500).ConfigureAwait(false);
+                await loader.Start(Canceller);
             }
+            finally
+            {
+                loader.PartLoaded -= DummyContentsLoader_PartLoaded;
+            }
+        }
+
+        async void DummyContentsLoader_PartLoaded(object sender, ContentsLoadedEventArgs e)
+        {
+            if (InnerState == ViewerState.OutOfPage) return;
+
+            await Dispatcher.RunAsync(CoreDispatcherPriority.High, () =>
+            {
+                if (RemoteGridSource != null)
+                {
+                    RemoteGridSource.AddRange(e.Contents);
+                }
+            });
         }
 #endif
 
@@ -548,7 +553,6 @@ namespace Kazyx.Uwpmm.Pages
                 DebugUtil.Log("Device not found");
                 return false;
             }
-            CurrentUuid = TargetDevice.Udn;
 
             if (TargetDevice.Api.AvContent == null)
             {
@@ -627,6 +631,7 @@ namespace Kazyx.Uwpmm.Pages
                 try
                 {
                     await loader.Start(Canceller).ConfigureAwait(false);
+                    DebugUtil.Log("RemoteApiContentsLoader completed");
                     HideProgress();
                 }
                 catch (StorageNotSupportedException)
@@ -656,7 +661,7 @@ namespace Kazyx.Uwpmm.Pages
             }
         }
 
-        async void RemoteContentsLoader_PartLoaded(object sender, ContentsCollectedEventArgs e)
+        async void RemoteContentsLoader_PartLoaded(object sender, ContentsLoadedEventArgs e)
         {
             if (InnerState == ViewerState.OutOfPage) return;
 
@@ -754,7 +759,7 @@ namespace Kazyx.Uwpmm.Pages
                 LocalGrid.IsEnabled = true;
                 if (PivotRoot.SelectedIndex == 0)
                 {
-                    UpdateInnerState(ViewerState.Local);
+                    UpdateInnerState(ViewerState.LocalSingle);
                 }
                 else if (PivotRoot.SelectedIndex == 1)
                 {
@@ -798,7 +803,7 @@ namespace Kazyx.Uwpmm.Pages
             switch (pivot.SelectedIndex)
             {
                 case 0:
-                    UpdateInnerState(ViewerState.Local);
+                    UpdateInnerState(ViewerState.LocalSingle);
                     break;
                 case 1:
                     if (CheckRemoteCapability())
@@ -850,14 +855,14 @@ namespace Kazyx.Uwpmm.Pages
             foreach (var item in items)
             {
                 var data = item as Thumbnail;
-                if (data.Source is WebApiContentInfo)
+                if (data.Source is RemoteApiContentInfo)
                 {
-                    var info = data.Source as WebApiContentInfo;
+                    var info = data.Source as RemoteApiContentInfo;
                     contents.ContentUris.Add(info.Uri);
                 }
                 // TODO for UPnP content
             }
-            await DeleteContents(contents);
+            await DeleteRemoteApiContents(contents);
 
             foreach (var item in items)
             {
@@ -904,6 +909,7 @@ namespace Kazyx.Uwpmm.Pages
                 HideProgress();
                 return;
             }
+
             foreach (var item in items)
             {
                 try
@@ -932,6 +938,7 @@ namespace Kazyx.Uwpmm.Pages
 
         private async void ShowToast(string message)
         {
+            DebugUtil.Log(message);
             await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
                 Toast.PushToast(new Control.ToastContent() { Text = message });
@@ -1023,7 +1030,7 @@ namespace Kazyx.Uwpmm.Pages
 
                     if (av != null)
                     {
-                        var item = content.Source as WebApiContentInfo;
+                        var item = content.Source as RemoteApiContentInfo;
                         if (item == null)
                         {
                             DebugUtil.Log("This is UPnP content");
@@ -1054,7 +1061,6 @@ namespace Kazyx.Uwpmm.Pages
                     }
                     else
                     {
-                        DebugUtil.Log("Not ready to start stream");
                         ShowToast(SystemUtil.GetStringResource("Viewer_NoAvContentApi"));
                     }
                     break;
@@ -1081,19 +1087,19 @@ namespace Kazyx.Uwpmm.Pages
             var item = sender as MenuFlyoutItem;
             var thumb = item.DataContext as Thumbnail;
             var content = thumb.Source;
-            if (content is WebApiContentInfo)
+            if (content is RemoteApiContentInfo)
             {
-                var data = content as WebApiContentInfo;
+                var data = content as RemoteApiContentInfo;
                 var contents = new TargetContents();
                 contents.ContentUris = new List<string>();
                 contents.ContentUris.Add(data.Uri);
-                var task = DeleteContents(contents);
+                var task = DeleteRemoteApiContents(contents);
             }
             // TODO for UPnP content
             RemoteGridSource.Remove(thumb);
         }
 
-        private async Task DeleteContents(TargetContents contents)
+        private async Task DeleteRemoteApiContents(TargetContents contents)
         {
             if (TargetDevice == null || TargetDevice.Api == null)
             {
@@ -1108,20 +1114,18 @@ namespace Kazyx.Uwpmm.Pages
                 try
                 {
                     await av.DeleteContentAsync(contents);
-                    DeleteRemoteGridFacially();
-                    if (PivotRoot.SelectedIndex == 1)
-                    {
-                        InitializeRemote();
-                    }
+                    DebugUtil.Log("Delete contents completed");
                 }
                 catch
                 {
-                    DebugUtil.Log("Failed to delete contents");
                     ShowToast(SystemUtil.GetStringResource("Viewer_FailedToDeleteContents"));
                     HideProgress();
                 }
             }
-            DebugUtil.Log("Not ready to delete contents");
+            else
+            {
+                DebugUtil.Log("Not ready to delete contents");
+            }
         }
 
         private void OpenAppSettingPanel()
@@ -1177,14 +1181,14 @@ namespace Kazyx.Uwpmm.Pages
             if (RemoteGrid.SelectionMode == ListViewSelectionMode.Multiple)
             {
                 DebugUtil.Log("Set selection mode none.");
-                RemoteGrid.SelectionMode = ListViewSelectionMode.None;
+                UpdateInnerState(ViewerState.RemoteSingle);
                 e.Handled = true;
             }
 
             if (LocalGrid.SelectionMode == ListViewSelectionMode.Multiple)
             {
                 DebugUtil.Log("Set selection mode none.");
-                LocalGrid.SelectionMode = ListViewSelectionMode.None;
+                UpdateInnerState(ViewerState.LocalSingle);
                 e.Handled = true;
             }
 
@@ -1348,7 +1352,7 @@ namespace Kazyx.Uwpmm.Pages
 
     public enum ViewerState
     {
-        Local,
+        LocalSingle,
         LocalStillPlayback,
         LocalMulti,
         LocalSelecting,

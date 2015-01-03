@@ -3,22 +3,49 @@ using Kazyx.RemoteApi.AvContent;
 using Kazyx.Uwpmm.DataModel;
 using System;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 #endif
 
-namespace Kazyx.Uwpmm.Utility
+namespace Kazyx.Uwpmm.Playback
 {
 #if DEBUG
-    public class DummyContentsGenerator
+    public class DummyContentsLoader : ContentsLoader
     {
         private readonly Random random;
-        private DummyContentsGenerator()
+        public DummyContentsLoader()
         {
             random = new Random();
         }
 
-        private static DummyContentsGenerator INSTANCE = new DummyContentsGenerator();
+        public override async Task Start(CancellationTokenSource cancel)
+        {
+            var CurrentUuid = DummyContentsLoader.RandomUuid();
 
-        public static List<DateInfo> RandomDateList(int count)
+            foreach (var date in RandomDateList(10))
+            {
+                await Task.Delay(500).ConfigureAwait(false);
+
+                if (cancel != null && cancel.IsCancellationRequested)
+                {
+                    OnCancelled();
+                    break;
+                }
+
+                var list = new List<Thumbnail>();
+                foreach (var content in RandomContentList(30))
+                {
+                    content.GroupName = date.Title;
+                    list.Add(new Thumbnail(content, CurrentUuid));
+                }
+
+                OnPartLoaded(list);
+            }
+
+            OnCompleted();
+        }
+
+        private IList<DateInfo> RandomDateList(int count)
         {
             var list = new List<DateInfo>();
             for (int i = 0; i < count; i++)
@@ -33,10 +60,10 @@ namespace Kazyx.Uwpmm.Utility
             return list;
         }
 
-        public static List<ContentInfo> RandomContentList(int count)
+        private IList<ContentInfo> RandomContentList(int count)
         {
             var list = new List<ContentInfo>();
-            for (int i = 0; i < INSTANCE.random.Next(1, count); i++)
+            for (int i = 0; i < random.Next(1, count); i++)
             {
                 list.Add(new ContentInfo
                 {
@@ -51,9 +78,9 @@ namespace Kazyx.Uwpmm.Utility
             return list;
         }
 
-        public static bool Protected()
+        private bool Protected()
         {
-            return INSTANCE.random.Next(0, 100) > 80; // protected is 20%.
+            return random.Next(0, 100) > 80; // protected is 20%.
         }
 
         public static string RandomUuid()
@@ -73,37 +100,37 @@ namespace Kazyx.Uwpmm.Utility
             return DateTimeOffset.Now.ToString("yyyy-MM-ddThh:mm:ssZ");
         }
 
-        private static string FileName()
+        private string FileName()
         {
-            return "DUMMYFILE_" + INSTANCE.random.Next(0, 10000);
+            return "DUMMYFILE_" + random.Next(0, 10000);
         }
 
-        private static string ThumbnailUrl()
+        private string ThumbnailUrl()
         {
-            return dummyimages[INSTANCE.random.Next(0, dummyimages.Length - 1)];
+            return dummyimages[random.Next(0, dummyimages.Length - 1)];
         }
 
-        private static string ContentType()
+        private string ContentType()
         {
-            return INSTANCE.random.NextDouble() > 0.1 ? ContentKind.StillImage : ContentKind.MovieMp4;
+            return random.NextDouble() > 0.1 ? ContentKind.StillImage : ContentKind.MovieMp4;
         }
 
-        private static int Year()
+        private int Year()
         {
-            return INSTANCE.random.Next(2000, 2014);
+            return random.Next(2000, 2014);
         }
 
-        private static int Month()
+        private int Month()
         {
-            return INSTANCE.random.Next(1, 12);
+            return random.Next(1, 12);
         }
 
-        private static int Day()
+        private int Day()
         {
-            return INSTANCE.random.Next(1, 28);
+            return random.Next(1, 28);
         }
 
-        private static string YMDwithPadding()
+        private string YMDwithPadding()
         {
             var m = Month().ToString();
             if (m.Length == 1)

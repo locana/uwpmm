@@ -29,13 +29,13 @@ namespace Kazyx.Uwpmm.DataModel
         public string GroupName { set; get; }
     }
 
-    public class WebApiContentInfo : ContentInfo
+    public class RemoteApiContentInfo : ContentInfo
     {
         public string Uri { set; get; }
         public bool RemotePlaybackAvailable { set; get; }
     }
 
-    public class UpnpContentInfo : ContentInfo
+    public class DlnaContentInfo : ContentInfo
     {
         /// <summary>
         /// Object ID of the content

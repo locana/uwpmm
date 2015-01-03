@@ -34,6 +34,7 @@ namespace Kazyx.Uwpmm.Playback
             var storages = await GetStoragesUriAsync().ConfigureAwait(false);
             if (cancel != null && cancel.IsCancellationRequested)
             {
+                DebugUtil.Log("Loading task cancelled");
                 OnCancelled();
                 return;
             }
@@ -48,6 +49,7 @@ namespace Kazyx.Uwpmm.Playback
             {
                 foreach (var date in dates)
                 {
+                    DebugUtil.Log("Loading: " + date.Title);
                     await GetContentsOfDayAsEventsAsync(date, true, (e2) =>
                     {
                         var list = new List<Thumbnail>();
@@ -73,9 +75,11 @@ namespace Kazyx.Uwpmm.Playback
             {
                 if (scheme.Scheme == Scheme.Storage)
                 {
+                    DebugUtil.Log("Storage scheme is supported");
                     return true;
                 }
             }
+            DebugUtil.Log("Storage scheme is NOT supported");
             return false;
         }
 
@@ -92,14 +96,19 @@ namespace Kazyx.Uwpmm.Playback
 
         private async Task GetDateListAsEventsAsync(string uri, Action<IList<DateInfo>> handler, CancellationTokenSource cancel)
         {
+            DebugUtil.Log("Loading DateList");
+
             var count = await AvContentApi.GetContentCountAsync(new CountingTarget
             {
                 Grouping = ContentGroupingMode.Date,
                 Uri = uri,
             }).ConfigureAwait(false);
 
+            DebugUtil.Log(count + " dates exist.");
+
             if (cancel != null && cancel.IsCancellationRequested)
             {
+                DebugUtil.Log("Loading task cancelled");
                 OnCancelled();
                 return;
             }
@@ -111,6 +120,7 @@ namespace Kazyx.Uwpmm.Playback
                 var dates = await GetDateListAsync(uri, i * CONTENT_LOOP_STEP, CONTENT_LOOP_STEP).ConfigureAwait(false);
                 if (cancel != null && cancel.IsCancellationRequested)
                 {
+                    DebugUtil.Log("Loading task cancelled");
                     OnCancelled();
                     break;
                 }
@@ -120,6 +130,8 @@ namespace Kazyx.Uwpmm.Playback
 
         private async Task<IList<DateInfo>> GetDateListAsync(string uri, int startFrom, int count)
         {
+            DebugUtil.Log("Loading DateList: " + uri + " from " + startFrom);
+
             var contents = await AvContentApi.GetContentListAsync(new ContentListTarget
             {
                 Sorting = SortMode.Descending,
@@ -142,11 +154,15 @@ namespace Kazyx.Uwpmm.Playback
 
         private async Task GetContentsOfDayAsEventsAsync(DateInfo date, bool includeMovies, Action<IList<ContentInfo>> handler, CancellationTokenSource cancel)
         {
+            DebugUtil.Log("Loading: " + date.Title);
+
             var count = await AvContentApi.GetContentCountAsync(new CountingTarget
             {
                 Grouping = ContentGroupingMode.Date,
                 Uri = date.Uri,
             }).ConfigureAwait(false);
+
+            DebugUtil.Log(count + " contents exist.");
 
             var loops = count.NumOfContents / CONTENT_LOOP_STEP + (count.NumOfContents % CONTENT_LOOP_STEP == 0 ? 0 : 1);
 
@@ -155,6 +171,7 @@ namespace Kazyx.Uwpmm.Playback
                 var contents = await GetContentsOfDayAsync(date, i * CONTENT_LOOP_STEP, CONTENT_LOOP_STEP, includeMovies).ConfigureAwait(false);
                 if (cancel != null && cancel.IsCancellationRequested)
                 {
+                    DebugUtil.Log("Loading task cancelled");
                     OnCancelled();
                     break;
                 }
@@ -164,6 +181,8 @@ namespace Kazyx.Uwpmm.Playback
 
         private async Task<IList<ContentInfo>> GetContentsOfDayAsync(DateInfo date, int startFrom, int count, bool includeMovies)
         {
+            DebugUtil.Log("Loading ContentsOfDay: " + date.Title + " from " + startFrom);
+
             var types = new List<string>();
             types.Add(ContentKind.StillImage);
             if (includeMovies)
@@ -189,7 +208,7 @@ namespace Kazyx.Uwpmm.Playback
                     && content.ImageContent.OriginalContents != null
                     && content.ImageContent.OriginalContents.Count > 0)
                 {
-                    var contentInfo = new WebApiContentInfo
+                    var contentInfo = new RemoteApiContentInfo
                     {
                         Name = RemoveExtension(content.ImageContent.OriginalContents[0].FileName),
                         LargeUrl = content.ImageContent.LargeImageUrl,

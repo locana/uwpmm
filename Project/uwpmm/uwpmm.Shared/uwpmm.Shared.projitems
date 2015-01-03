@@ -87,6 +87,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)LocalizedStrings.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Playback\ContentsLoader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Playback\DlnaContentsLoader.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Playback\DummyContentsLoader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Playback\LocalContentsLoader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Playback\PlaybackModeHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Playback\RemoteApiContentsLoader.cs" />
@@ -111,7 +112,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Utility\ApplicationSettingNames.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\BoolToVisibilityConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\DebugUtil.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Utility\DummyContentsGenerator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\GeoPositionManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\LiveviewUtil.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\MetaDataValueConverter.cs" />
