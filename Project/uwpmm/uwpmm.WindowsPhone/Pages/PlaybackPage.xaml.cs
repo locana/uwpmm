@@ -37,7 +37,7 @@ namespace Kazyx.Uwpmm.Pages
     {
         private NavigationHelper navigationHelper;
 
-        private const bool LOAD_DUMMY_CONTENTS = true;
+        private const bool LOAD_DUMMY_CONTENTS = false;
 
         private HttpClient HttpClient = new HttpClient();
 
