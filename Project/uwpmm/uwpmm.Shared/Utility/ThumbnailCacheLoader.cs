@@ -93,6 +93,10 @@ namespace Kazyx.Uwpmm.Utility
             var uri = new Uri(content.ThumbnailUrl);
             var directory = uuid.Replace(":", "-") + "/";
             var filename = content.CreatedTime.Replace(":", "-").Replace("/", "-") + "--" + Path.GetFileName(uri.LocalPath);
+            if (!filename.Contains("."))
+            {
+                filename += ".jpg";
+            }
 
             DebugUtil.Log("Loading " + content.ThumbnailUrl + " into " + directory);
 
