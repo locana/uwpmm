@@ -42,6 +42,8 @@ namespace Kazyx.Uwpmm.Utility
                     return new AppBarButton() { Icon = new BitmapIcon() { UriSource = new Uri("ms-appx:///Assets/AppBar/appbar_close_display.png") }, Label = "Hide info" };
                 case AppBarItem.Ok:
                     return new AppBarButton() { Icon = new BitmapIcon() { UriSource = new Uri("ms-appx:///Assets/AppBar/appbar_ok.png") }, Label = "OK" };
+                case AppBarItem.WifiSetting:
+                    return new AppBarButton() { Icon = new BitmapIcon() { UriSource = new Uri("ms-appx:///Assets/AppBar/appbar_wifi.png") }, Label = "Wi-Fi" };
                 default:
                     throw new NotImplementedException();
             }
@@ -146,6 +148,7 @@ namespace Kazyx.Uwpmm.Utility
         DeleteMultiple,
         ShowDetailInfo,
         HideDetailInfo,
-        Ok
+        Ok,
+        WifiSetting,
     }
 }

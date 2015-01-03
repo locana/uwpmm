@@ -21,6 +21,7 @@ using Windows.Foundation;
 using Windows.Networking.Proximity;
 using Windows.Phone.UI.Input;
 using Windows.Storage.FileProperties;
+using Windows.System;
 using Windows.UI.Core;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
@@ -166,6 +167,10 @@ namespace Kazyx.Uwpmm.Pages
             {
                 Frame.Navigate(typeof(PlaybackPage));
             });
+            _CommandBarManager.SetEvent(AppBarItem.WifiSetting, async (s, args) =>
+                {
+                    await Launcher.LaunchUriAsync(new Uri("ms-settings-wifi:"));
+                });
 
             PivotRoot.SelectionChanged += PivotRoot_SelectionChanged;
 
@@ -283,6 +288,7 @@ namespace Kazyx.Uwpmm.Pages
         private void CreateEntranceAppBar()
         {
             this.BottomAppBar = _CommandBarManager.Clear()//
+                .Icon(AppBarItem.WifiSetting)
                 .NoIcon(AppBarItem.AboutPage)//
                 .NoIcon(AppBarItem.PlaybackPage)//
                 .NoIcon(AppBarItem.LoggerPage)//
