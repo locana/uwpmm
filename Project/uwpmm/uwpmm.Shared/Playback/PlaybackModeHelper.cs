@@ -126,7 +126,7 @@ namespace Kazyx.Uwpmm.Playback
 
             await av.SeekStreamingPositionAsync(new PlaybackPosition() { PositionMSec = (int)seekTarget.TotalMilliseconds });
 
-            if (originalStatus == StreamStatus.Started)
+            if (originalStatus == StreamStatus.Started || originalStatus == StreamStatus.PausedByEdge)
             {
                 await StartMovieStreamingASync(av, status);
             }

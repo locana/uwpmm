@@ -23,7 +23,7 @@ namespace Kazyx.Uwpmm.Control
         {
             if (SeekOperated != null && Duration.TotalMilliseconds > 0)
             {
-                SeekOperated(this, new SeekBarOperationArgs() { SeekPosition = TimeSpan.FromMilliseconds(Duration.TotalMilliseconds * (sender as Slider).Value) });
+                SeekOperated(this, new SeekBarOperationArgs() { SeekPosition = TimeSpan.FromMilliseconds(Duration.TotalMilliseconds * (sender as Slider).Value / 1000) });
             }
         }
 
@@ -56,8 +56,8 @@ namespace Kazyx.Uwpmm.Control
                 PlaybackInfo.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
                 return;
             }
-            double value = current.TotalMilliseconds / duration.TotalMilliseconds;
-            if (value < 0 || value > 1.0) { return; }
+            double value = current.TotalMilliseconds / duration.TotalMilliseconds * 1000;
+            if (value < 0 || value > 1000) { return; }
             this.SeekBar.Value = value;
             this.ProgressBar.Value = value;
             PositionText.Text = ToString(current);

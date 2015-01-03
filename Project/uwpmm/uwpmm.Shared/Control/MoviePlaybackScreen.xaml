@@ -16,9 +16,9 @@
             <RowDefinition Height="30"/>
         </Grid.RowDefinitions>
         <Image Grid.Row="0" Name="Screen" Source="{Binding Image}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
-        <ProgressBar Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" Name="ProgressBar" Minimum="0.0" Maximum="1.0" Margin="3,6" Height="4"/>
+        <ProgressBar Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" Name="ProgressBar" Minimum="0.0" Maximum="1000" Margin="3,6" Height="4"/>
         <Slider Grid.Row="1"  HorizontalAlignment="Stretch" VerticalAlignment="Center" Name="SeekBar" Visibility="Collapsed" Margin="3,6" Height="30"
-                Minimum="0.0" Maximum="1.0"/>
+                Minimum="0.0" Maximum="1000" />
         <Grid Grid.Row="2" Name="PlaybackInfo" Visibility="Visible" >
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
