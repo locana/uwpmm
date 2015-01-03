@@ -4,6 +4,7 @@ using System.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml.Input;
 
 // The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
 
@@ -14,18 +15,38 @@ namespace Kazyx.Uwpmm.Control
         public MoviePlaybackScreen()
         {
             this.InitializeComponent();
+            SeekBar.AddHandler(PointerReleasedEvent, new PointerEventHandler(Slider_PointerReleased), true);
+
         }
 
+        private void Slider_PointerReleased(object sender, PointerRoutedEventArgs e)
+        {
+            if (SeekOperated != null && Duration.TotalMilliseconds > 0)
+            {
+                SeekOperated(this, new SeekBarOperationArgs() { SeekPosition = TimeSpan.FromMilliseconds(Duration.TotalMilliseconds * (sender as Slider).Value) });
+            }
+        }
+
+        public TimeSpan CurrentPosition
+        {
+            get { return (TimeSpan)GetValue(CurrentPositionProperty); }
+            set
+            {
+                SetValue(CurrentPositionProperty, value);
+                UpdatePlaybackPosition(value, this.Duration);
+            }
+        }
 
         public static readonly DependencyProperty CurrentPositionProperty = DependencyProperty.Register(
-            "Type",
+            "CurrentPosition",
             typeof(TimeSpan),
             typeof(MoviePlaybackScreen),
             new PropertyMetadata(new TimeSpan(0, 0, 0), new PropertyChangedCallback(MoviePlaybackScreen.OnCurrentPositionChanged)));
 
         private static void OnCurrentPositionChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            (d as MoviePlaybackScreen).CurrentPosition = (TimeSpan)e.NewValue;
+            // (d as MoviePlaybackScreen).CurrentPosition = (TimeSpan)e.NewValue;
+            DebugUtil.Log("Current position updated: " + ((TimeSpan)e.NewValue).TotalSeconds);
         }
 
         void UpdatePlaybackPosition(TimeSpan current, TimeSpan duration)
@@ -35,49 +56,45 @@ namespace Kazyx.Uwpmm.Control
                 PlaybackInfo.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
                 return;
             }
-            double value = current.TotalMilliseconds / duration.TotalMilliseconds * 100;
-            if (value < 0 || value > 100) { return; }
-            if (this.SeekAvailable)
-            {
-                this.SeekBar.Value = value;
-            }
-            else
-            {
-                this.ProgressBar.Value = value;
-            }
+            double value = current.TotalMilliseconds / duration.TotalMilliseconds;
+            if (value < 0 || value > 1.0) { return; }
+            this.SeekBar.Value = value;
+            this.ProgressBar.Value = value;
             PositionText.Text = ToString(current);
             PlaybackInfo.Visibility = Windows.UI.Xaml.Visibility.Visible;
         }
 
-        private TimeSpan _CurrentPosition;
-        public TimeSpan CurrentPosition
+        public TimeSpan Duration
         {
-            get { return _CurrentPosition; }
+            get { return (TimeSpan)GetValue(DurationProperty); }
             set
             {
-                if (_CurrentPosition != value)
-                {
-                    this._CurrentPosition = value;
-                    UpdatePlaybackPosition(value, this.Duration);
-                }
+                SetValue(DurationProperty, value);
+                UpdateDurationDisplay(value);
             }
         }
 
-        private TimeSpan _Duration;
-        public TimeSpan Duration
+        public static readonly DependencyProperty DurationProperty = DependencyProperty.Register(
+            "Duration",
+            typeof(TimeSpan),
+            typeof(MoviePlaybackScreen),
+            new PropertyMetadata(new TimeSpan(0, 0, 0), new PropertyChangedCallback(MoviePlaybackScreen.OnDurationChanged)));
+
+        private static void OnDurationChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            get { return _Duration; }
-            set
+            DebugUtil.Log("Duration updated: " + ((TimeSpan)e.NewValue).TotalSeconds);
+            // (d as MoviePlaybackScreen).Duration = (TimeSpan)e.NewValue;
+        }
+
+        void UpdateDurationDisplay(TimeSpan duration)
+        {
+            if (duration.TotalMilliseconds <= 0)
             {
-                if (value.TotalMilliseconds <= 0)
-                {
-                    this.DurationText.Text = "--:--:--";
-                }
-                else
-                {
-                    _Duration = value;
-                    this.DurationText.Text = ToString(value);
-                }
+                this.DurationText.Text = "--:--:--";
+            }
+            else
+            {
+                this.DurationText.Text = ToString(duration);
             }
         }
 
@@ -96,43 +113,42 @@ namespace Kazyx.Uwpmm.Control
             return sb.ToString();
         }
 
-        public static readonly DependencyProperty DurationProperty = DependencyProperty.Register(
-            "Type",
-            typeof(TimeSpan),
+        public static readonly DependencyProperty SeekAvailabilityProperty = DependencyProperty.Register(
+            "SeekAvailable",
+            typeof(bool),
             typeof(MoviePlaybackScreen),
-            new PropertyMetadata(new TimeSpan(0, 0, 0), new PropertyChangedCallback(MoviePlaybackScreen.OnDurationChanged)));
+            new PropertyMetadata(false, new PropertyChangedCallback(MoviePlaybackScreen.OnSeekAvailabilityChanged)));
 
-        private static void OnDurationChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void OnSeekAvailabilityChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            DebugUtil.Log("Duration updated: " + ((TimeSpan)e.NewValue).TotalSeconds);
-            (d as MoviePlaybackScreen).Duration = (TimeSpan)e.NewValue;
+            DebugUtil.Log("Seek availability changed: " + (bool)(e.NewValue));
         }
 
-        private bool _SeekAvailable = false;
         public bool SeekAvailable
         {
-            get { return _SeekAvailable; }
+            get { return (bool)GetValue(SeekAvailabilityProperty); }
             set
             {
-                if (_SeekAvailable != value)
-                {
-                    _SeekAvailable = value;
-                    if (value)
-                    {
-                        this.ProgressBar.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-                        this.SeekBar.Visibility = Windows.UI.Xaml.Visibility.Visible;
-                    }
-                    else
-                    {
-                        this.ProgressBar.Visibility = Windows.UI.Xaml.Visibility.Visible;
-                        this.SeekBar.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-                    }
-                }
+                SetValue(SeekAvailabilityProperty, value);
+                UpdateBarDisplay(value);
             }
         }
 
-        public Action<double> SeekOperated;
+        void UpdateBarDisplay(bool SeekAvailable)
+        {
+            if (SeekAvailable)
+            {
+                this.ProgressBar.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                this.SeekBar.Visibility = Windows.UI.Xaml.Visibility.Visible;
+            }
+            else
+            {
+                this.ProgressBar.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                this.SeekBar.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+            }
+        }
 
+        public event EventHandler<SeekBarOperationArgs> SeekOperated;
         public void Reset()
         {
             if (SeekAvailable)
@@ -147,13 +163,10 @@ namespace Kazyx.Uwpmm.Control
             DurationText.Text = "--:--";
             PlaybackInfo.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
         }
+    }
 
-        private void SeekBar_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
-        {
-            if (SeekOperated != null)
-            {
-                SeekOperated(e.NewValue);
-            }
-        }
+    public class SeekBarOperationArgs
+    {
+        public TimeSpan SeekPosition { get; set; }
     }
 }

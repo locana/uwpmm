@@ -41,5 +41,19 @@ namespace Kazyx.Uwpmm.DataModel
                 }
             }
         }
+
+        private bool _SeekAvailable = false;
+        public bool SeekAvailable
+        {
+            get { return _SeekAvailable; }
+            set
+            {
+                if (_SeekAvailable != value)
+                {
+                    _SeekAvailable = value;
+                    NotifyChanged("SeekAvailable");
+                }
+            }
+        }
     }
 }
