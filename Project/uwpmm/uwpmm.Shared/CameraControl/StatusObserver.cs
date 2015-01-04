@@ -118,6 +118,7 @@ namespace Kazyx.Uwpmm.CameraControl
             if (status.NumberOfShots >= 0) { target.NumberOfShots = status.NumberOfShots; }
             if (status.ContShootingMode != null) { target.ContShootingMode = status.ContShootingMode; }
             if (status.ContShootingSpeed != null) { target.ContShootingSpeed = status.ContShootingSpeed; }
+            if (status.ContShootingResult != null) { target.ContShootingResult = status.ContShootingResult; }
             if (status.ZoomSetting != null) { target.ZoomSetting = status.ZoomSetting; }
             if (status.SceneSelection != null) { target.SceneSelection = status.SceneSelection; }
             if (status.TrackingFocusMode != null) { target.TrackingFocus = status.TrackingFocusMode; }

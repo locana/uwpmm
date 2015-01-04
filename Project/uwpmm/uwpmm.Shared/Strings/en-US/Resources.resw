@@ -1067,4 +1067,10 @@ Please update to the latest at PlayMemories Camera Apps store.</value>
   <data name="PeriodicalShooting_StoppedByUser" xml:space="preserve">
     <value>Stopped interval shooting.</value>
   </data>
+  <data name="Error_StopContinuousShooting" xml:space="preserve">
+    <value>Failed to stop continuous shooting. Try again or stop by hardware button on the camera.</value>
+  </data>
+  <data name="Message_ContinuousShootingGuide" xml:space="preserve">
+    <value>Long press the button or use hardware shutter button to operate continuous shooting.</value>
+  </data>
 </root>

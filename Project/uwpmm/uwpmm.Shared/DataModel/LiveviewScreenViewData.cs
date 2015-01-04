@@ -99,6 +99,12 @@ namespace Kazyx.Uwpmm.DataModel
                 switch (Device.Status.ShootMode.Current)
                 {
                     case ShootModeParam.Still:
+                        if (Device.Status.ContShootingMode != null &&
+                            (Device.Status.ContShootingMode.Current == ContinuousShootMode.Cont ||
+                            Device.Status.ContShootingMode.Current == ContinuousShootMode.SpeedPriority))
+                        {
+                            return ContShootingImage;
+                        }
                         return StillImage;
                     case ShootModeParam.Movie:
                         return CamImage;
@@ -192,6 +198,14 @@ namespace Kazyx.Uwpmm.DataModel
                 {
                     case ShootModeParam.Still:
                         if (Device.Status.Status == EventParam.Idle) { return true; }
+                        if (
+                            Device.Status.Status == EventParam.StCapturing &&
+                            Device.Status.ContShootingMode != null &&
+                            (Device.Status.ContShootingMode.Current == ContinuousShootMode.Cont ||
+                            Device.Status.ContShootingMode.Current == ContinuousShootMode.SpeedPriority))
+                        {
+                            return true;
+                        }
                         break;
                     case ShootModeParam.Movie:
                         if (Device.Status.Status == EventParam.Idle || Device.Status.Status == EventParam.MvRecording) { return true; }

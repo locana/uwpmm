@@ -153,5 +153,21 @@ namespace Kazyx.Uwpmm.CameraControl
             DebugUtil.Log("Take picture timeout: await for completion");
             return await TakePicture(api, position, true).ConfigureAwait(false);
         }
+
+        public static async Task StopContinuousShooting(DeviceApiHolder api)
+        {
+            int retry = 5;
+            while (retry-- > 0)
+            {
+                try
+                {
+                    await api.Camera.StopContShootingAsync();
+                    break;
+                }
+                catch (RemoteApiException) { }
+                DebugUtil.Log("failed to stop cont shooting. retry count: " + retry);
+                await Task.Delay(TimeSpan.FromMilliseconds(200));
+            }
+        }
     }
 }

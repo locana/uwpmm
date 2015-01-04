@@ -187,16 +187,35 @@ namespace Kazyx.Uwpmm.Pages
             HardwareButtons.CameraHalfPressed += async (_sender, arg) =>
             {
                 if (target == null || target.Api == null || !target.Api.Capability.IsAvailable("actHalfPressShutter")) { return; }
-                await target.Api.Camera.ActHalfPressShutterAsync();
+                try
+                {
+                    await target.Api.Camera.ActHalfPressShutterAsync();
+                }
+                catch (RemoteApiException) { }
             };
             HardwareButtons.CameraReleased += async (_sender, arg) =>
             {
-                if (target == null || target.Api == null || !target.Api.Capability.IsAvailable("cancelHalfPressShutter")) { return; }
-                await target.Api.Camera.CancelHalfPressShutterAsync();
+                if (target == null || target.Api == null) { return; }
+                if (target.Api.Capability.IsAvailable("cancelHalfPressShutter"))
+                {
+                    try
+                    {
+                        await target.Api.Camera.CancelHalfPressShutterAsync();
+                    }
+                    catch (RemoteApiException) { }
+                }
+                await StopContShooting();
             };
-            HardwareButtons.CameraPressed += (_sender, arg) =>
+            HardwareButtons.CameraPressed += async (_sender, arg) =>
             {
-                ShutterButtonPressed();
+                if (IsContinuousShootingMode())
+                {
+                    await StartContShooting();
+                }
+                else
+                {
+                    ShutterButtonPressed();
+                }
             };
 
             _FocusFrameSurface.OnTouchFocusOperated += async (obj, args) =>
@@ -551,9 +570,12 @@ namespace Kazyx.Uwpmm.Pages
                     }
                     break;
                 case "PictureUrls":
-                    foreach (var url in status.PictureUrls)
+                    if (ApplicationSettings.GetInstance().IsPostviewTransferEnabled)
                     {
-                        PictureDownloader.Instance.Enqueue(new Uri(url, UriKind.Absolute), CachedPosition);
+                        foreach (var url in status.PictureUrls)
+                        {
+                            PictureDownloader.Instance.Enqueue(new Uri(url, UriKind.Absolute), CachedPosition);
+                        }
                     }
                     break;
                 case "BatteryInfo":
@@ -561,6 +583,15 @@ namespace Kazyx.Uwpmm.Pages
                     break;
                 case "AvailableApis":
                     SetupFocusFrame(ApplicationSettings.GetInstance().RequestFocusFrameInfo);
+                    break;
+                case "ContShootingResult":
+                    if (ApplicationSettings.GetInstance().IsPostviewTransferEnabled)
+                    {
+                        foreach (var result in status.ContShootingResult)
+                        {
+                            PictureDownloader.Instance.Enqueue(new Uri(result.PostviewUrl, UriKind.Absolute), CachedPosition);
+                        }
+                    }
                     break;
                 default:
                     break;
@@ -666,14 +697,67 @@ namespace Kazyx.Uwpmm.Pages
             catch (RemoteApiException ex) { DebugUtil.Log(ex.StackTrace); }
         }
 
-        private void ShutterButton_Click(object sender, RoutedEventArgs e)
+        private async void ShutterButton_Click(object sender, RoutedEventArgs e)
         {
-            ShutterButtonPressed();
+            if (IsContinuousShootingMode())
+            {
+                await StopContShooting();
+            }
         }
 
-        private void ShutterButton_ManipulationStarted(object sender, ManipulationStartedRoutedEventArgs e)
+        private async void ShutterButton_Holding(object sender, HoldingRoutedEventArgs e)
         {
+            if (IsContinuousShootingMode())
+            {
+                await StartContShooting();
+            }
+        }
 
+        private void ShutterButton_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            if (IsContinuousShootingMode()) { ShowToast(SystemUtil.GetStringResource("Message_ContinuousShootingGuide")); }
+            else { ShutterButtonPressed(); }
+        }
+
+        private async Task StartContShooting()
+        {
+            if ((PeriodicalShootingTask == null || !PeriodicalShootingTask.IsRunning) && IsContinuousShootingMode())
+            {
+                try
+                {
+                    await target.Api.Camera.StartContShootingAsync();
+                }
+                catch (RemoteApiException ex)
+                {
+                    DebugUtil.Log(ex.StackTrace);
+                    ShowError(SystemUtil.GetStringResource("ErrorMessage_shootingFailure"));
+                }
+            }
+        }
+
+        private async Task StopContShooting()
+        {
+            if ((PeriodicalShootingTask == null || !PeriodicalShootingTask.IsRunning) && IsContinuousShootingMode())
+            {
+                try
+                {
+                    await SequentialOperation.StopContinuousShooting(target.Api);
+                }
+                catch (RemoteApiException ex)
+                {
+                    DebugUtil.Log(ex.StackTrace);
+                    ShowError(SystemUtil.GetStringResource("Error_StopContinuousShooting"));
+                }
+            }
+        }
+
+        bool IsContinuousShootingMode()
+        {
+            return target.Status != null &&
+                target.Status.ShootMode.Current == ShootModeParam.Still &&
+                target.Status.ContShootingMode != null &&
+                (target.Status.ContShootingMode.Current == ContinuousShootMode.Cont ||
+                target.Status.ContShootingMode.Current == ContinuousShootMode.SpeedPriority);
         }
 
         PeriodicalShootingTask PeriodicalShootingTask;
@@ -686,76 +770,28 @@ namespace Kazyx.Uwpmm.Pages
                 if (PeriodicalShootingTask != null && PeriodicalShootingTask.IsRunning)
                 {
                     PeriodicalShootingTask.Stop();
+                    return;
                 }
-                else if (ApplicationSettings.GetInstance().IsIntervalShootingEnabled)
+                if (ApplicationSettings.GetInstance().IsIntervalShootingEnabled)
                 {
-                    PeriodicalShootingTask = new PeriodicalShootingTask(new List<TargetDevice>() { target }, ApplicationSettings.GetInstance().IntervalTime);
-                    PeriodicalShootingTask.Tick += async (result) =>
-                    {
-                        await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-                        {
-                            switch (result)
-                            {
-                                case PeriodicalShootingTask.ShootingResult.Skipped:
-                                    ShowToast(SystemUtil.GetStringResource("PeriodicalShooting_Skipped"));
-                                    break;
-                                case PeriodicalShootingTask.ShootingResult.Succeed:
-                                    ShowToast(SystemUtil.GetStringResource("Message_ImageCapture_Succeed"));
-                                    break;
-                            };
-                        });
-                    };
-                    PeriodicalShootingTask.Stopped += async (reason) =>
-                    {
-                        await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-                        {
-                            switch (reason)
-                            {
-                                case PeriodicalShootingTask.StopReason.ShootingFailed:
-                                    ShowError(SystemUtil.GetStringResource("ErrorMessage_Interval"));
-                                    break;
-                                case PeriodicalShootingTask.StopReason.SkipLimitExceeded:
-                                    ShowError(SystemUtil.GetStringResource("PeriodicalShooting_SkipLimitExceed"));
-                                    break;
-                                case PeriodicalShootingTask.StopReason.RequestedByUser:
-                                    ShowToast(SystemUtil.GetStringResource("PeriodicalShooting_StoppedByUser"));
-                                    break;
-                            };
-                        });
-                    };
-                    PeriodicalShootingTask.StatusUpdated += async (status) =>
-                    {
-                        await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-                        {
-                            DebugUtil.Log("Status updated: " + status.Count);
-                            if (status.IsRunning)
-                            {
-                                PeriodicalShootingStatus.Visibility = Visibility.Visible;
-                                PeriodicalShootingStatusText.Text = SystemUtil.GetStringResource("PeriodicalShooting_Status")
-                                    .Replace("__INTERVAL__", status.Interval.ToString())
-                                    .Replace("__PHOTO_NUM__", status.Count.ToString());
-                            }
-                            else { PeriodicalShootingStatus.Visibility = Visibility.Collapsed; }
-                        });
-                    };
+                    PeriodicalShootingTask = SetupPeriodicalShooting();
                     PeriodicalShootingTask.Start();
+                    return;
                 }
-                else
+                try
                 {
-                    try
+                    await SequentialOperation.TakePicture(target.Api, CachedPosition);
+                    if (!ApplicationSettings.GetInstance().IsPostviewTransferEnabled)
                     {
-                        await SequentialOperation.TakePicture(target.Api, CachedPosition);
-                        if (!ApplicationSettings.GetInstance().IsPostviewTransferEnabled)
-                        {
-                            ShowToast(SystemUtil.GetStringResource("Message_ImageCapture_Succeed"));
-                        }
-                    }
-                    catch (RemoteApiException ex)
-                    {
-                        DebugUtil.Log(ex.StackTrace);
-                        ShowError(SystemUtil.GetStringResource("ErrorMessage_shootingFailure"));
+                        ShowToast(SystemUtil.GetStringResource("Message_ImageCapture_Succeed"));
                     }
                 }
+                catch (RemoteApiException ex)
+                {
+                    DebugUtil.Log(ex.StackTrace);
+                    ShowError(SystemUtil.GetStringResource("ErrorMessage_shootingFailure"));
+                }
+
             }
             else if (target.Status.ShootMode.Current == ShootModeParam.Movie)
             {
@@ -820,6 +856,60 @@ namespace Kazyx.Uwpmm.Pages
                     }
                 }
             }
+        }
+
+        private PeriodicalShootingTask SetupPeriodicalShooting()
+        {
+            var task = new PeriodicalShootingTask(new List<TargetDevice>() { target }, ApplicationSettings.GetInstance().IntervalTime);
+            task.Tick += async (result) =>
+            {
+                await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                {
+                    switch (result)
+                    {
+                        case PeriodicalShootingTask.ShootingResult.Skipped:
+                            ShowToast(SystemUtil.GetStringResource("PeriodicalShooting_Skipped"));
+                            break;
+                        case PeriodicalShootingTask.ShootingResult.Succeed:
+                            ShowToast(SystemUtil.GetStringResource("Message_ImageCapture_Succeed"));
+                            break;
+                    };
+                });
+            };
+            task.Stopped += async (reason) =>
+            {
+                await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                {
+                    switch (reason)
+                    {
+                        case PeriodicalShootingTask.StopReason.ShootingFailed:
+                            ShowError(SystemUtil.GetStringResource("ErrorMessage_Interval"));
+                            break;
+                        case PeriodicalShootingTask.StopReason.SkipLimitExceeded:
+                            ShowError(SystemUtil.GetStringResource("PeriodicalShooting_SkipLimitExceed"));
+                            break;
+                        case PeriodicalShootingTask.StopReason.RequestedByUser:
+                            ShowToast(SystemUtil.GetStringResource("PeriodicalShooting_StoppedByUser"));
+                            break;
+                    };
+                });
+            };
+            task.StatusUpdated += async (status) =>
+            {
+                await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                {
+                    DebugUtil.Log("Status updated: " + status.Count);
+                    if (status.IsRunning)
+                    {
+                        PeriodicalShootingStatus.Visibility = Visibility.Visible;
+                        PeriodicalShootingStatusText.Text = SystemUtil.GetStringResource("PeriodicalShooting_Status")
+                            .Replace("__INTERVAL__", status.Interval.ToString())
+                            .Replace("__PHOTO_NUM__", status.Count.ToString());
+                    }
+                    else { PeriodicalShootingStatus.Visibility = Visibility.Collapsed; }
+                });
+            };
+            return task;
         }
 
         private async void ShowError(string error)

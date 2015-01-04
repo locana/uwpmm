@@ -989,4 +989,10 @@ PlayMemories Camera Appsストアで最新版にアップデートしてくだ�
   <data name="ZoomSetting" xml:space="preserve">
     <value>ズーム設定</value>
   </data>
+  <data name="Error_StopContinuousShooting" xml:space="preserve">
+    <value>連写停止に失敗しました。再度操作するかカメラ本体を操作してください。</value>
+  </data>
+  <data name="Message_ContinuousShootingGuide" xml:space="preserve">
+    <value>連写するにはボタンを長押しするか本体のシャッターキーを使用してください</value>
+  </data>
 </root>

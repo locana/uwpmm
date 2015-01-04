@@ -110,8 +110,8 @@
                             </Grid.ColumnDefinitions>
                             <Grid Name="ShutterButtonWrapper" Grid.RowSpan="2" Grid.Column="2" Width="80" Height="80" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" 
                                   Visibility="{Binding ShootButtonVisibility}" Margin="10">
-                                <Button Name="ShutterButton" MinWidth="10" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                                    BorderThickness="1" Click="ShutterButton_Click" ManipulationStarted="ShutterButton_ManipulationStarted"
+                                <Button Name="ShutterButton" MinWidth="10" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
+                                    BorderThickness="1" Click="ShutterButton_Click" Tapped="ShutterButton_Tapped" Holding="ShutterButton_Holding"
                                     IsEnabled="{Binding ShutterButtonEnabled}" Background="Black" Opacity="0.8" >
                                     <Image Source="{Binding ShutterButtonImage}" Margin="8"/>
                                 </Button>
