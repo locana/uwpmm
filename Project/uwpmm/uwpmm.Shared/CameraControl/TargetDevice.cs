@@ -1,19 +1,23 @@
 ﻿using Kazyx.DeviceDiscovery;
 using Kazyx.Uwpmm.DataModel;
+using Windows.Networking;
 
 namespace Kazyx.Uwpmm.CameraControl
 {
     public class TargetDevice
     {
-        public TargetDevice(SonyCameraDeviceInfo info)
+        public TargetDevice(SonyCameraDeviceInfo info, HostName local)
         {
             Udn = info.UDN;
             DeviceName = info.ModelName;
             FriendlyName = info.FriendlyName;
+            LocalAddress = local;
             _Api = new DeviceApiHolder(info);
             _Status = new CameraStatus();
             _Observer = new StatusObserver(this);
         }
+
+        public HostName LocalAddress { private set; get; }
 
         public string DeviceName { private set; get; }
 

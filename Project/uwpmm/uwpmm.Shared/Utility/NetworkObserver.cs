@@ -25,18 +25,18 @@ namespace Kazyx.Uwpmm.Utility
             cdsDiscovery.DescriptionObtained += cdsDiscovery_DescriptionObtained;
         }
 
-        private List<TargetDevice> devices = new List<TargetDevice>();
+        private Dictionary<string, TargetDevice> devices = new Dictionary<string, TargetDevice>();
 
         public List<TargetDevice> CameraDevices
         {
-            get { return new List<TargetDevice>(devices); }
+            get { return new List<TargetDevice>(devices.Values); }
         }
 
-        private List<UpnpDevice> cdServices = new List<UpnpDevice>();
+        private Dictionary<string, UpnpDevice> cdServices = new Dictionary<string, UpnpDevice>();
 
-        public List<UpnpDevice> CdsServices
+        public List<UpnpDevice> CdsProviders
         {
-            get { return new List<UpnpDevice>(cdServices); }
+            get { return new List<UpnpDevice>(cdServices.Values); }
         }
 
         public event EventHandler<CameraDeviceEventArgs> CameraDiscovered;
@@ -55,8 +55,15 @@ namespace Kazyx.Uwpmm.Utility
 
         void discovery_SonyCameraDeviceDiscovered(object sender, SonyCameraDeviceEventArgs e)
         {
-            var device = new TargetDevice(e.SonyCameraDevice);
-            devices.Add(device);
+            var device = new TargetDevice(e.SonyCameraDevice, e.LocalAddress);
+            lock (devices)
+            {
+                if (devices.ContainsKey(e.SonyCameraDevice.UDN))
+                {
+                    return;
+                }
+                devices.Add(device.Udn, device);
+            }
             OnDiscovered(device);
         }
 
@@ -65,16 +72,25 @@ namespace Kazyx.Uwpmm.Utility
             try
             {
                 var device = UpnpDescriptionParser.ParseDescription(XDocument.Parse(e.Description), e.Location);
+                device.LocalAddress = e.LocalAddress;
 
-                foreach (var service in device.Services)
+                lock (cdServices)
                 {
-                    DebugUtil.Log("Service: " + service.Key);
-                    if (service.Key == URN.ContentDirectory)
+                    if (cdServices.ContainsKey(device.UDN))
                     {
-                        DebugUtil.Log("CDS found. Notify discovered.");
-                        cdServices.Add(device);
-                        OnDiscovered(device);
-                        break;
+                        return;
+                    }
+
+                    foreach (var service in device.Services)
+                    {
+                        DebugUtil.Log("Service: " + service.Key);
+                        if (service.Key == URN.ContentDirectory)
+                        {
+                            DebugUtil.Log("CDS found. Notify discovered.");
+                            cdServices.Add(device.UDN, device);
+                            OnDiscovered(device);
+                            break;
+                        }
                     }
                 }
             }
@@ -83,16 +99,17 @@ namespace Kazyx.Uwpmm.Utility
                 DebugUtil.Log("failed to parse upnp device description.");
                 DebugUtil.Log(ex.StackTrace);
             }
+
         }
 
         public void ForceOffline(TargetDevice device)
         {
-            devices.Remove(device);
+            devices.Remove(device.Udn);
         }
 
         public void ForceOffline(UpnpDevice device)
         {
-            cdServices.Remove(device);
+            cdServices.Remove(device.UDN);
         }
 
         public void Search()

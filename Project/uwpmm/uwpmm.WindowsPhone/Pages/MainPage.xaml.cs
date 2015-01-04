@@ -18,6 +18,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.Devices.Geolocation;
 using Windows.Foundation;
+using Windows.Networking.Connectivity;
 using Windows.Networking.Proximity;
 using Windows.Phone.UI.Input;
 using Windows.Storage.FileProperties;
@@ -117,10 +118,18 @@ namespace Kazyx.Uwpmm.Pages
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             this.navigationHelper.OnNavigatedTo(e);
+
+            NetworkObserver.INSTANCE.CameraDiscovered += NetworkObserver_Discovered;
+            NetworkObserver.INSTANCE.CdsDiscovered += NetworkObserver_CdsDiscovered;
+            NetworkObserver.INSTANCE.Clear();
+            NetworkObserver.INSTANCE.Search();
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
+            NetworkObserver.INSTANCE.CameraDiscovered -= NetworkObserver_Discovered;
+            NetworkObserver.INSTANCE.CdsDiscovered -= NetworkObserver_CdsDiscovered;
+
             this.navigationHelper.OnNavigatedFrom(e);
         }
 
@@ -134,9 +143,6 @@ namespace Kazyx.Uwpmm.Pages
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            NetworkObserver.INSTANCE.CameraDiscovered += NetworkObserver_Discovered;
-            NetworkObserver.INSTANCE.Search();
-
             _CommandBarManager.SetEvent(AppBarItem.ControlPanel, (s, args) =>
             {
                 if (ControlPanelDisplayed) { StartToHideControlPanel(); }
@@ -406,6 +412,29 @@ namespace Kazyx.Uwpmm.Pages
         private StreamProcessor liveview = new StreamProcessor();
         private ImageDataSource liveview_data = new ImageDataSource();
         private ImageDataSource postview_data = new ImageDataSource();
+
+        private async void NetworkObserver_CdsDiscovered(object sender, CdServiceEventArgs e)
+        {
+            var type = await e.CdService.LocalAddress.IPInformation.NetworkAdapter.GetConnectedProfileAsync();
+            if (type.IsWlanConnectionProfile)
+            {
+                var ssid = type.WlanConnectionProfileDetails.GetConnectedSsid();
+                if (ssid != null && ssid.StartsWith("Direct-", StringComparison.OrdinalIgnoreCase))
+                {
+                    DebugUtil.Log("It seems to be connected to camera directly. Navigate to PlaybackPage automatically.");
+                    await Dispatcher.RunAsync(CoreDispatcherPriority.High, () =>
+                    {
+                        Frame.Navigate(typeof(PlaybackPage), PlaybackPage.AUTO_JUMP_TO_DLNA_FLAG);
+                    });
+                    return;
+                }
+            }
+            // TODO
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                ShowToast("[TMP] CDS discovered: " + e.CdService.FriendlyName);
+            });
+        }
 
         async void NetworkObserver_Discovered(object sender, CameraDeviceEventArgs e)
         {

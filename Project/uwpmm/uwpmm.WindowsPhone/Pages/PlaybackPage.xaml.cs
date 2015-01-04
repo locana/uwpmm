@@ -39,6 +39,8 @@ namespace Kazyx.Uwpmm.Pages
     {
         private NavigationHelper navigationHelper;
 
+        public const string AUTO_JUMP_TO_DLNA_FLAG = "auto_jump_to_dlna";
+
         private const bool LOAD_DUMMY_CONTENTS = false;
 
         private HttpClient HttpClient = new HttpClient();
@@ -243,7 +245,7 @@ namespace Kazyx.Uwpmm.Pages
             PictureDownloader.Instance.QueueStatusUpdated += OnFetchingImages;
 
             var devices = NetworkObserver.INSTANCE.CameraDevices;
-            var dlna = NetworkObserver.INSTANCE.CdsServices;
+            var dlna = NetworkObserver.INSTANCE.CdsProviders;
             if (devices.Count > 0)
             {
                 DebugUtil.Log("Apply " + devices[0].FriendlyName + " as target");
@@ -267,6 +269,20 @@ namespace Kazyx.Uwpmm.Pages
 
             MovieStreamHelper.INSTANCE.StreamClosed += MovieStreamHelper_StreamClosed;
             MovieStreamHelper.INSTANCE.StatusChanged += MovieStream_StatusChanged;
+
+            var param = e.Parameter as string;
+            if (param == AUTO_JUMP_TO_DLNA_FLAG)
+            {
+                MoveToRemotePivot();
+            }
+        }
+
+        private void MoveToRemotePivot()
+        {
+            if (!PivotRoot.IsLocked)
+            {
+                PivotRoot.SelectedIndex = 1;
+            }
         }
 
         private async void NetworkObserver_CameraDiscovered(object sender, CameraDeviceEventArgs e)
@@ -571,7 +587,7 @@ namespace Kazyx.Uwpmm.Pages
             catch
             {
                 //TODO
-                ShowToast("Failed to load local contents.");
+                ShowToast("[TMP] Failed to load local contents.");
             }
         }
 
@@ -704,7 +720,7 @@ namespace Kazyx.Uwpmm.Pages
                 if (RemoteGridSource.Count == 0)
                 {
                     // TODO
-                    ShowToast("Remote storage is empty");
+                    ShowToast("[TMP] Remote storage is empty");
                 }
                 HideProgress();
             }
@@ -713,7 +729,7 @@ namespace Kazyx.Uwpmm.Pages
                 DebugUtil.Log("SoapException while loading: " + e.StatusCode);
                 HideProgress();
                 // TODO
-                ShowToast("Image item search is failed");
+                ShowToast("[TMP] Image item search is failed");
             }
             finally
             {
@@ -1231,7 +1247,7 @@ namespace Kazyx.Uwpmm.Pages
             if (TargetDevice == null || TargetDevice.Api == null)
             {
                 //TODO
-                ShowToast("Camera device does not exist anymore");
+                ShowToast("[TMP] Camera device does not exist anymore");
                 return;
             }
 
@@ -1261,7 +1277,7 @@ namespace Kazyx.Uwpmm.Pages
             if (UpnpDevice == null)
             {
                 //TODO
-                ShowToast("Upnp device does not exist anymore");
+                ShowToast("[TMP] Upnp device does not exist anymore");
                 return;
             }
 
