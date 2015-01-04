@@ -127,6 +127,34 @@ namespace Kazyx.Uwpmm.Utility
             return await tcs.Task.ConfigureAwait(false);
         }
 
+        public async Task<StorageFile> EnqueueFileDownload(StorageFolder root, Uri uri, string extension = "")
+        {
+            var filename = Path.GetFileName(uri.LocalPath) + extension;
+
+            var file = await root.TryGetFileAsync(filename).ConfigureAwait(false);
+            if (file != null)
+            {
+                return file;
+            }
+
+            var tcs = new TaskCompletionSource<StorageFile>();
+
+            var taskSource = new TaskSource { uri = uri, folder = root, filename = filename, tcs = tcs };
+            lock (HolderLock)
+            {
+                if (Stack.Count == 0 && Queue.Count < FIFO_THRESHOLD)
+                {
+                    Queue.Enqueue(taskSource);
+                }
+                else
+                {
+                    Stack.Push(taskSource);
+                }
+            }
+            TryRunTask();
+            return await tcs.Task.ConfigureAwait(false);
+        }
+
         private void TryRunTask()
         {
             lock (LoopLock)

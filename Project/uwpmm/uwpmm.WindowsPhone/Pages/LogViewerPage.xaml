@@ -14,7 +14,6 @@
 
     <Grid x:Name="LayoutRoot">
         <Hub >
-
             <HubSection Margin="0">
                 <HubSection.Header>
                     <TextBlock Text="Log Files" Margin="0,8,0,0" Style="{StaticResource SubheaderTextBlockStyle}" FontWeight="Bold"/>
@@ -38,8 +37,6 @@
                     </DataTemplate>
                 </HubSection.ContentTemplate>
             </HubSection>
-
         </Hub>
     </Grid>
-
 </Page>

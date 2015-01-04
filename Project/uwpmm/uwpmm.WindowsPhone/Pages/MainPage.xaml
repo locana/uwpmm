@@ -35,8 +35,9 @@
                 <PivotItem Name="Entrance" Loaded="Entrance_Loaded">
                     <Grid Name="EntrancePage">
                         <StackPanel>
-                            <TextBlock Text="{Binding [ApplicationTitle], Source={StaticResource LocalizedStrings}}" Style="{ThemeResource TitleTextBlockStyle}" Margin="0,0,0,30" />
-                            <TextBlock Text="{Binding [Guide_StartLiveView], Source={StaticResource LocalizedStrings}}" FontSize="22" TextWrapping="WrapWholeWords" 
+                            <TextBlock Text="{Binding [ApplicationTitle], Source={StaticResource LocalizedStrings}}"
+                                       Style="{StaticResource SubheaderTextBlockStyle}" Margin="0,0,0,30" FontWeight="Bold" />
+                            <TextBlock Text="{Binding [Guide_StartLiveView], Source={StaticResource LocalizedStrings}}" TextWrapping="WrapWholeWords" 
                                        Style="{StaticResource BaseTextBlockStyle}"  />
                             <TextBlock Name="NfcAvailable" Text="{Binding [Guide_NFC], Source={StaticResource LocalizedStrings}}"
                                        Visibility="Collapsed" Style="{ThemeResource BaseTextBlockStyle}" TextWrapping="WrapWholeWords" />

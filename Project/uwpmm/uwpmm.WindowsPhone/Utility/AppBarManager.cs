@@ -44,6 +44,8 @@ namespace Kazyx.Uwpmm.Utility
                     return new AppBarButton() { Icon = new BitmapIcon() { UriSource = new Uri("ms-appx:///Assets/AppBar/appbar_ok.png") }, Label = SystemUtil.GetStringResource("AppBar_Exit") };
                 case AppBarItem.WifiSetting:
                     return new AppBarButton() { Icon = new BitmapIcon() { UriSource = new Uri("ms-appx:///Assets/AppBar/appbar_wifi.png") }, Label = SystemUtil.GetStringResource("WifiSettingLauncherButtonText") };
+                case AppBarItem.Donation:
+                    return new AppBarButton() { Icon = new BitmapIcon() { UriSource = new Uri("ms-appx:///Assets/AppBar/appbar_Dollar.png") }, Label = SystemUtil.GetStringResource("Donation") };
                 default:
                     throw new NotImplementedException();
             }
@@ -150,5 +152,6 @@ namespace Kazyx.Uwpmm.Utility
         HideDetailInfo,
         Ok,
         WifiSetting,
+        Donation,
     }
 }

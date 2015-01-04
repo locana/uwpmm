@@ -177,9 +177,13 @@ namespace Kazyx.Uwpmm.Pages
                 Frame.Navigate(typeof(PlaybackPage));
             });
             _CommandBarManager.SetEvent(AppBarItem.WifiSetting, async (s, args) =>
-                {
-                    await Launcher.LaunchUriAsync(new Uri("ms-settings-wifi:"));
-                });
+            {
+                await Launcher.LaunchUriAsync(new Uri("ms-settings-wifi:"));
+            });
+            _CommandBarManager.SetEvent(AppBarItem.Donation, (s, args) =>
+            {
+                Frame.Navigate(typeof(HiddenPage));
+            });
 
             PivotRoot.SelectionChanged += PivotRoot_SelectionChanged;
 
@@ -316,19 +320,20 @@ namespace Kazyx.Uwpmm.Pages
         private void CreateEntranceAppBar()
         {
             this.BottomAppBar = _CommandBarManager.Clear()//
-                .Icon(AppBarItem.WifiSetting)
+                .Icon(AppBarItem.WifiSetting)//
                 .NoIcon(AppBarItem.AboutPage)//
                 .NoIcon(AppBarItem.PlaybackPage)//
                 .NoIcon(AppBarItem.LoggerPage)//
+                .Icon(AppBarItem.Donation)//
                 .CreateNew(0.6);
         }
 
         private void CreateCameraControlAppBar()
         {
             this.BottomAppBar = _CommandBarManager.Clear()//
-                .Icon(AppBarItem.AppSetting)
+                .Icon(AppBarItem.AppSetting)//
                 .Icon(AppBarItem.ControlPanel)//
-                .Icon(AppBarItem.PlaybackPage)
+                .Icon(AppBarItem.PlaybackPage)//
                 .CreateNew(0.6);
         }
 
