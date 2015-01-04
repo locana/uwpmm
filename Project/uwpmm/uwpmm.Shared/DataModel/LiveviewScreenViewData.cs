@@ -101,7 +101,9 @@ namespace Kazyx.Uwpmm.DataModel
                     case ShootModeParam.Still:
                         if (Device.Status.ContShootingMode != null &&
                             (Device.Status.ContShootingMode.Current == ContinuousShootMode.Cont ||
-                            Device.Status.ContShootingMode.Current == ContinuousShootMode.SpeedPriority))
+                            Device.Status.ContShootingMode.Current == ContinuousShootMode.SpeedPriority ||
+                            Device.Status.ContShootingMode.Current == ContinuousShootMode.Burst ||
+                            Device.Status.ContShootingMode.Current == ContinuousShootMode.MotionShot))
                         {
                             return ContShootingImage;
                         }
