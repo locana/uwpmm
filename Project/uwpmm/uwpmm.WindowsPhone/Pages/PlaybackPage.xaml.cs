@@ -536,9 +536,9 @@ namespace Kazyx.Uwpmm.Pages
         {
             UpdateInnerState(ViewerState.RemoteSingle);
             MovieStreamHelper.INSTANCE.Finish();
-            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
             {
-                DefaultPivotLockState();
+                await DefaultPivotLockState();
                 MovieScreen.Reset();
                 MovieDrawer.Visibility = Visibility.Collapsed;
             });
@@ -905,20 +905,6 @@ namespace Kazyx.Uwpmm.Pages
         }
 
         private bool IsViewingDetail = false;
-
-        /*
-        private async void ImageGrid_ItemRealized(object sender, ItemRealizationEventArgs e)
-        {
-            if (e.ItemKind == LongListSelectorItemKind.Item)
-            {
-                var content = e.Container.Content as RemoteThumbnail;
-                if (content != null)
-                {
-                    await content.FetchThumbnailAsync();
-                }
-            }
-        }
-        */
 
         private void Pivot_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -1316,9 +1302,9 @@ namespace Kazyx.Uwpmm.Pages
             AppSettingPanel.Visibility = Visibility.Collapsed;
         }
 
-        private void PivotRoot_Loaded(object sender, RoutedEventArgs e)
+        private async void PivotRoot_Loaded(object sender, RoutedEventArgs e)
         {
-            DefaultPivotLockState();
+            await DefaultPivotLockState();
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)

@@ -18,7 +18,7 @@ namespace Kazyx.Uwpmm.Utility
         private const string request_focus_frame_info = "request_focus_frame_info";
         private const string prioritize_original_contents = "prioritize_original_contents";
 
-        private static T GetProperty<T>(string key, T defaultValue)
+        public static T GetProperty<T>(string key, T defaultValue)
         {
             var settings = ApplicationData.Current.LocalSettings;
             if (!settings.Values.ContainsKey(key))
@@ -28,7 +28,7 @@ namespace Kazyx.Uwpmm.Utility
             return (T)settings.Values[key];
         }
 
-        private static void SetProperty<T>(string key, T value)
+        public static void SetProperty<T>(string key, T value)
         {
             var settings = ApplicationData.Current.LocalSettings;
             settings.Values[key] = value;
