@@ -18,7 +18,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.Devices.Geolocation;
 using Windows.Foundation;
-using Windows.Networking.Connectivity;
 using Windows.Networking.Proximity;
 using Windows.Phone.UI.Input;
 using Windows.Storage.FileProperties;
@@ -119,6 +118,8 @@ namespace Kazyx.Uwpmm.Pages
         {
             this.navigationHelper.OnNavigatedTo(e);
 
+            NavigatedByInAppBackTransition = e.NavigationMode == NavigationMode.Back;
+
             NetworkObserver.INSTANCE.CameraDiscovered += NetworkObserver_Discovered;
             NetworkObserver.INSTANCE.CdsDiscovered += NetworkObserver_CdsDiscovered;
             NetworkObserver.INSTANCE.Clear();
@@ -134,6 +135,8 @@ namespace Kazyx.Uwpmm.Pages
         }
 
         #endregion
+
+        private bool NavigatedByInAppBackTransition = false;
 
         CommandBarManager _CommandBarManager = new CommandBarManager();
         Geolocator _Geolocator = new Geolocator();
@@ -416,7 +419,7 @@ namespace Kazyx.Uwpmm.Pages
         private async void NetworkObserver_CdsDiscovered(object sender, CdServiceEventArgs e)
         {
             var type = await e.CdService.LocalAddress.IPInformation.NetworkAdapter.GetConnectedProfileAsync();
-            if (type.IsWlanConnectionProfile)
+            if (!NavigatedByInAppBackTransition && type.IsWlanConnectionProfile)
             {
                 var ssid = type.WlanConnectionProfileDetails.GetConnectedSsid();
                 if (ssid != null && ssid.StartsWith("Direct-", StringComparison.OrdinalIgnoreCase))
