@@ -38,6 +38,7 @@ namespace Kazyx.Uwpmm.DataModel
                 NotifyChangedOnUI("ISODisplayValue");
                 NotifyChangedOnUI("ShutterSpeedVisibility");
                 NotifyChangedOnUI("ShutterSpeedDisplayValue");
+                NotifyChangedOnUI("IsAudioMode");
             };
             Device.Api.AvailiableApisUpdated += (sender, e) =>
             {
@@ -475,6 +476,11 @@ namespace Kazyx.Uwpmm.DataModel
                 _GeopositionEnabled = value;
                 NotifyChangedOnUI("GeopositionEnabled");
             }
+        }
+
+        public bool IsAudioMode
+        {
+            get { return Device.Status.ShootMode.Current == ShootModeParam.Audio; }
         }
     }
 
