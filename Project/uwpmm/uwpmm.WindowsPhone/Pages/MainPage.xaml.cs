@@ -777,7 +777,8 @@ namespace Kazyx.Uwpmm.Pages
                     PeriodicalShootingTask.Stop();
                     return;
                 }
-                if (ApplicationSettings.GetInstance().IsIntervalShootingEnabled)
+                if (ApplicationSettings.GetInstance().IsIntervalShootingEnabled &&
+                    (target.Status.ContShootingMode == null || (target.Status.ContShootingMode != null && target.Status.ContShootingMode.Current == ContinuousShootMode.Single)))
                 {
                     PeriodicalShootingTask = SetupPeriodicalShooting();
                     PeriodicalShootingTask.Start();

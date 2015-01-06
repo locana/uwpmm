@@ -1,4 +1,5 @@
 ﻿using Kazyx.RemoteApi;
+using Kazyx.RemoteApi.Camera;
 using Kazyx.Uwpmm.CameraControl;
 using Kazyx.Uwpmm.Utility;
 using System.Collections.Generic;
@@ -25,6 +26,7 @@ namespace Kazyx.Uwpmm.DataModel
             Device.Status.PropertyChanged += (sender, e) =>
             {
                 GenericPropertyChanged(e.PropertyName);
+                NotifyChangedOnUI("IsPeriodicalShootingAvailable");
             };
             Device.Api.AvailiableApisUpdated += (sender, e) =>
             {
@@ -796,6 +798,15 @@ namespace Kazyx.Uwpmm.DataModel
             get
             {
                 return Device.Api.Capability.IsAvailable("setAutoPowerOff") && Device.Status.AutoPowerOff != null;
+            }
+        }
+
+        public bool IsPeriodicalShootingAvailable
+        {
+            get
+            {
+                return Device.Status.ShootMode.Current == ShootModeParam.Still &&
+                    (Device.Status.ContShootingMode == null || (Device.Status.ContShootingMode != null && Device.Status.ContShootingMode.Current == ContinuousShootMode.Single));
             }
         }
     }

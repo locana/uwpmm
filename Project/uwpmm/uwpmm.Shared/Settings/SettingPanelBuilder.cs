@@ -387,6 +387,12 @@ namespace Kazyx.Uwpmm.Settings
                 Path = new PropertyPath("IsIntervalShootingEnabled"),
                 Mode = BindingMode.TwoWay,
             });
+            checkbox.SetBinding(CheckBox.IsEnabledProperty, new Binding()
+            {
+                Source = DataSource,
+                Path = new PropertyPath("IsPeriodicalShootingAvailable"),
+                Mode = BindingMode.OneWay,
+            });
 
             var firstPanel = new StackPanel()
             {
@@ -404,6 +410,12 @@ namespace Kazyx.Uwpmm.Settings
                 ApplicationSettings.GetInstance().IntervalTime = (int)(sender as Slider).Value;
                 DebugUtil.Log("Interval updated: " + (int)(sender as Slider).Value);
             };
+            slider.SetBinding(Slider.IsEnabledProperty, new Binding()
+            {
+                Source = DataSource,
+                Path = new PropertyPath("IsPeriodicalShootingAvailable"),
+                Mode = BindingMode.OneWay,
+            });
 
             var parent = BuildBasicPanel(SystemUtil.GetStringResource("IntervalSetting"));
             parent.Children.Add(firstPanel);
