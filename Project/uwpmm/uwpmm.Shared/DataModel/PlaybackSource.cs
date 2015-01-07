@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.Storage;
@@ -277,7 +278,7 @@ namespace Kazyx.Uwpmm.DataModel
                 {
                     CollectionChanged(this, e);
                 }
-                catch (System.NotSupportedException)
+                catch (NotSupportedException)
                 {
                     NotifyCollectionChangedEventArgs alternativeEventArgs =
                         new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset);
@@ -375,14 +376,7 @@ namespace Kazyx.Uwpmm.DataModel
 
         private Album GetGroup(string key)
         {
-            foreach (var item in base.Items)
-            {
-                if (item.Key == key)
-                {
-                    return item;
-                }
-            }
-            return null;
+            return base.Items.SingleOrDefault(item => item.Key == key);
         }
     }
 }

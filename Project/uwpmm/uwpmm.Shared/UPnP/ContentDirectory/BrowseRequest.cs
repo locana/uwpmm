@@ -21,12 +21,12 @@ namespace Kazyx.Uwpmm.UPnP.ContentDirectory
 
         protected override void AppendSpecificMessage(StringBuilder builder)
         {
-            builder.Append("<ObjectID>").Append(ObjectID).Append("</ObjectID>").Append("\r\n");
-            builder.Append("<BrowseFlag>").Append(BrowseFlag.ToString()).Append("</BrowseFlag>").Append("\r\n");
-            builder.Append("<Filter>").Append(Filter).Append("</Filter>").Append("\r\n");
-            builder.Append("<StartingIndex>").Append(StartingIndex).Append("</StartingIndex>").Append("\r\n");
-            builder.Append("<RequestedCount>").Append(RequestedCount).Append("</RequestedCount>").Append("\r\n");
-            builder.Append("<SortCriteria>").Append(SortCriteria).Append("</SortCriteria>").Append("\r\n");
+            builder.Append("<ObjectID>").Append(ObjectID).Append("</ObjectID>").Append("\r\n")
+                .Append("<BrowseFlag>").Append(BrowseFlag.ToString()).Append("</BrowseFlag>").Append("\r\n")
+                .Append("<Filter>").Append(Filter).Append("</Filter>").Append("\r\n")
+                .Append("<StartingIndex>").Append(StartingIndex).Append("</StartingIndex>").Append("\r\n")
+                .Append("<RequestedCount>").Append(RequestedCount).Append("</RequestedCount>").Append("\r\n")
+                .Append("<SortCriteria>").Append(SortCriteria).Append("</SortCriteria>").Append("\r\n");
         }
 
         public override Response ParseResponse(XDocument xml)

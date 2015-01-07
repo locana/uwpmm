@@ -3,6 +3,7 @@ using Kazyx.Uwpmm.CameraControl;
 using Kazyx.Uwpmm.UPnP;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Xml.Linq;
 
 namespace Kazyx.Uwpmm.Utility
@@ -81,16 +82,11 @@ namespace Kazyx.Uwpmm.Utility
                         return;
                     }
 
-                    foreach (var service in device.Services)
+                    if (device.Services.Any(service => service.Key == URN.ContentDirectory))
                     {
-                        DebugUtil.Log("Service: " + service.Key);
-                        if (service.Key == URN.ContentDirectory)
-                        {
-                            DebugUtil.Log("CDS found. Notify discovered.");
-                            cdServices.Add(device.UDN, device);
-                            OnDiscovered(device);
-                            break;
-                        }
+                        DebugUtil.Log("CDS found. Notify discovered.");
+                        cdServices.Add(device.UDN, device);
+                        OnDiscovered(device);
                     }
                 }
             }

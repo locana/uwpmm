@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
@@ -66,23 +67,14 @@ namespace Kazyx.Uwpmm.Utility
             LogBuilder.Clear();
         }
 
-        public static async Task<List<string>> LogFiles()
+        public static async Task<IList<string>> LogFiles()
         {
             Debug.WriteLine("LogFiles");
             var root = ApplicationData.Current.TemporaryFolder;
             var folder = await root.CreateFolderAsync(LOG_ROOT, CreationCollisionOption.OpenIfExists);
-
-            var list = new List<string>();
-
             var files = await folder.GetFilesAsync();
-            if (files != null)
-            {
-                foreach (var file in files)
-                {
-                    list.Add(file.Name);
-                }
-            }
-            return list;
+
+            return files.Select(file => file.Name).ToList();
         }
 
         public static async Task<string> GetFile(string filename)

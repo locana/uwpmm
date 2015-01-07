@@ -7,10 +7,10 @@ namespace Kazyx.Uwpmm.UPnP
 {
     public abstract class Request
     {
-        public abstract string URN { get; }
+        public abstract string Urn { get; }
         public abstract string ActionName { get; }
 
-        public string SoapHeader { get { return "\"" + URN + "#" + ActionName + "\""; } }
+        public string SoapHeader { get { return "\"" + Urn + "#" + ActionName + "\""; } }
 
         public string BuildMessage()
         {
@@ -19,7 +19,7 @@ namespace Kazyx.Uwpmm.UPnP
             builder.Append("<?xml version=\"1.0\" encoding=\"utf-8\"?>").Append("\r\n")
                 .Append("<s:Envelope s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\" xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\">").Append("\r\n")
                 .Append("<s:Body>").Append("\r\n")
-                .Append("<u:").Append(ActionName).Append(" xmlns:u=\"").Append(URN).Append("\">").Append("\r\n");
+                .Append("<u:").Append(ActionName).Append(" xmlns:u=\"").Append(Urn).Append("\">").Append("\r\n");
 
             AppendSpecificMessage(builder);
 

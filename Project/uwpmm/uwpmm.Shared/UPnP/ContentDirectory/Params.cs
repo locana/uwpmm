@@ -1,6 +1,6 @@
-﻿
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Xml.Linq;
+
 namespace Kazyx.Uwpmm.UPnP.ContentDirectory
 {
     public class Result

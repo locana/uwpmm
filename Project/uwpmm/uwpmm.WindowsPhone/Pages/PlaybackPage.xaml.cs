@@ -14,6 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
@@ -26,7 +27,6 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 
@@ -155,7 +155,6 @@ namespace Kazyx.Uwpmm.Pages
             };
             MovieScreen.OnPlaybackOperationRequested += async (sender, arg) =>
             {
-               
                 try
                 {
                     switch (arg.Request)
@@ -265,8 +264,6 @@ namespace Kazyx.Uwpmm.Pages
             SetStillDetailVisibility(false);
 
             LoadLocalContents();
-
-
 
             PictureDownloader.Instance.Failed += OnDLError;
             PictureDownloader.Instance.Fetched += OnFetched;
@@ -513,7 +510,12 @@ namespace Kazyx.Uwpmm.Pages
         {
             await Dispatcher.RunAsync(CoreDispatcherPriority.High, () =>
             {
-                PivotRoot.IsLocked = !ShouldUnlockPivot(TargetDevice, UpnpDevice);
+                var locked = !ShouldUnlockPivot(TargetDevice, UpnpDevice);
+                if (locked)
+                {
+                    PivotRoot.SelectedIndex = 0;
+                }
+                PivotRoot.IsLocked = locked;
             });
         }
 
@@ -609,13 +611,17 @@ namespace Kazyx.Uwpmm.Pages
             loader.SingleContentLoaded += LocalContentsLoader_SingleContentLoaded;
             try
             {
-                await loader.Load(Canceller);
+                await loader.Load(Canceller).ConfigureAwait(false);
                 HideProgress();
             }
             catch
             {
                 //TODO
                 ShowToast("[TMP] Failed to load local contents.");
+            }
+            finally
+            {
+                loader.SingleContentLoaded -= LocalContentsLoader_SingleContentLoaded;
             }
         }
 
@@ -640,7 +646,7 @@ namespace Kazyx.Uwpmm.Pages
 
             try
             {
-                await loader.Load(Canceller);
+                await loader.Load(Canceller).ConfigureAwait(false);
             }
             finally
             {
@@ -828,6 +834,7 @@ namespace Kazyx.Uwpmm.Pages
 
         private async void HideProgress()
         {
+            DebugUtil.Log("Hide Progress");
             await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
             {
                 await statusBar.ProgressIndicator.HideAsync();
@@ -836,7 +843,7 @@ namespace Kazyx.Uwpmm.Pages
 
         private async void ChangeProgressText(string text)
         {
-            DebugUtil.Log(text);
+            DebugUtil.Log("Show Progress: " + text);
             await Dispatcher.RunAsync(CoreDispatcherPriority.High, async () =>
             {
                 statusBar.ProgressIndicator.ProgressValue = null;
@@ -996,24 +1003,18 @@ namespace Kazyx.Uwpmm.Pages
                 HideProgress();
                 return;
             }
-            var contents = new TargetContents();
-            var dlna = new List<string>();
-            contents.ContentUris = new List<string>();
-            foreach (var item in items)
-            {
-                var data = item as Thumbnail;
-                if (data.Source is RemoteApiContentInfo)
-                {
-                    var info = data.Source as RemoteApiContentInfo;
-                    contents.ContentUris.Add(info.Uri);
-                }
-                else if (data.Source is DlnaContentInfo)
-                {
-                    var info = data.Source as DlnaContentInfo;
-                    dlna.Add(info.Id);
-                }
-            }
-            await DeleteRemoteApiContents(contents);
+
+            var uris = items
+                .Select(item => (item as Thumbnail).Source as RemoteApiContentInfo)
+                .Where(info => info != null)
+                .Select(info => info.Uri).ToList();
+
+            var dlna = items
+                .Select(item => (item as Thumbnail).Source as DlnaContentInfo)
+                .Where(info => info != null)
+                .Select(info => info.Id).ToList();
+
+            await DeleteRemoteApiContents(new TargetContents { ContentUris = uris });
             await DeleteDlnaContentsAsync(dlna);
 
             foreach (var item in items)
@@ -1033,20 +1034,16 @@ namespace Kazyx.Uwpmm.Pages
                 return;
             }
 
-            foreach (var item in new List<object>(items))
+            foreach (var data in items.Select(item => item as Thumbnail).Where(thumb => thumb.CacheFile != null))
             {
-                var data = item as Thumbnail;
-                if (data.CacheFile != null)
+                try
                 {
-                    try
-                    {
-                        await data.CacheFile.DeleteAsync();
-                        LocalGridSource.Remove(data);
-                    }
-                    catch (Exception e)
-                    {
-                        DebugUtil.Log("Failed to delete file: " + e.StackTrace);
-                    }
+                    await data.CacheFile.DeleteAsync();
+                    LocalGridSource.Remove(data);
+                }
+                catch (Exception e)
+                {
+                    DebugUtil.Log("Failed to delete file: " + e.StackTrace);
                 }
             }
         }
@@ -1272,7 +1269,7 @@ namespace Kazyx.Uwpmm.Pages
                 ChangeProgressText(SystemUtil.GetStringResource("Progress_DeletingSelectedContents"));
                 try
                 {
-                    await av.DeleteContentAsync(contents);
+                    await av.DeleteContentAsync(contents).ConfigureAwait(false);
                     DebugUtil.Log("Delete contents completed");
                 }
                 catch
@@ -1304,7 +1301,7 @@ namespace Kazyx.Uwpmm.Pages
                     await cds.Control(new DestroyObjectRequest
                     {
                         ObjectID = id,
-                    });
+                    }).ConfigureAwait(false);
                 }
                 catch (SoapException e)
                 {
@@ -1333,7 +1330,7 @@ namespace Kazyx.Uwpmm.Pages
 
         private async void PivotRoot_Loaded(object sender, RoutedEventArgs e)
         {
-            await DefaultPivotLockState();
+            await DefaultPivotLockState().ConfigureAwait(false);
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)

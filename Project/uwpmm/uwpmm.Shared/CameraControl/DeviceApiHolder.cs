@@ -91,7 +91,7 @@ namespace Kazyx.Uwpmm.CameraControl
             {
                 // DSC-QX10 firmware v3.00 has a bug in the response of getMethodTypes
                 var methods = (await Camera.GetMethodTypesAsync().ConfigureAwait(false))
-                    .Where(method => (method.Name != "setFocusMode" && ProductType == ProductType.DSC_QX10)).ToList();
+                    .Where(method => !(method.Name == "setFocusMode" && ProductType == ProductType.DSC_QX10)).ToList();
                 Capability.AddSupported(methods);
             }
             if (System != null)
