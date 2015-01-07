@@ -45,11 +45,11 @@ namespace Kazyx.Uwpmm.CameraControl
 
             try
             {
-                var location = await api.SetStreamingContentAsync(content);
-                await api.StartStreamingAsync();
+                var location = await api.SetStreamingContentAsync(content).ConfigureAwait(false);
+                await api.StartStreamingAsync().ConfigureAwait(false);
                 RunLoop(false);
 
-                var success = await StreamProcessor.OpenConnection(new Uri(location.Url));
+                var success = await StreamProcessor.OpenConnection(new Uri(location.Url)).ConfigureAwait(false);
                 if (!success)
                 {
                     AvContent = null;
@@ -85,7 +85,7 @@ namespace Kazyx.Uwpmm.CameraControl
 
             try
             {
-                await AvContent.StopStreamingAsync();
+                await AvContent.StopStreamingAsync().ConfigureAwait(false);
             }
             catch (Exception)
             {
@@ -103,7 +103,7 @@ namespace Kazyx.Uwpmm.CameraControl
             {
                 try
                 {
-                    var status = await AvContent.RequestToNotifyStreamingStatusAsync(new LongPollingFlag { ForLongPolling = polling });
+                    var status = await AvContent.RequestToNotifyStreamingStatusAsync(new LongPollingFlag { ForLongPolling = polling }).ConfigureAwait(false);
                     OnStatusChanged(status);
                     RunLoop();
                 }

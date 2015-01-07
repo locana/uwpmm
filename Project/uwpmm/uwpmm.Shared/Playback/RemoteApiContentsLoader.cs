@@ -4,6 +4,7 @@ using Kazyx.Uwpmm.DataModel;
 using Kazyx.Uwpmm.Utility;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -55,28 +56,14 @@ namespace Kazyx.Uwpmm.Playback
         /// <returns></returns>
         private async Task<bool> IsStorageSupportedAsync()
         {
-            var schemes = await AvContentApi.GetSchemeListAsync();
-            foreach (var scheme in schemes)
-            {
-                if (scheme.Scheme == Scheme.Storage)
-                {
-                    DebugUtil.Log("Storage scheme is supported");
-                    return true;
-                }
-            }
-            DebugUtil.Log("Storage scheme is NOT supported");
-            return false;
+            var schemes = await AvContentApi.GetSchemeListAsync().ConfigureAwait(false);
+            return schemes.Any(scheme => scheme.Scheme == Scheme.Storage);
         }
 
         private async Task<IList<string>> GetStoragesUriAsync()
         {
             var sources = await AvContentApi.GetSourceListAsync(new UriScheme { Scheme = Scheme.Storage }).ConfigureAwait(false);
-            var list = new List<string>(sources.Count);
-            foreach (var source in sources)
-            {
-                list.Add(source.Source);
-            }
-            return list;
+            return sources.Select(source => source.Source).ToList();
         }
 
         private async Task GetContentsByDateSeparatelyAsync(string uri, CancellationTokenSource cancel)
@@ -84,10 +71,10 @@ namespace Kazyx.Uwpmm.Playback
             DebugUtil.Log("Loading number of Dates");
 
             var count = await AvContentApi.GetContentCountAsync(new CountingTarget
-            {
-                Grouping = ContentGroupingMode.Date,
-                Uri = uri,
-            }).ConfigureAwait(false);
+                {
+                    Grouping = ContentGroupingMode.Date,
+                    Uri = uri,
+                }).ConfigureAwait(false);
 
             DebugUtil.Log(count.NumOfContents + " dates exist.");
 
@@ -122,23 +109,17 @@ namespace Kazyx.Uwpmm.Playback
             DebugUtil.Log("Loading DateList: " + uri + " from " + startFrom);
 
             var contents = await AvContentApi.GetContentListAsync(new ContentListTarget
-            {
-                Sorting = SortMode.Descending,
-                Grouping = ContentGroupingMode.Date,
-                Uri = uri,
-                StartIndex = startFrom,
-                MaxContents = count
-            }).ConfigureAwait(false);
-
-            var list = new List<DateInfo>();
-            foreach (var content in contents)
-            {
-                if (content.IsFolder == TextBoolean.True)
                 {
-                    list.Add(new DateInfo { Title = content.Title, Uri = content.Uri });
-                }
-            }
-            return list;
+                    Sorting = SortMode.Descending,
+                    Grouping = ContentGroupingMode.Date,
+                    Uri = uri,
+                    StartIndex = startFrom,
+                    MaxContents = count
+                }).ConfigureAwait(false);
+
+            return contents.Where(content => content.IsFolder == TextBoolean.True)
+                .Select(content => new DateInfo { Title = content.Title, Uri = content.Uri })
+                .ToList();
         }
 
         private async Task GetContentsOfDaySeparatelyAsync(DateInfo date, bool includeMovies, CancellationTokenSource cancel)
@@ -146,10 +127,10 @@ namespace Kazyx.Uwpmm.Playback
             DebugUtil.Log("Loading: " + date.Title);
 
             var count = await AvContentApi.GetContentCountAsync(new CountingTarget
-            {
-                Grouping = ContentGroupingMode.Date,
-                Uri = date.Uri,
-            }).ConfigureAwait(false);
+                {
+                    Grouping = ContentGroupingMode.Date,
+                    Uri = date.Uri,
+                }).ConfigureAwait(false);
 
             DebugUtil.Log(count.NumOfContents + " contents exist.");
 
@@ -166,13 +147,7 @@ namespace Kazyx.Uwpmm.Playback
                 }
 
                 DebugUtil.Log(contents.Count + " contents fetched");
-                var list = new List<Thumbnail>();
-                foreach (var content in contents)
-                {
-                    list.Add(new Thumbnail(content, Udn));
-                }
-
-                OnPartLoaded(list);
+                OnPartLoaded(contents.Select(content => new Thumbnail(content, Udn)).ToList());
             }
         }
 
@@ -189,52 +164,47 @@ namespace Kazyx.Uwpmm.Playback
             }
 
             var contents = await AvContentApi.GetContentListAsync(new ContentListTarget
-            {
-                Sorting = SortMode.Ascending,
-                Grouping = ContentGroupingMode.Date,
-                Uri = date.Uri,
-                Types = types,
-                StartIndex = startFrom,
-                MaxContents = count
-            }).ConfigureAwait(false);
-
-            var list = new List<ContentInfo>();
-            foreach (var content in contents)
-            {
-                if (content.ImageContent != null
-                    && content.ImageContent.OriginalContents != null
-                    && content.ImageContent.OriginalContents.Count > 0)
                 {
-                    var contentInfo = new RemoteApiContentInfo
-                    {
-                        Name = RemoveExtension(content.ImageContent.OriginalContents[0].FileName),
-                        LargeUrl = content.ImageContent.LargeImageUrl,
-                        ThumbnailUrl = content.ImageContent.ThumbnailUrl,
-                        ContentType = content.ContentKind,
-                        Uri = content.Uri,
-                        CreatedTime = content.CreatedTime,
-                        Protected = content.IsProtected == TextBoolean.True,
-                        RemotePlaybackAvailable = (content.RemotePlayTypes != null && content.RemotePlayTypes.Contains(RemotePlayMode.SimpleStreaming)),
-                        GroupName = date.Title,
-                    };
+                    Sorting = SortMode.Ascending,
+                    Grouping = ContentGroupingMode.Date,
+                    Uri = date.Uri,
+                    Types = types,
+                    StartIndex = startFrom,
+                    MaxContents = count
+                }).ConfigureAwait(false);
 
-                    if (content.ContentKind == ContentKind.StillImage)
+            return contents.Where(content => content.ImageContent != null
+                        && content.ImageContent.OriginalContents != null
+                        && content.ImageContent.OriginalContents.Count > 0)
+                    .Select(content =>
                     {
-                        foreach (var original in content.ImageContent.OriginalContents)
+                        var contentInfo = new RemoteApiContentInfo
                         {
-                            if (original.Type == ImageType.Jpeg)
+                            Name = RemoveExtension(content.ImageContent.OriginalContents[0].FileName),
+                            LargeUrl = content.ImageContent.LargeImageUrl,
+                            ThumbnailUrl = content.ImageContent.ThumbnailUrl,
+                            ContentType = content.ContentKind,
+                            Uri = content.Uri,
+                            CreatedTime = content.CreatedTime,
+                            Protected = content.IsProtected == TextBoolean.True,
+                            RemotePlaybackAvailable = (content.RemotePlayTypes != null && content.RemotePlayTypes.Contains(RemotePlayMode.SimpleStreaming)),
+                            GroupName = date.Title,
+                        };
+
+                        if (content.ContentKind == ContentKind.StillImage)
+                        {
+                            foreach (var original in content.ImageContent.OriginalContents)
                             {
-                                contentInfo.OriginalUrl = original.Url;
-                                break;
+                                if (original.Type == ImageType.Jpeg)
+                                {
+                                    contentInfo.OriginalUrl = original.Url;
+                                    break;
+                                }
                             }
                         }
-                    }
-
-                    list.Add(contentInfo);
-                }
-            }
-
-            return list;
+                        return contentInfo;
+                    })
+                    .ToList<ContentInfo>();
         }
 
         private static string RemoveExtension(string name)

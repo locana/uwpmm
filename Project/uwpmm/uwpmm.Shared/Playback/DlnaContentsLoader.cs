@@ -3,6 +3,7 @@ using Kazyx.Uwpmm.DataModel;
 using Kazyx.Uwpmm.UPnP;
 using Kazyx.Uwpmm.UPnP.ContentDirectory;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -54,16 +55,9 @@ namespace Kazyx.Uwpmm.Playback
 
         private IList<Thumbnail> Translate(IList<Item> source)
         {
-            var list = new List<Thumbnail>();
-            foreach (var item in source)
-            {
-                var content = Translate(item);
-                if (content != null)
-                {
-                    list.Add(new Thumbnail(content, UpnpDevice.UDN));
-                }
-            }
-            return list;
+            return source.Where(item => item.Resources.Count != null)
+                .Select(item => new Thumbnail(Translate(item), UpnpDevice.UDN))
+                .ToList();
         }
 
         private static DlnaContentInfo Translate(Item source)
@@ -89,16 +83,12 @@ namespace Kazyx.Uwpmm.Playback
 
         private static Resource GetLargeImageResource(Item item)
         {
-            foreach (var res in item.Resources)
+            var matched = item.Resources
+                .FirstOrDefault(res => res.ProtocolInfo != null && res.ProtocolInfo.MimeType == "image/jpeg" && res.ProtocolInfo.DlnaProfileName == DlnaProfileName.JpegLarge);
+
+            if (matched != null)
             {
-                if (res.ProtocolInfo == null)
-                {
-                    continue;
-                }
-                if (res.ProtocolInfo.MimeType == "image/jpeg" && res.ProtocolInfo.DlnaProfileName == DlnaProfileName.JpegLarge)
-                {
-                    return res;
-                }
+                return matched;
             }
 
             if (item.Class == Class.ImageItem)
@@ -110,16 +100,12 @@ namespace Kazyx.Uwpmm.Playback
 
         private static Resource GetOriginalImageResource(Item item)
         {
-            foreach (var res in item.Resources)
+            var matched = item.Resources
+                .FirstOrDefault(res => res.ProtocolInfo != null && res.ProtocolInfo.MimeType == "image/jpeg" && res.ProtocolInfo.IsOriginalContent);
+
+            if (matched != null)
             {
-                if (res.ProtocolInfo == null)
-                {
-                    continue;
-                }
-                if (res.ProtocolInfo.MimeType == "image/jpeg" && res.ProtocolInfo.IsOriginalContent)
-                {
-                    return res;
-                }
+                return matched;
             }
 
             if (item.Class == Class.ImageItem)

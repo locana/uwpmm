@@ -1,32 +1,36 @@
 ﻿using Kazyx.RemoteApi;
 using Kazyx.Uwpmm.CameraControl;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Kazyx.Uwpmm.DataModel
 {
     public class ApiCapabilityContainer : ObservableBase
     {
-        private readonly Dictionary<string, List<string>> _SupportedApis = new Dictionary<string, List<string>>();
+        private readonly Dictionary<string, IList<string>> _SupportedApis = new Dictionary<string, IList<string>>();
 
         /// <summary>
         /// API name and versions
         /// </summary>
-        public Dictionary<string, List<string>> SupportedApis
+        public Dictionary<string, IList<string>> SupportedApis
         {
             get { return _SupportedApis; }
         }
 
-        public void AddSupported(MethodType method)
+        public void AddSupported(IList<MethodType> methods)
         {
-            if (SupportedApis.ContainsKey(method.Name))
+            foreach (var method in methods)
             {
-                SupportedApis[method.Name].Add(method.Version);
-            }
-            else
-            {
-                var list = new List<string>();
-                list.Add(method.Version);
-                SupportedApis.Add(method.Name, list);
+                if (SupportedApis.ContainsKey(method.Name))
+                {
+                    SupportedApis[method.Name].Add(method.Version);
+                }
+                else
+                {
+                    var list = new List<string>();
+                    list.Add(method.Version);
+                    SupportedApis.Add(method.Name, list);
+                }
             }
             NotifyChanged("SupportedApis");
         }
@@ -80,14 +84,7 @@ namespace Kazyx.Uwpmm.DataModel
 
         public bool IsRestrictedApi(string apiName)
         {
-            foreach (var api in RestrictedApiSet)
-            {
-                if (apiName == api)
-                {
-                    return true;
-                }
-            }
-            return false;
+            return RestrictedApiSet.Any(name => name == apiName);
         }
 
         private List<string> _AvailableApis;

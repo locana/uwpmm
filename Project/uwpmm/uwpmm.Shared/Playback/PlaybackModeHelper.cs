@@ -95,22 +95,22 @@ namespace Kazyx.Uwpmm.Playback
         public static async Task<string> PrepareMovieStreamingAsync(AvContentApiClient av, string contentUri)
         {
             var uri = await av.SetStreamingContentAsync(new PlaybackContent
-            {
-                Uri = contentUri,
-                RemotePlayType = RemotePlayMode.SimpleStreaming
-            }).ConfigureAwait(false);
+                {
+                    Uri = contentUri,
+                    RemotePlayType = RemotePlayMode.SimpleStreaming
+                }).ConfigureAwait(false);
             await av.StartStreamingAsync().ConfigureAwait(false);
             return uri.Url;
         }
 
         public static async Task PauseMovieStreamingAsync(AvContentApiClient av, MoviePlaybackData status)
         {
-            await av.PauseStreamingAsync();
+            await av.PauseStreamingAsync().ConfigureAwait(false);
         }
 
         public static async Task StartMovieStreamingASync(AvContentApiClient av, MoviePlaybackData status)
         {
-            await av.StartStreamingAsync();
+            await av.StartStreamingAsync().ConfigureAwait(false);
         }
 
         public static async Task SeekMovieStreamingAsync(AvContentApiClient av, MoviePlaybackData status, TimeSpan seekTarget)
@@ -121,14 +121,14 @@ namespace Kazyx.Uwpmm.Playback
 
             if (status.StreamingStatus == StreamStatus.Started)
             {
-                await PauseMovieStreamingAsync(av, status);
+                await PauseMovieStreamingAsync(av, status).ConfigureAwait(false);
             }
 
-            await av.SeekStreamingPositionAsync(new PlaybackPosition() { PositionMSec = (int)seekTarget.TotalMilliseconds });
+            await av.SeekStreamingPositionAsync(new PlaybackPosition() { PositionMSec = (int)seekTarget.TotalMilliseconds }).ConfigureAwait(false);
 
             if (originalStatus == StreamStatus.Started || originalStatus == StreamStatus.PausedByEdge)
             {
-                await StartMovieStreamingASync(av, status);
+                await StartMovieStreamingASync(av, status).ConfigureAwait(false);
             }
         }
     }

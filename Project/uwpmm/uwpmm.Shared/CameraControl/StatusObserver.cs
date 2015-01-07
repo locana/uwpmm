@@ -4,6 +4,7 @@ using Kazyx.Uwpmm.DataModel;
 using Kazyx.Uwpmm.Utility;
 using System;
 using System.Collections.Generic;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Kazyx.Uwpmm.CameraControl
@@ -52,7 +53,7 @@ namespace Kazyx.Uwpmm.CameraControl
             else { version = ApiVersion.V1_0; }
 
             failure_count = 0;
-            if (!await Refresh())
+            if (!await Refresh().ConfigureAwait(false))
             {
                 DebugUtil.Log("StatusObserver: Failed to start");
                 return false;
@@ -74,7 +75,7 @@ namespace Kazyx.Uwpmm.CameraControl
             DebugUtil.Log("StatusObserver: Refresh");
             try
             {
-                await Update(await api.Camera.GetEventAsync(false, version));
+                await Update(await api.Camera.GetEventAsync(false, version)).ConfigureAwait(false);
             }
             catch (RemoteApiException e)
             {
@@ -138,7 +139,7 @@ namespace Kazyx.Uwpmm.CameraControl
                 {
                     try
                     {
-                        var size = await api.Camera.GetAvailableStillSizeAsync();
+                        var size = await api.Camera.GetAvailableStillSizeAsync().ConfigureAwait(false);
                         size.Candidates.Sort(CompareStillSize);
                         target.StillImageSize = size;
                     }
@@ -160,7 +161,7 @@ namespace Kazyx.Uwpmm.CameraControl
                 {
                     try
                     {
-                        var wb = await api.Camera.GetAvailableWhiteBalanceAsync();
+                        var wb = await api.Camera.GetAvailableWhiteBalanceAsync().ConfigureAwait(false);
                         var candidates = new List<string>();
                         var tmpCandidates = new Dictionary<string, int[]>();
                         foreach (var mode in wb.Candidates)
@@ -176,7 +177,7 @@ namespace Kazyx.Uwpmm.CameraControl
                             }
                             tmpCandidates.Add(mode.WhiteBalanceMode, tmpList.ToArray());
 
-                            var builder = new System.Text.StringBuilder();
+                            var builder = new StringBuilder();
                             foreach (var val in mode.Candidates)
                             {
                                 builder.Append(val).Append(", ");
@@ -212,7 +213,7 @@ namespace Kazyx.Uwpmm.CameraControl
 
             try
             {
-                OnSuccess(await api.Camera.GetEventAsync(true, version));
+                OnSuccess(await api.Camera.GetEventAsync(true, version).ConfigureAwait(false));
             }
             catch (RemoteApiException e)
             {
@@ -223,7 +224,7 @@ namespace Kazyx.Uwpmm.CameraControl
         private async void OnSuccess(Event @event)
         {
             failure_count = 0;
-            await Update(@event);
+            await Update(@event).ConfigureAwait(false);
             PollingLoop();
         }
 
@@ -243,7 +244,7 @@ namespace Kazyx.Uwpmm.CameraControl
                     if (failure_count++ < RETRY_LIMIT)
                     {
                         DebugUtil.Log("GetEvent failed - retry " + failure_count + ", status: " + code);
-                        await Task.Delay(TimeSpan.FromSeconds(RETRY_INTERVAL_SEC));
+                        await Task.Delay(TimeSpan.FromSeconds(RETRY_INTERVAL_SEC)).ConfigureAwait(false);
                         PollingLoop();
                         return;
                     }
