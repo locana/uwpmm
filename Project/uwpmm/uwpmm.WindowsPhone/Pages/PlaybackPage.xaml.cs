@@ -26,6 +26,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 
@@ -144,26 +145,31 @@ namespace Kazyx.Uwpmm.Pages
 
             MovieScreen.SeekOperated += async (sender, arg) =>
             {
+                ChangeProgressText(SystemUtil.GetStringResource("ProgressBar_Processing"));
                 try
                 {
                     await PlaybackModeHelper.SeekMovieStreamingAsync(TargetDevice.Api.AvContent, MovieStreamHelper.INSTANCE.MoviePlaybackData, arg.SeekPosition);
                 }
                 catch (RemoteApi.RemoteApiException) { }
+                HideProgress();
             };
             MovieScreen.OnPlaybackOperationRequested += async (sender, arg) =>
             {
+               
                 try
                 {
                     switch (arg.Request)
                     {
                         case PlaybackRequest.Start:
+                            ChangeProgressText(SystemUtil.GetStringResource("ProgressBar_Processing"));
                             await TargetDevice.Api.AvContent.StartStreamingAsync();
                             break;
                         case PlaybackRequest.Pause:
+                            ChangeProgressText(SystemUtil.GetStringResource("ProgressBar_Processing"));
                             await TargetDevice.Api.AvContent.PauseStreamingAsync();
                             break;
-
                     }
+                    HideProgress();
                 }
                 catch (RemoteApiException ex) { DebugUtil.Log(ex.StackTrace); }
             };
@@ -239,6 +245,8 @@ namespace Kazyx.Uwpmm.Pages
                 this.navigationHelper.GoBack();
                 return;
             }
+            ChangeProgressText("processing.");
+
 
             UpdateInnerState(ViewerState.LocalSingle);
 
@@ -257,6 +265,8 @@ namespace Kazyx.Uwpmm.Pages
             SetStillDetailVisibility(false);
 
             LoadLocalContents();
+
+
 
             PictureDownloader.Instance.Failed += OnDLError;
             PictureDownloader.Instance.Fetched += OnFetched;
@@ -820,7 +830,7 @@ namespace Kazyx.Uwpmm.Pages
         {
             await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
             {
-                await statusBar.HideAsync();
+                await statusBar.ProgressIndicator.HideAsync();
             });
         }
 
@@ -829,8 +839,9 @@ namespace Kazyx.Uwpmm.Pages
             DebugUtil.Log(text);
             await Dispatcher.RunAsync(CoreDispatcherPriority.High, async () =>
             {
+                statusBar.ProgressIndicator.ProgressValue = null;
                 statusBar.ProgressIndicator.Text = text;
-                await statusBar.ShowAsync();
+                await statusBar.ProgressIndicator.ShowAsync();
             });
         }
 

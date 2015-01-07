@@ -248,13 +248,13 @@
                 </Grid>
             </PivotItem>
         </Pivot>
-        <Border x:Name="HeaderBlocker" Height="56" VerticalAlignment="Top"
+        <Border x:Name="HeaderBlocker" Height="56" VerticalAlignment="Top" Visibility="Collapsed"
                 Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
             <TextBlock x:Name="HeaderBlockerText" VerticalAlignment="Bottom"
                        Style="{StaticResource SubheaderTextBlockStyle}" Margin="18,0,0,2" />
         </Border>
 
-        <control:PhotoPlaybackScreen x:Name="PhotoScreen" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0"/>
+        <control:PhotoPlaybackScreen x:Name="PhotoScreen" Margin="0"/>
 
         <Border x:Name="MovieDrawer" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="Collapsed">            
             <control:MoviePlaybackScreen x:Name="MovieScreen" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="12" 

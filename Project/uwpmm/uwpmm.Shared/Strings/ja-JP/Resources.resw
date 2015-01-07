@@ -995,4 +995,7 @@ PlayMemories Camera Appsストアで最新版にアップデートしてくだ�
   <data name="Message_ContinuousShootingGuide" xml:space="preserve">
     <value>連写するにはボタンを長押しするか本体のシャッターキーを使用してください</value>
   </data>
+  <data name="ProgressBar_Processing" xml:space="preserve">
+    <value>処理中...</value>
+  </data>
 </root>

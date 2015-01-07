@@ -1073,4 +1073,7 @@ Please update to the latest at PlayMemories Camera Apps store.</value>
   <data name="Message_ContinuousShootingGuide" xml:space="preserve">
     <value>Long press the button or use hardware shutter button to operate continuous shooting.</value>
   </data>
+  <data name="ProgressBar_Processing" xml:space="preserve">
+    <value>Processing...</value>
+  </data>
 </root>

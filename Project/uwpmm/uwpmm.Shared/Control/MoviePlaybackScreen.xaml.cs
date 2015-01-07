@@ -210,7 +210,7 @@ namespace Kazyx.Uwpmm.Control
         {
             if (OnPlaybackOperationRequested != null)
             {
-                var r = PlaybackRequest.Start;
+                var r = PlaybackRequest.None;
                 switch (this.PlaybackStatus)
                 {
                     case StreamStatus.Paused:
@@ -223,7 +223,10 @@ namespace Kazyx.Uwpmm.Control
                         r = PlaybackRequest.Start;
                         break;
                 }
-                OnPlaybackOperationRequested(this, new PlaybackRequestArgs() { Request = r });
+                if (r != PlaybackRequest.None)
+                {
+                    OnPlaybackOperationRequested(this, new PlaybackRequestArgs() { Request = r });
+                }
             }
         }
     }
@@ -240,6 +243,7 @@ namespace Kazyx.Uwpmm.Control
 
     public enum PlaybackRequest
     {
+        None,
         Start,
         Pause,
     }
