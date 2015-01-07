@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Linq;
 using System.Xml.Linq;
 
 namespace Kazyx.Uwpmm.UPnP
@@ -18,28 +18,23 @@ namespace Kazyx.Uwpmm.UPnP
             var fn = device.Element(NS_UPNP + "friendlyName").Value;
             var mn = device.Element(NS_UPNP + "modelName").Value;
 
-            var result = new Dictionary<string, UpnpService>();
-            foreach (var service in services.Elements())
-            {
-                var key = service.Element(NS_UPNP + "serviceType").Value;
-                result.Add(key, new UpnpService
-                {
-                    RootAddress = rootAddress,
-                    ServiceType = key,
-                    ServiceId = service.Element(NS_UPNP + "serviceId").Value,
-                    ScpdUrl = service.Element(NS_UPNP + "SCPDURL").Value,
-                    ControlUrl = service.Element(NS_UPNP + "controlURL").Value,
-                    EventSubUrl = service.Element(NS_UPNP + "eventSubURL").Value,
-                });
-            }
-
             return new UpnpDevice
             {
                 RootAddress = rootAddress,
                 FriendlyName = fn,
                 ModelName = mn,
                 UDN = udn,
-                Services = result
+                Services = services.Elements()
+                    .Select(service => new UpnpService
+                    {
+                        RootAddress = rootAddress,
+                        ServiceType = service.Element(NS_UPNP + "serviceType").Value,
+                        ServiceId = service.Element(NS_UPNP + "serviceId").Value,
+                        ScpdUrl = service.Element(NS_UPNP + "SCPDURL").Value,
+                        ControlUrl = service.Element(NS_UPNP + "controlURL").Value,
+                        EventSubUrl = service.Element(NS_UPNP + "eventSubURL").Value,
+                    })
+                    .ToDictionary(upnp => upnp.ServiceType)
             };
         }
 

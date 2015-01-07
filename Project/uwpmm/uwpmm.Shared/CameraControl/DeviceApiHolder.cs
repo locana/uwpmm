@@ -6,6 +6,7 @@ using Kazyx.Uwpmm.DataModel;
 using Kazyx.Uwpmm.Utility;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Kazyx.Uwpmm.CameraControl
@@ -88,28 +89,18 @@ namespace Kazyx.Uwpmm.CameraControl
         {
             if (Camera != null)
             {
-                foreach (var method in await Camera.GetMethodTypesAsync())
-                {
-                    if (method.Name == "setFocusMode" && ProductType == ProductType.DSC_QX10)
-                    {
-                        continue; // DSC-QX10 firmware v3.00 has a bug in the response of getMethodTypes
-                    }
-                    Capability.AddSupported(method);
-                }
+                // DSC-QX10 firmware v3.00 has a bug in the response of getMethodTypes
+                var methods = (await Camera.GetMethodTypesAsync().ConfigureAwait(false))
+                    .Where(method => (method.Name != "setFocusMode" && ProductType == ProductType.DSC_QX10)).ToList();
+                Capability.AddSupported(methods);
             }
             if (System != null)
             {
-                foreach (var method in await System.GetMethodTypesAsync())
-                {
-                    Capability.AddSupported(method);
-                }
+                Capability.AddSupported(await System.GetMethodTypesAsync().ConfigureAwait(false));
             }
             if (AvContent != null)
             {
-                foreach (var method in await AvContent.GetMethodTypesAsync())
-                {
-                    Capability.AddSupported(method);
-                }
+                Capability.AddSupported(await AvContent.GetMethodTypesAsync().ConfigureAwait(false));
             }
 
             if (SupportedApisUpdated != null)
@@ -142,14 +133,14 @@ namespace Kazyx.Uwpmm.CameraControl
 
     public class SupportedApiEventArgs : EventArgs
     {
-        private readonly Dictionary<string, List<string>> apis;
+        private readonly Dictionary<string, IList<string>> apis;
 
-        internal SupportedApiEventArgs(Dictionary<string, List<string>> apis)
+        internal SupportedApiEventArgs(Dictionary<string, IList<string>> apis)
         {
             this.apis = apis;
         }
 
-        public Dictionary<string, List<string>> SupportedApis
+        public Dictionary<string, IList<string>> SupportedApis
         {
             get { return apis; }
         }
@@ -172,14 +163,14 @@ namespace Kazyx.Uwpmm.CameraControl
 
     public class AvailableApiEventArgs : EventArgs
     {
-        private readonly List<string> apis;
+        private readonly IList<string> apis;
 
-        internal AvailableApiEventArgs(List<string> apis)
+        internal AvailableApiEventArgs(IList<string> apis)
         {
             this.apis = apis;
         }
 
-        public List<string> AvailableApis
+        public IList<string> AvailableApis
         {
             get { return apis; }
         }

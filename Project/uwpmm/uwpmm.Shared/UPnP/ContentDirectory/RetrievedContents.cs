@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System.Linq;
 using System.Xml.Linq;
 
 namespace Kazyx.Uwpmm.UPnP.ContentDirectory
@@ -22,10 +22,8 @@ namespace Kazyx.Uwpmm.UPnP.ContentDirectory
             var total = int.Parse(response.Element("TotalMatches").Value);
             var updateId = response.Element("UpdateID").Value;
 
-            var containers = new List<Container>();
-            foreach (var element in root.Elements(NS_DIDL + "container"))
-            {
-                var container = new Container
+            var containers = root.Elements(NS_DIDL + "container")
+                .Select(element => new Container
                 {
                     Id = element.Attribute("id").Value,
                     ParentId = element.Attribute("parentID").Value,
@@ -34,30 +32,10 @@ namespace Kazyx.Uwpmm.UPnP.ContentDirectory
                     Restricted = BoolConversionHelper.Parse(element.Attribute("restricted")),
                     ChildCount = (int?)element.Attribute("childCount"),
                     WriteStatus = (string)element.Element(NS_DIDL + "writeStatus"),
-                };
-                containers.Add(container);
-            }
+                }).ToList();
 
-            var items = new List<Item>();
-            foreach (var element in root.Elements(NS_DIDL + "item"))
-            {
-                var list = new List<Resource>();
-                var resources = element.Elements(NS_DIDL + "res");
-                foreach (var res in resources)
-                {
-                    var protocol = (string)res.Attribute("protocolInfo");
-                    var resolution = (string)res.Attribute("resolution");
-                    var size = (long?)res.Attribute("size");
-                    list.Add(new Resource
-                    {
-                        ProtocolInfo = ProtocolInfo.Parse(res.Attribute("protocolInfo")),
-                        Resolution = (string)res.Attribute("resolution"),
-                        SizeInByte = (long?)res.Attribute("size"),
-                        ResourceUrl = (string)res.Value,
-                    });
-                }
-
-                var item = new Item
+            var items = root.Elements(NS_DIDL + "item")
+                .Select(element => new Item
                 {
                     Id = element.Attribute("id").Value,
                     ParentId = element.Attribute("parentID").Value,
@@ -65,12 +43,16 @@ namespace Kazyx.Uwpmm.UPnP.ContentDirectory
                     Class = element.Element(NS_UPNP + "class").Value,
                     Restricted = BoolConversionHelper.Parse(element.Attribute("restricted")),
                     WriteStatus = (string)element.Element(NS_DIDL + "writeStatus"),
-                    Resources = list,
+                    Resources = element.Elements(NS_DIDL + "res").Select(res => new Resource
+                    {
+                        ProtocolInfo = ProtocolInfo.Parse(res.Attribute("protocolInfo")),
+                        Resolution = (string)res.Attribute("resolution"),
+                        SizeInByte = (long?)res.Attribute("size"),
+                        ResourceUrl = (string)res.Value,
+                    }).ToList(),
                     Date = (string)element.Element(NS_DC + "date"),
                     Genre = (string)element.Element(NS_UPNP + "upnp"),
-                };
-                items.Add(item);
-            }
+                }).ToList();
 
             return new RetrievedContents
             {

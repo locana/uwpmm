@@ -3,6 +3,7 @@ using Kazyx.Uwpmm.DataModel;
 using Kazyx.Uwpmm.Utility;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.Storage;
@@ -46,23 +47,17 @@ namespace Kazyx.Uwpmm.Playback
                 return;
             }
 
-            var thumbs = new List<Thumbnail>();
-            foreach (var file in list)
-            {
-                var content = new ContentInfo
+            var thumbs = list.Select(file =>
                 {
-                    Protected = false,
-                    ContentType = ContentKind.StillImage,
-                    GroupName = folder.DisplayName,
-                };
-                var thumb = new Thumbnail(content, file);
-
-                SingleContentLoaded.Raise(this, new SingleContentEventArgs { File = thumb });
-                thumbs.Add(thumb);
-            }
+                    var thumb = new Thumbnail(new ContentInfo { Protected = false, ContentType = ContentKind.StillImage, GroupName = folder.DisplayName, }, file);
+                    SingleContentLoaded.Raise(this, new SingleContentEventArgs { File = thumb });
+                    return thumb;
+                }).ToList();
 
             OnPartLoaded(thumbs);
         }
+
+        readonly string[] IMAGE_MIME_TYPES = { "image/jpeg", "image/png", "image/bmp", "image/gif" };
 
         private async Task LoadPicturesRecursively(List<StorageFile> into, StorageFolder folder, CancellationTokenSource cancel)
         {
@@ -73,20 +68,7 @@ namespace Kazyx.Uwpmm.Playback
                 return;
             }
 
-            foreach (var file in files)
-            {
-                switch (file.ContentType)
-                {
-                    case "image/jpeg":
-                    case "image/png":
-                    case "image/bmp":
-                    case "image/gif":
-                        into.Add(file);
-                        break;
-                    default:
-                        break;
-                }
-            }
+            into.AddRange(files.Where(file => IMAGE_MIME_TYPES.Any(type => file.ContentType.Equals(type, StringComparison.OrdinalIgnoreCase))));
 
             foreach (var child in await folder.GetFoldersAsync())
             {
