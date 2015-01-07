@@ -186,6 +186,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)Common\RelayCommand.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\SuspensionManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\ObservableDictionary.cs" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\PlaybackScreen\playback_paused.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\PlaybackScreen\playback_playing.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\PlaybackScreen\playback_stopped.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\Screen\audio_locana.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\Screen\ExposureMode_A.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\Screen\ExposureMode_iA.png" />

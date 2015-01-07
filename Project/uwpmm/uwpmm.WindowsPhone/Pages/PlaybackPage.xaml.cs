@@ -1,4 +1,5 @@
-﻿using Kazyx.RemoteApi.AvContent;
+﻿using Kazyx.RemoteApi;
+using Kazyx.RemoteApi.AvContent;
 using Kazyx.RemoteApi.Camera;
 using Kazyx.Uwpmm.CameraControl;
 using Kazyx.Uwpmm.Common;
@@ -148,6 +149,23 @@ namespace Kazyx.Uwpmm.Pages
                     await PlaybackModeHelper.SeekMovieStreamingAsync(TargetDevice.Api.AvContent, MovieStreamHelper.INSTANCE.MoviePlaybackData, arg.SeekPosition);
                 }
                 catch (RemoteApi.RemoteApiException) { }
+            };
+            MovieScreen.OnPlaybackOperationRequested += async (sender, arg) =>
+            {
+                try
+                {
+                    switch (arg.Request)
+                    {
+                        case PlaybackRequest.Start:
+                            await TargetDevice.Api.AvContent.StartStreamingAsync();
+                            break;
+                        case PlaybackRequest.Pause:
+                            await TargetDevice.Api.AvContent.PauseStreamingAsync();
+                            break;
+
+                    }
+                }
+                catch (RemoteApiException ex) { DebugUtil.Log(ex.StackTrace); }
             };
         }
 

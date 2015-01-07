@@ -258,7 +258,8 @@
 
         <Border x:Name="MovieDrawer" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="Collapsed">            
             <control:MoviePlaybackScreen x:Name="MovieScreen" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="12" 
-                                         CurrentPosition="{Binding CurrentPosition}" Duration="{Binding Duration}" SeekAvailable="{Binding SeekAvailable}"/>           
+                                         CurrentPosition="{Binding CurrentPosition}" Duration="{Binding Duration}" SeekAvailable="{Binding SeekAvailable}"
+                                         PlaybackStatus="{Binding StreamingStatus}"/>           
         </Border>
 
         <Grid Name="AppSettingPanel" Visibility="Collapsed"

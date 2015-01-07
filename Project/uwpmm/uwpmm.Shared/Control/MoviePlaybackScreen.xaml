@@ -15,7 +15,8 @@
             <RowDefinition Height="auto"/>
             <RowDefinition Height="30"/>
         </Grid.RowDefinitions>
-        <Image Grid.Row="0" Name="Screen" Source="{Binding Image}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+        <Image Grid.Row="0" Name="Screen" Source="{Binding Image}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Tapped="Screen_Tapped"/>
+        <Image x:Name="PlaybackStatusIcon" HorizontalAlignment="Left" VerticalAlignment="Top" Width="30" Height="30" Visibility="Collapsed"/>
         <ProgressBar Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" Name="ProgressBar" Minimum="0.0" Maximum="1000" Margin="3,6" Height="4"/>
         <Slider Grid.Row="1"  HorizontalAlignment="Stretch" VerticalAlignment="Center" Name="SeekBar" Visibility="Collapsed" Margin="3,6" Height="30"
                 Minimum="0.0" Maximum="1000" />
