@@ -41,6 +41,7 @@
                                        Style="{StaticResource BaseTextBlockStyle}"  />
                             <TextBlock Name="NfcAvailable" Text="{Binding [Guide_NFC], Source={StaticResource LocalizedStrings}}"
                                        Visibility="Collapsed" Style="{ThemeResource BaseTextBlockStyle}" TextWrapping="WrapWholeWords" />
+                            <TextBox x:Name="WifiPassword" Margin="60,30" Visibility="Collapsed" TextAlignment="Center" BorderThickness="1" IsReadOnly="True" />
                         </StackPanel>
                     </Grid>
                 </PivotItem>

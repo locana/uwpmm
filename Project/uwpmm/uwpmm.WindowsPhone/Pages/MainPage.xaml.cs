@@ -315,6 +315,9 @@ namespace Kazyx.Uwpmm.Pages
             ShutterButtonWrapper.DataContext = ApplicationSettings.GetInstance();
             InitializeAppSettingPanel();
             FramingGuideSurface.DataContext = ApplicationSettings.GetInstance();
+            NfcAvailable.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+            WifiPassword.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+            WifiPassword.Text = "";
         }
 
         private void CreateEntranceAppBar()
@@ -1009,8 +1012,9 @@ namespace Kazyx.Uwpmm.Pages
                     {
                         await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
                         {
-                            // TODO: find any easy way to connect the camera
-                            // Clipboard.SetText(r.Password);
+                            WifiPassword.Text = r.Password;
+                            WifiPassword.Visibility = Windows.UI.Xaml.Visibility.Visible;
+
                             var sb = new StringBuilder();
                             sb.Append(SystemUtil.GetStringResource("Message_NFC_succeed"));
                             sb.Append(System.Environment.NewLine);

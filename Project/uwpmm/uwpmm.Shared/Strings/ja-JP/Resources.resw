@@ -652,7 +652,7 @@ PlayMemories Camera Appsストアで最新版にアップデートしてくだ�
     <value>位置情報を付加してカメラロールに画像を保存しました！</value>
   </data>
   <data name="Message_NFC_succeed" xml:space="preserve">
-    <value>カメラのWi-Fiパスワードをクリップボードに保存しました！</value>
+    <value>カメラのWi-Fiパスワードを読み取りました。コピーしてご利用ください。</value>
   </data>
   <data name="MetaDataName_CameraModel" xml:space="preserve">
     <value>カメラ</value>
