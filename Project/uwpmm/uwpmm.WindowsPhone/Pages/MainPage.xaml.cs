@@ -442,6 +442,7 @@ namespace Kazyx.Uwpmm.Pages
 
         private async void NetworkObserver_CdsDiscovered(object sender, CdServiceEventArgs e)
         {
+            /*
             var type = await e.CdService.LocalAddress.IPInformation.NetworkAdapter.GetConnectedProfileAsync();
             if (!NavigatedByInAppBackTransition && type.IsWlanConnectionProfile)
             {
@@ -456,6 +457,7 @@ namespace Kazyx.Uwpmm.Pages
                     return;
                 }
             }
+             * */
             // TODO
             await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {

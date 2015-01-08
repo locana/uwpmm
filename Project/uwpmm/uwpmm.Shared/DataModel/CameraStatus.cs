@@ -1,7 +1,5 @@
 ﻿using Kazyx.RemoteApi;
 using Kazyx.RemoteApi.Camera;
-using Kazyx.Uwpmm.Utility;
-using System;
 using System.Collections.Generic;
 
 namespace Kazyx.Uwpmm.DataModel
@@ -263,8 +261,11 @@ namespace Kazyx.Uwpmm.DataModel
         {
             set
             {
-                _LiveviewOrientation = value;
-                NotifyChangedOnUI("LiveviewOrientation");
+                if (_LiveviewOrientation != value)
+                {
+                    _LiveviewOrientation = value;
+                    NotifyChangedOnUI("LiveviewOrientation");
+                }
             }
             get { return _LiveviewOrientation == null ? Orientation.Straight : _LiveviewOrientation; }
         }
@@ -285,8 +286,11 @@ namespace Kazyx.Uwpmm.DataModel
         {
             set
             {
-                _ProgramShiftActivated = value;
-                NotifyChangedOnUI("ProgramShiftActivated");
+                if (_ProgramShiftActivated != value)
+                {
+                    _ProgramShiftActivated = value;
+                    NotifyChangedOnUI("ProgramShiftActivated");
+                }
             }
             get { return _ProgramShiftActivated; }
         }
@@ -310,8 +314,11 @@ namespace Kazyx.Uwpmm.DataModel
         {
             set
             {
-                _FocusStatus = value;
-                NotifyChangedOnUI("FocusStatus");
+                if (_FocusStatus != value)
+                {
+                    _FocusStatus = value;
+                    NotifyChangedOnUI("FocusStatus");
+                }
             }
             get { return _FocusStatus; }
         }
@@ -489,8 +496,11 @@ namespace Kazyx.Uwpmm.DataModel
         {
             set
             {
-                _TrackingFocusStatus = value;
-                NotifyChangedOnUI("TrackingFocusStatus");
+                if (_TrackingFocusStatus != value)
+                {
+                    _TrackingFocusStatus = value;
+                    NotifyChangedOnUI("TrackingFocusStatus");
+                }
             }
             get { return _TrackingFocusStatus; }
         }
@@ -522,8 +532,11 @@ namespace Kazyx.Uwpmm.DataModel
         {
             set
             {
-                _RecordingTimeSec = value;
-                NotifyChangedOnUI("RecordingTimeSec");
+                if (_RecordingTimeSec != value)
+                {
+                    _RecordingTimeSec = value;
+                    NotifyChangedOnUI("RecordingTimeSec");
+                }
             }
             get { return _RecordingTimeSec; }
         }
@@ -533,8 +546,11 @@ namespace Kazyx.Uwpmm.DataModel
         {
             set
             {
-                _NumberOfShots = value;
-                NotifyChangedOnUI("NumberOfShots");
+                if (_NumberOfShots != value)
+                {
+                    _NumberOfShots = value;
+                    NotifyChangedOnUI("NumberOfShots");
+                }
             }
             get { return _NumberOfShots; }
         }
