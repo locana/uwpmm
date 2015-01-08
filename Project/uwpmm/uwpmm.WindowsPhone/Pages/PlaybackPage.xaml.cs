@@ -325,7 +325,7 @@ namespace Kazyx.Uwpmm.Pages
 
         private async Task SetUpRemoteApiDevice()
         {
-            await TargetDevice.Observer.Start();
+            await TargetDevice.Observer.StartAsync();
             UpdateStorageInfo();
             TargetDevice.Status.PropertyChanged += Status_PropertyChanged;
             MovieStreamHelper.INSTANCE.MoviePlaybackData.SeekAvailable = TargetDevice.Api.Capability.IsSupported("seekStreamingPosition");

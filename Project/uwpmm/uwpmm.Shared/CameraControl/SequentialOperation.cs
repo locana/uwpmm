@@ -51,7 +51,7 @@ namespace Kazyx.Uwpmm.CameraControl
                     catch (RemoteApiException) { } // This API always fails on some models.
                 }
 
-                await device.Observer.Start().ConfigureAwait(false);
+                await device.Observer.StartAsync().ConfigureAwait(false);
             }
             catch (RemoteApiException e)
             {

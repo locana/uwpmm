@@ -4,7 +4,6 @@ using Kazyx.Uwpmm.DataModel;
 using Kazyx.Uwpmm.Utility;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Kazyx.Uwpmm.CameraControl
@@ -14,19 +13,14 @@ namespace Kazyx.Uwpmm.CameraControl
         public StatusObserver(TargetDevice device)
         {
             this.api = device.Api;
-            this.target = device.Status;
+            this.status = device.Status;
         }
 
         private readonly DeviceApiHolder api;
 
-        private readonly CameraStatus target;
+        private readonly CameraStatus status;
 
-        private bool _IsProcessing = false;
-        public bool IsProcessing
-        {
-            private set { _IsProcessing = value; }
-            get { return _IsProcessing; }
-        }
+        public bool IsProcessing { private set; get; }
 
         private int failure_count = 0;
 
@@ -38,7 +32,7 @@ namespace Kazyx.Uwpmm.CameraControl
 
         private ApiVersion version = ApiVersion.V1_0;
 
-        public async Task<bool> Start()
+        public async Task<bool> StartAsync()
         {
             DebugUtil.Log("StatusObserver: Start");
             if (IsProcessing)
@@ -75,7 +69,7 @@ namespace Kazyx.Uwpmm.CameraControl
             DebugUtil.Log("StatusObserver: Refresh");
             try
             {
-                await Update(await api.Camera.GetEventAsync(false, version)).ConfigureAwait(false);
+                await UpdateStatus(await api.Camera.GetEventAsync(false, version)).ConfigureAwait(false);
             }
             catch (RemoteApiException e)
             {
@@ -85,63 +79,64 @@ namespace Kazyx.Uwpmm.CameraControl
             return true;
         }
 
-        private async Task Update(Event status)
+        private async Task UpdateStatus(Event @event)
         {
-            if (status.AvailableApis != null) { api.Capability.AvailableApis = status.AvailableApis; }
-            target.IsLiveviewAvailable = status.LiveviewAvailable;
-            if (status.ShootModeInfo != null) { target.ShootMode = status.ShootModeInfo; }
-            if (status.ExposureMode != null) { target.ExposureMode = status.ExposureMode; }
-            if (status.ISOSpeedRate != null) { target.ISOSpeedRate = status.ISOSpeedRate; }
-            if (status.ShutterSpeed != null) { target.ShutterSpeed = status.ShutterSpeed; }
-            if (status.FNumber != null) { target.FNumber = status.FNumber; }
-            if (status.ZoomInfo != null) { target.ZoomInfo = status.ZoomInfo; }
-            if (status.PostviewSizeInfo != null) { target.PostviewSize = status.PostviewSizeInfo; }
-            if (status.SelfTimerInfo != null) { target.SelfTimer = status.SelfTimerInfo; }
-            if (status.BeepMode != null) { target.BeepMode = status.BeepMode; }
-            if (status.FlashMode != null) { target.FlashMode = status.FlashMode; }
-            if (status.FocusMode != null) { target.FocusMode = status.FocusMode; }
-            if (status.ViewAngle != null) { target.ViewAngle = status.ViewAngle; }
-            if (status.SteadyMode != null) { target.SteadyMode = status.SteadyMode; }
-            if (status.MovieQuality != null) { target.MovieQuality = status.MovieQuality; }
-            if (status.TouchAFStatus != null) { target.TouchFocusStatus = status.TouchAFStatus; }
-            if (status.ProgramShiftActivated != null) { target.ProgramShiftActivated = status.ProgramShiftActivated.Value; }
-            if (status.PictureUrls != null) { target.PictureUrls = status.PictureUrls; }
-            if (status.LiveviewOrientation != null) { target.LiveviewOrientation = status.LiveviewOrientation; }
-            if (status.EvInfo != null) { target.EvInfo = status.EvInfo; }
-            if (status.CameraStatus != null) { target.Status = status.CameraStatus; }
-            if (status.StorageInfo != null) { target.Storages = status.StorageInfo; }
-            if (status.BatteryInfo != null) { target.BatteryInfo = status.BatteryInfo; }
-            if (status.FNumber != null) { target.FNumber = status.FNumber; }
-            if (status.ShutterSpeed != null) { target.ShutterSpeed = status.ShutterSpeed; }
-            if (status.EvInfo != null) { target.EvInfo = status.EvInfo; }
-            if (status.ISOSpeedRate != null) { target.ISOSpeedRate = status.ISOSpeedRate; }
-            if (status.RecordingTimeSec >= 0) { target.RecordingTimeSec = status.RecordingTimeSec; }
-            if (status.NumberOfShots >= 0) { target.NumberOfShots = status.NumberOfShots; }
-            if (status.ContShootingMode != null) { target.ContShootingMode = status.ContShootingMode; }
-            if (status.ContShootingSpeed != null) { target.ContShootingSpeed = status.ContShootingSpeed; }
-            if (status.ContShootingResult != null) { target.ContShootingResult = status.ContShootingResult; }
-            if (status.ZoomSetting != null) { target.ZoomSetting = status.ZoomSetting; }
-            if (status.SceneSelection != null) { target.SceneSelection = status.SceneSelection; }
-            if (status.TrackingFocusMode != null) { target.TrackingFocus = status.TrackingFocusMode; }
-            if (status.TrackingFocusStatus != null) { target.TrackingFocusStatus = status.TrackingFocusStatus; }
-            if (status.MovieFormat != null) { target.MovieFormat = status.MovieFormat; }
-            if (status.FlipMode != null) { target.FlipMode = status.FlipMode; }
-            if (status.IntervalTime != null) { target.FlipMode = status.FlipMode; }
-            if (status.ColorSetting != null) { target.ColorSetting = status.ColorSetting; }
-            if (status.IrRemoteControl != null) { target.InfraredRemoteControl = status.IrRemoteControl; }
-            if (status.TvColorSystem != null) { target.TvColorSystem = status.TvColorSystem; }
-            if (status.AutoPowerOff != null) { target.AutoPowerOff = status.AutoPowerOff; }
-            if (status.ImageQuality != null) { target.StillQuality = status.ImageQuality; }
+            TrySetNotNull(@event.AvailableApis, val => api.Capability.AvailableApis = val);
 
-            if (status.StillImageSize != null)
+            status.IsLiveviewAvailable = @event.LiveviewAvailable;
+            TrySetNotNull(@event.ShootModeInfo, val => status.ShootMode = val);
+            TrySetNotNull(@event.ExposureMode, val => status.ExposureMode = val);
+            TrySetNotNull(@event.ISOSpeedRate, val => status.ISOSpeedRate = val);
+            TrySetNotNull(@event.ShutterSpeed, val => status.ShutterSpeed = val);
+            TrySetNotNull(@event.FNumber, val => status.FNumber = val);
+            TrySetNotNull(@event.ZoomInfo, val => status.ZoomInfo = val);
+            TrySetNotNull(@event.PostviewSizeInfo, val => status.PostviewSize = val);
+            TrySetNotNull(@event.SelfTimerInfo, val => status.SelfTimer = val);
+            TrySetNotNull(@event.BeepMode, val => status.BeepMode = val);
+            TrySetNotNull(@event.FlashMode, val => status.FlashMode = val);
+            TrySetNotNull(@event.FocusMode, val => status.FocusMode = val);
+            TrySetNotNull(@event.ViewAngle, val => status.ViewAngle = val);
+            TrySetNotNull(@event.SteadyMode, val => status.SteadyMode = val);
+            TrySetNotNull(@event.MovieQuality, val => status.MovieQuality = val);
+            TrySetNotNull(@event.TouchAFStatus, val => status.TouchFocusStatus = val);
+            TrySetNotNull(@event.ProgramShiftActivated, val => status.ProgramShiftActivated = val.Value);
+            TrySetNotNull(@event.PictureUrls, val => status.PictureUrls = val);
+            TrySetNotNull(@event.LiveviewOrientation, val => status.LiveviewOrientation = val);
+            TrySetNotNull(@event.EvInfo, val => status.EvInfo = val);
+            TrySetNotNull(@event.CameraStatus, val => status.Status = val);
+            TrySetNotNull(@event.StorageInfo, val => status.Storages = val);
+            TrySetNotNull(@event.BatteryInfo, val => status.BatteryInfo = val);
+            TrySetNotNull(@event.FNumber, val => status.FNumber = val);
+            TrySetNotNull(@event.ShutterSpeed, val => status.ShutterSpeed = val);
+            TrySetNotNull(@event.EvInfo, val => status.EvInfo = val);
+            TrySetNotNull(@event.ISOSpeedRate, val => status.ISOSpeedRate = val);
+            TrySetPositiveOrZero(@event.RecordingTimeSec, val => status.RecordingTimeSec = val);
+            TrySetPositiveOrZero(@event.NumberOfShots, val => status.NumberOfShots = val);
+            TrySetNotNull(@event.ContShootingMode, val => status.ContShootingMode = val);
+            TrySetNotNull(@event.ContShootingSpeed, val => status.ContShootingSpeed = val);
+            TrySetNotNull(@event.ContShootingResult, val => status.ContShootingResult = val);
+            TrySetNotNull(@event.ZoomSetting, val => status.ZoomSetting = val);
+            TrySetNotNull(@event.SceneSelection, val => status.SceneSelection = val);
+            TrySetNotNull(@event.TrackingFocusMode, val => status.TrackingFocus = val);
+            TrySetNotNull(@event.TrackingFocusStatus, val => status.TrackingFocusStatus = val);
+            TrySetNotNull(@event.MovieFormat, val => status.MovieFormat = val);
+            TrySetNotNull(@event.FlipMode, val => status.FlipMode = val);
+            TrySetNotNull(@event.IntervalTime, val => status.FlipMode = val);
+            TrySetNotNull(@event.ColorSetting, val => status.ColorSetting = val);
+            TrySetNotNull(@event.IrRemoteControl, val => status.InfraredRemoteControl = val);
+            TrySetNotNull(@event.TvColorSystem, val => status.TvColorSystem = val);
+            TrySetNotNull(@event.AutoPowerOff, val => status.AutoPowerOff = val);
+            TrySetNotNull(@event.ImageQuality, val => status.StillQuality = val);
+
+            if (@event.StillImageSize != null)
             {
-                if (status.StillImageSize.CapabilityChanged)
+                if (@event.StillImageSize.CapabilityChanged)
                 {
                     try
                     {
                         var size = await api.Camera.GetAvailableStillSizeAsync().ConfigureAwait(false);
                         size.Candidates.Sort(CompareStillSize);
-                        target.StillImageSize = size;
+                        status.StillImageSize = size;
                     }
                     catch (RemoteApiException)
                     {
@@ -150,14 +145,14 @@ namespace Kazyx.Uwpmm.CameraControl
                 }
                 else
                 {
-                    target.StillImageSize.Current = status.StillImageSize.Current;
-                    target.StillImageSize = target.StillImageSize;
+                    status.StillImageSize.Current = @event.StillImageSize.Current;
+                    status.StillImageSize = status.StillImageSize;
                 }
             }
 
-            if (status.WhiteBalance != null)
+            if (@event.WhiteBalance != null)
             {
-                if (status.WhiteBalance.CapabilityChanged)
+                if (@event.WhiteBalance.CapabilityChanged)
                 {
                     try
                     {
@@ -176,17 +171,11 @@ namespace Kazyx.Uwpmm.CameraControl
                                 }
                             }
                             tmpCandidates.Add(mode.WhiteBalanceMode, tmpList.ToArray());
-
-                            var builder = new StringBuilder();
-                            foreach (var val in mode.Candidates)
-                            {
-                                builder.Append(val).Append(", ");
-                            }
                         }
 
-                        target.WhiteBalance = new Capability<string> { Candidates = candidates, Current = wb.Current.Mode };
-                        target.ColorTempertureCandidates = tmpCandidates;
-                        target.ColorTemperture = wb.Current.ColorTemperature;
+                        status.WhiteBalance = new Capability<string> { Candidates = candidates, Current = wb.Current.Mode };
+                        status.ColorTempertureCandidates = tmpCandidates;
+                        status.ColorTemperture = wb.Current.ColorTemperature;
                     }
                     catch (RemoteApiException)
                     {
@@ -195,11 +184,11 @@ namespace Kazyx.Uwpmm.CameraControl
                 }
                 else
                 {
-                    if (status.WhiteBalance != null)
+                    if (@event.WhiteBalance != null)
                     {
-                        target.WhiteBalance.Current = status.WhiteBalance.Current.Mode;
+                        status.WhiteBalance.Current = @event.WhiteBalance.Current.Mode;
                     }
-                    target.ColorTemperture = status.WhiteBalance.Current.ColorTemperature;
+                    status.ColorTemperture = @event.WhiteBalance.Current.ColorTemperature;
                 }
             }
         }
@@ -224,7 +213,7 @@ namespace Kazyx.Uwpmm.CameraControl
         private async void OnSuccess(Event @event)
         {
             failure_count = 0;
-            await Update(@event).ConfigureAwait(false);
+            await UpdateStatus(@event).ConfigureAwait(false);
             PollingLoop();
         }
 
@@ -264,6 +253,26 @@ namespace Kazyx.Uwpmm.CameraControl
                 Stop();
                 EndByError.Raise();
             }
+        }
+
+        private bool TrySetNotNull<T>(T newValue, Action<T> setter)
+        {
+            if (newValue == null)
+            {
+                return false;
+            }
+            setter(newValue);
+            return true;
+        }
+
+        private bool TrySetPositiveOrZero(int newValue, Action<int> setter)
+        {
+            if (newValue < 0)
+            {
+                return false;
+            }
+            setter(newValue);
+            return true;
         }
 
         private static int CompareStillSize(StillImageSize x, StillImageSize y)
