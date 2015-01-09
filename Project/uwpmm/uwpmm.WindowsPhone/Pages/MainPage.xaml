@@ -220,7 +220,7 @@
                                     </DoubleAnimationUsingKeyFrames>
                                 </Storyboard>
                             </ScrollViewer.Resources>
-                            <StackPanel x:Name="ControlPanel" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                            <StackPanel x:Name="ControlPanel" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="Collapsed"/>
                         </ScrollViewer>
                         <Grid Name="ProcessingDisplay" HorizontalAlignment="Stretch" VerticalAlignment="Center" Height="80" Visibility="{Binding Processing, Mode=OneWay, FallbackValue=Collapsed, Converter={StaticResource B2VConverter}}">
                             <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Opacity="0.5"

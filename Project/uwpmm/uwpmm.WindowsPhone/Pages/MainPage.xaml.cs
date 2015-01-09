@@ -416,6 +416,7 @@ namespace Kazyx.Uwpmm.Pages
 
         private void StartToShowControlPanel()
         {
+            ControlPanel.Visibility = Windows.UI.Xaml.Visibility.Visible;
             SlideTransform.X = 200;
             ShowControlPanelStoryBoard.Begin();
             SlideInControlPanel.Begin();
@@ -435,6 +436,7 @@ namespace Kazyx.Uwpmm.Pages
 
         private void HideControlPanelStoryBoard_Completed(object sender, object e)
         {
+            ControlPanel.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
             ControlPanelDisplayed = false;
         }
 
