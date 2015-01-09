@@ -451,6 +451,20 @@ namespace Kazyx.Uwpmm.Pages
                 return;
             }
 
+            if (AppSettingPanel.Visibility == Windows.UI.Xaml.Visibility.Visible)
+            {
+                CloseAppSettingPanel();
+                e.Handled = true;
+                return;
+            }
+
+            if (ShootingParamSliders.Visibility == Visibility.Visible)
+            {
+                OpenCloseSliders();
+                e.Handled = true;
+                return;
+            }
+
             GoToEntranceScreen();
             e.Handled = true;
         }
