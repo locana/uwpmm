@@ -24,6 +24,7 @@ using Windows.Storage.FileProperties;
 using Windows.System;
 using Windows.UI.Core;
 using Windows.UI.Popups;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
@@ -45,6 +46,7 @@ namespace Kazyx.Uwpmm.Pages
         private ObservableDictionary defaultViewModel = new ObservableDictionary();
         private LiveviewScreenViewData screenViewData;
         private HistogramCreator HistogramCreator;
+        private StatusBar statusBar = StatusBar.GetForCurrentView();
 
         public MainPage()
         {
@@ -473,12 +475,19 @@ namespace Kazyx.Uwpmm.Pages
         async void NetworkObserver_Discovered(object sender, CameraDeviceEventArgs e)
         {
             var target = e.CameraDevice;
+
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                ChangeProgressText(SystemUtil.GetStringResource("ProgressMessageConnecting"));
+            });
+
             try
             {
                 await SequentialOperation.SetUp(target, liveview);
             }
             catch (Exception ex)
             {
+                HideProgress();
                 DebugUtil.Log("Failed setup: " + ex.Message);
                 ShowError(SystemUtil.GetStringResource("ErrorMessage_fatal"));
                 return;
@@ -491,6 +500,7 @@ namespace Kazyx.Uwpmm.Pages
 
             await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
+                HideProgress();
                 GoToLiveviewScreen();
                 var panels = SettingPanelBuilder.CreateNew(target);
                 var pn = panels.GetPanelsToShow();
@@ -1200,6 +1210,26 @@ namespace Kazyx.Uwpmm.Pages
                 ShootingParamSliders.Visibility = Visibility.Visible;
                 StartOpenSliderAnimation(0, 180);
             }
+        }
+
+        private async void HideProgress()
+        {
+            DebugUtil.Log("Hide Progress");
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+            {
+                await statusBar.ProgressIndicator.HideAsync();
+            });
+        }
+
+        private async void ChangeProgressText(string text)
+        {
+            DebugUtil.Log("Show Progress: " + text);
+            await Dispatcher.RunAsync(CoreDispatcherPriority.High, async () =>
+            {
+                statusBar.ProgressIndicator.ProgressValue = null;
+                statusBar.ProgressIndicator.Text = text;
+                await statusBar.ProgressIndicator.ShowAsync();
+            });
         }
     }
 }
