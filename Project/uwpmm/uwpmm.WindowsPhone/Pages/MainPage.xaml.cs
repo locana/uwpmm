@@ -121,7 +121,11 @@ namespace Kazyx.Uwpmm.Pages
             this.navigationHelper.OnNavigatedTo(e);
 
             NavigatedByInAppBackTransition = e.NavigationMode == NavigationMode.Back;
+            SearchCameraDevice();
+        }
 
+        private void SearchCameraDevice()
+        {
             NetworkObserver.INSTANCE.CameraDiscovered += NetworkObserver_Discovered;
             NetworkObserver.INSTANCE.CdsDiscovered += NetworkObserver_CdsDiscovered;
             NetworkObserver.INSTANCE.Clear();
@@ -228,7 +232,45 @@ namespace Kazyx.Uwpmm.Pages
             {
                 DebugUtil.Log("Touch AF operated: " + args.X + " " + args.Y);
                 if (target == null || target.Api == null || !target.Api.Capability.IsAvailable("setTouchAFPosition")) { return; }
-                await target.Api.Camera.SetAFPositionAsync(args.X, args.Y);
+                try
+                {
+                    await target.Api.Camera.SetAFPositionAsync(args.X, args.Y);
+                }
+                catch (RemoteApiException ex)
+                {
+                    DebugUtil.Log(ex.StackTrace);
+                }
+            };
+
+            FnumberSlider.SliderOperated += async (s, arg) =>
+            {
+                DebugUtil.Log("Fnumber operated: " + arg.Selected);
+                try { await target.Api.Camera.SetFNumberAsync(arg.Selected); }
+                catch (RemoteApiException) { }
+            };
+            SSSlider.SliderOperated += async (s, arg) =>
+            {
+                DebugUtil.Log("SS operated: " + arg.Selected);
+                try { await target.Api.Camera.SetShutterSpeedAsync(arg.Selected); }
+                catch (RemoteApiException) { }
+            };
+            ISOSlider.SliderOperated += async (s, arg) =>
+            {
+                DebugUtil.Log("ISO operated: " + arg.Selected);
+                try { await target.Api.Camera.SetISOSpeedAsync(arg.Selected); }
+                catch (RemoteApiException) { }
+            };
+            EvSlider.SliderOperated += async (s, arg) =>
+            {
+                DebugUtil.Log("Ev operated: " + arg.Selected);
+                try { await target.Api.Camera.SetEvIndexAsync(arg.Selected); }
+                catch (RemoteApiException) { }
+            };
+            ProgramShiftSlider.SliderOperated += async (s, arg) =>
+            {
+                DebugUtil.Log("Program shift operated: " + arg.OperatedStep);
+                try { await target.Api.Camera.SetProgramShiftAsync(arg.OperatedStep); }
+                catch (RemoteApiException) { }
             };
 
             InitializeUI();
@@ -342,6 +384,11 @@ namespace Kazyx.Uwpmm.Pages
                 .CreateNew(0.6);
         }
 
+        private void EmptyAppBar()
+        {
+            this.BottomAppBar = _CommandBarManager.Clear().CreateNew(0.6);
+        }
+
         async void PivotRoot_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             switch ((sender as Pivot).SelectedIndex)
@@ -353,18 +400,19 @@ namespace Kazyx.Uwpmm.Pages
                     {
                         await SequentialOperation.CloseLiveviewStream(target.Api, liveview);
                         target.Observer.Stop();
+                        target.Status.PropertyChanged -= Status_PropertyChanged;
                     }
                     target = null;
                     break;
                 case 1:
+                    EmptyAppBar();
                     if (target != null)
                     {
-                        CreateCameraControlAppBar();
                         LiveViewPageLoaded();
                     }
                     else
                     {
-                        // TODO search devices explicitly.
+                        SearchCameraDevice();
                     }
                     break;
             }
@@ -372,15 +420,6 @@ namespace Kazyx.Uwpmm.Pages
 
         private async void LiveViewPageLoaded()
         {
-            screenViewData = new LiveviewScreenViewData(target);
-            Liveview.DataContext = screenViewData;
-            ShutterButton.DataContext = screenViewData;
-            BatteryStatusDisplay.DataContext = target.Status.BatteryInfo;
-            _FocusFrameSurface.ClearFrames();
-
-            if (ApplicationSettings.GetInstance().GeotagEnabled) { EnableGeolocator(); }
-            else { DisableGeolocator(); }
-
             await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
             {
                 await Task.Delay(TimeSpan.FromMilliseconds(500));
@@ -495,13 +534,17 @@ namespace Kazyx.Uwpmm.Pages
 
             this.target = target;
 
-            target.Status.PropertyChanged += Status_PropertyChanged;
-            // TODO remove when the target is gone to out of control.
-
             await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
+                screenViewData = new LiveviewScreenViewData(target);
+                Liveview.DataContext = screenViewData;
+                ShutterButton.DataContext = screenViewData;
+                BatteryStatusDisplay.DataContext = target.Status.BatteryInfo;
+
+                target.Status.PropertyChanged += Status_PropertyChanged;
                 HideProgress();
                 GoToLiveviewScreen();
+                CreateCameraControlAppBar();
                 var panels = SettingPanelBuilder.CreateNew(target);
                 var pn = panels.GetPanelsToShow();
                 foreach (var panel in pn)
@@ -510,38 +553,12 @@ namespace Kazyx.Uwpmm.Pages
                 }
 
                 SetupFocusFrame(ApplicationSettings.GetInstance().RequestFocusFrameInfo);
+                _FocusFrameSurface.ClearFrames();
 
                 ShootingParamSliders.DataContext = new ShootingParamViewData() { Status = target.Status, Liveview = screenViewData };
-                FnumberSlider.SliderOperated += async (s, arg) =>
-                {
-                    DebugUtil.Log("Fnumber operated: " + arg.Selected);
-                    try { await target.Api.Camera.SetFNumberAsync(arg.Selected); }
-                    catch (RemoteApiException) { }
-                };
-                SSSlider.SliderOperated += async (s, arg) =>
-                {
-                    DebugUtil.Log("SS operated: " + arg.Selected);
-                    try { await target.Api.Camera.SetShutterSpeedAsync(arg.Selected); }
-                    catch (RemoteApiException) { }
-                };
-                ISOSlider.SliderOperated += async (s, arg) =>
-                {
-                    DebugUtil.Log("ISO operated: " + arg.Selected);
-                    try { await target.Api.Camera.SetISOSpeedAsync(arg.Selected); }
-                    catch (RemoteApiException) { }
-                };
-                EvSlider.SliderOperated += async (s, arg) =>
-                {
-                    DebugUtil.Log("Ev operated: " + arg.Selected);
-                    try { await target.Api.Camera.SetEvIndexAsync(arg.Selected); }
-                    catch (RemoteApiException) { }
-                };
-                ProgramShiftSlider.SliderOperated += async (s, arg) =>
-                {
-                    DebugUtil.Log("Program shift operated: " + arg.OperatedStep);
-                    try { await target.Api.Camera.SetProgramShiftAsync(arg.OperatedStep); }
-                    catch (RemoteApiException) { }
-                };
+
+                if (ApplicationSettings.GetInstance().GeotagEnabled) { EnableGeolocator(); }
+                else { DisableGeolocator(); }
             });
         }
 
