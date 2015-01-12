@@ -79,12 +79,12 @@ namespace Kazyx.Uwpmm.Pages
             CommandBarManager.SetEvent(AppBarItem.ShowDetailInfo, (sender, e) =>
             {
                 PhotoScreen.DetailInfoVisibility = Visibility.Visible;
-                BottomAppBar = CommandBarManager.Clear().Icon(AppBarItem.HideDetailInfo).CreateNew(0.5);
+                BottomAppBar = CommandBarManager.Clear().Icon(AppBarItem.RotateRight).Icon(AppBarItem.HideDetailInfo).Icon(AppBarItem.RotateLeft).CreateNew(0.5);
             });
             CommandBarManager.SetEvent(AppBarItem.HideDetailInfo, (sender, e) =>
             {
                 PhotoScreen.DetailInfoVisibility = Visibility.Collapsed;
-                BottomAppBar = CommandBarManager.Clear().Icon(AppBarItem.ShowDetailInfo).CreateNew(0.5);
+                BottomAppBar = CommandBarManager.Clear().Icon(AppBarItem.RotateRight).Icon(AppBarItem.ShowDetailInfo).Icon(AppBarItem.RotateLeft).CreateNew(0.5);
             });
             CommandBarManager.SetEvent(AppBarItem.Ok, (sender, e) =>
             {
@@ -522,7 +522,6 @@ namespace Kazyx.Uwpmm.Pages
                         else
                         {
                             BottomAppBar = CommandBarManager.Clear().Icon(AppBarItem.RotateRight).Icon(AppBarItem.ShowDetailInfo).Icon(AppBarItem.RotateLeft).CreateNew(0.5);
-
                         }
                         break;
                     default:
