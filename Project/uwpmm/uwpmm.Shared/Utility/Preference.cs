@@ -1,4 +1,5 @@
-﻿using Windows.Storage;
+﻿using Kazyx.Uwpmm.Playback;
+using Windows.Storage;
 
 namespace Kazyx.Uwpmm.Utility
 {
@@ -71,22 +72,22 @@ namespace Kazyx.Uwpmm.Utility
             set { SetProperty(add_geotag, value); }
         }
 
-        public static string FramingGridType
+        public static FramingGridTypes FramingGridType
         {
-            get { return GetProperty(fraiming_grids, FramingGridTypes.Off); }
-            set { SetProperty(fraiming_grids, value); }
+            get { return (FramingGridTypes)GetProperty(fraiming_grids, (int)FramingGridTypes.Off); }
+            set { SetProperty(fraiming_grids, (int)value); }
         }
 
-        public static string FramingGridColor
+        public static FramingGridColors FramingGridColor
         {
-            get { return GetProperty(framing_grids_color, FramingGridColors.White); }
-            set { SetProperty(framing_grids_color, value); }
+            get { return (FramingGridColors)GetProperty(framing_grids_color, (int)FramingGridColors.White); }
+            set { SetProperty(framing_grids_color, (int)value); }
         }
 
-        public static string FibonacciOrigin
+        public static FibonacciLineOrigins FibonacciOrigin
         {
-            get { return GetProperty(fibonacci_origin, FibonacciLineOrigins.UpperLeft); }
-            set { SetProperty(fibonacci_origin, value); }
+            get { return (FibonacciLineOrigins)GetProperty(fibonacci_origin, (int)FibonacciLineOrigins.UpperLeft); }
+            set { SetProperty(fibonacci_origin, (int)value); }
         }
 
         public static bool FocusFrameEnabled
@@ -101,10 +102,10 @@ namespace Kazyx.Uwpmm.Utility
             set { SetProperty(prioritize_original_contents, value); }
         }
 
-        public static int RemoteContentsSet
+        public static ContentsSet RemoteContentsSet
         {
-            get { return GetProperty(remote_contents_set, 0); }
-            set { SetProperty(remote_contents_set, value); }
+            get { return (ContentsSet)GetProperty(remote_contents_set, (int)ContentsSet.ImagesAndMovies); }
+            set { SetProperty(remote_contents_set, (int)value); }
         }
     }
 }

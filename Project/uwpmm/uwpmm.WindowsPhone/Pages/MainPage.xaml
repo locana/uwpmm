@@ -98,7 +98,7 @@
                                        Visibility="{Binding GeopositionEnabled, FallbackValue=Collapsed, Converter={StaticResource B2VConverter}}"/>
                             </Grid>
                             <controls:Histogram Margin="6,6" HorizontalAlignment="Left" VerticalAlignment="Center" x:Name="HistogramControl" Width="120" Height="90" Grid.Row="2"
-                                                Visibility="{Binding HistogramVisibility}"/>
+                                                Visibility="{Binding IsHistogramDisplayed, Converter={StaticResource B2VConverter}}"/>
                         </Grid>
                         <Grid Name="Bottom" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Margin="0">
                             <Grid.RowDefinitions>

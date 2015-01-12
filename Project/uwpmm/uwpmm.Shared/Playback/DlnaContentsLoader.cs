@@ -55,7 +55,7 @@ namespace Kazyx.Uwpmm.Playback
 
         private IList<Thumbnail> Translate(IList<Item> source)
         {
-            return source.Where(item => item.Resources.Count != null)
+            return source.Where(item => item.Resources.Count != 0)
                 .Select(item => new Thumbnail(Translate(item), UpnpDevice.UDN))
                 .ToList();
         }

@@ -12,6 +12,7 @@ using NtNfcLib;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -966,10 +967,13 @@ namespace Kazyx.Uwpmm.Pages
             return task;
         }
 
-        private async void ShowError(string error)
+        private void ShowError(string error)
         {
-            var dialog = new MessageDialog(error);
-            await dialog.ShowAsync();
+            var task = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+            {
+                var dialog = new MessageDialog(error);
+                await dialog.ShowAsync();
+            });
         }
 
         private void LiveviewImage_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -1144,35 +1148,34 @@ namespace Kazyx.Uwpmm.Pages
 
             display_settings.Add(new ComboBoxSetting(
                 new AppSettingData<int>(SystemUtil.GetStringResource("FramingGrids"), SystemUtil.GetStringResource("Guide_FramingGrids"),
-                    () => { return ApplicationSettings.GetInstance().GridTypeIndex; },
+                    () => { return (int)ApplicationSettings.GetInstance().GridType; },
                     setting =>
                     {
                         if (setting < 0) { return; }
-                        ApplicationSettings.GetInstance().GridTypeIndex = setting;
-                        DisplayGridColorSetting(ApplicationSettings.GetInstance().GridTypeSettings[setting] != FramingGridTypes.Off);
-                        DisplayFibonacciOriginSetting(ApplicationSettings.GetInstance().GridTypeSettings[setting] == FramingGridTypes.Fibonacci);
+                        ApplicationSettings.GetInstance().GridType = (FramingGridTypes)setting;
+                        DisplayGridColorSetting(ApplicationSettings.GetInstance().GridType != FramingGridTypes.Off);
+                        DisplayFibonacciOriginSetting(ApplicationSettings.GetInstance().GridType == FramingGridTypes.Fibonacci);
                     },
-                    SettingValueConverter.FromFramingGrid(ApplicationSettings.GetInstance().GridTypeSettings.ToArray())
-                    )));
+                    SettingValueConverter.FromFramingGrid(Enum.GetValues(typeof(FramingGridTypes)).Cast<FramingGridTypes>().ToArray()))));
 
             gridColorSetting = new AppSettingData<int>(SystemUtil.GetStringResource("FramingGridColor"), null,
-                    () => { return ApplicationSettings.GetInstance().GridColorIndex; },
+                    () => { return (int)ApplicationSettings.GetInstance().GridColor; },
                     setting =>
                     {
                         if (setting < 0) { return; }
-                        ApplicationSettings.GetInstance().GridColorIndex = setting;
+                        ApplicationSettings.GetInstance().GridColor = (FramingGridColors)setting;
                     },
-                    SettingValueConverter.FromFramingGridColor(ApplicationSettings.GetInstance().GridColorSettings.ToArray()));
+                    SettingValueConverter.FromFramingGridColor(Enum.GetValues(typeof(FramingGridColors)).Cast<FramingGridColors>().ToArray()));
             display_settings.Add(new ComboBoxSetting(gridColorSetting));
 
             fibonacciOriginSetting = new AppSettingData<int>(SystemUtil.GetStringResource("FibonacciSpiralOrigin"), null,
-                () => { return ApplicationSettings.GetInstance().FibonacciOriginIndex; },
+                () => { return (int)ApplicationSettings.GetInstance().FibonacciLineOrigin; },
                 setting =>
                 {
                     if (setting < 0) { return; }
-                    ApplicationSettings.GetInstance().FibonacciOriginIndex = setting;
+                    ApplicationSettings.GetInstance().FibonacciLineOrigin = (FibonacciLineOrigins)setting;
                 },
-                SettingValueConverter.FromFibonacciLineOrigin(ApplicationSettings.GetInstance().FibonacciLineOriginSettings.ToArray()));
+                SettingValueConverter.FromFibonacciLineOrigin(Enum.GetValues(typeof(FibonacciLineOrigins)).Cast<FibonacciLineOrigins>().ToArray()));
             display_settings.Add(new ComboBoxSetting(fibonacciOriginSetting));
 
             HideSettingAnimation.Completed += HideSettingAnimation_Completed;

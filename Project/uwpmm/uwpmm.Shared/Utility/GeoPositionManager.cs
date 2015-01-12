@@ -101,7 +101,7 @@ namespace Kazyx.Uwpmm.Utility
                 case PositionStatus.NotInitialized:
                 case PositionStatus.NotAvailable:
                     OnGeopositionUpdated(new GeopositionEventArgs() { UpdatedPosition = LatestPosition, Status = GeopositiomManagerStatus.Failed });
-                break;
+                    break;
             }
         }
 
@@ -179,13 +179,15 @@ namespace Kazyx.Uwpmm.Utility
             _Timer = new DispatcherTimer();
             _Timer.Interval = TimeSpan.FromMinutes(AcquiringInterval);
             //_Timer.Tick += new EventHandler<object>(OnTimerTick);
-            _Timer.Tick += _Timer_Tick;
+            // _Timer.Tick += _Timer_Tick;
         }
 
+        /*
         async void _Timer_Tick(object sender, object e)
         {
             //await UpdateGeoposition();
         }
+         * */
 
         public static GeopositionManager GetInstance()
         {

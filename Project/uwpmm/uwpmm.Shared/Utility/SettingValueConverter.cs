@@ -591,98 +591,72 @@ namespace Kazyx.Uwpmm.Utility
             return val + " " + SystemUtil.GetStringResource("Seconds");
         }
 
-
-        internal static string[] FromFramingGrid(string[] keys)
+        internal static string[] FromFramingGrid(FramingGridTypes[] keys)
         {
-            string[] names = new string[keys.Length];
-            for (int i = 0; i < keys.Length; i++)
+            return keys.Select(key =>
             {
-                switch (keys[i])
+                switch (key)
                 {
                     case FramingGridTypes.Off:
-                        names[i] = SystemUtil.GetStringResource("Off");
-                        break;
+                        return SystemUtil.GetStringResource("Off");
                     case FramingGridTypes.RuleOfThirds:
-                        names[i] = SystemUtil.GetStringResource("Grid_RuleOfThirds");
-                        break;
+                        return SystemUtil.GetStringResource("Grid_RuleOfThirds");
                     case FramingGridTypes.Diagonal:
-                        names[i] = SystemUtil.GetStringResource("Grid_Diagonal");
-                        break;
+                        return SystemUtil.GetStringResource("Grid_Diagonal");
                     case FramingGridTypes.Square:
-                        names[i] = SystemUtil.GetStringResource("Grid_Square");
-                        break;
+                        return SystemUtil.GetStringResource("Grid_Square");
                     case FramingGridTypes.Crosshairs:
-                        names[i] = SystemUtil.GetStringResource("Grid_Crosshairs");
-                        break;
+                        return SystemUtil.GetStringResource("Grid_Crosshairs");
                     case FramingGridTypes.Fibonacci:
-                        names[i] = SystemUtil.GetStringResource("Grid_Fibonacci");
-                        break;
+                        return SystemUtil.GetStringResource("Grid_Fibonacci");
                     case FramingGridTypes.GoldenRatio:
-                        names[i] = SystemUtil.GetStringResource("Grid_GoldenRatio");
-                        break;
+                        return SystemUtil.GetStringResource("Grid_GoldenRatio");
                     default:
-                        names[i] = keys[i];
-                        break;
+                        throw new NotImplementedException();
                 }
-            }
-            return names;
+            }).ToArray();
         }
 
-        internal static string[] FromFramingGridColor(string[] keys)
+        internal static string[] FromFramingGridColor(FramingGridColors[] keys)
         {
-            string[] names = new string[keys.Length];
-            for (int i = 0; i < keys.Length; i++)
+            return keys.Select(key =>
             {
-                switch (keys[i])
+                switch (key)
                 {
                     case FramingGridColors.White:
-                        names[i] = SystemUtil.GetStringResource("White");
-                        break;
+                        return SystemUtil.GetStringResource("White");
                     case FramingGridColors.Black:
-                        names[i] = SystemUtil.GetStringResource("Black");
-                        break;
+                        return SystemUtil.GetStringResource("Black");
                     case FramingGridColors.Red:
-                        names[i] = SystemUtil.GetStringResource("Red");
-                        break;
+                        return SystemUtil.GetStringResource("Red");
                     case FramingGridColors.Green:
-                        names[i] = SystemUtil.GetStringResource("Green");
-                        break;
+                        return SystemUtil.GetStringResource("Green");
                     case FramingGridColors.Blue:
-                        names[i] = SystemUtil.GetStringResource("Blue");
-                        break;
+                        return SystemUtil.GetStringResource("Blue");
                     default:
-                        names[i] = keys[i];
-                        break;
+                        throw new NotImplementedException();
                 }
-            }
-            return names;
+            }).ToArray();
         }
 
-        internal static string[] FromFibonacciLineOrigin(string[] keys)
+        internal static string[] FromFibonacciLineOrigin(FibonacciLineOrigins[] keys)
         {
-            string[] names = new string[keys.Length];
-            for (int i = 0; i < keys.Length; i++)
+            return keys.Select(key =>
             {
-                switch (keys[i])
+                switch (key)
                 {
                     case FibonacciLineOrigins.UpperLeft:
-                        names[i] = SystemUtil.GetStringResource("UpperLeft");
-                        break;
+                        return SystemUtil.GetStringResource("UpperLeft");
                     case FibonacciLineOrigins.UpperRight:
-                        names[i] = SystemUtil.GetStringResource("UpperRight");
-                        break;
+                        return SystemUtil.GetStringResource("UpperRight");
                     case FibonacciLineOrigins.BottomLeft:
-                        names[i] = SystemUtil.GetStringResource("BottomLeft");
-                        break;
+                        return SystemUtil.GetStringResource("BottomLeft");
                     case FibonacciLineOrigins.BottomRight:
-                        names[i] = SystemUtil.GetStringResource("BottomRight");
-                        break;
+                        return SystemUtil.GetStringResource("BottomRight");
                     default:
-                        names[i] = keys[i];
-                        break;
+                        throw new NotImplementedException();
                 }
-            }
-            return names;
+            }).ToArray();
         }
 
         internal static string[] FromContentsSet(ContentsSet[] types)
@@ -699,7 +673,7 @@ namespace Kazyx.Uwpmm.Utility
                     case ContentsSet.Movies:
                         return "Movies";
                     default:
-                        return "Undefined";
+                        throw new NotImplementedException();
                 }
             }).ToArray();
         }

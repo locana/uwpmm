@@ -1,6 +1,5 @@
 ﻿using Kazyx.Uwpmm.Playback;
 using Kazyx.Uwpmm.Utility;
-using System.Collections.Generic;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
@@ -10,34 +9,6 @@ namespace Kazyx.Uwpmm.DataModel
     public class ApplicationSettings : ObservableBase
     {
         private static ApplicationSettings sSettings = new ApplicationSettings();
-
-        internal List<string> GridTypeSettings = new List<string>()
-        {
-            FramingGridTypes.Off,
-            FramingGridTypes.RuleOfThirds,
-            FramingGridTypes.Diagonal,
-            FramingGridTypes.Square,
-            FramingGridTypes.Crosshairs,
-            FramingGridTypes.Fibonacci,
-            FramingGridTypes.GoldenRatio,
-        };
-
-        internal List<string> GridColorSettings = new List<string>()
-        {
-            FramingGridColors.White,
-            FramingGridColors.Black,
-            FramingGridColors.Red,
-            FramingGridColors.Green,
-            FramingGridColors.Blue,
-        };
-
-        internal List<string> FibonacciLineOriginSettings = new List<string>()
-        {
-            FibonacciLineOrigins.UpperLeft,
-            FibonacciLineOrigins.UpperRight,
-            FibonacciLineOrigins.BottomLeft,
-            FibonacciLineOrigins.BottomRight,
-        };
 
         private ApplicationSettings()
         {
@@ -52,7 +23,7 @@ namespace Kazyx.Uwpmm.DataModel
             FibonacciLineOrigin = Preference.FibonacciOrigin;
             RequestFocusFrameInfo = Preference.FocusFrameEnabled;
             PrioritizeOriginalSizeContents = Preference.OriginalSizeContentsPrioritized;
-            RemoteContentsSet = (ContentsSet)Preference.RemoteContentsSet;
+            RemoteContentsSet = Preference.RemoteContentsSet;
         }
 
         public static ApplicationSettings GetInstance()
@@ -234,8 +205,8 @@ namespace Kazyx.Uwpmm.DataModel
             }
         }
 
-        private string _GridType = FramingGridTypes.Off;
-        public string GridType
+        private FramingGridTypes _GridType = FramingGridTypes.Off;
+        public FramingGridTypes GridType
         {
             set
             {
@@ -250,30 +221,8 @@ namespace Kazyx.Uwpmm.DataModel
             get { return _GridType; }
         }
 
-        public int GridTypeIndex
-        {
-            set
-            {
-                if (value < 0) { return; }
-                GridType = GridTypeSettings[value];
-            }
-            get
-            {
-                int i = 0;
-                foreach (string type in GridTypeSettings)
-                {
-                    if (GridType.Equals(type))
-                    {
-                        return i;
-                    }
-                    i++;
-                }
-                return 0;
-            }
-        }
-
-        private string _GridColor = FramingGridColors.White;
-        public string GridColor
+        private FramingGridColors _GridColor = FramingGridColors.White;
+        public FramingGridColors GridColor
         {
             set
             {
@@ -319,30 +268,8 @@ namespace Kazyx.Uwpmm.DataModel
             }
         }
 
-        public int GridColorIndex
-        {
-            set
-            {
-                if (value < 0) { return; }
-                GridColor = GridColorSettings[value];
-            }
-            get
-            {
-                int i = 0;
-                foreach (string color in GridColorSettings)
-                {
-                    if (GridColor.Equals(color))
-                    {
-                        return i;
-                    }
-                    i++;
-                }
-                return 0;
-            }
-        }
-
-        private string _FibonacciLineOrigin = FibonacciLineOrigins.UpperLeft;
-        public string FibonacciLineOrigin
+        private FibonacciLineOrigins _FibonacciLineOrigin = FibonacciLineOrigins.UpperLeft;
+        public FibonacciLineOrigins FibonacciLineOrigin
         {
             get { return _FibonacciLineOrigin; }
             set
@@ -353,27 +280,6 @@ namespace Kazyx.Uwpmm.DataModel
                     this._FibonacciLineOrigin = value;
                     NotifyChangedOnUI("FibonacciLineOrigin");
                 }
-            }
-        }
-
-        public int FibonacciOriginIndex
-        {
-            set
-            {
-                FibonacciLineOrigin = FibonacciLineOriginSettings[value];
-            }
-            get
-            {
-                int i = 0;
-                foreach (string f in FibonacciLineOriginSettings)
-                {
-                    if (FibonacciLineOrigin.Equals(f))
-                    {
-                        return i;
-                    }
-                    i++;
-                }
-                return 0;
             }
         }
 
@@ -406,30 +312,6 @@ namespace Kazyx.Uwpmm.DataModel
             }
         }
 
-        public Visibility HistogramVisibility
-        {
-            get
-            {
-                if (_IsHistogramDisplayed)
-                {
-                    return Visibility.Visible;
-                }
-                else
-                {
-                    return Visibility.Collapsed;
-                }
-            }
-        }
-
-        public Visibility GeopositionStatusVisibility
-        {
-            get
-            {
-                if (GeotagEnabled) { return Visibility.Visible; }
-                else { return Visibility.Collapsed; }
-            }
-        }
-
         private ContentsSet _RemoteContentsType = ContentsSet.ImagesAndMovies;
         public ContentsSet RemoteContentsSet
         {
@@ -438,7 +320,7 @@ namespace Kazyx.Uwpmm.DataModel
             {
                 if (value != _RemoteContentsType)
                 {
-                    Preference.RemoteContentsSet = (int)value;
+                    Preference.RemoteContentsSet = value;
                     _RemoteContentsType = value;
                     NotifyChangedOnUI("RemoteContentsSet");
                 }

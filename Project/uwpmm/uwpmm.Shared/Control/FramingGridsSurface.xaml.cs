@@ -46,8 +46,8 @@ namespace Kazyx.Uwpmm.Control
             }
         }
 
-        private string _Type = FramingGridTypes.Off;
-        public string Type
+        private FramingGridTypes _Type = FramingGridTypes.Off;
+        public FramingGridTypes Type
         {
             get { return _Type; }
             set
@@ -64,14 +64,14 @@ namespace Kazyx.Uwpmm.Control
 
         public static readonly DependencyProperty GridTypeProperty = DependencyProperty.Register(
             "Type",
-            typeof(string),
+            typeof(FramingGridTypes),
             typeof(FramingGridsSurface),
             new PropertyMetadata("", new PropertyChangedCallback(FramingGridsSurface.OnGridTypeChanged)));
 
         public static void OnGridTypeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             // DebugUtil.Log("[FramingGridsSurface]Type changed: " + (string)e.NewValue);
-            (d as FramingGridsSurface).Type = (string)e.NewValue;
+            (d as FramingGridsSurface).Type = (FramingGridTypes)e.NewValue;
         }
 
         public static readonly DependencyProperty StrokeProperty = DependencyProperty.Register(
@@ -98,8 +98,8 @@ namespace Kazyx.Uwpmm.Control
             (d as FramingGridsSurface).StrokeThickness = (double)e.NewValue;
         }
 
-        private string _FibonacciOrigin = FibonacciLineOrigins.UpperLeft;
-        public string FibonacciOrigin
+        private FibonacciLineOrigins _FibonacciOrigin = FibonacciLineOrigins.UpperLeft;
+        public FibonacciLineOrigins FibonacciOrigin
         {
             get { return _FibonacciOrigin; }
             set
@@ -114,14 +114,14 @@ namespace Kazyx.Uwpmm.Control
 
         public static readonly DependencyProperty FibonacciOriginProperty = DependencyProperty.Register(
             "FibonacciOrigin",
-            typeof(string),
+            typeof(FibonacciLineOrigins),
             typeof(FramingGridsSurface),
             new PropertyMetadata("", new PropertyChangedCallback(FramingGridsSurface.OnFibonacciOriginChanged)));
 
         private static void OnFibonacciOriginChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             // DebugUtil.Log("fibonacci origin changed: " + e.NewValue);
-            (d as FramingGridsSurface).FibonacciOrigin = (string)e.NewValue;
+            (d as FramingGridsSurface).FibonacciOrigin = (FibonacciLineOrigins)e.NewValue;
         }
 
 
@@ -135,7 +135,7 @@ namespace Kazyx.Uwpmm.Control
             Lines.Children.Clear();
         }
 
-        private void DrawGridLines(string t)
+        private void DrawGridLines(FramingGridTypes t)
         {
             double w = LayoutRoot.ActualWidth;
             double h = LayoutRoot.ActualHeight;
