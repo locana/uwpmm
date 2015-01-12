@@ -43,7 +43,7 @@ namespace Kazyx.Uwpmm.Pages
 
         public const string AUTO_JUMP_TO_DLNA_FLAG = "auto_jump_to_dlna";
 
-        private const bool LOAD_DUMMY_CONTENTS = true;
+        private const bool LOAD_DUMMY_CONTENTS = false;
 
         private HttpClient HttpClient = new HttpClient();
 
