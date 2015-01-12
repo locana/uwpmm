@@ -12,7 +12,7 @@
 
     <UserControl.Resources>
         <DataTemplate x:Key="VerticalItemTemplate">
-            <Grid Margin="-7,-6,0,-6" HorizontalAlignment="Center" Width="224" VerticalAlignment="Center" Background="Transparent" Opacity="0.7" >
+            <Grid Margin="-7,-6,0,-6" HorizontalAlignment="Center" Width="224" VerticalAlignment="Center" Background="Transparent" >
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="auto"/>
@@ -39,13 +39,14 @@
             </Image>
         </ScrollViewer>
 
-        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <Grid VerticalAlignment="Stretch" Width="230" HorizontalAlignment="Right" Name="DetailInfoPanel" Visibility="Collapsed">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="4*"/>
                 <ColumnDefinition Width="auto"/>
             </Grid.ColumnDefinitions>
-            <ScrollViewer Name="DetailInfoPanel" Width="230" HorizontalAlignment="Center" VerticalAlignment="Stretch" Grid.Column="1" Margin="0" Opacity="0.7"
-                      Visibility="Collapsed" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" >
+            <Border HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Opacity="0.7"/>
+
+            <ScrollViewer HorizontalAlignment="Center" VerticalAlignment="Stretch" Grid.Column="1" Margin="0" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" >
                 <ListBox x:Name="DetailInfoList" Margin="0,28,0,22" HorizontalAlignment="Stretch"  VerticalAlignment="Stretch" ItemsSource="{Binding EntryList}" 
                          IsHitTestVisible="False" ItemTemplate="{StaticResource VerticalItemTemplate}" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"  />
             </ScrollViewer>
