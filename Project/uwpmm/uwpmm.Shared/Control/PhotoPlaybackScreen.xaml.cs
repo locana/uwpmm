@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Kazyx.Uwpmm.Utility;
+using System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
@@ -33,11 +34,8 @@ namespace Kazyx.Uwpmm.Control
             (d as PhotoPlaybackScreen).SourceBitmap = (BitmapImage)e.NewValue;
         }
 
-        const double MaxScale = 1.0;
-
-        double _scale = 1.0;
-        double _coercedScale;
-        double _originalScale;
+        const double MaxScale = 5.0;
+        const double MinScale = 0.9;
 
         BitmapImage _SourceBitmap;
         public BitmapImage SourceBitmap
@@ -54,49 +52,48 @@ namespace Kazyx.Uwpmm.Control
             Image.Source = _SourceBitmap;
         }
 
-        public void viewport_ManipulationStarted(object sender, ManipulationStartedRoutedEventArgs e)
-        {
-            _originalScale = _scale;
-        }
-
         public void Init()
         {
-            _scale = 0;
-            CoerceScale(true);
-            _scale = _coercedScale;
-        }
-
-        void CoerceScale(bool recompute)
-        {
-            //if (recompute && _SourceBitmap != null && viewport != null)
-            //{
-            //    // Calculate the minimum scale to fit the viewport 
-            //    var minX = viewport.ActualWidth / _SourceBitmap.PixelWidth;
-            //    var minY = viewport.ActualHeight / _SourceBitmap.PixelHeight;
-
-            //    _minScale = Math.Min(minX, minY);
-            //    DebugUtil.Log("Minimum scale: " + _minScale);
-            //}
-
-            //_coercedScale = Math.Min(MaxScale, Math.Max(_scale, _minScale));
+            var transform = Image.RenderTransform as CompositeTransform;
+            if (transform != null)
+            {
+                transform.ScaleX = 1;
+                transform.ScaleY = 1;
+                transform.Rotation = 0;
+                transform.TranslateX = 0;
+                transform.TranslateY = 0;
+            }
         }
 
         internal void ReleaseImage()
         {
             _SourceBitmap = null;
         }
+
         private void Image_ManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
         {
             UIElement element = sender as UIElement;
+            var parent = (sender as Image).Parent as ScrollViewer;
             CompositeTransform transform = element.RenderTransform as CompositeTransform;
-            if (transform != null)
+            if (transform != null && parent != null)
             {
-                transform.ScaleX *= e.Delta.Scale;
-                transform.ScaleY *= e.Delta.Scale;
-                transform.Rotation += e.Delta.Scale / Math.PI;
-                transform.TranslateX += e.Delta.Translation.X;
-                transform.TranslateY += e.Delta.Translation.Y;
+                transform.ScaleX = LimitToRange(transform.ScaleX * e.Delta.Scale, MinScale, MaxScale);
+                transform.ScaleY = LimitToRange(transform.ScaleY * e.Delta.Scale, MinScale, MaxScale);
+                transform.Rotation += e.Delta.Rotation / Math.PI;
+
+                var diagonalSize = Math.Sqrt(Math.Pow(element.RenderSize.Width, 2) + Math.Pow(element.RenderSize.Height, 2)) * transform.ScaleX;
+                var translateLimitX = diagonalSize / 3 + parent.ActualWidth / 2;
+                var translateLimitY = diagonalSize / 4 + parent.ActualHeight / 2;
+                transform.TranslateX = LimitToRange(transform.TranslateX + e.Delta.Translation.X, -translateLimitX, translateLimitX);
+                transform.TranslateY = LimitToRange(transform.TranslateY + e.Delta.Translation.Y, -translateLimitY, translateLimitY);
             }
+        }
+
+        double LimitToRange(double value, double min, double max)
+        {
+            if (value > max) { return max; }
+            if (value < min) { return min; }
+            return value;
         }
     }
 }
