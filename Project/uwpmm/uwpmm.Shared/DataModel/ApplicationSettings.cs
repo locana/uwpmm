@@ -1,4 +1,5 @@
-﻿using Kazyx.Uwpmm.Playback;
+﻿using Kazyx.Uwpmm.Control;
+using Kazyx.Uwpmm.Playback;
 using Kazyx.Uwpmm.Utility;
 using Windows.UI;
 using Windows.UI.Xaml;

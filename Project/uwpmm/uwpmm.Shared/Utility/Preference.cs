@@ -1,4 +1,5 @@
-﻿using Kazyx.Uwpmm.Playback;
+﻿using Kazyx.Uwpmm.Control;
+using Kazyx.Uwpmm.Playback;
 using Windows.Storage;
 
 namespace Kazyx.Uwpmm.Utility

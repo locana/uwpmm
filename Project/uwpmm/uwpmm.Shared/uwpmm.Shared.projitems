@@ -109,7 +109,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)UPnP\UpnpService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UPnP\UpnpDescriptionParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UPnP\ValueLessResponse.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Utility\ApplicationSettingNames.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\BoolToVisibilityConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\DebugUtil.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\GeoPositionManager.cs" />
