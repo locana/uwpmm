@@ -153,7 +153,7 @@ namespace Kazyx.Uwpmm.Pages
                             InitializeRemoteGridContents();
                         }
                     },
-                    SettingValueConverter.FromContentsSet(Enum.GetValues(typeof(ContentsSet)).Cast<ContentsSet>().ToArray()))));
+                    SettingValueConverter.FromContentsSet(EnumUtil<ContentsSet>.GetValueEnumerable()))));
             AppSettings.Children.Add(contents_type_settings);
 
             HideSettingAnimation.Completed += HideSettingAnimation_Completed;
