@@ -1001,4 +1001,10 @@ PlayMemories Camera Appsストアで最新版にアップデートしてくだ�
   <data name="Viewer_MenuFetchMore" xml:space="preserve">
     <value>さらに読み込む</value>
   </data>
+  <data name="RotateLeft" xml:space="preserve">
+    <value>左回転</value>
+  </data>
+  <data name="RotateRight" xml:space="preserve">
+    <value>右回転</value>
+  </data>
 </root>

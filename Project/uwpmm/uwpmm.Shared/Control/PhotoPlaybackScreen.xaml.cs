@@ -1,9 +1,11 @@
 ﻿using Kazyx.Uwpmm.Utility;
 using System;
+using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Media.Imaging;
 
 // The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
@@ -21,6 +23,43 @@ namespace Kazyx.Uwpmm.Control
         {
             get { return DetailInfoPanel.Visibility; }
             set { DetailInfoPanel.Visibility = value; }
+        }
+
+        public void RotateImage(Rotation r)
+        {
+            var transform = Image.RenderTransform as CompositeTransform;
+            if (transform != null)
+            {
+                switch (r)
+                {
+                    case Rotation.Left:
+                        RotateSmoothly(Image, -90);
+                        break;
+                    case Rotation.Right:
+                        RotateSmoothly(Image, 90);
+                        break;
+                }
+            }
+        }
+
+        public void RotateSmoothly(UIElement target, double angle)
+        {
+            var transform = Image.RenderTransform as CompositeTransform;
+
+            var duration = new Duration(TimeSpan.FromMilliseconds(200));
+            var sb = new Storyboard() { Duration = duration };
+            var animation = new DoubleAnimationUsingKeyFrames();
+
+            sb.Children.Add(animation);
+
+            Storyboard.SetTarget(animation, transform);
+            Storyboard.SetTargetProperty(animation, "Rotation");
+
+            animation.KeyFrames.Add(new EasingDoubleKeyFrame() { KeyTime = KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(0)), Value = transform.Rotation });
+            animation.KeyFrames.Add(new EasingDoubleKeyFrame() { KeyTime = KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(60)), Value = transform.Rotation + angle * 0.7 });
+            animation.KeyFrames.Add(new EasingDoubleKeyFrame() { KeyTime = KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(180)), Value = transform.Rotation + angle });
+
+            sb.Begin();
         }
 
         public static readonly DependencyProperty MinProperty = DependencyProperty.Register(
@@ -79,11 +118,10 @@ namespace Kazyx.Uwpmm.Control
             {
                 transform.ScaleX = LimitToRange(transform.ScaleX * e.Delta.Scale, MinScale, MaxScale);
                 transform.ScaleY = LimitToRange(transform.ScaleY * e.Delta.Scale, MinScale, MaxScale);
-                transform.Rotation += e.Delta.Rotation / Math.PI;
 
                 var diagonalSize = Math.Sqrt(Math.Pow(element.RenderSize.Width, 2) + Math.Pow(element.RenderSize.Height, 2)) * transform.ScaleX;
                 var translateLimitX = diagonalSize / 3 + parent.ActualWidth / 2;
-                var translateLimitY = diagonalSize / 4 + parent.ActualHeight / 2;
+                var translateLimitY = diagonalSize / 4 + parent.ActualHeight / 2.2;
                 transform.TranslateX = LimitToRange(transform.TranslateX + e.Delta.Translation.X, -translateLimitX, translateLimitX);
                 transform.TranslateY = LimitToRange(transform.TranslateY + e.Delta.Translation.Y, -translateLimitY, translateLimitY);
             }
@@ -95,5 +133,11 @@ namespace Kazyx.Uwpmm.Control
             if (value < min) { return min; }
             return value;
         }
+    }
+
+    public enum Rotation
+    {
+        Right,
+        Left,
     }
 }

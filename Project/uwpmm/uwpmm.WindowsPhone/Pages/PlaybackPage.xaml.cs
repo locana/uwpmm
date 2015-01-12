@@ -134,6 +134,16 @@ namespace Kazyx.Uwpmm.Pages
                 OpenAppSettingPanel();
             });
 
+            CommandBarManager.SetEvent(AppBarItem.RotateRight, (sender, e) =>
+            {
+                PhotoScreen.RotateImage(Control.Rotation.Right);
+            });
+
+            CommandBarManager.SetEvent(AppBarItem.RotateLeft, (sender, e) =>
+            {
+                PhotoScreen.RotateImage(Control.Rotation.Left);
+            });
+
             var storage_access_settings = new SettingSection(SystemUtil.GetStringResource("SettingSection_ContentsSync"));
             AppSettings.Children.Add(storage_access_settings);
             storage_access_settings.Add(new CheckBoxSetting(
@@ -507,11 +517,12 @@ namespace Kazyx.Uwpmm.Pages
                     case ViewerState.RemoteStillPlayback:
                         if (PhotoScreen.DetailInfoVisibility == Visibility.Visible)
                         {
-                            BottomAppBar = CommandBarManager.Clear().Icon(AppBarItem.HideDetailInfo).CreateNew(0.5);
+                            BottomAppBar = CommandBarManager.Clear().Icon(AppBarItem.RotateRight).Icon(AppBarItem.HideDetailInfo).Icon(AppBarItem.RotateLeft).CreateNew(0.5);
                         }
                         else
                         {
-                            BottomAppBar = CommandBarManager.Clear().Icon(AppBarItem.ShowDetailInfo).CreateNew(0.5);
+                            BottomAppBar = CommandBarManager.Clear().Icon(AppBarItem.RotateRight).Icon(AppBarItem.ShowDetailInfo).Icon(AppBarItem.RotateLeft).CreateNew(0.5);
+
                         }
                         break;
                     default:

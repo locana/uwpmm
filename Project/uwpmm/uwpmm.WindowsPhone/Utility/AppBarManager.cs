@@ -46,6 +46,10 @@ namespace Kazyx.Uwpmm.Utility
                     return new AppBarButton() { Icon = new BitmapIcon() { UriSource = new Uri("ms-appx:///Assets/AppBar/appbar_wifi.png") }, Label = SystemUtil.GetStringResource("WifiSettingLauncherButtonText") };
                 case AppBarItem.Donation:
                     return new AppBarButton() { Icon = new BitmapIcon() { UriSource = new Uri("ms-appx:///Assets/AppBar/appbar_Dollar.png") }, Label = SystemUtil.GetStringResource("Donation") };
+                case AppBarItem.RotateLeft:
+                    return new AppBarButton() { Icon = new BitmapIcon() { UriSource = new Uri("ms-appx:///Assets/AppBar/appbar_rotateLeft.png") }, Label = SystemUtil.GetStringResource("RotateLeft") };
+                case AppBarItem.RotateRight:
+                    return new AppBarButton() { Icon = new BitmapIcon() { UriSource = new Uri("ms-appx:///Assets/AppBar/appbar_rotateRight.png") }, Label = SystemUtil.GetStringResource("RotateRight") };
                 default:
                     throw new NotImplementedException();
             }
@@ -148,10 +152,12 @@ namespace Kazyx.Uwpmm.Utility
         CancelTouchAF,
         DownloadMultiple,
         DeleteMultiple,
-        ShowDetailInfo,
-        HideDetailInfo,
         Ok,
         WifiSetting,
         Donation,
+        RotateRight,
+        ShowDetailInfo,
+        HideDetailInfo,
+        RotateLeft,
     }
 }

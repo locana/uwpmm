@@ -135,6 +135,8 @@
     <Content Include="$(MSBuildThisFileDirectory)Assets\AppBar\appBar_download.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\AppBar\appBar_ok.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\AppBar\appBar_playback.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppBar\appbar_rotateLeft.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AppBar\appbar_rotateRight.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\AppBar\appBar_selection.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\AppBar\appBar_wifi.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\AppBar\ControlPanel.png" />
