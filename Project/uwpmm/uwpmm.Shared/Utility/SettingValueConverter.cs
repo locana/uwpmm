@@ -1,7 +1,9 @@
 ﻿using Kazyx.RemoteApi;
 using Kazyx.RemoteApi.Camera;
+using Kazyx.Uwpmm.Playback;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Kazyx.Uwpmm.Utility
 {
@@ -681,6 +683,25 @@ namespace Kazyx.Uwpmm.Utility
                 }
             }
             return names;
+        }
+
+        internal static string[] FromContentsSet(ContentsSet[] types)
+        {
+            // TODO
+            return types.Select(type =>
+            {
+                switch (type)
+                {
+                    case ContentsSet.ImagesAndMovies:
+                        return "Images and movies";
+                    case ContentsSet.Images:
+                        return "Images";
+                    case ContentsSet.Movies:
+                        return "Movies";
+                    default:
+                        return "Undefined";
+                }
+            }).ToArray();
         }
     }
 }

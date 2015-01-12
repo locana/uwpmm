@@ -19,7 +19,7 @@ namespace Kazyx.Uwpmm.Playback
             SingleContentLoaded.Raise(this, new SingleContentEventArgs { File = file });
         }
 
-        public override async Task Load(CancellationTokenSource cancel)
+        public override async Task Load(ContentsSet contentsSet, CancellationTokenSource cancel)
         {
             var library = KnownFolders.PicturesLibrary;
 

@@ -43,7 +43,7 @@ namespace Kazyx.Uwpmm.Pages
 
         public const string AUTO_JUMP_TO_DLNA_FLAG = "auto_jump_to_dlna";
 
-        private const bool LOAD_DUMMY_CONTENTS = false;
+        private const bool LOAD_DUMMY_CONTENTS = true;
 
         private HttpClient HttpClient = new HttpClient();
 
@@ -140,6 +140,21 @@ namespace Kazyx.Uwpmm.Pages
                 new AppSettingData<bool>(SystemUtil.GetStringResource("Setting_PrioritizeOriginalSize"), SystemUtil.GetStringResource("Guide_PrioritizeOriginalSize"),
                     () => { return ApplicationSettings.GetInstance().PrioritizeOriginalSizeContents; },
                     enabled => { ApplicationSettings.GetInstance().PrioritizeOriginalSizeContents = enabled; })));
+
+            var contents_type_settings = new SettingSection("Contents type");
+            contents_type_settings.Add(new ComboBoxSetting(
+                new AppSettingData<int>("Contents type", "Filter types",
+                    () => { return (int)ApplicationSettings.GetInstance().RemoteContentsSet; },
+                    newValue =>
+                    {
+                        if (newValue != -1)
+                        {
+                            ApplicationSettings.GetInstance().RemoteContentsSet = (ContentsSet)newValue;
+                            InitializeRemoteGridContents();
+                        }
+                    },
+                    SettingValueConverter.FromContentsSet(Enum.GetValues(typeof(ContentsSet)).Cast<ContentsSet>().ToArray()))));
+            AppSettings.Children.Add(contents_type_settings);
 
             HideSettingAnimation.Completed += HideSettingAnimation_Completed;
 
@@ -251,7 +266,7 @@ namespace Kazyx.Uwpmm.Pages
 
             Canceller = new CancellationTokenSource();
 
-            DeleteRemoteGridFacially();
+            InitializeRemoteGridContents();
             UnsupportedMessage.Visibility = Visibility.Collapsed;
 
             RemoteGridSource = new AlbumGroupCollection();
@@ -479,11 +494,11 @@ namespace Kazyx.Uwpmm.Pages
                         break;
                     case ViewerState.LocalSingle:
                         UpdateLocalSelectionMode(SelectivityFactor.None);
-                        BottomAppBar = CommandBarManager.Clear().Icon(AppBarItem.DeleteMultiple).CreateNew(0.5);
+                        BottomAppBar = CommandBarManager.Clear().Icon(AppBarItem.DeleteMultiple).NoIcon(AppBarItem.AppSetting).CreateNew(0.5);
                         break;
                     case ViewerState.RemoteSingle:
                         UpdateRemoteSelectionMode(SelectivityFactor.None);
-                        BottomAppBar = CommandBarManager.Clear().Icon(AppBarItem.DownloadMultiple).Icon(AppBarItem.DeleteMultiple).Icon(AppBarItem.AppSetting).CreateNew(0.5);
+                        BottomAppBar = CommandBarManager.Clear().Icon(AppBarItem.DownloadMultiple).Icon(AppBarItem.DeleteMultiple).NoIcon(AppBarItem.AppSetting).CreateNew(0.5);
                         break;
                     case ViewerState.AppSettings:
                         BottomAppBar = CommandBarManager.Clear().Icon(AppBarItem.Ok).CreateNew(0.5);
@@ -611,7 +626,7 @@ namespace Kazyx.Uwpmm.Pages
             loader.SingleContentLoaded += LocalContentsLoader_SingleContentLoaded;
             try
             {
-                await loader.Load(Canceller).ConfigureAwait(false);
+                await loader.Load(ContentsSet.Images, Canceller).ConfigureAwait(false);
                 HideProgress();
             }
             catch
@@ -639,14 +654,29 @@ namespace Kazyx.Uwpmm.Pages
         }
 
 #if DEBUG
+        DummyContentsLoader loader = new DummyContentsLoader();
+
         private async Task AddDummyContentsAsync()
         {
-            var loader = new DummyContentsLoader();
             loader.PartLoaded += RemoteContentsLoader_PartLoaded;
 
             try
             {
-                await loader.Load(Canceller).ConfigureAwait(false);
+                await loader.Load(ContentsSet.Images, Canceller).ConfigureAwait(false);
+            }
+            finally
+            {
+                loader.PartLoaded -= RemoteContentsLoader_PartLoaded;
+            }
+        }
+
+        private async Task AddPartDummyContentsAsync(RemainingContentsHolder holder)
+        {
+            loader.PartLoaded += RemoteContentsLoader_PartLoaded;
+
+            try
+            {
+                await loader.PartLoad(holder, ContentsSet.Images, Canceller).ConfigureAwait(false);
             }
             finally
             {
@@ -693,20 +723,21 @@ namespace Kazyx.Uwpmm.Pages
                     if (storages[0].RecordableImages != -1 || storages[0].RecordableMovieLength != -1)
                     {
                         ShowToast(SystemUtil.GetStringResource("Viewer_RefreshAutomatically"));
-                        InitializeRemote();
+                        var initTask = InitializeRemote();
                     }
                 }
             }
             else
             {
-                DeleteRemoteGridFacially();
+                InitializeRemoteGridContents();
                 ShowToast(SystemUtil.GetStringResource("Viewer_StorageDetached"));
                 UpdateInnerState(ViewerState.RemoteNoMedia);
             }
         }
 
-        private async void DeleteRemoteGridFacially()
+        private async void InitializeRemoteGridContents()
         {
+            DebugUtil.Log("InitializeRemoteGridContents");
             IsRemoteInitialized = false;
             await Dispatcher.RunAsync(CoreDispatcherPriority.High, () => { RemoteGridSource.Clear(); });
         }
@@ -726,7 +757,7 @@ namespace Kazyx.Uwpmm.Pages
             get { return _StorageAvailable; }
         }
 
-        private async void InitializeRemote()
+        private async Task InitializeRemote()
         {
             IsRemoteInitialized = true;
 
@@ -749,7 +780,7 @@ namespace Kazyx.Uwpmm.Pages
 
             try
             {
-                await loader.Load(Canceller).ConfigureAwait(false);
+                await loader.Load(ContentsSet.Images, Canceller).ConfigureAwait(false);
                 DebugUtil.Log("DlnaContentsLoader completed");
                 if (RemoteGridSource.Count == 0)
                 {
@@ -787,7 +818,7 @@ namespace Kazyx.Uwpmm.Pages
 
                 try
                 {
-                    await loader.Load(Canceller).ConfigureAwait(false);
+                    await loader.Load(ApplicationSettings.GetInstance().RemoteContentsSet, Canceller).ConfigureAwait(false);
                     DebugUtil.Log("RemoteApiContentsLoader completed");
                     HideProgress();
                 }
@@ -827,7 +858,11 @@ namespace Kazyx.Uwpmm.Pages
                 if (RemoteGridSource != null)
                 {
                     DebugUtil.Log("Adding " + e.Contents.Count + " contents to RemoteGrid");
-                    RemoteGridSource.AddRange(e.Contents);
+                    // RemoteGridSource.AddRange(e.Contents);
+                    foreach (var content in e.Contents)
+                    {
+                        RemoteGridSource.Add(content);
+                    }
                 }
             });
         }
@@ -952,45 +987,52 @@ namespace Kazyx.Uwpmm.Pages
                     UpdateInnerState(ViewerState.LocalSingle);
                     break;
                 case 1:
-                    if (CheckRemoteCapability())
+                    OnRemotePivotDisplayed();
+                    break;
+            }
+        }
+
+        private void OnRemotePivotDisplayed()
+        {
+#if DEBUG
+            if (LOAD_DUMMY_CONTENTS && !IsRemoteInitialized)
+            {
+                UpdateInnerState(ViewerState.RemoteSingle);
+                var task = InitializeRemote();
+                var dummytask = AddDummyContentsAsync();
+            }
+#endif
+
+            if (CheckRemoteCapability())
+            {
+                if (IsRemoteInitialized)
+                {
+                    UpdateInnerState(ViewerState.RemoteSingle);
+                }
+                else
+                {
+                    if (StorageAvailable)
                     {
-                        if (IsRemoteInitialized)
-                        {
-                            UpdateInnerState(ViewerState.RemoteSingle);
-                        }
-                        else
-                        {
-                            if (StorageAvailable)
-                            {
-                                UpdateInnerState(ViewerState.RemoteSingle);
-                                InitializeRemote();
-                            }
-                            else if (UpnpDevice != null)
-                            {
-                                UpdateInnerState(ViewerState.RemoteSingle);
-                                InitializeRemote();
-                            }
-                            else
-                            {
-                                ShowToast(SystemUtil.GetStringResource("Viewer_NoStorage"));
-                                UpdateInnerState(ViewerState.RemoteNoMedia);
-                            }
-                        }
+                        UpdateInnerState(ViewerState.RemoteSingle);
+                        var task = InitializeRemote();
+                    }
+                    else if (UpnpDevice != null)
+                    {
+                        UpdateInnerState(ViewerState.RemoteSingle);
+                        var task = InitializeRemote();
                     }
                     else
                     {
-                        UpdateInnerState(ViewerState.RemoteUnsupported);
-                        ShowToast(SystemUtil.GetStringResource("Viewer_StorageAccessNotSupported"));
-                        UnsupportedMessage.Visibility = Visibility.Visible;
+                        ShowToast(SystemUtil.GetStringResource("Viewer_NoStorage"));
+                        UpdateInnerState(ViewerState.RemoteNoMedia);
                     }
-#if DEBUG
-                    if (LOAD_DUMMY_CONTENTS)
-                    {
-                        var task = AddDummyContentsAsync();
-                        UpdateInnerState(ViewerState.RemoteSingle);
-                    }
-#endif
-                    break;
+                }
+            }
+            else
+            {
+                UpdateInnerState(ViewerState.RemoteUnsupported);
+                ShowToast(SystemUtil.GetStringResource("Viewer_StorageAccessNotSupported"));
+                UnsupportedMessage.Visibility = Visibility.Visible;
             }
         }
 
@@ -1004,29 +1046,31 @@ namespace Kazyx.Uwpmm.Pages
                 return;
             }
 
-            var uris = items
+            var copy = new List<object>(items);
+
+            var uris = copy
                 .Select(item => (item as Thumbnail).Source as RemoteApiContentInfo)
                 .Where(info => info != null)
                 .Select(info => info.Uri).ToList();
 
-            var dlna = items
+            var dlna = copy
                 .Select(item => (item as Thumbnail).Source as DlnaContentInfo)
                 .Where(info => info != null)
                 .Select(info => info.Id).ToList();
 
-            await DeleteRemoteApiContents(new TargetContents { ContentUris = uris });
-            await DeleteDlnaContentsAsync(dlna);
-
-            foreach (var item in items)
+            foreach (var item in copy)
             {
                 var data = item as Thumbnail;
                 RemoteGridSource.Remove(data);
             }
+
+            await DeleteRemoteApiContents(new TargetContents { ContentUris = uris });
+            await DeleteDlnaContentsAsync(dlna);
         }
 
         private async void DeleteSelectedLocalImages()
         {
-            DebugUtil.Log("DeleteSelectedLocalImages");
+            DebugUtil.Log("DeleteSelectedLocalImages: " + LocalGrid.SelectedItems.Count);
             var items = LocalGrid.SelectedItems;
             if (items.Count == 0)
             {
@@ -1034,17 +1078,9 @@ namespace Kazyx.Uwpmm.Pages
                 return;
             }
 
-            foreach (var data in items.Select(item => item as Thumbnail).Where(thumb => thumb.CacheFile != null))
+            foreach (var data in new List<object>(items).Select(item => item as Thumbnail).Where(thumb => thumb.CacheFile != null))
             {
-                try
-                {
-                    await data.CacheFile.DeleteAsync();
-                    LocalGridSource.Remove(data);
-                }
-                catch (Exception e)
-                {
-                    DebugUtil.Log("Failed to delete file: " + e.StackTrace);
-                }
+                await TryDeleteLocalFile(data);
             }
         }
 
@@ -1057,7 +1093,7 @@ namespace Kazyx.Uwpmm.Pages
                 return;
             }
 
-            foreach (var item in items)
+            foreach (var item in new List<object>(items))
             {
                 try
                 {
@@ -1326,6 +1362,10 @@ namespace Kazyx.Uwpmm.Pages
         void HideSettingAnimation_Completed(object sender, object e)
         {
             AppSettingPanel.Visibility = Visibility.Collapsed;
+            if (InnerState != ViewerState.OutOfPage && PivotRoot.SelectedIndex == 1)
+            {
+                OnRemotePivotDisplayed();
+            }
         }
 
         private async void PivotRoot_Loaded(object sender, RoutedEventArgs e)
@@ -1380,18 +1420,6 @@ namespace Kazyx.Uwpmm.Pages
                 CloseAppSettingPanel();
                 e.Handled = true;
             }
-        }
-
-        private void RemoteThumbnailImage_Tapped(object sender, TappedRoutedEventArgs e)
-        {
-            if (RemoteGrid.SelectionMode == ListViewSelectionMode.Multiple)
-            {
-                DebugUtil.Log("Ignore tap in multi-selection mode.");
-                return;
-            }
-            var image = sender as Image;
-            var content = image.DataContext as Thumbnail;
-            var task = PlaybackContent(content);
         }
 
         private void RemoteGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -1455,19 +1483,6 @@ namespace Kazyx.Uwpmm.Pages
             FlyoutBase.ShowAttachedFlyout(sender as FrameworkElement);
         }
 
-        private void LocalThumbnailImage_Tapped(object sender, TappedRoutedEventArgs e)
-        {
-            if (LocalGrid.SelectionMode == ListViewSelectionMode.Multiple)
-            {
-                DebugUtil.Log("Ignore tap in multi-selection mode.");
-                return;
-            }
-
-            var image = sender as Image;
-            var content = image.DataContext as Thumbnail;
-            DisplayLocalDetailImage(content);
-        }
-
         private void LocalPlayback_Click(object sender, RoutedEventArgs e)
         {
             var item = sender as MenuFlyoutItem;
@@ -1518,15 +1533,91 @@ namespace Kazyx.Uwpmm.Pages
             var data = item.DataContext as Thumbnail;
             if (data.CacheFile != null)
             {
-                try
-                {
-                    await data.CacheFile.DeleteAsync();
-                    LocalGridSource.Remove(data);
-                }
-                catch (Exception ex)
-                {
-                    DebugUtil.Log("Failed to delete file: " + ex.StackTrace);
-                }
+                await TryDeleteLocalFile(data);
+            }
+        }
+
+        private async Task TryDeleteLocalFile(Thumbnail data)
+        {
+            try
+            {
+                LocalGridSource.Remove(data);
+                DebugUtil.Log("Delete " + data.CacheFile.DisplayName);
+                await data.CacheFile.DeleteAsync();
+            }
+            catch (Exception ex)
+            {
+                DebugUtil.Log("Failed to delete file: " + ex.StackTrace);
+            }
+        }
+
+        private void RemoteThumbnailGrid_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            if (RemoteGrid.SelectionMode == ListViewSelectionMode.Multiple)
+            {
+                return;
+            }
+            var grid = sender as Grid;
+
+            var content = grid.DataContext as Thumbnail;
+            if (content.IsContent)
+            {
+                var task = PlaybackContent(content);
+            }
+            else
+            {
+                var holder = grid.DataContext as RemainingContentsHolder;
+                RemoteGridSource.Remove(holder, false);
+                var loadTask = LoadRemainingContents(holder);
+            }
+        }
+
+        private void LocalThumbnailGrid_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            if (LocalGrid.SelectionMode == ListViewSelectionMode.Multiple)
+            {
+                return;
+            }
+
+            var image = sender as Grid;
+            var content = image.DataContext as Thumbnail;
+            DisplayLocalDetailImage(content);
+        }
+
+        private async void FetchMore_Click(object sender, RoutedEventArgs e)
+        {
+            var item = sender as MenuFlyoutItem;
+            var holder = item.DataContext as RemainingContentsHolder;
+            RemoteGridSource.Remove(holder, false);
+            await LoadRemainingContents(holder);
+        }
+
+        private async Task LoadRemainingContents(RemainingContentsHolder holder)
+        {
+#if DEBUG
+            if (LOAD_DUMMY_CONTENTS)
+            {
+                var task = AddPartDummyContentsAsync(holder);
+                return;
+            }
+#endif
+            var loader = new RemoteApiContentsLoader(TargetDevice);
+            loader.PartLoaded += RemoteContentsLoader_PartLoaded;
+
+            ChangeProgressText(SystemUtil.GetStringResource("Progress_FetchingContents"));
+            try
+            {
+                await loader.GetPartOfContentsOfDayAsync(holder, ApplicationSettings.GetInstance().RemoteContentsSet, Canceller);
+            }
+            catch (Exception e)
+            {
+                DebugUtil.Log(e.StackTrace);
+                HideProgress();
+                ShowToast(SystemUtil.GetStringResource("Viewer_FailedToRefreshContents"));
+            }
+            finally
+            {
+                loader.PartLoaded -= RemoteContentsLoader_PartLoaded;
             }
         }
     }

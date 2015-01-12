@@ -12,21 +12,26 @@ namespace Kazyx.Uwpmm.Playback
 #if DEBUG
     public class DummyContentsLoader : ContentsLoader
     {
+        public const int MAX_AUTO_LOAD_THUMBNAILS = 30;
+
         private readonly Random random;
         public DummyContentsLoader()
         {
             random = new Random();
+            CurrentUuid = DummyContentsLoader.RandomUuid();
         }
 
-        public override async Task Load(CancellationTokenSource cancel)
-        {
-            var CurrentUuid = DummyContentsLoader.RandomUuid();
+        private readonly string CurrentUuid;
 
+        public override async Task Load(ContentsSet contentsSet, CancellationTokenSource cancel)
+        {
             await Task.Delay(500).ConfigureAwait(false);
+
+            var loaded = 0;
 
             foreach (var date in RandomDateList(10))
             {
-                await Task.Delay(500).ConfigureAwait(false);
+                await Task.Delay(200).ConfigureAwait(false);
 
                 if (cancel != null && cancel.IsCancellationRequested)
                 {
@@ -35,16 +40,45 @@ namespace Kazyx.Uwpmm.Playback
                 }
 
                 var list = new List<Thumbnail>();
-                foreach (var content in RandomContentList(30))
+                var contents = RandomContentList(30);
+
+                if (MAX_AUTO_LOAD_THUMBNAILS < loaded)
+                {
+                    var remaining = new RemainingContentsHolder(date, CurrentUuid, 0, contents.Count);
+                    var tmplist = new List<Thumbnail>();
+                    tmplist.Add(remaining);
+                    OnPartLoaded(tmplist);
+                    continue;
+                }
+
+                foreach (var content in contents)
                 {
                     content.GroupName = date.Title;
                     list.Add(new Thumbnail(content, CurrentUuid));
                 }
 
                 OnPartLoaded(list);
+                loaded += list.Count;
             }
 
             OnCompleted();
+        }
+
+        public async Task PartLoad(RemainingContentsHolder holder, ContentsSet contentsSet, CancellationTokenSource cancel)
+        {
+            var list = new List<Thumbnail>();
+            var contents = RandomContentList(holder.RemainingCount, true);
+
+            await Task.Delay(200).ConfigureAwait(false);
+
+            foreach (var content in contents)
+            {
+                content.GroupName = holder.AlbumGroup.Title;
+                Kazyx.Uwpmm.Utility.DebugUtil.Log("Add content for " + content.GroupName);
+                list.Add(new Thumbnail(content, CurrentUuid));
+            }
+
+            OnPartLoaded(list);
         }
 
         private IList<DateInfo> RandomDateList(int count)
@@ -62,10 +96,10 @@ namespace Kazyx.Uwpmm.Playback
             return list;
         }
 
-        private IList<ContentInfo> RandomContentList(int count)
+        private IList<ContentInfo> RandomContentList(int count, bool fixedNum = false)
         {
             var list = new List<ContentInfo>();
-            for (int i = 0; i < random.Next(1, count); i++)
+            for (int i = 0; i < (fixedNum ? count : random.Next(1, count)); i++)
             {
                 list.Add(new ContentInfo
                 {

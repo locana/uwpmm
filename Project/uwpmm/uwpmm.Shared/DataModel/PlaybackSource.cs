@@ -1,8 +1,8 @@
 ﻿using Kazyx.RemoteApi.AvContent;
+using Kazyx.Uwpmm.Playback;
 using Kazyx.Uwpmm.Utility;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
@@ -14,6 +14,52 @@ using Windows.UI.Xaml.Media.Imaging;
 
 namespace Kazyx.Uwpmm.DataModel
 {
+    public class RemainingContentsHolder : Thumbnail
+    {
+        public RemainingContentsHolder(DateInfo date, string uuid, int startsFrom, int count)
+            : base(new ContentInfo { GroupName = date.Title }, uuid)
+        {
+            StartsFrom = 0;
+            RemainingCount = count;
+            AlbumGroup = date;
+        }
+
+        public int StartsFrom { private set; get; }
+        public int RemainingCount { private set; get; }
+        public DateInfo AlbumGroup { private set; get; }
+
+        public override string OverlayText
+        {
+            get
+            {
+                if (RemainingCount == 0) { return null; }
+                else { return "+" + RemainingCount; }
+            }
+        }
+
+        public override bool IsSelectable
+        {
+            get
+            {
+                switch (SelectivityFactor)
+                {
+                    case SelectivityFactor.None:
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+        }
+
+        public override bool IsMovie { get { return false; } }
+        public override bool IsDeletable { get { return false; } }
+        public override bool IsPlayable { get { return false; } }
+        public override bool IsCopyable { get { return false; } }
+        public override bool IsContent { get { return false; } }
+        public override BitmapImage ThumbnailImage { get { return null; } }
+        public override BitmapImage LargeImage { get { return null; } }
+    }
+
     public class Thumbnail : ObservableBase
     {
         public Thumbnail(ContentInfo content, string uuid)
@@ -33,7 +79,9 @@ namespace Kazyx.Uwpmm.DataModel
 
         public ContentInfo Source { private set; get; }
 
-        public bool IsMovie
+        public virtual string OverlayText { get { return null; } }
+
+        public virtual bool IsMovie
         {
             get
             {
@@ -59,7 +107,7 @@ namespace Kazyx.Uwpmm.DataModel
             get { return factor; }
         }
 
-        public bool IsSelectable
+        public virtual bool IsSelectable
         {
             get
             {
@@ -76,6 +124,14 @@ namespace Kazyx.Uwpmm.DataModel
                 }
             }
         }
+
+        public virtual bool IsDeletable { get { return !Source.Protected; } }
+
+        public virtual bool IsCopyable { get { return !IsMovie; } }
+
+        public virtual bool IsPlayable { get { return true; } }
+
+        public virtual bool IsContent { get { return true; } }
 
         private string DeviceUuid { set; get; }
 
@@ -109,19 +165,20 @@ namespace Kazyx.Uwpmm.DataModel
 
         private BitmapImage _ThumbnailImage = null;
 
-        public BitmapImage ThumbnailImage
+        public virtual BitmapImage ThumbnailImage
         {
             private set
             {
                 _ThumbnailImage = value;
                 NotifyChanged("ThumbnailImage");
+                NotifyChanged("LargeImage");
             }
             get { return GetImage(ImageMode.Image); }
         }
 
         private BitmapImage _LargeImage = null;
 
-        public BitmapImage LargeImage
+        public virtual BitmapImage LargeImage
         {
             private set
             {
@@ -200,7 +257,10 @@ namespace Kazyx.Uwpmm.DataModel
             {
                 if (Thumb == null)
                 {
-                    Thumb = this[new Random().Next(0, Count - 1)];
+                    lock (this)
+                    {
+                        Thumb = this[new Random().Next(0, Count - 1)];
+                    }
                     Thumb.PropertyChanged += Thumb_PropertyChanged;
                 }
                 return Thumb.LargeImage;
@@ -219,9 +279,12 @@ namespace Kazyx.Uwpmm.DataModel
         {
             set
             {
-                foreach (var thumb in this)
+                lock (this)
                 {
-                    thumb.SelectivityFactor = value;
+                    foreach (var thumb in this)
+                    {
+                        thumb.SelectivityFactor = value;
+                    }
                 }
             }
         }
@@ -233,38 +296,48 @@ namespace Kazyx.Uwpmm.DataModel
 
         new public void Add(Thumbnail content)
         {
-            var previous = Count;
-            base.Add(content);
-            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, content, previous));
+            lock (this)
+            {
+                var previous = Count;
+                base.Add(content);
+                OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, content, previous));
+                if (previous == 0)
+                {
+                    Thumb = null;
+                    OnPropertyChanged("RandomThumbnail");
+                }
+            }
         }
 
         new public bool Remove(Thumbnail content)
         {
-            var index = IndexOf(content);
-            var removed = base.Remove(content);
-            if (removed)
+            lock (this)
             {
-                OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, content, index));
+                var index = IndexOf(content);
+                var removed = base.Remove(content);
+                if (removed)
+                {
+                    OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, content, index));
+                }
+                return removed;
             }
-            return removed;
         }
 
         new public void AddRange(IEnumerable<Thumbnail> contents)
         {
-            var previous = Count;
-            var list = new List<Thumbnail>(contents);
-            base.AddRange(contents);
-            var e = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset);
-            OnCollectionChanged(e);
+            lock (this)
+            {
+                var previous = Count;
+                base.AddRange(contents);
+                var list = new List<Thumbnail>(contents);
+                OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, list, previous));
+            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
         private void OnPropertyChanged(string name)
         {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(name));
-            }
+            PropertyChanged.Raise(this, new PropertyChangedEventArgs(name));
         }
 
         public event NotifyCollectionChangedEventHandler CollectionChanged;
@@ -272,23 +345,18 @@ namespace Kazyx.Uwpmm.DataModel
         {
             OnPropertyChanged("Count");
             OnPropertyChanged("Item[]");
-            if (CollectionChanged != null)
+            try
             {
-                try
-                {
-                    CollectionChanged(this, e);
-                }
-                catch (NotSupportedException)
-                {
-                    NotifyCollectionChangedEventArgs alternativeEventArgs =
-                        new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset);
-                    OnCollectionChanged(alternativeEventArgs);
-                }
+                CollectionChanged.Raise(this, e);
+            }
+            catch (NotSupportedException)
+            {
+                OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
             }
         }
     }
 
-    public class AlbumGroupCollection : ObservableCollection<Album>
+    public class AlbumGroupCollection : List<Album>, INotifyPropertyChanged, INotifyCollectionChanged
     {
         private readonly bool SortAlbum;
 
@@ -304,67 +372,63 @@ namespace Kazyx.Uwpmm.DataModel
             set
             {
                 _SelectivityFactor = value;
-                foreach (var group in this)
+                lock (this)
                 {
-                    group.SelectivityFactor = value;
+                    foreach (var group in this)
+                    {
+                        group.SelectivityFactor = value;
+                    }
                 }
             }
         }
 
-        public bool Remove(Thumbnail content)
+        public bool Remove(Thumbnail content, bool deleteGroupIfEmpty = true)
         {
-            var group = GetGroup(content.GroupTitle);
-            if (group == null)
+            lock (this)
             {
-                DebugUtil.Log("Remove: group does not exist");
-                return false;
+                var group = GetGroup(content.GroupTitle);
+                if (group == null)
+                {
+                    DebugUtil.Log("Remove: group does not exist");
+                    return false;
+                }
+                var res = group.Remove(content);
+                if (deleteGroupIfEmpty && group.Count == 0)
+                {
+                    DebugUtil.Log("Remove no item group: " + group.Key);
+                    var index = IndexOf(group);
+                    var removed = Remove(group);
+                    if (removed)
+                    {
+                        OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, group, index));
+                    }
+                }
+                return res;
             }
-            return group.Remove(content);
         }
 
         public void Add(Thumbnail content)
         {
-            var group = GetGroup(content.GroupTitle);
-            if (group == null)
+            lock (this)
             {
-                group = new Album(content.GroupTitle);
-                SortAdd(group);
-            }
-            group.Add(content);
-        }
-
-        public void AddRange(IEnumerable<Thumbnail> contents)
-        {
-            var groups = new Dictionary<string, List<Thumbnail>>();
-            foreach (var content in contents)
-            {
-                if (!groups.ContainsKey(content.GroupTitle))
+                var group = GetGroup(content.GroupTitle);
+                if (group == null)
                 {
-                    groups.Add(content.GroupTitle, new List<Thumbnail>());
+                    group = new Album(content.GroupTitle);
+                    SortAdd(group);
                 }
-                groups[content.GroupTitle].Add(content);
-            }
-
-            foreach (var group in groups)
-            {
-                var g = GetGroup(group.Key);
-                if (g == null)
-                {
-                    g = new Album(group.Key);
-                    SortAdd(g);
-                }
-                g.AddRange(group.Value);
+                group.Add(content);
             }
         }
 
         private void SortAdd(Album item)
         {
-            int insertAt = Items.Count;
+            int insertAt = Count;
             if (SortAlbum)
             {
-                for (int i = 0; i < Items.Count; i++)
+                for (int i = 0; i < Count; i++)
                 {
-                    if (string.CompareOrdinal(Items[i].Key, item.Key) < 0)
+                    if (string.CompareOrdinal(this[i].Key, item.Key) < 0)
                     {
                         insertAt = i;
                         break;
@@ -372,11 +436,33 @@ namespace Kazyx.Uwpmm.DataModel
                 }
             }
             Insert(insertAt, item);
+            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, item, insertAt));
         }
 
         private Album GetGroup(string key)
         {
-            return base.Items.SingleOrDefault(item => item.Key == key);
+            return this.SingleOrDefault(item => item.Key == key);
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        private void OnPropertyChanged(string name)
+        {
+            PropertyChanged.Raise(this, new PropertyChangedEventArgs(name));
+        }
+
+        public event NotifyCollectionChangedEventHandler CollectionChanged;
+        private void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
+        {
+            OnPropertyChanged("Count");
+            OnPropertyChanged("Item[]");
+            try
+            {
+                CollectionChanged.Raise(this, e);
+            }
+            catch (NotSupportedException)
+            {
+                OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+            }
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Kazyx.Uwpmm.Utility;
+﻿using Kazyx.Uwpmm.Playback;
+using Kazyx.Uwpmm.Utility;
 using System.Collections.Generic;
 using Windows.UI;
 using Windows.UI.Xaml;
@@ -51,6 +52,7 @@ namespace Kazyx.Uwpmm.DataModel
             FibonacciLineOrigin = Preference.FibonacciOrigin;
             RequestFocusFrameInfo = Preference.FocusFrameEnabled;
             PrioritizeOriginalSizeContents = Preference.OriginalSizeContentsPrioritized;
+            RemoteContentsSet = (ContentsSet)Preference.RemoteContentsSet;
         }
 
         public static ApplicationSettings GetInstance()
@@ -425,6 +427,21 @@ namespace Kazyx.Uwpmm.DataModel
             {
                 if (GeotagEnabled) { return Visibility.Visible; }
                 else { return Visibility.Collapsed; }
+            }
+        }
+
+        private ContentsSet _RemoteContentsType = ContentsSet.ImagesAndMovies;
+        public ContentsSet RemoteContentsSet
+        {
+            get { return _RemoteContentsType; }
+            set
+            {
+                if (value != _RemoteContentsType)
+                {
+                    Preference.RemoteContentsSet = (int)value;
+                    _RemoteContentsType = value;
+                    NotifyChangedOnUI("RemoteContentsSet");
+                }
             }
         }
     }

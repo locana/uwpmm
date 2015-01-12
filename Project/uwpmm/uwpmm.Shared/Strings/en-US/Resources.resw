@@ -1076,4 +1076,7 @@ Please update to the latest at PlayMemories Camera Apps store.</value>
   <data name="ProgressBar_Processing" xml:space="preserve">
     <value>Processing...</value>
   </data>
+  <data name="Viewer_MenuFetchMore" xml:space="preserve">
+    <value>Load more contents</value>
+  </data>
 </root>

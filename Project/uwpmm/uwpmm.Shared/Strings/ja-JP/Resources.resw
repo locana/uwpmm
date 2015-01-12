@@ -998,4 +998,7 @@ PlayMemories Camera Appsストアで最新版にアップデートしてくだ�
   <data name="ProgressBar_Processing" xml:space="preserve">
     <value>処理中...</value>
   </data>
+  <data name="Viewer_MenuFetchMore" xml:space="preserve">
+    <value>さらに読み込む</value>
+  </data>
 </root>

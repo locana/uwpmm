@@ -53,8 +53,9 @@
                                       ItemContainerStyleSelector="{StaticResource GridViewItemSelectivityBinder}">
                                 <GridView.ItemTemplate>
                                     <DataTemplate>
-                                        <Grid Height="116" Width="116" Margin="2,2" Holding="LocalGrid_Holding"
-                                              Background="{ThemeResource ContentDialogBackgroundThemeBrush}">
+                                        <Grid x:Name="LocalThumbnailGrid" Height="116" Width="116" Margin="2,2" Holding="LocalGrid_Holding"
+                                              Background="{ThemeResource ContentDialogBackgroundThemeBrush}"
+                                              Tapped="LocalThumbnailGrid_Tapped">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="48"/>
                                                 <ColumnDefinition Width="*"/>
@@ -64,8 +65,8 @@
                                                 <RowDefinition Height="*"/>
                                                 <RowDefinition Height="48"/>
                                             </Grid.RowDefinitions>
-                                            <Image Grid.ColumnSpan="3" Grid.RowSpan="2" x:Name="LocalThumbnailImage" Width="108" Height="108" Stretch="Uniform"
-                                                   Source="{Binding Path=ThumbnailImage}" Tapped="LocalThumbnailImage_Tapped"/>
+                                            <Image Grid.ColumnSpan="3" Grid.RowSpan="2" Width="108" Height="108" Stretch="Uniform"
+                                                   Source="{Binding ThumbnailImage}"/>
                                             <Image Grid.Row="1" Grid.Column="2" Source="/Assets/Screen/mode_movie.png"
                                                    Visibility="{Binding IsMovie, Converter={StaticResource B2VConverter}}"
                                                    IsHitTestVisible="False" CacheMode="BitmapCache" Margin="0,0,20,20"/>
@@ -90,7 +91,7 @@
                                     </ItemsPanelTemplate>
                                 </GridView.ItemsPanel>
                                 <GridView.GroupStyle>
-                                    <GroupStyle HidesIfEmpty="True">
+                                    <GroupStyle>
                                         <GroupStyle.HeaderTemplate>
                                             <DataTemplate>
                                                 <Grid Margin="0,8,0,0">
@@ -107,7 +108,7 @@
                                       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
                                 <GridView.ItemTemplate>
                                     <DataTemplate>
-                                        <Grid Background="{ThemeResource ContentDialogBackgroundThemeBrush}"
+                                        <Grid x:Name="RemoteThumbnailGrid" Background="{ThemeResource ContentDialogBackgroundThemeBrush}"
                                               Height="188" Width ="188" Margin="8,8">
                                             <Grid.RowDefinitions>
                                                 <RowDefinition Height="40" />
@@ -159,6 +160,7 @@
                                 <GridView.ItemTemplate>
                                     <DataTemplate>
                                         <Grid Height="116" Width="116" Margin="2,2" Holding="RemoteGrid_Holding"
+                                              Tapped="RemoteThumbnailGrid_Tapped"
                                               Background="{ThemeResource ContentDialogBackgroundThemeBrush}">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="48"/>
@@ -169,14 +171,19 @@
                                                 <RowDefinition Height="*"/>
                                                 <RowDefinition Height="48"/>
                                             </Grid.RowDefinitions>
-                                            <Image Grid.ColumnSpan="3" Grid.RowSpan="2" x:Name="RemoteThumbnailImage" Width="108" Height="108" Stretch="Uniform"
-                                                   Source="{Binding Path=ThumbnailImage}" Tapped="RemoteThumbnailImage_Tapped"/>
+                                            <Image Grid.ColumnSpan="3" Grid.RowSpan="2" Width="108" Height="108" Stretch="Uniform"
+                                                   Source="{Binding ThumbnailImage}"/>
                                             <Image Grid.Row="1" Grid.Column="0" Source="/Assets/Screen/protected.png"
                                                    Visibility="{Binding Path=Source.Protected, Converter={StaticResource B2VConverter}}"
                                                    IsHitTestVisible="False" CacheMode="BitmapCache" Margin="0,0,20,20"/>
                                             <Image Grid.Row="1" Grid.Column="2" Source="/Assets/Screen/mode_movie.png"
                                                    Visibility="{Binding IsMovie, Converter={StaticResource B2VConverter}}"
                                                    IsHitTestVisible="False" CacheMode="BitmapCache" Margin="0,0,20,20"/>
+                                            <TextBlock Grid.ColumnSpan="3" Grid.RowSpan="2" Width="108" Height="108"
+                                                       Text="{Binding OverlayText}" IsHitTestVisible="True"
+                                                       VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
+                                                       Style="{StaticResource SubheaderTextBlockStyle}" Margin="8,8,0,0"
+                                                       TextTrimming="None" TextWrapping="NoWrap"/>
                                             <Border Grid.RowSpan="2" Grid.ColumnSpan="3"
                                                     Visibility="{Binding IsSelectable, Converter={StaticResource B2VRConverter}}">
                                                 <Border.Background>
@@ -185,11 +192,14 @@
                                             </Border>
                                             <FlyoutBase.AttachedFlyout>
                                                 <MenuFlyout>
-                                                    <MenuFlyoutItem Text="{Binding [Viewer_MenuPlayback], Source={StaticResource LocalizedStrings}}" Click="Playback_Click" />
+                                                    <MenuFlyoutItem Text="{Binding [Viewer_MenuPlayback], Source={StaticResource LocalizedStrings}}" Click="Playback_Click"
+                                                                    Visibility="{Binding IsPlayable, Converter={StaticResource B2VConverter}}"/>
                                                     <MenuFlyoutItem Text="{Binding [Viewer_MenuCopyToPhone], Source={StaticResource LocalizedStrings}}" Click="CopyToPhone_Click"
-                                                                    Visibility="{Binding IsMovie, Converter={StaticResource B2VRConverter}}"/>
+                                                                    Visibility="{Binding IsCopyable, Converter={StaticResource B2VConverter}}"/>
                                                     <MenuFlyoutItem Text="{Binding [Viewer_MenuDelete], Source={StaticResource LocalizedStrings}}" Click="Delete_Click"
-                                                                    Visibility="{Binding Path=Source.Protected, Converter={StaticResource B2VRConverter}}" />
+                                                                    Visibility="{Binding IsDeletable, Converter={StaticResource B2VConverter}}" />
+                                                    <MenuFlyoutItem Text="{Binding [Viewer_MenuFetchMore], Source={StaticResource LocalizedStrings}}" Click="FetchMore_Click"
+                                                                    Visibility="{Binding IsContent, Converter={StaticResource B2VRConverter}}" />
                                                 </MenuFlyout>
                                             </FlyoutBase.AttachedFlyout>
                                         </Grid>
@@ -201,7 +211,7 @@
                                     </ItemsPanelTemplate>
                                 </GridView.ItemsPanel>
                                 <GridView.GroupStyle>
-                                    <GroupStyle HidesIfEmpty="True">
+                                    <GroupStyle>
                                         <GroupStyle.HeaderTemplate>
                                             <DataTemplate>
                                                 <Grid Margin="0,8,0,0">
@@ -256,10 +266,10 @@
 
         <control:PhotoPlaybackScreen x:Name="PhotoScreen" Margin="0"/>
 
-        <Border x:Name="MovieDrawer" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="Collapsed">            
+        <Border x:Name="MovieDrawer" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="Collapsed">
             <control:MoviePlaybackScreen x:Name="MovieScreen" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="12" 
                                          CurrentPosition="{Binding CurrentPosition}" Duration="{Binding Duration}" SeekAvailable="{Binding SeekAvailable}"
-                                         PlaybackStatus="{Binding StreamingStatus}"/>           
+                                         PlaybackStatus="{Binding StreamingStatus}"/>
         </Border>
 
         <Grid Name="AppSettingPanel" Visibility="Collapsed"

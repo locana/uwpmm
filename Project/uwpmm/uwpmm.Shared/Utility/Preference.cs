@@ -17,6 +17,7 @@ namespace Kazyx.Uwpmm.Utility
         private const string fibonacci_origin = "fibonacci_origin";
         private const string request_focus_frame_info = "request_focus_frame_info";
         private const string prioritize_original_contents = "prioritize_original_contents";
+        private const string remote_contents_set = "remote_contents_set";
 
         public static T GetProperty<T>(string key, T defaultValue)
         {
@@ -98,6 +99,12 @@ namespace Kazyx.Uwpmm.Utility
         {
             get { return GetProperty(prioritize_original_contents, false); }
             set { SetProperty(prioritize_original_contents, value); }
+        }
+
+        public static int RemoteContentsSet
+        {
+            get { return GetProperty(remote_contents_set, 0); }
+            set { SetProperty(remote_contents_set, value); }
         }
     }
 }

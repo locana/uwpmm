@@ -20,7 +20,7 @@ namespace Kazyx.Uwpmm.Playback
             UpnpDevice = upnp;
         }
 
-        public override async Task Load(CancellationTokenSource cancel)
+        public override async Task Load(ContentsSet contentsSet, CancellationTokenSource cancel)
         {
             await RetrieveAllImageMetadataRecursivelyAsync(cancel, 0);
         }

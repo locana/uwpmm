@@ -33,7 +33,7 @@ namespace Kazyx.Uwpmm.Playback
             Cancelled.Raise(this, null);
         }
 
-        public abstract Task Load(CancellationTokenSource cancel);
+        public abstract Task Load(ContentsSet contentsSet, CancellationTokenSource cancel);
     }
 
     public class ContentsLoadedEventArgs : EventArgs
@@ -44,5 +44,12 @@ namespace Kazyx.Uwpmm.Playback
         {
             Contents = contents;
         }
+    }
+
+    public enum ContentsSet
+    {
+        ImagesAndMovies = 0,
+        Images = 1,
+        Movies = 2,
     }
 }

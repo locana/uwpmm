@@ -18,13 +18,15 @@ namespace Kazyx.Uwpmm.Playback
 
         public const int CONTENT_LOOP_STEP = 50;
 
+        public const int MAX_AUTO_LOAD_THUMBNAILS = 30;
+
         public RemoteApiContentsLoader(TargetDevice device)
         {
             AvContentApi = device.Api.AvContent;
             Udn = device.Udn;
         }
 
-        public override async Task Load(CancellationTokenSource cancel)
+        public override async Task Load(ContentsSet contentsSet, CancellationTokenSource cancel)
         {
             if (!await IsStorageSupportedAsync().ConfigureAwait(false))
             {
@@ -46,7 +48,7 @@ namespace Kazyx.Uwpmm.Playback
                 throw new NoStorageException();
             }
 
-            await GetContentsByDateSeparatelyAsync(storages[0], cancel).ConfigureAwait(false);
+            await GetContentsByDateSeparatelyAsync(storages[0], contentsSet, cancel).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -66,7 +68,7 @@ namespace Kazyx.Uwpmm.Playback
             return sources.Select(source => source.Source).ToList();
         }
 
-        private async Task GetContentsByDateSeparatelyAsync(string uri, CancellationTokenSource cancel)
+        private async Task GetContentsByDateSeparatelyAsync(string uri, ContentsSet contentsSet, CancellationTokenSource cancel)
         {
             DebugUtil.Log("Loading number of Dates");
 
@@ -97,9 +99,10 @@ namespace Kazyx.Uwpmm.Playback
                     break;
                 }
 
+                var loaded = 0;
                 foreach (var date in dates)
                 {
-                    await GetContentsOfDaySeparatelyAsync(date, true, cancel).ConfigureAwait(false);
+                    loaded += await GetContentsOfDaySeparatelyAsync(date, contentsSet, cancel, loaded).ConfigureAwait(false);
                 }
             }
         }
@@ -122,7 +125,7 @@ namespace Kazyx.Uwpmm.Playback
                 .ToList();
         }
 
-        private async Task GetContentsOfDaySeparatelyAsync(DateInfo date, bool includeMovies, CancellationTokenSource cancel)
+        private async Task<int> GetContentsOfDaySeparatelyAsync(DateInfo date, ContentsSet contentsSet, CancellationTokenSource cancel, int sum)
         {
             DebugUtil.Log("Loading: " + date.Title);
 
@@ -135,10 +138,47 @@ namespace Kazyx.Uwpmm.Playback
             DebugUtil.Log(count.NumOfContents + " contents exist.");
 
             var loops = count.NumOfContents / CONTENT_LOOP_STEP + (count.NumOfContents % CONTENT_LOOP_STEP == 0 ? 0 : 1);
+            var loaded = 0;
 
             for (var i = 0; i < loops; i++)
             {
-                var contents = await GetContentsOfDayAsync(date, i * CONTENT_LOOP_STEP, CONTENT_LOOP_STEP, includeMovies).ConfigureAwait(false);
+                if (loaded + sum > MAX_AUTO_LOAD_THUMBNAILS)
+                {
+                    break;
+                }
+
+                var contents = await GetContentsOfDayAsync(date, i * CONTENT_LOOP_STEP, CONTENT_LOOP_STEP, contentsSet).ConfigureAwait(false);
+                if (cancel != null && cancel.IsCancellationRequested)
+                {
+                    DebugUtil.Log("Loading task cancelled");
+                    OnCancelled();
+                    break;
+                }
+
+                loaded += contents.Count;
+                DebugUtil.Log(contents.Count + " contents fetched");
+
+                OnPartLoaded(contents.Select(content => new Thumbnail(content, Udn)).ToList());
+            }
+
+            if (loaded < count.NumOfContents)
+            {
+                var remaining = new RemainingContentsHolder(date, Udn, loaded, count.NumOfContents - loaded);
+                var list = new List<Thumbnail>();
+                list.Add(remaining);
+                OnPartLoaded(list);
+            }
+
+            return loaded;
+        }
+
+        public async Task GetPartOfContentsOfDayAsync(RemainingContentsHolder holder, ContentsSet contentsSet, CancellationTokenSource cancel)
+        {
+            var loops = holder.RemainingCount / CONTENT_LOOP_STEP + (holder.RemainingCount % CONTENT_LOOP_STEP == 0 ? 0 : 1);
+
+            for (var i = 0; i < loops; i++)
+            {
+                var contents = await GetContentsOfDayAsync(holder.AlbumGroup, i * CONTENT_LOOP_STEP, CONTENT_LOOP_STEP, contentsSet).ConfigureAwait(false);
                 if (cancel != null && cancel.IsCancellationRequested)
                 {
                     DebugUtil.Log("Loading task cancelled");
@@ -147,20 +187,31 @@ namespace Kazyx.Uwpmm.Playback
                 }
 
                 DebugUtil.Log(contents.Count + " contents fetched");
+
                 OnPartLoaded(contents.Select(content => new Thumbnail(content, Udn)).ToList());
             }
         }
 
-        private async Task<IList<ContentInfo>> GetContentsOfDayAsync(DateInfo date, int startFrom, int count, bool includeMovies)
+        private async Task<IList<ContentInfo>> GetContentsOfDayAsync(DateInfo date, int startFrom, int count, ContentsSet contentsSet)
         {
             DebugUtil.Log("Loading ContentsOfDay: " + date.Title + " from " + startFrom);
 
             var types = new List<string>();
-            types.Add(ContentKind.StillImage);
-            if (includeMovies)
+
+            switch (contentsSet)
             {
-                types.Add(ContentKind.MovieMp4);
-                types.Add(ContentKind.MovieXavcS);
+                case ContentsSet.ImagesAndMovies:
+                    types.Add(ContentKind.StillImage);
+                    types.Add(ContentKind.MovieMp4);
+                    types.Add(ContentKind.MovieXavcS);
+                    break;
+                case ContentsSet.Images:
+                    types.Add(ContentKind.StillImage);
+                    break;
+                case ContentsSet.Movies:
+                    types.Add(ContentKind.MovieMp4);
+                    types.Add(ContentKind.MovieXavcS);
+                    break;
             }
 
             var contents = await AvContentApi.GetContentListAsync(new ContentListTarget

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Specialized;
 using System.ComponentModel;
 
 namespace Kazyx.Uwpmm.Utility
@@ -22,6 +23,14 @@ namespace Kazyx.Uwpmm.Utility
         }
 
         public static void Raise(this PropertyChangedEventHandler @event, object sender, PropertyChangedEventArgs e)
+        {
+            if (@event != null)
+            {
+                @event(sender, e);
+            }
+        }
+
+        public static void Raise(this NotifyCollectionChangedEventHandler @event, object sender, NotifyCollectionChangedEventArgs e)
         {
             if (@event != null)
             {
