@@ -1156,7 +1156,7 @@ namespace Kazyx.Uwpmm.Pages
                         DisplayGridColorSetting(ApplicationSettings.GetInstance().GridType != FramingGridTypes.Off);
                         DisplayFibonacciOriginSetting(ApplicationSettings.GetInstance().GridType == FramingGridTypes.Fibonacci);
                     },
-                    SettingValueConverter.FromFramingGrid(Enum.GetValues(typeof(FramingGridTypes)).Cast<FramingGridTypes>().ToArray()))));
+                    SettingValueConverter.FromFramingGrid(EnumUtil<FramingGridTypes>.GetValueEnumerable()))));
 
             gridColorSetting = new AppSettingData<int>(SystemUtil.GetStringResource("FramingGridColor"), null,
                     () => { return (int)ApplicationSettings.GetInstance().GridColor; },
@@ -1165,7 +1165,7 @@ namespace Kazyx.Uwpmm.Pages
                         if (setting < 0) { return; }
                         ApplicationSettings.GetInstance().GridColor = (FramingGridColors)setting;
                     },
-                    SettingValueConverter.FromFramingGridColor(Enum.GetValues(typeof(FramingGridColors)).Cast<FramingGridColors>().ToArray()));
+                    SettingValueConverter.FromFramingGridColor(EnumUtil<FramingGridColors>.GetValueEnumerable()));
             display_settings.Add(new ComboBoxSetting(gridColorSetting));
 
             fibonacciOriginSetting = new AppSettingData<int>(SystemUtil.GetStringResource("FibonacciSpiralOrigin"), null,
@@ -1175,7 +1175,7 @@ namespace Kazyx.Uwpmm.Pages
                     if (setting < 0) { return; }
                     ApplicationSettings.GetInstance().FibonacciLineOrigin = (FibonacciLineOrigins)setting;
                 },
-                SettingValueConverter.FromFibonacciLineOrigin(Enum.GetValues(typeof(FibonacciLineOrigins)).Cast<FibonacciLineOrigins>().ToArray()));
+                SettingValueConverter.FromFibonacciLineOrigin(EnumUtil<FibonacciLineOrigins>.GetValueEnumerable()));
             display_settings.Add(new ComboBoxSetting(fibonacciOriginSetting));
 
             HideSettingAnimation.Completed += HideSettingAnimation_Completed;

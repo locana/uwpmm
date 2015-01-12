@@ -111,6 +111,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)UPnP\ValueLessResponse.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\BoolToVisibilityConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\DebugUtil.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utility\EnumUtil.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\GeoPositionManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\LiveviewUtil.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\MetaDataValueConverter.cs" />

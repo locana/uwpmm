@@ -592,7 +592,7 @@ namespace Kazyx.Uwpmm.Utility
             return val + " " + SystemUtil.GetStringResource("Seconds");
         }
 
-        internal static string[] FromFramingGrid(FramingGridTypes[] keys)
+        internal static string[] FromFramingGrid(IEnumerable<FramingGridTypes> keys)
         {
             return keys.Select(key =>
             {
@@ -618,7 +618,7 @@ namespace Kazyx.Uwpmm.Utility
             }).ToArray();
         }
 
-        internal static string[] FromFramingGridColor(FramingGridColors[] keys)
+        internal static string[] FromFramingGridColor(IEnumerable<FramingGridColors> keys)
         {
             return keys.Select(key =>
             {
@@ -640,7 +640,7 @@ namespace Kazyx.Uwpmm.Utility
             }).ToArray();
         }
 
-        internal static string[] FromFibonacciLineOrigin(FibonacciLineOrigins[] keys)
+        internal static string[] FromFibonacciLineOrigin(IEnumerable<FibonacciLineOrigins> keys)
         {
             return keys.Select(key =>
             {
@@ -660,7 +660,7 @@ namespace Kazyx.Uwpmm.Utility
             }).ToArray();
         }
 
-        internal static string[] FromContentsSet(ContentsSet[] types)
+        internal static string[] FromContentsSet(IEnumerable<ContentsSet> types)
         {
             // TODO
             return types.Select(type =>
