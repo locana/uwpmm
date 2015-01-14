@@ -39,7 +39,7 @@
             <PivotItem Margin="0,-16,0,0">
                 <PivotItem.Header>
                     <TextBlock Text="{Binding [Viewer_StoragePhone], Source={StaticResource LocalizedStrings}}" Margin="0,8,0,0"
-                               Style="{StaticResource SubheaderTextBlockStyle}" FontWeight="Bold" Width="280"/>
+                               Style="{StaticResource SubheaderTextBlockStyle}" FontWeight="Bold" Width="320"/>
                 </PivotItem.Header>
                 <Grid>
                     <SemanticZoom x:Name="LocalSemanticZoom">
@@ -140,7 +140,7 @@
             <PivotItem Margin="0,-16,0,0">
                 <PivotItem.Header>
                     <TextBlock x:Name="RemoteTitleBlock" Text="{Binding [Viewer_StorageCamera], Source={StaticResource LocalizedStrings}}"
-                               Margin="0,8,0,0" Style="{StaticResource SubheaderTextBlockStyle}" FontWeight="Bold" Width="280"/>
+                               Margin="0,8,0,0" Style="{StaticResource SubheaderTextBlockStyle}" FontWeight="Bold" Width="320"/>
                 </PivotItem.Header>
                 <Grid>
                     <TextBlock x:Name="UnsupportedMessage"
