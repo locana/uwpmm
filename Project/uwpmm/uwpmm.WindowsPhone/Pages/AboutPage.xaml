@@ -32,8 +32,10 @@
                     <RichTextBlock VerticalAlignment="Top" HorizontalAlignment="Left" Margin="20,0,0,0">
                         <Paragraph x:Name="Repository" />
                     </RichTextBlock>
+                    <TextBlock Text="{Binding [FAQ], Source={StaticResource LocalizedStrings}}" Grid.Row="0" TextWrapping="Wrap" Margin="9,20,9,0" Style="{StaticResource GroupHeaderTextBlockStyle}"/>
+                    <Button Grid.Row="7" HorizontalAlignment="Left"  Margin="20,10, 50,0"  Content="{Binding [OpenFAQ], Source={StaticResource LocalizedStrings}}" BorderThickness="1" Click="FAQ_Click"/>
                     <TextBlock Text="{Binding [Support], Source={StaticResource LocalizedStrings}}" Grid.Row="0" TextWrapping="Wrap" Margin="9,20,9,0" Style="{StaticResource GroupHeaderTextBlockStyle}"/>
-                    <Button Grid.Row="7" HorizontalAlignment="Left"  Margin="20,10, 50,0"  Content="@scrap_support on twitter" BorderThickness="1" Click="Button_Click"/>
+                    <Button Grid.Row="7" HorizontalAlignment="Left"  Margin="20,10, 50,0"  Content="@scrap_support on twitter" BorderThickness="1" Click="Support_Click"/>
                 </StackPanel>
             </PivotItem>
 

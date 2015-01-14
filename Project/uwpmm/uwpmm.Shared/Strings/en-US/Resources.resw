@@ -1085,4 +1085,10 @@ Please update to the latest at PlayMemories Camera Apps store.</value>
   <data name="RotateRight" xml:space="preserve">
     <value>Rotate Right</value>
   </data>
+  <data name="FAQ" xml:space="preserve">
+    <value>FAQ</value>
+  </data>
+  <data name="OpenFAQ" xml:space="preserve">
+    <value>Open FAQ page</value>
+  </data>
 </root>

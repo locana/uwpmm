@@ -4,6 +4,7 @@ using System;
 using System.IO;
 using System.Reflection;
 using Windows.ApplicationModel;
+using Windows.System;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -186,13 +187,16 @@ namespace Kazyx.Uwpmm.Pages
             return hl;
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private async void Support_Click(object sender, RoutedEventArgs e)
         {
-            /*
-            var task = new ShareStatusTask();
-            task.Status = "@scrap_support ";
-            task.Show();
-             * */
+            var success = await Launcher.LaunchUriAsync(new Uri(@"https://twitter.com/scrap_support"));
+            if (!success) DebugUtil.Log("Failed to open FAQ page.");
+        }
+
+        private async void FAQ_Click(object sender, RoutedEventArgs e)
+        {
+            var success = await Launcher.LaunchUriAsync(new Uri(@"http://locana.github.io/locana_faq.html"));
+            if (!success) DebugUtil.Log("Failed to open FAQ page.");
         }
     }
 }

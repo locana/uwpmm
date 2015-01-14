@@ -1007,4 +1007,10 @@ PlayMemories Camera Appsストアで最新版にアップデートしてくだ�
   <data name="RotateRight" xml:space="preserve">
     <value>右回転</value>
   </data>
+  <data name="FAQ" xml:space="preserve">
+    <value>良くある質問</value>
+  </data>
+  <data name="OpenFAQ" xml:space="preserve">
+    <value>FAQページを開く</value>
+  </data>
 </root>
