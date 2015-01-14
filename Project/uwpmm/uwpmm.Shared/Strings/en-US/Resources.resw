@@ -1088,7 +1088,19 @@ Please update to the latest at PlayMemories Camera Apps store.</value>
   <data name="FAQ" xml:space="preserve">
     <value>FAQ</value>
   </data>
+  <data name="FAQURL" xml:space="preserve">
+    <value>http://locana.github.io/locana_faq.html</value>
+  </data>
   <data name="OpenFAQ" xml:space="preserve">
     <value>Open FAQ page</value>
+  </data>
+  <data name="OpenGithub" xml:space="preserve">
+    <value>Open Github</value>
+  </data>
+  <data name="OpenSupportTwitter" xml:space="preserve">
+    <value>Open support account on Twitter</value>
+  </data>
+  <data name="SupportTwitterURL" xml:space="preserve">
+    <value>https://twitter.com/scrap_support</value>
   </data>
 </root>

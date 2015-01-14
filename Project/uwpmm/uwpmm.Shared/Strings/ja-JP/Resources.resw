@@ -742,7 +742,7 @@ PlayMemories Camera Appsストアで最新版にアップデートしてくだ�
     <value>赤</value>
   </data>
   <data name="RepoURL" xml:space="preserve">
-    <value>https://github.com/kazyx/WPPMM</value>
+    <value>https://github.com/locana/uwpmm</value>
   </data>
   <data name="ResourceFlowDirection" xml:space="preserve">
     <value>LeftToRight</value>
@@ -1010,7 +1010,19 @@ PlayMemories Camera Appsストアで最新版にアップデートしてくだ�
   <data name="FAQ" xml:space="preserve">
     <value>良くある質問</value>
   </data>
+  <data name="FAQURL" xml:space="preserve">
+    <value>http://locana.github.io/locana_faq.html</value>
+  </data>
   <data name="OpenFAQ" xml:space="preserve">
     <value>FAQページを開く</value>
+  </data>
+  <data name="OpenGithub" xml:space="preserve">
+    <value>Githubリポジトリを開く</value>
+  </data>
+  <data name="OpenSupportTwitter" xml:space="preserve">
+    <value>Twitterのアカウントを開く</value>
+  </data>
+  <data name="SupportTwitterURL" xml:space="preserve">
+    <value>https://twitter.com/scrap_support</value>
   </data>
 </root>

@@ -103,8 +103,6 @@ namespace Kazyx.Uwpmm.Pages
             }
             VERSION_STR.Text = version;
 
-            FormatRichText(Repository, SystemUtil.GetStringResource("RepoURL"));
-
             COPYRIGHT.Text = copyright;
 
             DEV_BY.Text = developer;
@@ -187,16 +185,22 @@ namespace Kazyx.Uwpmm.Pages
             return hl;
         }
 
-        private async void Support_Click(object sender, RoutedEventArgs e)
+        private async void SourceCode_Click(object sender, RoutedEventArgs e)
         {
-            var success = await Launcher.LaunchUriAsync(new Uri(@"https://twitter.com/scrap_support"));
-            if (!success) DebugUtil.Log("Failed to open FAQ page.");
+            var success = await Launcher.LaunchUriAsync(new Uri(SystemUtil.GetStringResource("RepoURL")));
+            if (!success) DebugUtil.Log("Failed to open Github page.");
         }
 
         private async void FAQ_Click(object sender, RoutedEventArgs e)
         {
-            var success = await Launcher.LaunchUriAsync(new Uri(@"http://locana.github.io/locana_faq.html"));
+            var success = await Launcher.LaunchUriAsync(new Uri(SystemUtil.GetStringResource("FAQURL")));
             if (!success) DebugUtil.Log("Failed to open FAQ page.");
+        }
+
+        private async void Support_Click(object sender, RoutedEventArgs e)
+        {
+            var success = await Launcher.LaunchUriAsync(new Uri(SystemUtil.GetStringResource("SupportTwitterURL")));
+            if (!success) DebugUtil.Log("Failed to open Support page.");
         }
     }
 }

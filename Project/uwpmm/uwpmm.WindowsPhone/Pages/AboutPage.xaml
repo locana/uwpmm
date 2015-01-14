@@ -17,26 +17,26 @@
                 <PivotItem.Header>
                     <TextBlock Text="{Binding [AppInfo], Source={StaticResource LocalizedStrings}}" Margin="0,8,0,0" Style="{StaticResource SubheaderTextBlockStyle}" FontWeight="Bold"/>
                 </PivotItem.Header>
-                <StackPanel>
-                    <TextBlock Text="{Binding [Version], Source={StaticResource LocalizedStrings}}" Grid.Row="0" TextWrapping="Wrap" Margin="9,0" Style="{StaticResource GroupHeaderTextBlockStyle}"/>
-                    <StackPanel Orientation="Horizontal" Margin="20,0,0,0">
-                        <TextBlock Text="{Binding [ApplicationTitle], Source={StaticResource LocalizedStrings}}" Grid.Row="0" TextWrapping="Wrap" Margin="0,0,9,0" />
-                        <TextBlock Text="ver. " Margin="0,0,9,0" />
-                        <TextBlock x:Name="VERSION_STR"/>
+                <ScrollViewer>
+                    <StackPanel>
+                        <TextBlock Text="{Binding [Version], Source={StaticResource LocalizedStrings}}" Grid.Row="0" TextWrapping="Wrap" Margin="9,0" Style="{StaticResource GroupHeaderTextBlockStyle}"/>
+                        <StackPanel Orientation="Horizontal" Margin="20,0,0,0">
+                            <TextBlock Text="{Binding [ApplicationTitle], Source={StaticResource LocalizedStrings}}" Grid.Row="0" TextWrapping="Wrap" Margin="0,0,9,0" />
+                            <TextBlock Text="ver. " Margin="0,0,9,0" />
+                            <TextBlock x:Name="VERSION_STR"/>
+                        </StackPanel>
+                        <TextBlock Text="{Binding [CopyRight], Source={StaticResource LocalizedStrings}}" Grid.Row="0" TextWrapping="Wrap" Margin="9,20,9,0" Style="{StaticResource GroupHeaderTextBlockStyle}"/>
+                        <TextBlock x:Name="COPYRIGHT" Margin="20,0,0,0" />
+                        <TextBlock Text="{Binding [DevelopedBy], Source={StaticResource LocalizedStrings}}" Grid.Row="0" TextWrapping="Wrap" Margin="9,20,9,0" Style="{StaticResource GroupHeaderTextBlockStyle}"/>
+                        <TextBlock x:Name="DEV_BY" Margin="20,0,0,0" />
+                        <TextBlock Text="{Binding [SourceCode], Source={StaticResource LocalizedStrings}}" Grid.Row="0" TextWrapping="Wrap" Margin="9,20,9,0" Style="{StaticResource GroupHeaderTextBlockStyle}"/>
+                        <Button Grid.Row="7" HorizontalAlignment="Left"  Margin="20,10,40,0"  Content="{Binding [OpenGithub], Source={StaticResource LocalizedStrings}}" BorderThickness="1" Click="SourceCode_Click"/>
+                        <TextBlock Text="{Binding [FAQ], Source={StaticResource LocalizedStrings}}" Grid.Row="0" TextWrapping="Wrap" Margin="9,10,9,0" Style="{StaticResource GroupHeaderTextBlockStyle}"/>
+                        <Button Grid.Row="7" HorizontalAlignment="Left"  Margin="20,10,40,0"  Content="{Binding [OpenFAQ], Source={StaticResource LocalizedStrings}}" BorderThickness="1" Click="FAQ_Click"/>
+                        <TextBlock Text="{Binding [Support], Source={StaticResource LocalizedStrings}}" Grid.Row="0" TextWrapping="Wrap" Margin="9,10,9,0" Style="{StaticResource GroupHeaderTextBlockStyle}"/>
+                        <Button Grid.Row="7" HorizontalAlignment="Left"  Margin="20,10,40,0"  Content="{Binding [OpenSupportTwitter], Source={StaticResource LocalizedStrings}}" BorderThickness="1" Click="Support_Click"/>
                     </StackPanel>
-                    <TextBlock Text="{Binding [CopyRight], Source={StaticResource LocalizedStrings}}" Grid.Row="0" TextWrapping="Wrap" Margin="9,20,9,0" Style="{StaticResource GroupHeaderTextBlockStyle}"/>
-                    <TextBlock x:Name="COPYRIGHT" Margin="20,0,0,0" />
-                    <TextBlock Text="{Binding [DevelopedBy], Source={StaticResource LocalizedStrings}}" Grid.Row="0" TextWrapping="Wrap" Margin="9,20,9,0" Style="{StaticResource GroupHeaderTextBlockStyle}"/>
-                    <TextBlock x:Name="DEV_BY" Margin="20,0,0,0" />
-                    <TextBlock Text="{Binding [SourceCode], Source={StaticResource LocalizedStrings}}" Grid.Row="0" TextWrapping="Wrap" Margin="9,20,9,0" Style="{StaticResource GroupHeaderTextBlockStyle}"/>
-                    <RichTextBlock VerticalAlignment="Top" HorizontalAlignment="Left" Margin="20,0,0,0">
-                        <Paragraph x:Name="Repository" />
-                    </RichTextBlock>
-                    <TextBlock Text="{Binding [FAQ], Source={StaticResource LocalizedStrings}}" Grid.Row="0" TextWrapping="Wrap" Margin="9,20,9,0" Style="{StaticResource GroupHeaderTextBlockStyle}"/>
-                    <Button Grid.Row="7" HorizontalAlignment="Left"  Margin="20,10, 50,0"  Content="{Binding [OpenFAQ], Source={StaticResource LocalizedStrings}}" BorderThickness="1" Click="FAQ_Click"/>
-                    <TextBlock Text="{Binding [Support], Source={StaticResource LocalizedStrings}}" Grid.Row="0" TextWrapping="Wrap" Margin="9,20,9,0" Style="{StaticResource GroupHeaderTextBlockStyle}"/>
-                    <Button Grid.Row="7" HorizontalAlignment="Left"  Margin="20,10, 50,0"  Content="@scrap_support on twitter" BorderThickness="1" Click="Support_Click"/>
-                </StackPanel>
+                </ScrollViewer>
             </PivotItem>
 
             <PivotItem Margin="12,14,12,0">
