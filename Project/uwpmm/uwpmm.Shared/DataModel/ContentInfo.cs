@@ -21,12 +21,12 @@ namespace Kazyx.Uwpmm.DataModel
         public bool Protected { set; get; }
 
         public string GroupName { set; get; }
+        public bool RemotePlaybackAvailable { set; get; }
     }
 
     public class RemoteApiContentInfo : ContentInfo
     {
         public string Uri { set; get; }
-        public bool RemotePlaybackAvailable { set; get; }
     }
 
     public class DlnaContentInfo : ContentInfo

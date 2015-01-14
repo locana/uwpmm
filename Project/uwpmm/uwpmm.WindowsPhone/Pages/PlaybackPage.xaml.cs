@@ -1219,42 +1219,35 @@ namespace Kazyx.Uwpmm.Pages
                     {
                         MovieStreamHelper.INSTANCE.Finish();
                     }
-                    var av = TargetDevice.Api.AvContent;
 
-                    if (av != null)
+                    var item = content.Source as ContentInfo;
+                    if (item.RemotePlaybackAvailable)
                     {
-                        var item = content.Source as RemoteApiContentInfo;
-                        if (item == null)
+                        if (TargetDevice == null || TargetDevice.Api.AvContent == null)
                         {
-                            DebugUtil.Log("This is UPnP content");
-                            break;
+                            ShowToast(SystemUtil.GetStringResource("Viewer_NoAvContentApi"));
+                            return;
                         }
-                        if (item.RemotePlaybackAvailable)
+
+                        PivotRoot.IsLocked = true;
+                        UpdateInnerState(ViewerState.RemoteMoviePlayback);
+                        MovieDrawer.Visibility = Visibility.Visible;
+                        ChangeProgressText(SystemUtil.GetStringResource("Progress_OpeningMovieStream"));
+                        var started = await MovieStreamHelper.INSTANCE.Start(TargetDevice.Api.AvContent, new PlaybackContent
                         {
-                            PivotRoot.IsLocked = true;
-                            UpdateInnerState(ViewerState.RemoteMoviePlayback);
-                            MovieDrawer.Visibility = Visibility.Visible;
-                            ChangeProgressText(SystemUtil.GetStringResource("Progress_OpeningMovieStream"));
-                            var started = await MovieStreamHelper.INSTANCE.Start(av, new PlaybackContent
-                            {
-                                Uri = item.Uri,
-                                RemotePlayType = RemotePlayMode.SimpleStreaming
-                            }, content.Source.Name);
-                            if (!started)
-                            {
-                                ShowToast(SystemUtil.GetStringResource("Viewer_FailedPlaybackMovie"));
-                                CloseMovieStream();
-                            }
-                            HideProgress();
-                        }
-                        else
+                            Uri = (item as RemoteApiContentInfo).Uri,
+                            RemotePlayType = RemotePlayMode.SimpleStreaming
+                        }, content.Source.Name);
+                        if (!started)
                         {
-                            ShowToast(SystemUtil.GetStringResource("Viewer_UnplayableContent"));
+                            ShowToast(SystemUtil.GetStringResource("Viewer_FailedPlaybackMovie"));
+                            CloseMovieStream();
                         }
+                        HideProgress();
                     }
                     else
                     {
-                        ShowToast(SystemUtil.GetStringResource("Viewer_NoAvContentApi"));
+                        ShowToast(SystemUtil.GetStringResource("Viewer_UnplayableContent"));
                     }
                     break;
                 default:

@@ -2,6 +2,7 @@
 using Kazyx.Uwpmm.DataModel;
 using Kazyx.Uwpmm.UPnP;
 using Kazyx.Uwpmm.UPnP.ContentDirectory;
+using Kazyx.Uwpmm.Utility;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -22,7 +23,9 @@ namespace Kazyx.Uwpmm.Playback
 
         public override async Task Load(ContentsSet contentsSet, CancellationTokenSource cancel)
         {
-            await RetrieveAllImageMetadataRecursivelyAsync(cancel, 0);
+            await RetrieveContentsByBrowse("Root", "0", cancel);
+            // await RetrieveAllImageMetadataRecursivelyAsync(cancel, 0);
+            OnCompleted();
         }
 
         private async Task RetrieveAllImageMetadataRecursivelyAsync(CancellationTokenSource cancel, int start)
@@ -41,7 +44,8 @@ namespace Kazyx.Uwpmm.Playback
             }
 
             var contents = res as RetrievedContents;
-            OnPartLoaded(Translate(contents.Result.Items));
+            // TODO
+            OnPartLoaded(Translate("Image files", contents.Result.Items));
 
             if (contents.TotalMatches > (start + 1) * CONTENT_LOOP_STEP)
             {
@@ -53,69 +57,109 @@ namespace Kazyx.Uwpmm.Playback
             }
         }
 
-        private IList<Thumbnail> Translate(IList<Item> source)
+        private IList<Thumbnail> Translate(string containerName, IList<Item> source)
         {
+            var group = FormatDateTitle(containerName);
             return source.Where(item => item.Resources.Count != 0)
-                .Select(item => new Thumbnail(Translate(item), UpnpDevice.UDN))
+                .Select(item => new Thumbnail(Translate(group, item), UpnpDevice.UDN))
                 .ToList();
         }
 
-        private static DlnaContentInfo Translate(Item source)
+        private static DlnaContentInfo Translate(string containerName, Item source)
         {
             if (source.Resources.Count == 0)
             {
                 return null;
             }
 
+            var type = ParseContentType(source.Class);
+
             return new DlnaContentInfo
             {
                 Id = source.Id,
-                ContentType = source.Class == Class.ImageItem ? ContentKind.StillImage : ContentKind.Unknown,
+                ContentType = type,
                 CreatedTime = source.Date,
                 Name = source.Title,
                 Protected = source.Restricted,
-                OriginalUrl = GetOriginalImageResource(source).ResourceUrl,
-                LargeUrl = GetLargeImageResource(source).ResourceUrl,
-                ThumbnailUrl = GetThumbnailResource(source).ResourceUrl,
-                GroupName = source.Genre,
+                OriginalUrl = GetOriginalImageResource(source),
+                LargeUrl = GetLargeImageResource(source),
+                ThumbnailUrl = GetThumbnailResource(source),
+                GroupName = containerName,
+                RemotePlaybackAvailable = type == ContentKind.StillImage,
             };
         }
 
-        private static Resource GetLargeImageResource(Item item)
+        private static string ParseContentType(string upnpClass)
+        {
+            if (upnpClass.StartsWith(Class.ImageItem))
+            {
+                return ContentKind.StillImage;
+            }
+            if (upnpClass.StartsWith(Class.VideoItem))
+            {
+                // TODO other types
+                return ContentKind.MovieMp4;
+            }
+            return ContentKind.Unknown;
+        }
+
+        private static string FormatDateTitle(string containerName)
+        {
+            var sepa = containerName.Split('-');
+            if (sepa == null || sepa.Length != 3)
+            {
+                return containerName;
+            }
+            while (sepa[0].Length < 4)
+            {
+                sepa[0] = "0" + sepa[0];
+            }
+            while (sepa[1].Length < 2)
+            {
+                sepa[1] = "0" + sepa[1];
+            }
+            while (sepa[2].Length < 2)
+            {
+                sepa[2] = "0" + sepa[2];
+            }
+            return sepa[0] + "-" + sepa[1] + "-" + sepa[2];
+        }
+
+        private static string GetLargeImageResource(Item item)
         {
             var matched = item.Resources
                 .FirstOrDefault(res => res.ProtocolInfo != null && res.ProtocolInfo.MimeType == "image/jpeg" && res.ProtocolInfo.DlnaProfileName == DlnaProfileName.JpegLarge);
 
             if (matched != null)
             {
-                return matched;
+                return matched.ResourceUrl;
             }
 
-            if (item.Class == Class.ImageItem)
+            if (item.Class.StartsWith(Class.ImageItem))
             {
-                return item.Resources[0];
+                return item.Resources[0].ResourceUrl;
             }
             return null;
         }
 
-        private static Resource GetOriginalImageResource(Item item)
+        private static string GetOriginalImageResource(Item item)
         {
             var matched = item.Resources
                 .FirstOrDefault(res => res.ProtocolInfo != null && res.ProtocolInfo.MimeType == "image/jpeg" && res.ProtocolInfo.IsOriginalContent);
 
             if (matched != null)
             {
-                return matched;
+                return matched.ResourceUrl;
             }
 
-            if (item.Class == Class.ImageItem)
+            if (item.Class.StartsWith(Class.ImageItem))
             {
-                return item.Resources[0];
+                return item.Resources[0].ResourceUrl;
             }
             return null;
         }
 
-        private static Resource GetThumbnailResource(Item item)
+        private static string GetThumbnailResource(Item item)
         {
             Resource result = null;
             foreach (var res in item.Resources)
@@ -157,45 +201,53 @@ namespace Kazyx.Uwpmm.Playback
                 }
             }
 
-            return result;
+            if (result == null)
+            {
+                return null;
+            }
+            return result.ResourceUrl;
         }
 
-        /*
-        public event Action<Result> BrowsingInProgress;
-
-        public event Action BrowsingCompleted;
-
-        public async Task<Result> BrowseChildGradually(string containerId, CancellationTokenSource cancel = null)
+        private async Task RetrieveContentsByBrowse(string containerName, string containerId, CancellationTokenSource cancel)
         {
-            return await BrowseChild(containerId, cancel, 0);
+            var res = await BrowseChild(containerName, containerId, cancel, 0).ConfigureAwait(false);
+            if (res == null)
+            {
+                return;
+            }
+            foreach (var container in res.Reverse())
+            {
+                DebugUtil.Log("Browse - " + container.Title);
+                await RetrieveContentsByBrowse(container.Title, container.Id, cancel).ConfigureAwait(false);
+            }
         }
 
-        private async Task<Result> BrowseChild(string containerId, CancellationTokenSource cancel, int start)
+        private async Task<IList<Container>> BrowseChild(string containerName, string containerId, CancellationTokenSource cancel, int start)
         {
             var res = await UpnpDevice.Services[URN.ContentDirectory].Control(new BrowseRequest
             {
                 ObjectID = containerId,
                 BrowseFlag = BrowseFlag.BrowseDirectChildren,
                 StartingIndex = start,
-                RequestedCount = PlaybackModeHelper.CONTENT_LOOP_STEP,
-            });
+                RequestedCount = CONTENT_LOOP_STEP,
+            }).ConfigureAwait(false);
             if (cancel != null && cancel.IsCancellationRequested)
             {
-                throw new OperationCanceledException("Browse child is cancelled.");
+                OnCancelled();
+                return null;
             }
 
             var contents = res as RetrievedContents;
-            if (contents.TotalMatches > (start + 1) * PlaybackModeHelper.CONTENT_LOOP_STEP)
+            OnPartLoaded(Translate(containerName, contents.Result.Items));
+
+            var containers = new List<Container>(contents.Result.Containers);
+
+            if (contents.TotalMatches > (start + 1) * CONTENT_LOOP_STEP)
             {
-                BrowsingInProgress.Raise(contents.Result);
-                return await BrowseChild(containerId, cancel, start + 1);
+                var nextContainers = await BrowseChild(containerName, containerId, cancel, start + 1).ConfigureAwait(false);
+                containers.AddRange(nextContainers);
             }
-            else
-            {
-                BrowsingCompleted.Raise();
-                return contents.Result;
-            }
+            return containers;
         }
-         * */
     }
 }

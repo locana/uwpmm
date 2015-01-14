@@ -26,7 +26,7 @@ namespace Kazyx.Uwpmm.UPnP
             if (response.IsSuccessStatusCode)
             {
                 var res = await response.Content.ReadAsStringAsync();
-                DebugUtil.Log(res);
+                // DebugUtil.Log(res);
             }
             else
             {
@@ -37,7 +37,7 @@ namespace Kazyx.Uwpmm.UPnP
         public async Task<Response> Control(Request request)
         {
             var body = request.BuildMessage();
-            DebugUtil.Log(body);
+            // DebugUtil.Log(body);
 
             var content = new HttpStringContent(body);
             content.Headers["Content-Type"] = "text/xml";
@@ -45,15 +45,14 @@ namespace Kazyx.Uwpmm.UPnP
 
             var uri = new Uri(RootAddress + ControlUrl);
 
-            DebugUtil.Log("Access to " + uri.ToString());
+            // DebugUtil.Log("Access to " + uri.ToString());
             var response = await HttpClient.PostAsync(uri, content);
 
             if (response.IsSuccessStatusCode)
             {
                 var res = await response.Content.ReadAsStringAsync();
                 res = WebUtility.HtmlDecode(res);
-                System.Diagnostics.Debug.WriteLine(res);
-                DebugUtil.Log(res);
+                // DebugUtil.Log(res);
                 return request.ParseResponse(XDocument.Parse(res));
             }
             else
