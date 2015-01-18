@@ -34,6 +34,8 @@ namespace Kazyx.Uwpmm.Playback
         }
 
         public abstract Task Load(ContentsSet contentsSet, CancellationTokenSource cancel);
+
+        public abstract Task LoadRemainingAsync(RemainingContentsHolder holder, ContentsSet contentsSet, CancellationTokenSource cancel);
     }
 
     public class ContentsLoadedEventArgs : EventArgs

@@ -19,14 +19,23 @@ namespace Kazyx.Uwpmm.DataModel
         public RemainingContentsHolder(DateInfo date, string uuid, int startsFrom, int count)
             : base(new ContentInfo { GroupName = date.Title }, uuid)
         {
-            StartsFrom = 0;
+            StartsFrom = startsFrom;
             RemainingCount = count;
             AlbumGroup = date;
+        }
+
+        public RemainingContentsHolder(string containerId, string groupTitle, string uuid, int startsFrom, int count)
+            : base(new ContentInfo { GroupName = groupTitle }, uuid)
+        {
+            StartsFrom = startsFrom;
+            RemainingCount = count;
+            CdsContainerId = containerId;
         }
 
         public int StartsFrom { private set; get; }
         public int RemainingCount { private set; get; }
         public DateInfo AlbumGroup { private set; get; }
+        public string CdsContainerId { private set; get; }
 
         public override string OverlayText
         {

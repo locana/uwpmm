@@ -79,6 +79,11 @@ namespace Kazyx.Uwpmm.Playback
                 await LoadPicturesRecursively(into, child, cancel).ConfigureAwait(false);
             }
         }
+
+        public override Task LoadRemainingAsync(RemainingContentsHolder holder, ContentsSet contentsSet, CancellationTokenSource cancel)
+        {
+            throw new NotImplementedException();
+        }
     }
 
     public class SingleContentEventArgs : EventArgs

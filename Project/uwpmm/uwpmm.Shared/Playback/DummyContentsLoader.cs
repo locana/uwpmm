@@ -64,7 +64,7 @@ namespace Kazyx.Uwpmm.Playback
             OnCompleted();
         }
 
-        public async Task PartLoad(RemainingContentsHolder holder, ContentsSet contentsSet, CancellationTokenSource cancel)
+        public override async Task LoadRemainingAsync(RemainingContentsHolder holder, ContentsSet contentsSet, CancellationTokenSource cancel)
         {
             var list = new List<Thumbnail>();
             var contents = RandomContentList(holder.RemainingCount, true);

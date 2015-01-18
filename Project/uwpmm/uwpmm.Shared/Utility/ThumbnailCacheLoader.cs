@@ -97,6 +97,10 @@ namespace Kazyx.Uwpmm.Utility
             {
                 filename += ".jpg";
             }
+            else if (filename.EndsWith(".arw", StringComparison.OrdinalIgnoreCase))
+            {
+                filename = filename.Substring(0, filename.Length - 3) + "jpg";
+            }
 
             DebugUtil.Log("Loading " + content.ThumbnailUrl + " into " + directory);
 

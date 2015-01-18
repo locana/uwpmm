@@ -686,7 +686,7 @@ namespace Kazyx.Uwpmm.Pages
 
             try
             {
-                await loader.PartLoad(holder, ContentsSet.Images, Canceller).ConfigureAwait(false);
+                await loader.LoadRemainingAsync(holder, ContentsSet.Images, Canceller).ConfigureAwait(false);
             }
             finally
             {
@@ -1604,13 +1604,26 @@ namespace Kazyx.Uwpmm.Pages
                 return;
             }
 #endif
-            var loader = new RemoteApiContentsLoader(TargetDevice);
-            loader.PartLoaded += RemoteContentsLoader_PartLoaded;
+            ContentsLoader loader = null;
 
+            if (TargetDevice != null)
+            {
+                loader = new RemoteApiContentsLoader(TargetDevice);
+            }
+            else if (UpnpDevice != null)
+            {
+                loader = new DlnaContentsLoader(UpnpDevice);
+            }
+            else
+            {
+                return;
+            }
+
+            loader.PartLoaded += RemoteContentsLoader_PartLoaded;
             ChangeProgressText(SystemUtil.GetStringResource("Progress_FetchingContents"));
             try
             {
-                await loader.GetPartOfContentsOfDayAsync(holder, ApplicationSettings.GetInstance().RemoteContentsSet, Canceller);
+                await loader.LoadRemainingAsync(holder, ApplicationSettings.GetInstance().RemoteContentsSet, Canceller);
             }
             catch (Exception e)
             {

@@ -172,7 +172,7 @@ namespace Kazyx.Uwpmm.Playback
             return loaded;
         }
 
-        public async Task GetPartOfContentsOfDayAsync(RemainingContentsHolder holder, ContentsSet contentsSet, CancellationTokenSource cancel)
+        public override async Task LoadRemainingAsync(RemainingContentsHolder holder, ContentsSet contentsSet, CancellationTokenSource cancel)
         {
             var loops = holder.RemainingCount / CONTENT_LOOP_STEP + (holder.RemainingCount % CONTENT_LOOP_STEP == 0 ? 0 : 1);
 

@@ -16,6 +16,8 @@ namespace Kazyx.Uwpmm.Playback
 
         public const int CONTENT_LOOP_STEP = 50;
 
+        public const int MAX_AUTO_LOAD_THUMBNAILS = 30;
+
         public DlnaContentsLoader(UpnpDevice upnp)
         {
             UpnpDevice = upnp;
@@ -208,6 +210,8 @@ namespace Kazyx.Uwpmm.Playback
             return result.ResourceUrl;
         }
 
+        private int sum = 0;
+
         private async Task RetrieveContentsByBrowse(string containerName, string containerId, CancellationTokenSource cancel)
         {
             var res = await BrowseChild(containerName, containerId, cancel, 0).ConfigureAwait(false);
@@ -222,15 +226,16 @@ namespace Kazyx.Uwpmm.Playback
             }
         }
 
-        private async Task<IList<Container>> BrowseChild(string containerName, string containerId, CancellationTokenSource cancel, int start)
+        private async Task<IList<Container>> BrowseChild(string containerName, string containerId, CancellationTokenSource cancel, int loadedForLayer)
         {
             var res = await UpnpDevice.Services[URN.ContentDirectory].Control(new BrowseRequest
             {
                 ObjectID = containerId,
                 BrowseFlag = BrowseFlag.BrowseDirectChildren,
-                StartingIndex = start,
-                RequestedCount = CONTENT_LOOP_STEP,
+                StartingIndex = loadedForLayer,
+                RequestedCount = sum > MAX_AUTO_LOAD_THUMBNAILS ? 1 : CONTENT_LOOP_STEP,
             }).ConfigureAwait(false);
+
             if (cancel != null && cancel.IsCancellationRequested)
             {
                 OnCancelled();
@@ -240,14 +245,60 @@ namespace Kazyx.Uwpmm.Playback
             var contents = res as RetrievedContents;
             OnPartLoaded(Translate(containerName, contents.Result.Items));
 
+            loadedForLayer += contents.NumberReturned;
+            sum += contents.NumberReturned;
+
             var containers = new List<Container>(contents.Result.Containers);
 
-            if (contents.TotalMatches > (start + 1) * CONTENT_LOOP_STEP)
+            if (sum > MAX_AUTO_LOAD_THUMBNAILS)
             {
-                var nextContainers = await BrowseChild(containerName, containerId, cancel, start + 1).ConfigureAwait(false);
+                var remainingNum = contents.TotalMatches - contents.NumberReturned;
+                var remaining = new RemainingContentsHolder(containerId, containerName, UpnpDevice.UDN, loadedForLayer, contents.TotalMatches - loadedForLayer);
+                var list = new List<Thumbnail>();
+                list.Add(remaining);
+                OnPartLoaded(list);
+                return containers;
+            }
+
+            if (contents.TotalMatches > loadedForLayer)
+            {
+                var nextContainers = await BrowseChild(containerName, containerId, cancel, loadedForLayer).ConfigureAwait(false);
                 containers.AddRange(nextContainers);
             }
             return containers;
+        }
+
+        public override async Task LoadRemainingAsync(RemainingContentsHolder holder, ContentsSet contentsSet, CancellationTokenSource cancel)
+        {
+            await BrowseRemainingChild(holder.GroupTitle, holder.CdsContainerId, cancel, holder.StartsFrom, holder.RemainingCount);
+        }
+
+        private async Task BrowseRemainingChild(string containerName, string containerId, CancellationTokenSource cancel, int start, int remainingCount)
+        {
+            var res = await UpnpDevice.Services[URN.ContentDirectory].Control(new BrowseRequest
+            {
+                ObjectID = containerId,
+                BrowseFlag = BrowseFlag.BrowseDirectChildren,
+                StartingIndex = start,
+                RequestedCount = CONTENT_LOOP_STEP,
+            }).ConfigureAwait(false);
+
+            if (cancel != null && cancel.IsCancellationRequested)
+            {
+                OnCancelled();
+                return;
+            }
+
+            var contents = res as RetrievedContents;
+            OnPartLoaded(Translate(containerName, contents.Result.Items));
+
+            var nextIndex = start + contents.NumberReturned;
+            remainingCount -= contents.NumberReturned;
+
+            if (remainingCount > 0)
+            {
+                await BrowseRemainingChild(containerName, containerId, cancel, nextIndex, remainingCount).ConfigureAwait(false);
+            }
         }
     }
 }
