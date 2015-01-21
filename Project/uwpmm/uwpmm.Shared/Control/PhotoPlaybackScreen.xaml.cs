@@ -62,7 +62,7 @@ namespace Kazyx.Uwpmm.Control
             sb.Begin();
         }
 
-        public static readonly DependencyProperty MinProperty = DependencyProperty.Register(
+        public static readonly DependencyProperty SourceBitmapProperty = DependencyProperty.Register(
             "SourceBitmap",
             typeof(BitmapImage),
             typeof(PhotoPlaybackScreen),

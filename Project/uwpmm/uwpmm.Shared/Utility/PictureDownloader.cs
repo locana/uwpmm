@@ -106,7 +106,7 @@ namespace Kazyx.Uwpmm.Utility
                 {
                     try
                     {
-                        imageStream = NtImageProcessor.MetaData.MetaDataOperator.AddGeoposition(imageStream, req.GeoPosition, false);
+                        imageStream = await NtImageProcessor.MetaData.MetaDataOperator.AddGeopositionAsync(imageStream, req.GeoPosition, false);
                         GeotaggingResult = Utility.GeotaggingResult.OK;
                     }
                     catch (NtImageProcessor.MetaData.Misc.GpsInformationAlreadyExistsException)

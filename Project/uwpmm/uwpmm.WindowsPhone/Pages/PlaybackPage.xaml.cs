@@ -1177,7 +1177,7 @@ namespace Kazyx.Uwpmm.Pages
                             }
                             replica.Seek(0, SeekOrigin.Begin);
 
-                            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
                             {
                                 try
                                 {
@@ -1188,7 +1188,7 @@ namespace Kazyx.Uwpmm.Pages
                                     PhotoScreen.SetBitmap();
                                     try
                                     {
-                                        PhotoData.MetaData = NtImageProcessor.MetaData.JpegMetaDataParser.ParseImage(replica);
+                                        PhotoData.MetaData = await NtImageProcessor.MetaData.JpegMetaDataParser.ParseImageAsync(replica);
                                     }
                                     catch (UnsupportedFileFormatException)
                                     {
@@ -1513,7 +1513,7 @@ namespace Kazyx.Uwpmm.Pages
                     PhotoScreen.SetBitmap();
                     try
                     {
-                        PhotoData.MetaData = NtImageProcessor.MetaData.JpegMetaDataParser.ParseImage(stream);
+                        PhotoData.MetaData = await NtImageProcessor.MetaData.JpegMetaDataParser.ParseImageAsync(stream);
                     }
                     catch (UnsupportedFileFormatException)
                     {
