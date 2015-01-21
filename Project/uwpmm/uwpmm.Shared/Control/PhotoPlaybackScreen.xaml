@@ -30,8 +30,8 @@
     <Grid x:Name="LayoutRoot" >
         <Border x:Name="background" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Opacity="0.7"/>
 
-        <ScrollViewer HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,12" ZoomMode="Enabled">
-            <Image Name="Image" CacheMode="BitmapCache" ManipulationMode="All" ManipulationDelta="Image_ManipulationDelta"  HorizontalAlignment="Center" 
+        <ScrollViewer HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,12" ZoomMode="Enabled" DoubleTapped="Image_DoubleTapped">
+            <Image Name="Image" CacheMode="BitmapCache" ManipulationMode="All" ManipulationDelta="Image_ManipulationDelta"  HorizontalAlignment="Center" DoubleTapped="Image_DoubleTapped"
                    VerticalAlignment="Center" Height="315" Width="360" RenderTransformOrigin="0.5, 0.5" >
                 <Image.RenderTransform>
                     <CompositeTransform></CompositeTransform>

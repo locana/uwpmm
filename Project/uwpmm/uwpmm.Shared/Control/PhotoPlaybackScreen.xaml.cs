@@ -133,6 +133,11 @@ namespace Kazyx.Uwpmm.Control
             if (value < min) { return min; }
             return value;
         }
+
+        private void Image_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
+        {
+            Init();
+        }
     }
 
     public enum Rotation
