@@ -362,6 +362,7 @@ namespace Kazyx.Uwpmm.Pages
                 {
                     // might be capability issue.
                     DebugUtil.Log("Error: capability issue, maybe.");
+                    ShowError(SystemUtil.GetStringResource("ErrorMessage_LocationAccessUnauthorized"));
                 }
             }
             screenViewData.GeopositionEnabled = true;
@@ -369,8 +370,20 @@ namespace Kazyx.Uwpmm.Pages
 
         private void DisableGeolocator()
         {
-            _Geolocator.StatusChanged -= _Geolocator_StatusChanged;
-            _Geolocator.PositionChanged -= _Geolocator_PositionChanged;
+            try
+            {
+                _Geolocator.StatusChanged -= _Geolocator_StatusChanged;
+                _Geolocator.PositionChanged -= _Geolocator_PositionChanged;
+            }
+            catch (Exception ex)
+            {
+                if ((uint)ex.HResult == 0x80004004)
+                {
+                    // might be capability issue.
+                    DebugUtil.Log("Error: capability issue, maybe.");
+                }
+            }
+
             CachedPosition = null;
             screenViewData.GeopositionEnabled = false;
         }
