@@ -435,7 +435,8 @@ namespace Kazyx.Uwpmm.Pages
                     }
                     else
                     {
-                        SearchCameraDevice();
+                        await Task.Delay(TimeSpan.FromMilliseconds(500));
+                        GoToEntranceScreen();
                     }
                     break;
             }
