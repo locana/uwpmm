@@ -128,10 +128,30 @@ namespace Kazyx.Uwpmm.Pages
         private void SearchCameraDevice()
         {
             NetworkObserver.INSTANCE.CameraDiscovered += NetworkObserver_Discovered;
+            NetworkObserver.INSTANCE.CameraDiscoveryFinished += NetworkObserver_CameraDiscoveryFinished;
             NetworkObserver.INSTANCE.CdsDiscovered += NetworkObserver_CdsDiscovered;
+            NetworkObserver.INSTANCE.DlnaDiscoveryFinished += NetworkObserver_DlnaDiscoveryFinished;
             NetworkObserver.INSTANCE.Clear();
             NetworkObserver.INSTANCE.SearchCamera();
             NetworkObserver.INSTANCE.SearchCds();
+        }
+
+        void NetworkObserver_DlnaDiscoveryFinished(object sender, EventArgs e)
+        {
+            if (this.target == null)
+            {
+                DebugUtil.Log("Dlna discovery finished. Search again.");
+                NetworkObserver.INSTANCE.SearchCds();
+            }
+        }
+
+        void NetworkObserver_CameraDiscoveryFinished(object sender, EventArgs e)
+        {
+            if (this.target == null)
+            {
+                DebugUtil.Log("Camera discovery finished. Search again.");
+                NetworkObserver.INSTANCE.SearchCamera();
+            }
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
