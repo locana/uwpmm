@@ -654,9 +654,9 @@ namespace Kazyx.Uwpmm.Pages
 
         private async void SetupFocusFrame(bool RequestFocusFrameEnabled)
         {
-            if (RequestFocusFrameEnabled && target.Api.Capability.IsAvailable("setLiveviewFrameInfo"))
+            if (target.Api.Capability.IsAvailable("setLiveviewFrameInfo"))
             {
-                await target.Api.Camera.SetLiveviewFrameInfo(new FrameInfoSetting() { TransferFrameInfo = true });
+                await target.Api.Camera.SetLiveviewFrameInfo(new FrameInfoSetting() { TransferFrameInfo = RequestFocusFrameEnabled });
             }
 
             if (RequestFocusFrameEnabled && !target.Api.Capability.IsSupported("setLiveviewFrameInfo") && target.Api.Capability.IsAvailable("setTouchAFPosition"))

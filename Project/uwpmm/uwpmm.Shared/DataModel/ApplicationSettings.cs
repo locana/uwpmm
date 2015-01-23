@@ -166,7 +166,7 @@ namespace Kazyx.Uwpmm.DataModel
                 {
                     Preference.HistogramVisible = value;
                     _IsHistogramDisplayed = value;
-                    NotifyChangedOnUI("HistogramVisibility");
+                    NotifyChangedOnUI("IsHistogramDisplayed");
                 }
             }
             get { return _IsHistogramDisplayed; }
