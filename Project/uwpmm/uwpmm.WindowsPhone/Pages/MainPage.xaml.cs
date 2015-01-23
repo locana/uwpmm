@@ -158,7 +158,8 @@ namespace Kazyx.Uwpmm.Pages
         {
             NetworkObserver.INSTANCE.CameraDiscovered -= NetworkObserver_Discovered;
             NetworkObserver.INSTANCE.CdsDiscovered -= NetworkObserver_CdsDiscovered;
-
+            NetworkObserver.INSTANCE.CameraDiscoveryFinished -= NetworkObserver_CameraDiscoveryFinished;
+            NetworkObserver.INSTANCE.DlnaDiscoveryFinished -= NetworkObserver_DlnaDiscoveryFinished;
             this.navigationHelper.OnNavigatedFrom(e);
         }
 
