@@ -24,6 +24,32 @@ namespace Kazyx.Uwpmm.Utility
         {
             discovery.SonyCameraDeviceDiscovered += discovery_SonyCameraDeviceDiscovered;
             cdsDiscovery.DescriptionObtained += cdsDiscovery_DescriptionObtained;
+            discovery.Finished += discovery_Finished;
+            cdsDiscovery.Finished += cdsDiscovery_Finished;
+        }
+
+        void cdsDiscovery_Finished(object sender, EventArgs e)
+        {
+            OnDlnaDiscoveryFinished();
+        }
+
+        public event EventHandler DlnaDiscoveryFinished;
+
+        protected void OnDlnaDiscoveryFinished()
+        {
+            DlnaDiscoveryFinished.Raise(this, null);
+        }
+
+        void discovery_Finished(object sender, EventArgs e)
+        {
+            OnCameraDiscoveryFinished();
+        }
+
+        public event EventHandler CameraDiscoveryFinished;
+
+        protected void OnCameraDiscoveryFinished()
+        {
+            CameraDiscoveryFinished.Raise(this, null);
         }
 
         private Dictionary<string, TargetDevice> devices = new Dictionary<string, TargetDevice>();
@@ -108,10 +134,14 @@ namespace Kazyx.Uwpmm.Utility
             cdServices.Remove(device.UDN);
         }
 
-        public void Search()
+        public void SearchCds()
+        {
+            cdsDiscovery.SearchUpnpDevices("urn:schemas-upnp-org:service:ContentDirectory:1");
+        }
+
+        public void SearchCamera()
         {
             discovery.SearchSonyCameraDevices();
-            cdsDiscovery.SearchUpnpDevices("urn:schemas-upnp-org:service:ContentDirectory:1");
         }
 
         public void Clear()

@@ -130,7 +130,8 @@ namespace Kazyx.Uwpmm.Pages
             NetworkObserver.INSTANCE.CameraDiscovered += NetworkObserver_Discovered;
             NetworkObserver.INSTANCE.CdsDiscovered += NetworkObserver_CdsDiscovered;
             NetworkObserver.INSTANCE.Clear();
-            NetworkObserver.INSTANCE.Search();
+            NetworkObserver.INSTANCE.SearchCamera();
+            NetworkObserver.INSTANCE.SearchCds();
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)

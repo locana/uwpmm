@@ -312,7 +312,8 @@ namespace Kazyx.Uwpmm.Pages
                 DebugUtil.Log("No target device detected. Search again.");
                 NetworkObserver.INSTANCE.CdsDiscovered += NetworkObserver_CdsDiscovered;
                 NetworkObserver.INSTANCE.CameraDiscovered += NetworkObserver_CameraDiscovered;
-                NetworkObserver.INSTANCE.Search();
+                NetworkObserver.INSTANCE.SearchCamera();
+                NetworkObserver.INSTANCE.SearchCds();
             }
 
             await DefaultPivotLockState();

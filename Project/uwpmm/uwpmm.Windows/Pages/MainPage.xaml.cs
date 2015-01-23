@@ -108,7 +108,7 @@ namespace Kazyx.Uwpmm.Pages
         private void pageRoot_Loaded(object sender, RoutedEventArgs e)
         {
             NetworkObserver.INSTANCE.CameraDiscovered += NetworkObserver_Discovered;
-            NetworkObserver.INSTANCE.Search();
+            NetworkObserver.INSTANCE.SearchCamera();
             PictureDownloader.Instance.Fetched += OnFetchdImage;
         }
 
