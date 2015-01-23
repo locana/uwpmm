@@ -122,10 +122,10 @@ namespace Kazyx.Uwpmm.Pages
             this.navigationHelper.OnNavigatedTo(e);
 
             NavigatedByInAppBackTransition = e.NavigationMode == NavigationMode.Back;
-            SearchCameraDevice();
+            SearchDevice();
         }
 
-        private void SearchCameraDevice()
+        private void SearchDevice()
         {
             NetworkObserver.INSTANCE.CameraDiscovered += NetworkObserver_Discovered;
             NetworkObserver.INSTANCE.CameraDiscoveryFinished += NetworkObserver_CameraDiscoveryFinished;
@@ -138,7 +138,7 @@ namespace Kazyx.Uwpmm.Pages
 
         void NetworkObserver_DlnaDiscoveryFinished(object sender, EventArgs e)
         {
-            if (this.target == null)
+            if (this.target == null && !DlnaDeviceFound)
             {
                 DebugUtil.Log("Dlna discovery finished. Search again.");
                 NetworkObserver.INSTANCE.SearchCds();
@@ -149,18 +149,28 @@ namespace Kazyx.Uwpmm.Pages
         {
             if (this.target == null)
             {
+                StartLiveviewGuide.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
                 DebugUtil.Log("Camera discovery finished. Search again.");
                 NetworkObserver.INSTANCE.SearchCamera();
+            }
+            else
+            {
+                StartLiveviewGuide.Visibility = Windows.UI.Xaml.Visibility.Visible;
             }
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
+            InitNetworkObserver();
+            this.navigationHelper.OnNavigatedFrom(e);
+        }
+
+        private void InitNetworkObserver()
+        {
             NetworkObserver.INSTANCE.CameraDiscovered -= NetworkObserver_Discovered;
             NetworkObserver.INSTANCE.CdsDiscovered -= NetworkObserver_CdsDiscovered;
             NetworkObserver.INSTANCE.CameraDiscoveryFinished -= NetworkObserver_CameraDiscoveryFinished;
             NetworkObserver.INSTANCE.DlnaDiscoveryFinished -= NetworkObserver_DlnaDiscoveryFinished;
-            this.navigationHelper.OnNavigatedFrom(e);
         }
 
         #endregion
@@ -168,8 +178,9 @@ namespace Kazyx.Uwpmm.Pages
         private bool NavigatedByInAppBackTransition = false;
 
         CommandBarManager _CommandBarManager = new CommandBarManager();
-        Geolocator _Geolocator = new Geolocator();
+        Geolocator _Geolocator;
         Geoposition CachedPosition = null;
+        bool DlnaDeviceFound = false;
 
         bool ControlPanelDisplayed = false;
 
@@ -334,11 +345,25 @@ namespace Kazyx.Uwpmm.Pages
 
         private void EnableGeolocator()
         {
-            _Geolocator.DesiredAccuracy = PositionAccuracy.Default;
-            _Geolocator.ReportInterval = 3000;
+            _Geolocator = null;
+            _Geolocator = new Geolocator();
 
-            _Geolocator.PositionChanged += _Geolocator_PositionChanged;
-            _Geolocator.StatusChanged += _Geolocator_StatusChanged;
+            try
+            {
+                _Geolocator.DesiredAccuracy = PositionAccuracy.Default;
+                _Geolocator.ReportInterval = 3000;
+
+                _Geolocator.PositionChanged += _Geolocator_PositionChanged;
+                _Geolocator.StatusChanged += _Geolocator_StatusChanged;
+            }
+            catch (Exception ex)
+            {
+                if ((uint)ex.HResult == 0x80004004)
+                {
+                    // might be capability issue.
+                    DebugUtil.Log("Error: capability issue, maybe.");
+                }
+            }
             screenViewData.GeopositionEnabled = true;
         }
 
@@ -414,6 +439,8 @@ namespace Kazyx.Uwpmm.Pages
 
         async void PivotRoot_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            await Task.Delay(TimeSpan.FromMilliseconds(500));
+
             switch ((sender as Pivot).SelectedIndex)
             {
                 case 0:
@@ -426,6 +453,8 @@ namespace Kazyx.Uwpmm.Pages
                         target.Status.PropertyChanged -= Status_PropertyChanged;
                     }
                     target = null;
+                    InitNetworkObserver();
+                    SearchDevice();
                     break;
                 case 1:
                     EmptyAppBar();
@@ -435,7 +464,6 @@ namespace Kazyx.Uwpmm.Pages
                     }
                     else
                     {
-                        await Task.Delay(TimeSpan.FromMilliseconds(500));
                         GoToEntranceScreen();
                     }
                     break;
@@ -526,6 +554,7 @@ namespace Kazyx.Uwpmm.Pages
 
         private async void NetworkObserver_CdsDiscovered(object sender, CdServiceEventArgs e)
         {
+            DlnaDeviceFound = true;
             /*
             var type = await e.CdService.LocalAddress.IPInformation.NetworkAdapter.GetConnectedProfileAsync();
             if (!NavigatedByInAppBackTransition && type.IsWlanConnectionProfile)
@@ -546,6 +575,9 @@ namespace Kazyx.Uwpmm.Pages
             await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
                 ShowToast("[TMP] CDS discovered: " + e.CdService.FriendlyName);
+                StartLiveviewGuide.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                ConnectionGuide.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                DlnaGuide.Visibility = Windows.UI.Xaml.Visibility.Visible;
             });
         }
 
@@ -555,6 +587,8 @@ namespace Kazyx.Uwpmm.Pages
 
             await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
+                DlnaGuide.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                ConnectionGuide.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
                 ChangeProgressText(SystemUtil.GetStringResource("ProgressMessageConnecting"));
             });
 
