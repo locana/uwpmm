@@ -12,7 +12,6 @@ using NtNfcLib;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -122,15 +121,20 @@ namespace Kazyx.Uwpmm.Pages
             this.navigationHelper.OnNavigatedTo(e);
 
             NavigatedByInAppBackTransition = e.NavigationMode == NavigationMode.Back;
+            SetupNetworkObserver();
             SearchDevice();
         }
 
-        private void SearchDevice()
+        private void SetupNetworkObserver()
         {
             NetworkObserver.INSTANCE.CameraDiscovered += NetworkObserver_Discovered;
             NetworkObserver.INSTANCE.CameraDiscoveryFinished += NetworkObserver_CameraDiscoveryFinished;
             NetworkObserver.INSTANCE.CdsDiscovered += NetworkObserver_CdsDiscovered;
             NetworkObserver.INSTANCE.DlnaDiscoveryFinished += NetworkObserver_DlnaDiscoveryFinished;
+        }
+
+        private static void SearchDevice()
+        {
             NetworkObserver.INSTANCE.Clear();
             NetworkObserver.INSTANCE.SearchCamera();
             NetworkObserver.INSTANCE.SearchCds();
@@ -161,11 +165,11 @@ namespace Kazyx.Uwpmm.Pages
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
-            InitNetworkObserver();
+            TearDownNetworkObserver();
             this.navigationHelper.OnNavigatedFrom(e);
         }
 
-        private void InitNetworkObserver()
+        private void TearDownNetworkObserver()
         {
             NetworkObserver.INSTANCE.CameraDiscovered -= NetworkObserver_Discovered;
             NetworkObserver.INSTANCE.CdsDiscovered -= NetworkObserver_CdsDiscovered;
@@ -466,17 +470,16 @@ namespace Kazyx.Uwpmm.Pages
                         target.Status.PropertyChanged -= Status_PropertyChanged;
                     }
                     target = null;
-                    InitNetworkObserver();
                     SearchDevice();
                     break;
                 case 1:
-                    EmptyAppBar();
                     if (target != null)
                     {
                         LiveViewPageLoaded();
                     }
                     else
                     {
+                        EmptyAppBar();
                         GoToEntranceScreen();
                     }
                     break;
@@ -630,6 +633,8 @@ namespace Kazyx.Uwpmm.Pages
                 HideProgress();
                 GoToLiveviewScreen();
                 CreateCameraControlAppBar();
+
+                ControlPanel.Children.Clear();
                 var panels = SettingPanelBuilder.CreateNew(target);
                 var pn = panels.GetPanelsToShow();
                 foreach (var panel in pn)
