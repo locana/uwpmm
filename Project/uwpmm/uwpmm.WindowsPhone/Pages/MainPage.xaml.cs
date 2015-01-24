@@ -130,7 +130,7 @@ namespace Kazyx.Uwpmm.Pages
             NetworkObserver.INSTANCE.CameraDiscovered += NetworkObserver_Discovered;
             NetworkObserver.INSTANCE.CameraDiscoveryFinished += NetworkObserver_CameraDiscoveryFinished;
             NetworkObserver.INSTANCE.CdsDiscovered += NetworkObserver_CdsDiscovered;
-            NetworkObserver.INSTANCE.DlnaDiscoveryFinished += NetworkObserver_DlnaDiscoveryFinished;
+            NetworkObserver.INSTANCE.CdsDiscoveryFinished += NetworkObserver_CdsDiscoveryFinished;
         }
 
         private static void SearchDevice()
@@ -140,9 +140,9 @@ namespace Kazyx.Uwpmm.Pages
             NetworkObserver.INSTANCE.SearchCds();
         }
 
-        void NetworkObserver_DlnaDiscoveryFinished(object sender, EventArgs e)
+        void NetworkObserver_CdsDiscoveryFinished(object sender, EventArgs e)
         {
-            if (this.target == null && !DlnaDeviceFound)
+            if (this.target == null && !CdsDeviceFound)
             {
                 DebugUtil.Log("Dlna discovery finished. Search again.");
                 NetworkObserver.INSTANCE.SearchCds();
@@ -153,13 +153,13 @@ namespace Kazyx.Uwpmm.Pages
         {
             if (this.target == null)
             {
-                StartLiveviewGuide.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                StartLiveviewGuide.Visibility = Visibility.Collapsed;
                 DebugUtil.Log("Camera discovery finished. Search again.");
                 NetworkObserver.INSTANCE.SearchCamera();
             }
             else
             {
-                StartLiveviewGuide.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                StartLiveviewGuide.Visibility = Visibility.Visible;
             }
         }
 
@@ -174,7 +174,7 @@ namespace Kazyx.Uwpmm.Pages
             NetworkObserver.INSTANCE.CameraDiscovered -= NetworkObserver_Discovered;
             NetworkObserver.INSTANCE.CdsDiscovered -= NetworkObserver_CdsDiscovered;
             NetworkObserver.INSTANCE.CameraDiscoveryFinished -= NetworkObserver_CameraDiscoveryFinished;
-            NetworkObserver.INSTANCE.DlnaDiscoveryFinished -= NetworkObserver_DlnaDiscoveryFinished;
+            NetworkObserver.INSTANCE.CdsDiscoveryFinished -= NetworkObserver_CdsDiscoveryFinished;
         }
 
         #endregion
@@ -184,7 +184,7 @@ namespace Kazyx.Uwpmm.Pages
         CommandBarManager _CommandBarManager = new CommandBarManager();
         Geolocator _Geolocator;
         Geoposition CachedPosition = null;
-        bool DlnaDeviceFound = false;
+        bool CdsDeviceFound = false;
 
         bool ControlPanelDisplayed = false;
 
@@ -424,8 +424,8 @@ namespace Kazyx.Uwpmm.Pages
             ShutterButtonWrapper.DataContext = ApplicationSettings.GetInstance();
             InitializeAppSettingPanel();
             FramingGuideSurface.DataContext = ApplicationSettings.GetInstance();
-            NfcAvailable.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-            WifiPassword.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+            NfcAvailable.Visibility = Visibility.Collapsed;
+            WifiPassword.Visibility = Visibility.Collapsed;
             WifiPassword.Text = "";
         }
 
@@ -519,7 +519,7 @@ namespace Kazyx.Uwpmm.Pages
                 return;
             }
 
-            if (AppSettingPanel.Visibility == Windows.UI.Xaml.Visibility.Visible)
+            if (AppSettingPanel.Visibility == Visibility.Visible)
             {
                 CloseAppSettingPanel();
                 e.Handled = true;
@@ -539,7 +539,7 @@ namespace Kazyx.Uwpmm.Pages
 
         private void StartToShowControlPanel()
         {
-            ControlPanel.Visibility = Windows.UI.Xaml.Visibility.Visible;
+            ControlPanel.Visibility = Visibility.Visible;
             SlideTransform.X = 200;
             ShowControlPanelStoryBoard.Begin();
             SlideInControlPanel.Begin();
@@ -559,7 +559,7 @@ namespace Kazyx.Uwpmm.Pages
 
         private void HideControlPanelStoryBoard_Completed(object sender, object e)
         {
-            ControlPanel.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+            ControlPanel.Visibility = Visibility.Collapsed;
             ControlPanelDisplayed = false;
         }
 
@@ -570,7 +570,7 @@ namespace Kazyx.Uwpmm.Pages
 
         private async void NetworkObserver_CdsDiscovered(object sender, CdServiceEventArgs e)
         {
-            DlnaDeviceFound = true;
+            CdsDeviceFound = true;
             /*
             var type = await e.CdService.LocalAddress.IPInformation.NetworkAdapter.GetConnectedProfileAsync();
             if (!NavigatedByInAppBackTransition && type.IsWlanConnectionProfile)
@@ -591,9 +591,9 @@ namespace Kazyx.Uwpmm.Pages
             await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
                 ShowToast("[TMP] CDS discovered: " + e.CdService.FriendlyName);
-                StartLiveviewGuide.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-                ConnectionGuide.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-                DlnaGuide.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                StartLiveviewGuide.Visibility = Visibility.Collapsed;
+                ConnectionGuide.Visibility = Visibility.Collapsed;
+                DlnaGuide.Visibility = Visibility.Visible;
             });
         }
 
@@ -603,8 +603,8 @@ namespace Kazyx.Uwpmm.Pages
 
             await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
-                DlnaGuide.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-                ConnectionGuide.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                DlnaGuide.Visibility = Visibility.Collapsed;
+                ConnectionGuide.Visibility = Visibility.Collapsed;
                 ChangeProgressText(SystemUtil.GetStringResource("ProgressMessageConnecting"));
             });
 
@@ -1135,7 +1135,7 @@ namespace Kazyx.Uwpmm.Pages
                         await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
                         {
                             WifiPassword.Text = r.Password;
-                            WifiPassword.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                            WifiPassword.Visibility = Visibility.Visible;
 
                             var sb = new StringBuilder();
                             sb.Append(SystemUtil.GetStringResource("Message_NFC_succeed"));

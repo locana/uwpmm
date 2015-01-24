@@ -125,6 +125,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Utility\SettingValueConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\StorageExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\SystemUtil.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utility\TaskExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\ThumbnailCacheLoader.cs" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\AppBar\appbar_cameraSetting.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\AppBar\appBar_cancel.png" />

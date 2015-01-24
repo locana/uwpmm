@@ -33,11 +33,11 @@ namespace Kazyx.Uwpmm.Utility
             OnDlnaDiscoveryFinished();
         }
 
-        public event EventHandler DlnaDiscoveryFinished;
+        public event EventHandler CdsDiscoveryFinished;
 
         protected void OnDlnaDiscoveryFinished()
         {
-            DlnaDiscoveryFinished.Raise(this, null);
+            CdsDiscoveryFinished.Raise(this, null);
         }
 
         void discovery_Finished(object sender, EventArgs e)
