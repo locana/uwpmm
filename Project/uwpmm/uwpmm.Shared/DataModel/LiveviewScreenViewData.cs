@@ -39,6 +39,7 @@ namespace Kazyx.Uwpmm.DataModel
                 NotifyChangedOnUI("ShutterSpeedVisibility");
                 NotifyChangedOnUI("ShutterSpeedDisplayValue");
                 NotifyChangedOnUI("IsAudioMode");
+                NotifyChangedOnUI("LiveviewImageDisplayed");
             };
             Device.Api.AvailiableApisUpdated += (sender, e) =>
             {
@@ -481,6 +482,11 @@ namespace Kazyx.Uwpmm.DataModel
         public bool IsAudioMode
         {
             get { return Device.Status.ShootMode.Current == ShootModeParam.Audio; }
+        }
+
+        public bool LiveviewImageDisplayed
+        {
+            get { return !IsAudioMode; }
         }
     }
 

@@ -775,6 +775,7 @@ namespace Kazyx.Uwpmm.Pages
         private void LiveviewImage_Loaded(object sender, RoutedEventArgs e)
         {
             var image = sender as Image;
+            liveview_data.ScreenViewData = screenViewData;
             image.DataContext = liveview_data;
             liveview.JpegRetrieved += liveview_JpegRetrieved;
             liveview.FocusFrameRetrieved += liveview_FocusFrameRetrieved;
@@ -785,6 +786,7 @@ namespace Kazyx.Uwpmm.Pages
         {
             var image = sender as Image;
             image.DataContext = null;
+            liveview_data.ScreenViewData = null;
             liveview.JpegRetrieved -= liveview_JpegRetrieved;
             liveview.FocusFrameRetrieved -= liveview_FocusFrameRetrieved;
             liveview.Closed -= liveview_Closed;

@@ -18,5 +18,7 @@ namespace Kazyx.Uwpmm.DataModel
                 return _Image;
             }
         }
+
+        public LiveviewScreenViewData ScreenViewData { get; set; }
     }
 }

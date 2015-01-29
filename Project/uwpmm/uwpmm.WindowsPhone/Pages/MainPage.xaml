@@ -45,7 +45,7 @@
                                        Style="{StaticResource BaseTextBlockStyle}" x:Name="DlnaGuide" Visibility="Collapsed" />
                             <TextBlock Name="NfcAvailable" Text="{Binding [Guide_NFC], Source={StaticResource LocalizedStrings}}"
                                        Visibility="Collapsed" Style="{ThemeResource BaseTextBlockStyle}" TextWrapping="WrapWholeWords" />
-                            
+
                             <TextBox x:Name="WifiPassword" Margin="60,30" Visibility="Collapsed" TextAlignment="Center" BorderThickness="1" IsReadOnly="True" />
                         </StackPanel>
                     </Grid>
@@ -53,8 +53,8 @@
 
                 <PivotItem Name="Liveview" Margin="0">
                     <Grid Name="LiveviewScreen">
-                        <Image x:Name="LiveviewImage" Source="{Binding Image, Mode=OneWay}" Loaded="LiveviewImage_Loaded" Unloaded="LiveviewImage_Unloaded"
-                               SizeChanged="LiveviewImage_SizeChanged"/>
+                        <Image x:Name="LiveviewImage" Source="{Binding Image, Mode=OneWay}" Loaded="LiveviewImage_Loaded" Unloaded="LiveviewImage_Unloaded" SizeChanged="LiveviewImage_SizeChanged" 
+                               Visibility="{Binding Path=ScreenViewData.LiveviewImageDisplayed, FallbackValue=Collapsed, Converter={StaticResource B2VConverter}}"/>
                         <Image x:Name="AudioDummyScreen" Source="/Assets/Screen/audio_locana.png" Margin="30" 
                                Visibility="{Binding IsAudioMode, FallbackValue=Collapsed, Converter={StaticResource B2VConverter}}"/>
                         <controls:FramingGridsSurface x:Name="FramingGuideSurface" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
