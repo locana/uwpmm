@@ -63,6 +63,7 @@ namespace Kazyx.Uwpmm.Playback
             {
                 if (e.code == StatusCode.IllegalState)
                 {
+                    DebugUtil.Log("SetCameraFunction IllegalState: Already in specified mode");
                     return true;
                 }
             }

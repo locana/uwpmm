@@ -21,6 +21,8 @@ namespace Kazyx.Uwpmm.CameraControl
                 device.Api.Capability.Version = new ServerVersion(info.Version);
                 device.Api.Capability.AvailableApis = await device.Api.Camera.GetAvailableApiListAsync().ConfigureAwait(false);
 
+                await device.Observer.StartAsync().ConfigureAwait(false);
+
                 if (device.Api.AvContent != null)
                 {
                     DebugUtil.Log("This device support ContentsTransfer mode. Turn on Shooting mode at first.");
@@ -50,12 +52,11 @@ namespace Kazyx.Uwpmm.CameraControl
                     }
                     catch (RemoteApiException) { } // This API always fails on some models.
                 }
-
-                await device.Observer.StartAsync().ConfigureAwait(false);
             }
             catch (RemoteApiException e)
             {
                 DebugUtil.Log("Failed setup: " + e.code);
+                device.Observer.Stop();
                 throw e;
             }
         }
