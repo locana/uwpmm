@@ -142,7 +142,7 @@ namespace Kazyx.Uwpmm.Pages
 
         void NetworkObserver_CdsDiscoveryFinished(object sender, EventArgs e)
         {
-            if (this.target == null && !CdsDeviceFound)
+            if (this.target == null && !CdsDeviceFound && !OnSettingCameraDevice)
             {
                 DebugUtil.Log("Dlna discovery finished. Search again.");
                 NetworkObserver.INSTANCE.SearchCds();
@@ -151,7 +151,7 @@ namespace Kazyx.Uwpmm.Pages
 
         void NetworkObserver_CameraDiscoveryFinished(object sender, EventArgs e)
         {
-            if (this.target == null)
+            if (!OnSettingCameraDevice && this.target == null)
             {
                 StartLiveviewGuide.Visibility = Visibility.Collapsed;
                 DebugUtil.Log("Camera discovery finished. Search again.");
@@ -597,10 +597,12 @@ namespace Kazyx.Uwpmm.Pages
             });
         }
 
+        bool OnSettingCameraDevice = false;
+
         async void NetworkObserver_Discovered(object sender, CameraDeviceEventArgs e)
         {
             var target = e.CameraDevice;
-
+            OnSettingCameraDevice = true;
             await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
                 DlnaGuide.Visibility = Visibility.Collapsed;
@@ -617,6 +619,7 @@ namespace Kazyx.Uwpmm.Pages
                 HideProgress();
                 DebugUtil.Log("Failed setup: " + ex.Message);
                 ShowError(SystemUtil.GetStringResource("ErrorMessage_fatal"));
+                OnSettingCameraDevice = false;
                 return;
             }
 
@@ -650,6 +653,7 @@ namespace Kazyx.Uwpmm.Pages
                 if (ApplicationSettings.GetInstance().GeotagEnabled) { EnableGeolocator(); }
                 else { DisableGeolocator(); }
             });
+            OnSettingCameraDevice = false;
         }
 
         private async void SetupFocusFrame(bool RequestFocusFrameEnabled)
