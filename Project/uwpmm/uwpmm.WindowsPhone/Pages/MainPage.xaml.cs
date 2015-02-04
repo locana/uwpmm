@@ -166,6 +166,7 @@ namespace Kazyx.Uwpmm.Pages
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
+            liveview.CloseConnection();
             TearDownNetworkObserver();
             this.navigationHelper.OnNavigatedFrom(e);
         }
