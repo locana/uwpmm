@@ -188,6 +188,7 @@ namespace Kazyx.Uwpmm.Pages
         bool CdsDeviceFound = false;
 
         bool ControlPanelDisplayed = false;
+        bool PivotChangedByBackkey = false;
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
@@ -480,42 +481,46 @@ namespace Kazyx.Uwpmm.Pages
             {
                 case 0:
                     LiveViewPageUnloaded();
-                    CreateEntranceAppBar();
-                    if (target != null)
-                    {
-                        await SequentialOperation.CloseLiveviewStream(target.Api, liveview);
-                        target.Observer.Stop();
-                        target.Status.PropertyChanged -= Status_PropertyChanged;
-                    }
-                    target = null;
-                    SearchDevice();
+
                     break;
                 case 1:
-                    if (target != null)
-                    {
-                        LiveViewPageLoaded();
-                    }
-                    else
-                    {
-                        EmptyAppBar();
-                        GoToEntranceScreen();
-                    }
+                    LiveViewPageLoaded();
                     break;
             }
+            PivotChangedByBackkey = false;
         }
 
         private async void LiveViewPageLoaded()
         {
-            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+            if (target != null)
             {
-                await Task.Delay(TimeSpan.FromMilliseconds(500));
-                PivotRoot.IsLocked = true;
-            });
+                await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+                {
+                    await Task.Delay(TimeSpan.FromMilliseconds(500));
+                    PivotRoot.IsLocked = true;
+                });
+            }
+            else
+            {
+                EmptyAppBar();
+                SearchDevice();
+            }
         }
 
-        private void LiveViewPageUnloaded()
+        private async void LiveViewPageUnloaded()
         {
+            LiveviewScreen.Visibility = Visibility.Collapsed;
+
+            if (!PivotChangedByBackkey) { SearchDevice(); }
             LayoutRoot.DataContext = null;
+            CreateEntranceAppBar();
+            if (target != null)
+            {
+                await SequentialOperation.CloseLiveviewStream(target.Api, liveview);
+                target.Observer.Stop();
+                target.Status.PropertyChanged -= Status_PropertyChanged;
+            }
+            target = null;
         }
 
         private void Entrance_Loaded(object sender, RoutedEventArgs e)
@@ -551,6 +556,7 @@ namespace Kazyx.Uwpmm.Pages
                 return;
             }
 
+            PivotChangedByBackkey = true;
             GoToEntranceScreen();
             e.Handled = true;
         }
@@ -647,6 +653,7 @@ namespace Kazyx.Uwpmm.Pages
             {
                 screenViewData = new LiveviewScreenViewData(target);
                 Liveview.DataContext = screenViewData;
+                LiveviewScreen.Visibility = Visibility.Visible;
                 ShutterButton.DataContext = screenViewData;
                 BatteryStatusDisplay.DataContext = target.Status.BatteryInfo;
 
