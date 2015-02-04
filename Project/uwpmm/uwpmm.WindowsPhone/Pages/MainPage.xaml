@@ -53,200 +53,203 @@
                 </PivotItem>
 
                 <PivotItem Name="Liveview" Margin="0">
-                    <Grid Name="LiveviewScreen">
-                        <Image x:Name="LiveviewImage" Source="{Binding Image, Mode=OneWay}" Loaded="LiveviewImage_Loaded" Unloaded="LiveviewImage_Unloaded" SizeChanged="LiveviewImage_SizeChanged" 
+                    <Grid Name="LiveviewScreenWrapper">
+                        <Grid Name="LiveviewScreen">
+                            <Image x:Name="LiveviewImage" Source="{Binding Image, Mode=OneWay}" Loaded="LiveviewImage_Loaded" Unloaded="LiveviewImage_Unloaded" SizeChanged="LiveviewImage_SizeChanged" 
                                Visibility="{Binding Path=ScreenViewData.LiveviewImageDisplayed, FallbackValue=Collapsed, Converter={StaticResource B2VConverter}}"/>
-                        <Image x:Name="AudioDummyScreen" Source="/Assets/Screen/audio_locana.png" Margin="30" 
+                            <Image x:Name="AudioDummyScreen" Source="/Assets/Screen/audio_locana.png" Margin="30" 
                                Visibility="{Binding IsAudioMode, FallbackValue=Collapsed, Converter={StaticResource B2VConverter}}"/>
-                        <controls:FramingGridsSurface x:Name="FramingGuideSurface" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                            <controls:FramingGridsSurface x:Name="FramingGuideSurface" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                                                       Type="{Binding GridType, Mode=OneWay}"
                                                    Stroke="{Binding GridColorBrush,Mode=OneWay}" FibonacciOrigin="{Binding FibonacciLineOrigin, Mode=OneWay}"/>
-                        <controls:FocusFrameSurface x:Name="_FocusFrameSurface" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
-                        <Grid Name="Top" HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="14,0">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="auto"/>
-                                <ColumnDefinition Width="auto"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="auto"/>
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="*"/>
-                                <RowDefinition Height="*"/>
-                                <RowDefinition Height="*"/>
-                            </Grid.RowDefinitions>
-                            <Grid Name="PeriodicalShootingStatus" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Opacity="0.7" 
+                            <controls:FocusFrameSurface x:Name="_FocusFrameSurface" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                            <Grid Name="Top" HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="14,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="auto"/>
+                                    <ColumnDefinition Width="auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                <Grid Name="PeriodicalShootingStatus" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Opacity="0.7" 
                                   HorizontalAlignment="Stretch" Height="25" Visibility="Collapsed" Grid.ColumnSpan="3">
-                                <TextBlock FontSize="18" Name="PeriodicalShootingStatusText" TextWrapping="WrapWholeWords" HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="0" 
+                                    <TextBlock FontSize="18" Name="PeriodicalShootingStatusText" TextWrapping="WrapWholeWords" HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="0" 
                                            TextAlignment="Center"/>
-                            </Grid>
-                            <Grid Grid.Row="1" Grid.ColumnSpan="3" Height="25">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="auto"/>
-                                    <ColumnDefinition Width="auto"/>
-                                    <ColumnDefinition Width="auto"/>
-                                    <ColumnDefinition Width="auto"/>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="auto"/>
-                                    <ColumnDefinition Width="auto"/>
-                                    <ColumnDefinition Width="auto"/>
-                                    <ColumnDefinition Width="auto"/>
-                                </Grid.ColumnDefinitions>
-                                <Image Source="{Binding ShootModeImage, Mode=OneWay}" />
-                                <Image Source="{Binding ExposureModeImage, Mode=OneWay}" Grid.Column="1" Margin="3"/>
-                                <Image Name="RecDisplay" Source="/Assets/LiveviewScreen/rec.png" Grid.Column="2" Margin="3"
+                                </Grid>
+                                <Grid Grid.Row="1" Grid.ColumnSpan="3" Height="25">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="auto"/>
+                                        <ColumnDefinition Width="auto"/>
+                                        <ColumnDefinition Width="auto"/>
+                                        <ColumnDefinition Width="auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="auto"/>
+                                        <ColumnDefinition Width="auto"/>
+                                        <ColumnDefinition Width="auto"/>
+                                        <ColumnDefinition Width="auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Image Source="{Binding ShootModeImage, Mode=OneWay}" />
+                                    <Image Source="{Binding ExposureModeImage, Mode=OneWay}" Grid.Column="1" Margin="3"/>
+                                    <Image Name="RecDisplay" Source="/Assets/LiveviewScreen/rec.png" Grid.Column="2" Margin="3"
                                    Visibility="{Binding IsRecording, FallbackValue=Collapsed, Converter={StaticResource B2VConverter}}"/>
-                                <TextBlock Text="{Binding RecordingCount}" Grid.Column="3" FontSize="16" VerticalAlignment="Center" Margin="3,6,3,3"
+                                    <TextBlock Text="{Binding RecordingCount}" Grid.Column="3" FontSize="16" VerticalAlignment="Center" Margin="3,6,3,3"
                                            Visibility="{Binding IsRecordingCountAvailable, FallbackValue=Collapsed, Converter={StaticResource B2VConverter}}"/>
-                                <Image Source="{Binding MemoryCardStatusImage}" Grid.Column="5" Margin="3"/>
-                                <TextBlock Text="{Binding RecordbaleAmount}" Grid.Column="6" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="3,6,6,3"/>
-                                <controls:BatteryStatus x:Name="BatteryStatusDisplay" Grid.Column="7" BatteryInfo="{Binding Mode=OneWay}" Height="22" Width="44" VerticalAlignment="Center" />
-                                <Image Source="{Binding GeopositionStatusImage}" Grid.Column="8" VerticalAlignment="Center" 
+                                    <Image Source="{Binding MemoryCardStatusImage}" Grid.Column="5" Margin="3"/>
+                                    <TextBlock Text="{Binding RecordbaleAmount}" Grid.Column="6" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="3,6,6,3"/>
+                                    <controls:BatteryStatus x:Name="BatteryStatusDisplay" Grid.Column="7" BatteryInfo="{Binding Mode=OneWay}" Height="22" Width="44" VerticalAlignment="Center" />
+                                    <Image Source="{Binding GeopositionStatusImage}" Grid.Column="8" VerticalAlignment="Center" 
                                        Visibility="{Binding GeopositionEnabled, FallbackValue=Collapsed, Converter={StaticResource B2VConverter}}"/>
-                            </Grid>
-                            <controls:Histogram Margin="6,6" HorizontalAlignment="Left" VerticalAlignment="Center" x:Name="HistogramControl" Width="120" Height="90" Grid.Row="2"
+                                </Grid>
+                                <controls:Histogram Margin="6,6" HorizontalAlignment="Left" VerticalAlignment="Center" x:Name="HistogramControl" Width="120" Height="90" Grid.Row="2"
                                                 Visibility="{Binding IsHistogramDisplayed, Converter={StaticResource B2VConverter}}"/>
-                        </Grid>
-                        <Grid Name="Bottom" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Margin="0">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="auto"/>
-                                <RowDefinition Height="auto"/>
-                                <RowDefinition Height="auto"/>
-                                <RowDefinition Height="auto"/>
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="auto"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="auto"/>
-                            </Grid.ColumnDefinitions>
-                            <Grid Name="ShutterButtonWrapper" Grid.RowSpan="2" Grid.Column="2" Width="80" Height="80" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" 
-                                  Visibility="{Binding ShootButtonVisibility}" Margin="10">
-                                <Button Name="ShutterButton" MinWidth="10" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
-                                    BorderThickness="1" Click="ShutterButton_Click" Tapped="ShutterButton_Tapped" Holding="ShutterButton_Holding"
-                                    IsEnabled="{Binding ShutterButtonEnabled}" Background="Black" Opacity="0.8" >
-                                    <Image Source="{Binding ShutterButtonImage}" Margin="8"/>
-                                </Button>
                             </Grid>
-                            <controls:ZoomBar Grid.Column="0" Grid.Row="0" Height="13" Margin="16,4,4,4"  VerticalAlignment="Bottom" Visibility="{Binding IsZoomAvailable, FallbackValue=Collapsed, Converter={StaticResource B2VConverter}}"
-                                              PositionInCurrentBox="{Binding ZoomPositionInCurrentBox, Mode=OneWay, FallbackValue=0}" CurrentBoxIndex="{Binding ZoomBoxIndex, Mode=OneWay, FallbackValue=0}"
-                                              TotalBoxNum="{Binding ZoomBoxNum, Mode=OneWay, FallbackValue=1}" Width="140"  />
-                            <Grid  Grid.Column="0" Grid.Row="1" Height="60" Visibility="{Binding IsZoomAvailable, FallbackValue=Collapsed, Converter={StaticResource B2VConverter}}" Margin="16,0,0,0">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
-                                <Button Name="ZoomOutButton" BorderThickness="1" MinWidth="20" Grid.Column="0" Background="Black" Opacity="0.8" Margin="2" HorizontalAlignment="Stretch" 
-                            Click="ZoomOutButton_Click" Tapped="ZoomOutButton_Tapped" Holding="ZoomOutButton_Holding" >
-                                    <Image Source="/Assets/LiveviewScreen/ZoomOut.png" Margin="0" />
-                                </Button>
-                                <Button Name="ZoomInButton" BorderThickness="1" MinWidth="20" Grid.Column="1" Background="Black" Opacity="0.8" Margin="2" HorizontalAlignment="Stretch"
-                            Click="ZoomInButton_Click" Tapped="ZoomInButton_Tapped" Holding="ZoomInButton_Holding">
-                                    <Image Source="/Assets/LiveviewScreen/ZoomIn.png" Margin="0"  />
-                                </Button>
-                            </Grid>
-
-                            <Grid Grid.ColumnSpan="3" Grid.RowSpan="2" HorizontalAlignment="Center" VerticalAlignment="Bottom" ManipulationMode="TranslateY"
-                                  ManipulationCompleted="Grid_ManipulationCompleted" Tapped="Grid_Tapped"
-                                  Visibility="{Binding IsShootingParamSettingAvailable, FallbackValue=Collapsed, Converter={StaticResource B2VConverter}}"                              >
-                                <Image x:Name="OpenSliderImage" Source="/Assets/LiveviewScreen/OpenSlider.png" Width="50" Height="50" Margin="12,6,12,0" />
-                            </Grid>
-
-                            <Grid x:Name="ShootingParams" Grid.Row="2" Grid.ColumnSpan="3" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Opacity="0.7"
-                                  Visibility="{Binding IsShootingParamDisplayAvailable, FallbackValue=Collapsed, Converter={StaticResource B2VConverter}}"
-                                  ManipulationMode="TranslateY" ManipulationCompleted="Grid_ManipulationCompleted" Tapped="Grid_Tapped">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
-                                <TextBlock Name="ShutterSpeed" Foreground="{Binding ShutterSpeedBrush}" Visibility="{Binding IsAvailableGetShutterSpeed, FallbackValue=Collapsed, Converter={StaticResource B2VConverter}}" Text="{Binding ShutterSpeedDisplayValue}"  
-                                           Style="{StaticResource ShootingParamStyle}" Grid.Column="0"/>
-                                <TextBlock Name="Fnumber" Foreground="{Binding FNumberBrush}"  Visibility="{Binding IsAvailableGetFNumber, FallbackValue=Collapsed, Converter={StaticResource B2VConverter}}" Text="{Binding FnumberDisplayValue}" 
-                                           Style="{StaticResource ShootingParamStyle}" Grid.Column="1"/>
-                                <TextBlock Name="Ev" Foreground="{Binding EvBrush}" Visibility="{Binding IsAvailableGetIsoSpeedRate, FallbackValue=Collapsed, Converter={StaticResource B2VConverter}}" Text="{Binding EvDisplayValue}" 
-                                           Style="{StaticResource ShootingParamStyle}"   Grid.Column="2"/>
-                                <TextBlock Name="ISO" Foreground="{Binding IsoBrush}" Visibility="{Binding IsAvailableGetEV, FallbackValue=Collapsed, Converter={StaticResource B2VConverter}}" Text="{Binding ISODisplayValue}" 
-                                           Style="{StaticResource ShootingParamStyle}"  Grid.Column="3"/>
-                            </Grid>
-                            <Grid x:Name="ShootingParamSliders" Grid.Row="3" Grid.ColumnSpan="3" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Opacity="0.7" Visibility="Collapsed">
+                            <Grid Name="Bottom" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Margin="0">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="auto"/>
                                     <RowDefinition Height="auto"/>
                                     <RowDefinition Height="auto"/>
                                     <RowDefinition Height="auto"/>
-                                    <RowDefinition Height="auto"/>
                                 </Grid.RowDefinitions>
-                                <controls:ShootingParamSlider x:Name="FnumberSlider" IconSource="/Assets/LiveviewScreen/aperture.png"
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid Name="ShutterButtonWrapper" Grid.RowSpan="2" Grid.Column="2" Width="80" Height="80" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" 
+                                  Visibility="{Binding ShootButtonVisibility}" Margin="10">
+                                    <Button Name="ShutterButton" MinWidth="10" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
+                                    BorderThickness="1" Click="ShutterButton_Click" Tapped="ShutterButton_Tapped" Holding="ShutterButton_Holding"
+                                    IsEnabled="{Binding ShutterButtonEnabled}" Background="Black" Opacity="0.8" >
+                                        <Image Source="{Binding ShutterButtonImage}" Margin="8"/>
+                                    </Button>
+                                </Grid>
+                                <controls:ZoomBar Grid.Column="0" Grid.Row="0" Height="13" Margin="16,4,4,4"  VerticalAlignment="Bottom" Visibility="{Binding IsZoomAvailable, FallbackValue=Collapsed, Converter={StaticResource B2VConverter}}"
+                                              PositionInCurrentBox="{Binding ZoomPositionInCurrentBox, Mode=OneWay, FallbackValue=0}" CurrentBoxIndex="{Binding ZoomBoxIndex, Mode=OneWay, FallbackValue=0}"
+                                              TotalBoxNum="{Binding ZoomBoxNum, Mode=OneWay, FallbackValue=1}" Width="140"  />
+                                <Grid  Grid.Column="0" Grid.Row="1" Height="60" Visibility="{Binding IsZoomAvailable, FallbackValue=Collapsed, Converter={StaticResource B2VConverter}}" Margin="16,0,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Button Name="ZoomOutButton" BorderThickness="1" MinWidth="20" Grid.Column="0" Background="Black" Opacity="0.8" Margin="2" HorizontalAlignment="Stretch" 
+                            Click="ZoomOutButton_Click" Tapped="ZoomOutButton_Tapped" Holding="ZoomOutButton_Holding" >
+                                        <Image Source="/Assets/LiveviewScreen/ZoomOut.png" Margin="0" />
+                                    </Button>
+                                    <Button Name="ZoomInButton" BorderThickness="1" MinWidth="20" Grid.Column="1" Background="Black" Opacity="0.8" Margin="2" HorizontalAlignment="Stretch"
+                            Click="ZoomInButton_Click" Tapped="ZoomInButton_Tapped" Holding="ZoomInButton_Holding">
+                                        <Image Source="/Assets/LiveviewScreen/ZoomIn.png" Margin="0"  />
+                                    </Button>
+                                </Grid>
+
+                                <Grid Grid.ColumnSpan="3" Grid.RowSpan="2" HorizontalAlignment="Center" VerticalAlignment="Bottom" ManipulationMode="TranslateY"
+                                  ManipulationCompleted="Grid_ManipulationCompleted" Tapped="Grid_Tapped"
+                                  Visibility="{Binding IsShootingParamSettingAvailable, FallbackValue=Collapsed, Converter={StaticResource B2VConverter}}"                              >
+                                    <Image x:Name="OpenSliderImage" Source="/Assets/LiveviewScreen/OpenSlider.png" Width="50" Height="50" Margin="12,6,12,0" />
+                                </Grid>
+
+                                <Grid x:Name="ShootingParams" Grid.Row="2" Grid.ColumnSpan="3" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Opacity="0.7"
+                                  Visibility="{Binding IsShootingParamDisplayAvailable, FallbackValue=Collapsed, Converter={StaticResource B2VConverter}}"
+                                  ManipulationMode="TranslateY" ManipulationCompleted="Grid_ManipulationCompleted" Tapped="Grid_Tapped">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Name="ShutterSpeed" Foreground="{Binding ShutterSpeedBrush}" Visibility="{Binding IsAvailableGetShutterSpeed, FallbackValue=Collapsed, Converter={StaticResource B2VConverter}}" Text="{Binding ShutterSpeedDisplayValue}"  
+                                           Style="{StaticResource ShootingParamStyle}" Grid.Column="0"/>
+                                    <TextBlock Name="Fnumber" Foreground="{Binding FNumberBrush}"  Visibility="{Binding IsAvailableGetFNumber, FallbackValue=Collapsed, Converter={StaticResource B2VConverter}}" Text="{Binding FnumberDisplayValue}" 
+                                           Style="{StaticResource ShootingParamStyle}" Grid.Column="1"/>
+                                    <TextBlock Name="Ev" Foreground="{Binding EvBrush}" Visibility="{Binding IsAvailableGetIsoSpeedRate, FallbackValue=Collapsed, Converter={StaticResource B2VConverter}}" Text="{Binding EvDisplayValue}" 
+                                           Style="{StaticResource ShootingParamStyle}"   Grid.Column="2"/>
+                                    <TextBlock Name="ISO" Foreground="{Binding IsoBrush}" Visibility="{Binding IsAvailableGetEV, FallbackValue=Collapsed, Converter={StaticResource B2VConverter}}" Text="{Binding ISODisplayValue}" 
+                                           Style="{StaticResource ShootingParamStyle}"  Grid.Column="3"/>
+                                </Grid>
+                                <Grid x:Name="ShootingParamSliders" Grid.Row="3" Grid.ColumnSpan="3" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Opacity="0.7" Visibility="Collapsed">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="auto"/>
+                                        <RowDefinition Height="auto"/>
+                                        <RowDefinition Height="auto"/>
+                                        <RowDefinition Height="auto"/>
+                                        <RowDefinition Height="auto"/>
+                                    </Grid.RowDefinitions>
+                                    <controls:ShootingParamSlider x:Name="FnumberSlider" IconSource="/Assets/LiveviewScreen/aperture.png"
                                                               Parameter="{Binding Status.FNumber}" Visibility="{Binding Path=Liveview.IsSetFNumberAvailable, Converter={StaticResource B2VConverter}}" />
-                                <controls:ShootingParamSlider x:Name="SSSlider" IconSource="/Assets/LiveviewScreen/ShutterSpeed.png"
+                                    <controls:ShootingParamSlider x:Name="SSSlider" IconSource="/Assets/LiveviewScreen/ShutterSpeed.png"
                                                               Parameter="{Binding Status.ShutterSpeed}" Grid.Row="1" Visibility="{Binding Path=Liveview.IsSetShutterSpeedAvailable, Converter={StaticResource B2VConverter}}"/>
-                                <controls:ShootingParamSlider x:Name="ISOSlider" IconSource="/Assets/LiveviewScreen/ISO.png"
+                                    <controls:ShootingParamSlider x:Name="ISOSlider" IconSource="/Assets/LiveviewScreen/ISO.png"
                                                               Parameter="{Binding Status.ISOSpeedRate}" Grid.Row="2" Visibility="{Binding Path=Liveview.IsSetIsoSpeedRateAvailable, Converter={StaticResource B2VConverter}}"/>
-                                <controls:EvSlider x:Name="EvSlider" IconSource="/Assets/LiveviewScreen/EVComp.png"
+                                    <controls:EvSlider x:Name="EvSlider" IconSource="/Assets/LiveviewScreen/EVComp.png"
                                                               Parameter="{Binding Status.EvInfo}" Grid.Row="3" Visibility="{Binding Path=Liveview.IsSetEVAvailable, Converter={StaticResource B2VConverter}}"/>
-                                <controls:ProgramShiftSlider x:Name="ProgramShiftSlider" Grid.Row="4" Visibility="{Binding Path=Liveview.IsProgramShiftAvailable, Converter={StaticResource B2VConverter}}"
+                                    <controls:ProgramShiftSlider x:Name="ProgramShiftSlider" Grid.Row="4" Visibility="{Binding Path=Liveview.IsProgramShiftAvailable, Converter={StaticResource B2VConverter}}"
                                                              IconSource="/Assets/LiveviewScreen/ProgramShift.png"/>
+                                </Grid>
+                            </Grid>
+                            <ScrollViewer Name="ControlPanelScrollViewer" Margin="28,0,0,0" Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Right" Width="200"
+                        Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Opacity="0.8" >
+                                <ScrollViewer.RenderTransform>
+                                    <TranslateTransform x:Name="SlideTransform" X="200"/>
+                                </ScrollViewer.RenderTransform>
+                                <ScrollViewer.Resources>
+                                    <Storyboard x:Name="ShowControlPanelStoryBoard" Storyboard.TargetName="ControlPanelScrollViewer" Storyboard.TargetProperty="Opacity"
+                                            Completed="ShowControlPanelStoryBoard_Completed">
+                                        <DoubleAnimationUsingKeyFrames>
+                                            <EasingDoubleKeyFrame KeyTime="00:00:0.00" Value="0.0"/>
+                                            <EasingDoubleKeyFrame KeyTime="00:00:0.02" Value="0.2"/>
+                                            <EasingDoubleKeyFrame KeyTime="00:00:0.10" Value="0.8"/>
+                                        </DoubleAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                    <Storyboard x:Name="SlideInControlPanel" >
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SlideTransform" Storyboard.TargetProperty="X">
+                                            <EasingDoubleKeyFrame KeyTime="00:00:0.00" Value="200"/>
+                                            <EasingDoubleKeyFrame KeyTime="00:00:0.02" Value="80"/>
+                                            <EasingDoubleKeyFrame KeyTime="00:00:0.10" Value="0"/>
+                                        </DoubleAnimationUsingKeyFrames>
+                                    </Storyboard>
+
+                                    <Storyboard x:Name="HideControlPanelStoryBoard" Storyboard.TargetName="ControlPanelScrollViewer" Storyboard.TargetProperty="Opacity"
+                                            Completed="HideControlPanelStoryBoard_Completed">
+                                        <DoubleAnimationUsingKeyFrames>
+                                            <EasingDoubleKeyFrame KeyTime="00:00:0.00" Value="0.8"/>
+                                            <EasingDoubleKeyFrame KeyTime="00:00:0.03" Value="0.6"/>
+                                            <EasingDoubleKeyFrame KeyTime="00:00:0.12" Value="0.0"/>
+                                        </DoubleAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                    <Storyboard x:Name="SlideOutControlPanel" >
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SlideTransform" Storyboard.TargetProperty="X">
+                                            <EasingDoubleKeyFrame KeyTime="00:00:0.00" Value="0"/>
+                                            <EasingDoubleKeyFrame KeyTime="00:00:0.03" Value="20"/>
+                                            <EasingDoubleKeyFrame KeyTime="00:00:0.12" Value="200"/>
+                                        </DoubleAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </ScrollViewer.Resources>
+                                <StackPanel x:Name="ControlPanel" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="Collapsed"/>
+                            </ScrollViewer>
+                            
+                            <Grid Name="AppSettingPanel" Visibility="Collapsed" >
+                                <Rectangle Fill="{ThemeResource ApplicationPageBackgroundThemeBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Opacity="0.9" Margin="-12,-36" />
+                                <ScrollViewer Margin="0,12,0,12">
+                                    <StackPanel Name="AppSettings" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="-12,0,0,0" >
+                                    </StackPanel>
+                                </ScrollViewer>
+                                <Grid.Resources>
+                                    <Storyboard x:Name="ShowSettingAnimation">
+                                        <DoubleAnimation Duration="0:0:0.1" From="0.0" To="0.9" Storyboard.TargetProperty="Opacity" Storyboard.TargetName="AppSettingPanel" />
+                                    </Storyboard>
+                                    <Storyboard x:Name="HideSettingAnimation">
+                                        <DoubleAnimation Duration="0:0:0.1" From="0.9" To="0.0" Storyboard.TargetProperty="Opacity" Storyboard.TargetName="AppSettingPanel" />
+                                    </Storyboard>
+                                </Grid.Resources>
                             </Grid>
                         </Grid>
-                        <ScrollViewer Name="ControlPanelScrollViewer" Margin="28,0,0,0" Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Right" Width="200"
-                        Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Opacity="0.8" >
-                            <ScrollViewer.RenderTransform>
-                                <TranslateTransform x:Name="SlideTransform" X="200"/>
-                            </ScrollViewer.RenderTransform>
-                            <ScrollViewer.Resources>
-                                <Storyboard x:Name="ShowControlPanelStoryBoard" Storyboard.TargetName="ControlPanelScrollViewer" Storyboard.TargetProperty="Opacity"
-                                            Completed="ShowControlPanelStoryBoard_Completed">
-                                    <DoubleAnimationUsingKeyFrames>
-                                        <EasingDoubleKeyFrame KeyTime="00:00:0.00" Value="0.0"/>
-                                        <EasingDoubleKeyFrame KeyTime="00:00:0.02" Value="0.2"/>
-                                        <EasingDoubleKeyFrame KeyTime="00:00:0.10" Value="0.8"/>
-                                    </DoubleAnimationUsingKeyFrames>
-                                </Storyboard>
-                                <Storyboard x:Name="SlideInControlPanel" >
-                                    <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SlideTransform" Storyboard.TargetProperty="X">
-                                        <EasingDoubleKeyFrame KeyTime="00:00:0.00" Value="200"/>
-                                        <EasingDoubleKeyFrame KeyTime="00:00:0.02" Value="80"/>
-                                        <EasingDoubleKeyFrame KeyTime="00:00:0.10" Value="0"/>
-                                    </DoubleAnimationUsingKeyFrames>
-                                </Storyboard>
-
-                                <Storyboard x:Name="HideControlPanelStoryBoard" Storyboard.TargetName="ControlPanelScrollViewer" Storyboard.TargetProperty="Opacity"
-                                            Completed="HideControlPanelStoryBoard_Completed">
-                                    <DoubleAnimationUsingKeyFrames>
-                                        <EasingDoubleKeyFrame KeyTime="00:00:0.00" Value="0.8"/>
-                                        <EasingDoubleKeyFrame KeyTime="00:00:0.03" Value="0.6"/>
-                                        <EasingDoubleKeyFrame KeyTime="00:00:0.12" Value="0.0"/>
-                                    </DoubleAnimationUsingKeyFrames>
-                                </Storyboard>
-                                <Storyboard x:Name="SlideOutControlPanel" >
-                                    <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SlideTransform" Storyboard.TargetProperty="X">
-                                        <EasingDoubleKeyFrame KeyTime="00:00:0.00" Value="0"/>
-                                        <EasingDoubleKeyFrame KeyTime="00:00:0.03" Value="20"/>
-                                        <EasingDoubleKeyFrame KeyTime="00:00:0.12" Value="200"/>
-                                    </DoubleAnimationUsingKeyFrames>
-                                </Storyboard>
-                            </ScrollViewer.Resources>
-                            <StackPanel x:Name="ControlPanel" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="Collapsed"/>
-                        </ScrollViewer>
                         <Grid Name="ProcessingDisplay" HorizontalAlignment="Stretch" VerticalAlignment="Center" Height="80" Visibility="{Binding Processing, Mode=OneWay, FallbackValue=Collapsed, Converter={StaticResource B2VConverter}}">
                             <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Opacity="0.5"
                                        Fill="{ThemeResource ApplicationPageBackgroundThemeBrush}"/>
                             <ProgressBar HorizontalAlignment="Stretch" IsIndeterminate="True"/>
-                        </Grid>
-                        <Grid Name="AppSettingPanel" Visibility="Collapsed" >
-                            <Rectangle Fill="{ThemeResource ApplicationPageBackgroundThemeBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Opacity="0.9" Margin="-12,-36" />
-                            <ScrollViewer Margin="0,12,0,12">
-                                <StackPanel Name="AppSettings" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="-12,0,0,0" >
-                                </StackPanel>
-                            </ScrollViewer>
-                            <Grid.Resources>
-                                <Storyboard x:Name="ShowSettingAnimation">
-                                    <DoubleAnimation Duration="0:0:0.1" From="0.0" To="0.9" Storyboard.TargetProperty="Opacity" Storyboard.TargetName="AppSettingPanel" />
-                                </Storyboard>
-                                <Storyboard x:Name="HideSettingAnimation">
-                                    <DoubleAnimation Duration="0:0:0.1" From="0.9" To="0.0" Storyboard.TargetProperty="Opacity" Storyboard.TargetName="AppSettingPanel" />
-                                </Storyboard>
-                            </Grid.Resources>
                         </Grid>
                     </Grid>
                 </PivotItem>

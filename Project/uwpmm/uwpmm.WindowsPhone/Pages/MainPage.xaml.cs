@@ -628,8 +628,10 @@ namespace Kazyx.Uwpmm.Pages
         {
             var target = e.CameraDevice;
             OnSettingCameraDevice = true;
+
             await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
+                ProcessingDisplay.Visibility = Visibility.Visible;
                 DlnaGuide.Visibility = Visibility.Collapsed;
                 ConnectionGuide.Visibility = Visibility.Collapsed;
                 ChangeProgressText(SystemUtil.GetStringResource("ProgressMessageConnecting"));
@@ -652,6 +654,7 @@ namespace Kazyx.Uwpmm.Pages
 
             await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
+                ProcessingDisplay.Visibility = Visibility.Collapsed;
                 screenViewData = new LiveviewScreenViewData(target);
                 Liveview.DataContext = screenViewData;
                 LiveviewScreen.Visibility = Visibility.Visible;
