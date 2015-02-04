@@ -722,6 +722,13 @@ namespace Kazyx.Uwpmm.Pages
                         }
                     }
                     break;
+                case "Status":
+                    if (status.Status == EventParam.Idle)
+                    {
+                        // When recording is stopped, clear recording time.
+                        status.RecordingTimeSec = 0;
+                    }
+                    break;
                 default:
                     break;
             }

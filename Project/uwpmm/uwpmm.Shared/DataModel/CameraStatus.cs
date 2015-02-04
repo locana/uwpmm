@@ -147,11 +147,6 @@ namespace Kazyx.Uwpmm.DataModel
                 if (value != _Status)
                 {
                     _Status = value;
-                    if (_Status == EventParam.Idle)
-                    {
-                        // When recording is stopped, clear recording time.
-                        this.RecordingTimeSec = 0;
-                    }
                     NotifyChangedOnUI("Status");
                 }
             }
