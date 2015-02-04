@@ -20,6 +20,7 @@ using Windows.Devices.Geolocation;
 using Windows.Foundation;
 using Windows.Networking.Proximity;
 using Windows.Phone.UI.Input;
+using Windows.Storage;
 using Windows.Storage.FileProperties;
 using Windows.System;
 using Windows.UI.Core;
@@ -232,39 +233,9 @@ namespace Kazyx.Uwpmm.Pages
             PivotRoot.SelectionChanged += PivotRoot_SelectionChanged;
 
             HardwareButtons.BackPressed += HardwareButtons_BackPressed;
-            HardwareButtons.CameraHalfPressed += async (_sender, arg) =>
-            {
-                if (target == null || target.Api == null || !target.Api.Capability.IsAvailable("actHalfPressShutter")) { return; }
-                try
-                {
-                    await target.Api.Camera.ActHalfPressShutterAsync();
-                }
-                catch (RemoteApiException) { }
-            };
-            HardwareButtons.CameraReleased += async (_sender, arg) =>
-            {
-                if (target == null || target.Api == null) { return; }
-                if (target.Api.Capability.IsAvailable("cancelHalfPressShutter"))
-                {
-                    try
-                    {
-                        await target.Api.Camera.CancelHalfPressShutterAsync();
-                    }
-                    catch (RemoteApiException) { }
-                }
-                await StopContShooting();
-            };
-            HardwareButtons.CameraPressed += async (_sender, arg) =>
-            {
-                if (IsContinuousShootingMode())
-                {
-                    await StartContShooting();
-                }
-                else
-                {
-                    ShutterButtonPressed();
-                }
-            };
+            HardwareButtons.CameraHalfPressed += HardwareButtons_CameraHalfPressed;
+            HardwareButtons.CameraReleased += HardwareButtons_CameraReleased;
+            HardwareButtons.CameraPressed += HardwareButtons_CameraPressed;
 
             _FocusFrameSurface.OnTouchFocusOperated += async (obj, args) =>
             {
@@ -314,37 +285,84 @@ namespace Kazyx.Uwpmm.Pages
             InitializeUI();
             InitializeProximityDevice();
 
-            PictureDownloader.Instance.Fetched += async (folder, file, tagResult) =>
-            {
-                var thumb = await file.GetThumbnailAsync(ThumbnailMode.ListView, 100);
-                await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-                {
-                    var image = new BitmapImage();
-                    image.SetSource(thumb);
-                    var path = file.Path.Split('\\');
-                    var name = '\\' + path[path.Length - 2] + '\\' + path[path.Length - 1];
-                    var text = SystemUtil.GetStringResource("Message_ImageDL_Succeed");
-                    switch (tagResult)
-                    {
-                        case GeotaggingResult.OK:
-                            text = SystemUtil.GetStringResource("Message_ImageDL_Succeed_withGeotag");
-                            break;
-                        case GeotaggingResult.GeotagAlreadyExists:
-                            text = SystemUtil.GetStringResource("ErrorMessage_ImageDL_DuplicatedGeotag");
-                            break;
-                        case GeotaggingResult.UnExpectedError:
-                            text = SystemUtil.GetStringResource("ErrorMessage_ImageDL_Geotagging");
-                            break;
-                    }
-                    Toast.PushToast(new Control.ToastContent() { Text = text + name, Icon = image });
-                    thumb.Dispose();
-                });
-            };
+            PictureDownloader.Instance.Fetched += PictureFetched;
+            PictureDownloader.Instance.Failed += PictureFetchFailed;
+        }
 
-            PictureDownloader.Instance.Failed += (err, tagResult) =>
+        private void PictureFetchFailed(ImageFetchError err, GeotaggingResult tagResult)
+        {
+            ShowError(SystemUtil.GetStringResource("ErrorMessage_ImageDL_Other") + err + " " + tagResult);
+        }
+
+        private async void PictureFetched(Windows.Storage.StorageFolder folder, StorageFile file, GeotaggingResult tagResult)
+        {
+            var thumb = await file.GetThumbnailAsync(ThumbnailMode.ListView, 100);
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
-                ShowError(SystemUtil.GetStringResource("ErrorMessage_ImageDL_Other") + err + " " + tagResult);
-            };
+                var image = new BitmapImage();
+                image.SetSource(thumb);
+                var path = file.Path.Split('\\');
+                var name = '\\' + path[path.Length - 2] + '\\' + path[path.Length - 1];
+                var text = SystemUtil.GetStringResource("Message_ImageDL_Succeed");
+                switch (tagResult)
+                {
+                    case GeotaggingResult.OK:
+                        text = SystemUtil.GetStringResource("Message_ImageDL_Succeed_withGeotag");
+                        break;
+                    case GeotaggingResult.GeotagAlreadyExists:
+                        text = SystemUtil.GetStringResource("ErrorMessage_ImageDL_DuplicatedGeotag");
+                        break;
+                    case GeotaggingResult.UnExpectedError:
+                        text = SystemUtil.GetStringResource("ErrorMessage_ImageDL_Geotagging");
+                        break;
+                }
+                Toast.PushToast(new Control.ToastContent() { Text = text + name, Icon = image });
+                thumb.Dispose();
+            });
+        }
+
+        async void HardwareButtons_CameraPressed(object sender, CameraEventArgs e)
+        {
+            if (IsContinuousShootingMode()) { await StartContShooting(); }
+            else { ShutterButtonPressed(); }
+        }
+
+        async void HardwareButtons_CameraReleased(object sender, CameraEventArgs e)
+        {
+            if (target == null || target.Api == null) { return; }
+            if (target.Api.Capability.IsAvailable("cancelHalfPressShutter"))
+            {
+                try
+                {
+                    await target.Api.Camera.CancelHalfPressShutterAsync();
+                }
+                catch (RemoteApiException) { }
+            }
+            await StopContShooting();
+        }
+
+        async void HardwareButtons_CameraHalfPressed(object sender, CameraEventArgs e)
+        {
+            if (target == null || target.Api == null || !target.Api.Capability.IsAvailable("actHalfPressShutter")) { return; }
+            try
+            {
+                await target.Api.Camera.ActHalfPressShutterAsync();
+            }
+            catch (RemoteApiException) { }
+        }
+
+
+        private void Page_Unloaded(object sender, RoutedEventArgs e)
+        {
+            _CommandBarManager.ClearEvents();
+            PivotRoot.SelectionChanged -= PivotRoot_SelectionChanged;
+            HardwareButtons.BackPressed -= HardwareButtons_BackPressed;
+            HardwareButtons.CameraHalfPressed -= HardwareButtons_CameraHalfPressed;
+            HardwareButtons.CameraReleased -= HardwareButtons_CameraReleased;
+            HardwareButtons.CameraPressed -= HardwareButtons_CameraPressed;
+            PictureDownloader.Instance.Fetched -= PictureFetched;
+            PictureDownloader.Instance.Failed -= PictureFetchFailed;
+            StopProximityDevice();
         }
 
         private void EnableGeolocator()
@@ -1079,28 +1097,31 @@ namespace Kazyx.Uwpmm.Pages
             Toast.PushToast(new Control.ToastContent() { Text = s });
         }
 
-        ProximityDevice ProximityDevice;
+        ProximityDevice _ProximityDevice;
+        long ProximitySubscribeId;
 
         private void InitializeProximityDevice()
         {
+            StopProximityDevice();
+
             try
             {
-                ProximityDevice = ProximityDevice.GetDefault();
+                _ProximityDevice = ProximityDevice.GetDefault();
             }
             catch (FileNotFoundException)
             {
-                ProximityDevice = null;
+                _ProximityDevice = null;
                 DebugUtil.Log("Caught ununderstandable exception. ");
                 return;
             }
             catch (COMException)
             {
-                ProximityDevice = null;
+                _ProximityDevice = null;
                 DebugUtil.Log("Caught ununderstandable exception. ");
                 return;
             }
 
-            if (ProximityDevice == null)
+            if (_ProximityDevice == null)
             {
                 DebugUtil.Log("It seems this is not NFC available device");
                 return;
@@ -1108,16 +1129,25 @@ namespace Kazyx.Uwpmm.Pages
 
             try
             {
-                ProximityDevice.SubscribeForMessage("NDEF", ProximityMessageReceivedHandler);
+                ProximitySubscribeId = _ProximityDevice.SubscribeForMessage("NDEF", ProximityMessageReceivedHandler);
             }
             catch (Exception e)
             {
-                ProximityDevice = null;
+                _ProximityDevice = null;
                 DebugUtil.Log("Caught ununderstandable exception. " + e.Message + e.StackTrace);
                 return;
             }
 
             NfcAvailable.Visibility = Visibility.Visible;
+        }
+
+        private void StopProximityDevice()
+        {
+            if (_ProximityDevice != null)
+            {
+                _ProximityDevice.StopSubscribingForMessage(ProximitySubscribeId);
+                _ProximityDevice = null;
+            }
         }
 
         private async void ProximityMessageReceivedHandler(ProximityDevice sender, ProximityMessage message)
@@ -1147,6 +1177,8 @@ namespace Kazyx.Uwpmm.Pages
                     {
                         await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
                         {
+                            if (PivotRoot.SelectedIndex != 0) { return; }
+
                             WifiPassword.Text = r.Password;
                             WifiPassword.Visibility = Visibility.Visible;
 
@@ -1353,5 +1385,6 @@ namespace Kazyx.Uwpmm.Pages
                 await statusBar.ProgressIndicator.ShowAsync();
             });
         }
+
     }
 }
