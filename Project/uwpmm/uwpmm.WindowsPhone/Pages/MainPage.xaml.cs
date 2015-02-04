@@ -453,7 +453,7 @@ namespace Kazyx.Uwpmm.Pages
             this.BottomAppBar = _CommandBarManager.Clear()//
                 .Icon(AppBarItem.WifiSetting)//
                 .NoIcon(AppBarItem.AboutPage)//
-                .NoIcon(AppBarItem.PlaybackPage)//
+                .Icon(AppBarItem.PlaybackPage)//
                 .NoIcon(AppBarItem.LoggerPage)//
                 .Icon(AppBarItem.Donation)//
                 .CreateNew(0.6);
