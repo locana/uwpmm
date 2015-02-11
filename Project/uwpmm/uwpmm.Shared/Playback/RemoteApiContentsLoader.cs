@@ -133,6 +133,7 @@ namespace Kazyx.Uwpmm.Playback
                 {
                     Grouping = ContentGroupingMode.Date,
                     Uri = date.Uri,
+                    Types = ContentsSetToTypes(contentsSet),
                 }).ConfigureAwait(false);
 
             DebugUtil.Log(count.NumOfContents + " contents exist.");
@@ -196,30 +197,12 @@ namespace Kazyx.Uwpmm.Playback
         {
             DebugUtil.Log("Loading ContentsOfDay: " + date.Title + " from " + startFrom);
 
-            var types = new List<string>();
-
-            switch (contentsSet)
-            {
-                case ContentsSet.ImagesAndMovies:
-                    types.Add(ContentKind.StillImage);
-                    types.Add(ContentKind.MovieMp4);
-                    types.Add(ContentKind.MovieXavcS);
-                    break;
-                case ContentsSet.Images:
-                    types.Add(ContentKind.StillImage);
-                    break;
-                case ContentsSet.Movies:
-                    types.Add(ContentKind.MovieMp4);
-                    types.Add(ContentKind.MovieXavcS);
-                    break;
-            }
-
             var contents = await AvContentApi.GetContentListAsync(new ContentListTarget
                 {
                     Sorting = SortMode.Ascending,
                     Grouping = ContentGroupingMode.Date,
                     Uri = date.Uri,
-                    Types = types,
+                    Types = ContentsSetToTypes(contentsSet),
                     StartIndex = startFrom,
                     MaxContents = count
                 }).ConfigureAwait(false);
@@ -280,6 +263,29 @@ namespace Kazyx.Uwpmm.Playback
                     return name.Substring(0, index);
                 }
             }
+        }
+
+        private static List<string> ContentsSetToTypes(ContentsSet contentsSet)
+        {
+            var types = new List<string>();
+
+            switch (contentsSet)
+            {
+                case ContentsSet.ImagesAndMovies:
+                    types.Add(ContentKind.StillImage);
+                    types.Add(ContentKind.MovieMp4);
+                    types.Add(ContentKind.MovieXavcS);
+                    break;
+                case ContentsSet.Images:
+                    types.Add(ContentKind.StillImage);
+                    break;
+                case ContentsSet.Movies:
+                    types.Add(ContentKind.MovieMp4);
+                    types.Add(ContentKind.MovieXavcS);
+                    break;
+            }
+
+            return types;
         }
     }
 
