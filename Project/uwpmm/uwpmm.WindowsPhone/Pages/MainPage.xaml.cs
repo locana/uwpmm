@@ -225,6 +225,7 @@ namespace Kazyx.Uwpmm.Pages
             });
             _CommandBarManager.SetEvent(AppBarItem.WifiSetting, async (s, args) =>
             {
+                NetworkObserver.INSTANCE.Clear();
                 await Launcher.LaunchUriAsync(new Uri("ms-settings-wifi:"));
             });
             _CommandBarManager.SetEvent(AppBarItem.Donation, (s, args) =>
@@ -521,6 +522,10 @@ namespace Kazyx.Uwpmm.Pages
                 target.Observer.Stop();
                 target.Status.PropertyChanged -= Status_PropertyChanged;
             }
+            else
+            {
+                liveview.CloseConnection();
+            }
             target = null;
         }
 
@@ -533,6 +538,7 @@ namespace Kazyx.Uwpmm.Pages
         {
             if (PivotRoot.SelectedIndex == 0)
             {
+                NetworkObserver.INSTANCE.Clear();
                 return;
             }
 

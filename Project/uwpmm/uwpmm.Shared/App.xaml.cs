@@ -131,6 +131,7 @@ namespace Kazyx.Uwpmm
         /// </summary>
         private async void OnSuspending(object sender, SuspendingEventArgs e)
         {
+            NetworkObserver.INSTANCE.Clear();
             var deferral = e.SuspendingOperation.GetDeferral();
             await SuspensionManager.SaveAsync();
             deferral.Complete();
