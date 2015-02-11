@@ -15,7 +15,7 @@ namespace Kazyx.Uwpmm.Utility
     {
         private PictureDownloader() { }
 
-        private const string DIRECTORY_NAME = "uwpmm";
+        private static string DIRECTORY_NAME = SystemUtil.GetStringResource("ApplicationTitle");
 
         private const int BUFFER_SIZE = 2048;
 
