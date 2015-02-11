@@ -19,12 +19,37 @@ namespace Kazyx.Uwpmm.Playback
             SingleContentLoaded.Raise(this, new SingleContentEventArgs { File = file });
         }
 
+        private static string LOCANA_DIRECTORY = SystemUtil.GetStringResource("ApplicationTitle");
+
         public override async Task Load(ContentsSet contentsSet, CancellationTokenSource cancel)
         {
             var library = KnownFolders.PicturesLibrary;
 
-            foreach (var folder in await library.GetFoldersAsync())
+            var folders = await library.GetFoldersAsync();
+
+            foreach (var folder in folders)
             {
+                if (folder.Name != LOCANA_DIRECTORY)
+                {
+                    continue;
+                }
+
+                DebugUtil.Log("Load from local picture folder: " + folder.Name);
+                await LoadContentsAsync(folder, cancel).ConfigureAwait(false);
+                if (cancel != null && cancel.IsCancellationRequested)
+                {
+                    OnCancelled();
+                    break;
+                }
+            }
+
+            foreach (var folder in folders)
+            {
+                if (folder.Name == LOCANA_DIRECTORY)
+                {
+                    continue;
+                }
+
                 DebugUtil.Log("Load from local picture folder: " + folder.Name);
                 await LoadContentsAsync(folder, cancel).ConfigureAwait(false);
                 if (cancel != null && cancel.IsCancellationRequested)
