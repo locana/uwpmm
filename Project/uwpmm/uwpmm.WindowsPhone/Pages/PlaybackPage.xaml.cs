@@ -1299,8 +1299,7 @@ namespace Kazyx.Uwpmm.Pages
         {
             if (TargetDevice == null || TargetDevice.Api == null)
             {
-                //TODO
-                ShowToast("[TMP] Camera device does not exist anymore");
+                // Nothing to do.
                 return;
             }
 
@@ -1316,6 +1315,9 @@ namespace Kazyx.Uwpmm.Pages
                 catch
                 {
                     ShowToast(SystemUtil.GetStringResource("Viewer_FailedToDeleteContents"));
+                }
+                finally
+                {
                     HideProgress();
                 }
             }
@@ -1329,12 +1331,13 @@ namespace Kazyx.Uwpmm.Pages
         {
             if (UpnpDevice == null)
             {
-                //TODO
-                ShowToast("[TMP] Upnp device does not exist anymore");
+                // Nothing to do.
                 return;
             }
 
             var cds = UpnpDevice.Services[URN.ContentDirectory];
+            ChangeProgressText(SystemUtil.GetStringResource("Progress_DeletingSelectedContents"));
+
             foreach (var id in objectIdList)
             {
                 try
@@ -1349,6 +1352,8 @@ namespace Kazyx.Uwpmm.Pages
                     DebugUtil.Log("Failed to delete " + e.StatusCode);
                 }
             }
+
+            HideProgress();
         }
 
         private void OpenAppSettingPanel()
