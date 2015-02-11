@@ -79,12 +79,20 @@ namespace Kazyx.Uwpmm.Pages
             CommandBarManager.SetEvent(AppBarItem.ShowDetailInfo, (sender, e) =>
             {
                 PhotoScreen.DetailInfoVisibility = Visibility.Visible;
-                BottomAppBar = CommandBarManager.Clear().Icon(AppBarItem.RotateRight).Icon(AppBarItem.HideDetailInfo).Icon(AppBarItem.RotateLeft).CreateNew(0.5);
+                BottomAppBar = CommandBarManager.Clear()
+                    .Icon(AppBarItem.RotateRight)
+                    .Icon(AppBarItem.HideDetailInfo)
+                    .Icon(AppBarItem.RotateLeft)
+                    .CreateNew(0.5);
             });
             CommandBarManager.SetEvent(AppBarItem.HideDetailInfo, (sender, e) =>
             {
                 PhotoScreen.DetailInfoVisibility = Visibility.Collapsed;
-                BottomAppBar = CommandBarManager.Clear().Icon(AppBarItem.RotateRight).Icon(AppBarItem.ShowDetailInfo).Icon(AppBarItem.RotateLeft).CreateNew(0.5);
+                BottomAppBar = CommandBarManager.Clear()
+                    .Icon(AppBarItem.RotateRight)
+                    .Icon(AppBarItem.ShowDetailInfo)
+                    .Icon(AppBarItem.RotateLeft)
+                    .CreateNew(0.5);
             });
             CommandBarManager.SetEvent(AppBarItem.Ok, (sender, e) =>
             {
@@ -142,6 +150,12 @@ namespace Kazyx.Uwpmm.Pages
             CommandBarManager.SetEvent(AppBarItem.RotateLeft, (sender, e) =>
             {
                 PhotoScreen.RotateImage(Control.Rotation.Left);
+            });
+
+            CommandBarManager.SetEvent(AppBarItem.Refresh, (sender, e) =>
+            {
+                InitializeRemoteGridContents();
+                var task = InitializeRemote();
             });
 
             var storage_access_settings = new SettingSection(SystemUtil.GetStringResource("SettingSection_ContentsSync"));
@@ -491,38 +505,75 @@ namespace Kazyx.Uwpmm.Pages
 
         private ViewerState InnerState = ViewerState.LocalSingle;
 
-        private async void UpdateInnerState(ViewerState state)
+        private void UpdateInnerState(ViewerState state)
         {
             InnerState = state;
+            UpdateAppBar();
+        }
 
-            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+        private void UpdateAppBar()
+        {
+            var task = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
-                switch (state)
+                switch (InnerState)
                 {
                     case ViewerState.RemoteSelecting:
                     case ViewerState.LocalSelecting:
-                        BottomAppBar = CommandBarManager.Clear().Icon(AppBarItem.Ok).CreateNew(0.5);
+                        BottomAppBar = CommandBarManager.Clear()
+                            .Icon(AppBarItem.Ok)
+                            .CreateNew(0.5);
                         break;
                     case ViewerState.LocalSingle:
                         UpdateLocalSelectionMode(SelectivityFactor.None);
-                        BottomAppBar = CommandBarManager.Clear().Icon(AppBarItem.DeleteMultiple).NoIcon(AppBarItem.AppSetting).CreateNew(0.5);
+                        {
+                            var tmp = CommandBarManager.Clear()
+                                .NoIcon(AppBarItem.AppSetting);
+                            if (LocalGridSource != null && LocalGridSource.Count != 0)
+                            {
+                                tmp.Icon(AppBarItem.DeleteMultiple);
+                            }
+                            BottomAppBar = tmp.CreateNew(0.5);
+                        }
                         break;
                     case ViewerState.RemoteSingle:
                         UpdateRemoteSelectionMode(SelectivityFactor.None);
-                        BottomAppBar = CommandBarManager.Clear().Icon(AppBarItem.DownloadMultiple).Icon(AppBarItem.DeleteMultiple).NoIcon(AppBarItem.AppSetting).CreateNew(0.5);
+                        {
+                            var tmp = CommandBarManager.Clear()
+                                .NoIcon(AppBarItem.AppSetting);
+                            if (UpnpDevice != null || TargetDevice != null)
+                            {
+                                tmp.Icon(AppBarItem.Refresh);
+                            }
+                            if (RemoteGridSource != null && RemoteGridSource.Count != 0)
+                            {
+                                tmp.Icon(AppBarItem.DownloadMultiple)
+                                .Icon(AppBarItem.DeleteMultiple);
+                            }
+                            BottomAppBar = tmp.CreateNew(0.5);
+                        }
                         break;
                     case ViewerState.AppSettings:
-                        BottomAppBar = CommandBarManager.Clear().Icon(AppBarItem.Ok).CreateNew(0.5);
+                        BottomAppBar = CommandBarManager.Clear()
+                            .Icon(AppBarItem.Ok)
+                            .CreateNew(0.5);
                         break;
                     case ViewerState.LocalStillPlayback:
                     case ViewerState.RemoteStillPlayback:
                         if (PhotoScreen.DetailInfoVisibility == Visibility.Visible)
                         {
-                            BottomAppBar = CommandBarManager.Clear().Icon(AppBarItem.RotateRight).Icon(AppBarItem.HideDetailInfo).Icon(AppBarItem.RotateLeft).CreateNew(0.5);
+                            BottomAppBar = CommandBarManager.Clear()
+                                .Icon(AppBarItem.RotateRight)
+                                .Icon(AppBarItem.HideDetailInfo)
+                                .Icon(AppBarItem.RotateLeft)
+                                .CreateNew(0.5);
                         }
                         else
                         {
-                            BottomAppBar = CommandBarManager.Clear().Icon(AppBarItem.RotateRight).Icon(AppBarItem.ShowDetailInfo).Icon(AppBarItem.RotateLeft).CreateNew(0.5);
+                            BottomAppBar = CommandBarManager.Clear()
+                                .Icon(AppBarItem.RotateRight)
+                                .Icon(AppBarItem.ShowDetailInfo)
+                                .Icon(AppBarItem.RotateLeft)
+                                .CreateNew(0.5);
                         }
                         break;
                     default:
@@ -655,11 +706,20 @@ namespace Kazyx.Uwpmm.Pages
         {
             if (InnerState == ViewerState.OutOfPage) return;
 
+            bool updateAppBarAfterAdded = false;
+            if (LocalGridSource != null && LocalGridSource.Count == 0)
+            {
+                updateAppBarAfterAdded = true;
+            }
             await Dispatcher.RunAsync(CoreDispatcherPriority.High, () =>
             {
                 if (LocalGridSource != null)
                 {
                     LocalGridSource.Add(e.File);
+                    if (updateAppBarAfterAdded)
+                    {
+                        UpdateAppBar();
+                    }
                 }
             });
         }
@@ -750,7 +810,11 @@ namespace Kazyx.Uwpmm.Pages
         {
             DebugUtil.Log("InitializeRemoteGridContents");
             IsRemoteInitialized = false;
-            await Dispatcher.RunAsync(CoreDispatcherPriority.High, () => { RemoteGridSource.Clear(); });
+            await Dispatcher.RunAsync(CoreDispatcherPriority.High, () =>
+            {
+                RemoteGridSource.Clear();
+                UpdateAppBar();
+            });
         }
 
         private bool _StorageAvailable = false;
@@ -871,9 +935,19 @@ namespace Kazyx.Uwpmm.Pages
                 {
                     DebugUtil.Log("Adding " + e.Contents.Count + " contents to RemoteGrid");
                     // RemoteGridSource.AddRange(e.Contents);
+                    bool updateAppBarAfterAdded = false;
+                    if (RemoteGridSource.Count == 0)
+                    {
+                        updateAppBarAfterAdded = true;
+                    }
                     foreach (var content in e.Contents)
                     {
                         RemoteGridSource.Add(content);
+                        if (updateAppBarAfterAdded)
+                        {
+                            UpdateAppBar();
+                            updateAppBarAfterAdded = false;
+                        }
                     }
                 }
             });
@@ -1078,6 +1152,7 @@ namespace Kazyx.Uwpmm.Pages
 
             await DeleteRemoteApiContents(new TargetContents { ContentUris = uris });
             await DeleteDlnaContentsAsync(dlna);
+            UpdateAppBar();
         }
 
         private async void DeleteSelectedLocalImages()
@@ -1094,6 +1169,7 @@ namespace Kazyx.Uwpmm.Pages
             {
                 await TryDeleteLocalFile(data);
             }
+            UpdateAppBar();
         }
 
         private void FetchSelectedImages()

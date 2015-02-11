@@ -1031,4 +1031,7 @@ PlayMemories Camera Appsストアで最新版にアップデートしてくだ�
   <data name="FoundDlnaDeviceGuide" xml:space="preserve">
     <value>DLNAサーバが見つかりました。ギャラリーを開くとカメラ内の画像が参照できます。</value>
   </data>
+  <data name="AppBar_Refresh" xml:space="preserve">
+    <value>再読み込み</value>
+  </data>
 </root>

@@ -50,6 +50,8 @@ namespace Kazyx.Uwpmm.Utility
                     return new AppBarButton() { Icon = new BitmapIcon() { UriSource = new Uri("ms-appx:///Assets/AppBar/appbar_rotateLeft.png") }, Label = SystemUtil.GetStringResource("RotateLeft") };
                 case AppBarItem.RotateRight:
                     return new AppBarButton() { Icon = new BitmapIcon() { UriSource = new Uri("ms-appx:///Assets/AppBar/appbar_rotateRight.png") }, Label = SystemUtil.GetStringResource("RotateRight") };
+                case AppBarItem.Refresh:
+                    return new AppBarButton() { Icon = new BitmapIcon() { UriSource = new Uri("ms-appx:///Assets/AppBar/sync.png") }, Label = SystemUtil.GetStringResource("AppBar_Refresh") };
                 default:
                     throw new NotImplementedException();
             }
@@ -159,5 +161,6 @@ namespace Kazyx.Uwpmm.Utility
         ShowDetailInfo,
         HideDetailInfo,
         RotateLeft,
+        Refresh,
     }
 }
