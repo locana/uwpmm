@@ -181,6 +181,36 @@ namespace Kazyx.Uwpmm.Pages
 
         #endregion
 
+        /// <summary>
+        /// Called from App.xaml.cs on suspending.
+        /// </summary>
+        public void OnSuspending()
+        {
+            TearDownCurrentTarget();
+            PivotRoot.SelectedIndex = 0;
+        }
+
+        private async void TearDownCurrentTarget()
+        {
+            LiveviewScreen.Visibility = Visibility.Collapsed;
+
+            if (!PivotChangedByBackkey) { SearchDevice(); }
+            LayoutRoot.DataContext = null;
+            CreateEntranceAppBar();
+            var _target = target;
+            if (_target != null)
+            {
+                await SequentialOperation.CloseLiveviewStream(target.Api, liveview);
+                _target.Observer.Stop();
+                _target.Status.PropertyChanged -= Status_PropertyChanged;
+                target = null;
+            }
+            else
+            {
+                liveview.CloseConnection();
+            }
+        }
+
         private bool NavigatedByInAppBackTransition = false;
 
         CommandBarManager _CommandBarManager = new CommandBarManager();
@@ -509,24 +539,9 @@ namespace Kazyx.Uwpmm.Pages
             }
         }
 
-        private async void LiveViewPageUnloaded()
+        private void LiveViewPageUnloaded()
         {
-            LiveviewScreen.Visibility = Visibility.Collapsed;
-
-            if (!PivotChangedByBackkey) { SearchDevice(); }
-            LayoutRoot.DataContext = null;
-            CreateEntranceAppBar();
-            if (target != null)
-            {
-                await SequentialOperation.CloseLiveviewStream(target.Api, liveview);
-                target.Observer.Stop();
-                target.Status.PropertyChanged -= Status_PropertyChanged;
-            }
-            else
-            {
-                liveview.CloseConnection();
-            }
-            target = null;
+            TearDownCurrentTarget();
         }
 
         private void Entrance_Loaded(object sender, RoutedEventArgs e)

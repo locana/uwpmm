@@ -38,7 +38,7 @@ namespace Kazyx.Uwpmm
         /// search results, and so forth.
         /// </summary>
         /// <param name="e">Details about the launch request and process.</param>
-        protected async override void OnLaunched(LaunchActivatedEventArgs e)
+        protected override void OnLaunched(LaunchActivatedEventArgs e)
         {
 #if DEBUG
             if (System.Diagnostics.Debugger.IsAttached)
@@ -62,6 +62,7 @@ namespace Kazyx.Uwpmm
                 // TODO: change this value to a cache size that is appropriate for your application
                 rootFrame.CacheSize = 1;
 
+#if WINDOWS_APP
                 if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)
                 {
                     // Restore the saved session state only when appropriate
@@ -75,6 +76,7 @@ namespace Kazyx.Uwpmm
                         // Assume there is no state and continue
                     }
                 }
+#endif
 
                 // Place the frame in the current Window
                 Window.Current.Content = rootFrame;
@@ -132,9 +134,23 @@ namespace Kazyx.Uwpmm
         private async void OnSuspending(object sender, SuspendingEventArgs e)
         {
             NetworkObserver.INSTANCE.Clear();
+
+#if WINDOWS_PHONE_APP
+            var rootFrame = Window.Current.Content as Frame;
+            if (rootFrame.CanGoBack)
+            {
+                rootFrame.GoBack();
+            }
+            else if (rootFrame.Content is MainPage)
+            {
+                var page = rootFrame.Content as MainPage;
+                page.OnSuspending();
+            }
+#else
             var deferral = e.SuspendingOperation.GetDeferral();
             await SuspensionManager.SaveAsync();
             deferral.Complete();
+#endif
         }
     }
 }
