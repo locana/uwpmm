@@ -391,6 +391,12 @@ namespace Kazyx.Uwpmm.DataModel
             }
         }
 
+        new public void Clear()
+        {
+            base.Clear();
+            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+        }
+
         public bool Remove(Thumbnail content, bool deleteGroupIfEmpty = true)
         {
             lock (this)

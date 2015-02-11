@@ -818,7 +818,8 @@ namespace Kazyx.Uwpmm.Pages
             try
             {
                 ChangeProgressText(SystemUtil.GetStringResource("Progress_ChangingCameraState"));
-                await PlaybackModeHelper.MoveToContentTransferModeAsync(TargetDevice.Api.Camera, TargetDevice.Status, 20000);
+                await PlaybackModeHelper.MoveToContentTransferModeAsync(TargetDevice.Api.Camera, TargetDevice.Status, 20000).ConfigureAwait(false);
+                DebugUtil.Log("ModeTransition successfully finished.");
 
                 ChangeProgressText(SystemUtil.GetStringResource("Progress_CheckingStorage"));
 

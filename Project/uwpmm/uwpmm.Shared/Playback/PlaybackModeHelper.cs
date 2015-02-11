@@ -53,10 +53,26 @@ namespace Kazyx.Uwpmm.Playback
                 }
             };
 
+            DebugUtil.Log("Check current function at first...");
+            try
+            {
+                var already = await CheckCurrentFunction(camera, nextFunction).ConfigureAwait(false);
+                if (already)
+                {
+                    DebugUtil.Log("Already in specified mode: " + nextFunction);
+                    return true;
+                }
+            }
+            catch (RemoteApiException)
+            {
+                DebugUtil.Log("Failed to get current state");
+                return false;
+            }
+
             try
             {
                 status.PropertyChanged += status_observer;
-                await camera.SetCameraFunctionAsync(nextFunction);
+                await camera.SetCameraFunctionAsync(nextFunction).ConfigureAwait(false);
                 return await tcs.Task;
             }
             catch (RemoteApiException e)
@@ -74,23 +90,23 @@ namespace Kazyx.Uwpmm.Playback
 
             DebugUtil.Log("Failed to change camera state.");
 
+            DebugUtil.Log("Check current function again...");
             try
             {
-                DebugUtil.Log("Check current state...");
-                if (nextState == await camera.GetCameraFunctionAsync())
-                {
-                    DebugUtil.Log("Already in specified mode: " + nextState);
-                    return true;
-                }
+                return await CheckCurrentFunction(camera, nextFunction).ConfigureAwait(false); ;
             }
             catch (RemoteApiException)
             {
                 DebugUtil.Log("Failed to get current state");
                 return false;
             }
+        }
 
-            DebugUtil.Log("Not in specified state...");
-            return false;
+        private static async Task<bool> CheckCurrentFunction(CameraApiClient camera, string nextFunction)
+        {
+            var current = await camera.GetCameraFunctionAsync().ConfigureAwait(false);
+            DebugUtil.Log("Current state is : " + current);
+            return nextFunction == current;
         }
 
         public static async Task<string> PrepareMovieStreamingAsync(AvContentApiClient av, string contentUri)
