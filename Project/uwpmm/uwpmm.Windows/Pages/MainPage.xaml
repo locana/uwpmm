@@ -11,8 +11,6 @@
     mc:Ignorable="d" Loaded="pageRoot_Loaded" Unloaded="pageRoot_Unloaded">
 
     <Page.Resources>
-        <!-- TODO: Delete this line if the key AppName is declared in App.xaml -->
-        <x:String x:Key="AppName">UWPMM</x:String>
     </Page.Resources>
 
     <!--
@@ -43,7 +41,8 @@
                         AutomationProperties.Name="Back"
                         AutomationProperties.AutomationId="BackButton"
                         AutomationProperties.ItemType="Navigation Button"/>
-            <TextBlock x:Name="pageTitle" Text="{StaticResource AppName}" Style="{StaticResource HeaderTextBlockStyle}" Grid.Column="1" Foreground="{ThemeResource AccentColorBrush}"
+            <TextBlock x:Name="pageTitle" Text="{Binding [ApplicationTitle], Source={StaticResource LocalizedStrings}}"
+                       Style="{StaticResource HeaderTextBlockStyle}" Grid.Column="1" Foreground="{ThemeResource AccentColorBrush}"
                         IsHitTestVisible="false" TextWrapping="NoWrap" VerticalAlignment="Bottom" Margin="0,0,30,40"/>
         </Grid>
         <Grid Grid.Row="1" Margin="24,0,0,0">
@@ -98,4 +97,8 @@
             <StackPanel x:Name="ControlPanel" Grid.Column="2" HorizontalAlignment="Left" Margin="28,0,8,0" Grid.Row="1" VerticalAlignment="Center"/>
         </Grid>
     </Grid>
+
+    <Page.BottomAppBar>
+        <AppBar IsSticky="True" />
+    </Page.BottomAppBar>
 </Page>

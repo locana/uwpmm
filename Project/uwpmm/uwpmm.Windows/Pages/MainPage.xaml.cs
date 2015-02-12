@@ -136,6 +136,13 @@ namespace Kazyx.Uwpmm.Pages
 
         async void NetworkObserver_Discovered(object sender, CameraDeviceEventArgs e)
         {
+            /*
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                Frame.Navigate(typeof(PlaybackPage));
+            });
+            return;
+             * */
             var target = e.CameraDevice;
             try
             {
