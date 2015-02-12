@@ -259,28 +259,28 @@
         </SemanticZoom>
 
         <Border x:Name="HeaderBlocker" Height="56" VerticalAlignment="Top" Visibility="Collapsed"
-                Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+                Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Grid.RowSpan="2" Grid.ColumnSpan="2">
             <TextBlock x:Name="HeaderBlockerText" VerticalAlignment="Bottom"
                        Style="{StaticResource SubheaderTextBlockStyle}" Margin="18,0,0,2" />
         </Border>
 
-        <control:PhotoPlaybackScreen x:Name="PhotoScreen" Margin="0"/>
+        <control:PhotoPlaybackScreen x:Name="PhotoScreen" Margin="0" Grid.RowSpan="2" Grid.ColumnSpan="2"/>
 
-        <Border x:Name="MovieDrawer" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="Collapsed">
+        <Border x:Name="MovieDrawer" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="Collapsed" Grid.RowSpan="2" Grid.ColumnSpan="2">
             <control:MoviePlaybackScreen x:Name="MovieScreen" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="12" 
                                          CurrentPosition="{Binding CurrentPosition}" Duration="{Binding Duration}" SeekAvailable="{Binding SeekAvailable}"
                                          PlaybackStatus="{Binding StreamingStatus}"/>
         </Border>
 
         <Grid Name="AppSettingPanel" Visibility="Collapsed"
-              Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" >
+              Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Grid.RowSpan="2" Grid.ColumnSpan="2" >
             <ScrollViewer >
                 <StackPanel Name="AppSettings" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="-12,0,0,0" >
                 </StackPanel>
             </ScrollViewer>
         </Grid>
 
-        <control:Toast x:Name="Toast" HorizontalAlignment="Stretch" VerticalAlignment="Top"/>
+        <control:Toast x:Name="Toast" HorizontalAlignment="Center" VerticalAlignment="Top" Grid.RowSpan="2" Grid.ColumnSpan="2"/>
 
         <!-- Back button and page title -->
         <Grid>
@@ -288,12 +288,13 @@
                 <ColumnDefinition Width="120"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <Button x:Name="backButton" Margin="39,59,39,0" Command="{Binding NavigationHelper.GoBackCommand, ElementName=pageRoot}"
+            <Button x:Name="backButton" Margin="39,59,39,0"
                         Style="{StaticResource NavigationBackButtonNormalStyle}"
                         VerticalAlignment="Top"
                         AutomationProperties.Name="Back"
                         AutomationProperties.AutomationId="BackButton"
-                        AutomationProperties.ItemType="Navigation Button"/>
+                        AutomationProperties.ItemType="Navigation Button"
+                        Tapped="backButton_Tapped"/>
             <TextBlock x:Name="pageTitle" Text="{Binding [ApplicationTitle], Source={StaticResource LocalizedStrings}}"
                        Style="{StaticResource HeaderTextBlockStyle}" Grid.Column="1" 
                         IsHitTestVisible="false" TextWrapping="NoWrap" VerticalAlignment="Bottom" Margin="0,0,30,40"/>

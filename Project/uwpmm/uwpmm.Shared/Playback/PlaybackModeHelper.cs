@@ -63,9 +63,9 @@ namespace Kazyx.Uwpmm.Playback
                     return true;
                 }
             }
-            catch (RemoteApiException)
+            catch (RemoteApiException e)
             {
-                DebugUtil.Log("Failed to get current state");
+                DebugUtil.Log("Failed to get current state: " + e.code);
                 return false;
             }
 
@@ -82,22 +82,21 @@ namespace Kazyx.Uwpmm.Playback
                     DebugUtil.Log("SetCameraFunction IllegalState: Already in specified mode");
                     return true;
                 }
+                DebugUtil.Log("Failed to change camera state: " + e.code);
             }
             finally
             {
                 status.PropertyChanged -= status_observer;
             }
 
-            DebugUtil.Log("Failed to change camera state.");
-
             DebugUtil.Log("Check current function again...");
             try
             {
                 return await CheckCurrentFunction(camera, nextFunction).ConfigureAwait(false); ;
             }
-            catch (RemoteApiException)
+            catch (RemoteApiException e)
             {
-                DebugUtil.Log("Failed to get current state");
+                DebugUtil.Log("Failed to get current state: " + e.code);
                 return false;
             }
         }

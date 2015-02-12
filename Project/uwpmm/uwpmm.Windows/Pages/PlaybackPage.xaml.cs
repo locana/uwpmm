@@ -772,8 +772,13 @@ namespace Kazyx.Uwpmm.Pages
             try
             {
                 // ChangeProgressText(SystemUtil.GetStringResource("Progress_ChangingCameraState"));
-                await PlaybackModeHelper.MoveToContentTransferModeAsync(TargetDevice.Api.Camera, TargetDevice.Status, 20000).ConfigureAwait(false);
-                DebugUtil.Log("ModeTransition successfully finished.");
+                var res = await PlaybackModeHelper.MoveToContentTransferModeAsync(TargetDevice.Api.Camera, TargetDevice.Status, 20000).ConfigureAwait(false);
+
+                DebugUtil.Log(res ? "ModeTransition successfully finished." : "ModeTransition failed");
+                if (!res)
+                {
+                    throw new Exception();
+                }
 
                 // ChangeProgressText(SystemUtil.GetStringResource("Progress_CheckingStorage"));
 
@@ -1350,54 +1355,11 @@ namespace Kazyx.Uwpmm.Pages
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            // HardwareButtons.BackPressed += HardwareButtons_BackPressed;
         }
 
         private void Page_Unloaded(object sender, RoutedEventArgs e)
         {
-            // HardwareButtons.BackPressed -= HardwareButtons_BackPressed;
         }
-
-        /*
-        void HardwareButtons_BackPressed(object sender, BackPressedEventArgs e)
-        {
-            DebugUtil.Log("Backkey pressed.");
-            if (IsViewingDetail)
-            {
-                DebugUtil.Log("Release detail.");
-                ReleaseDetail();
-                e.Handled = true;
-            }
-
-            if (MovieDrawer.Visibility == Visibility.Visible || MovieStreamHelper.INSTANCE.IsProcessing)
-            {
-                DebugUtil.Log("Close movie stream.");
-                CloseMovieStream();
-                e.Handled = true;
-            }
-
-            if (RemoteGrid.SelectionMode == ListViewSelectionMode.Multiple)
-            {
-                DebugUtil.Log("Set selection mode none.");
-                UpdateInnerState(ViewerState.RemoteSingle);
-                e.Handled = true;
-            }
-
-            if (LocalGrid.SelectionMode == ListViewSelectionMode.Multiple)
-            {
-                DebugUtil.Log("Set selection mode none.");
-                UpdateInnerState(ViewerState.LocalSingle);
-                e.Handled = true;
-            }
-
-            if (AppSettingPanel.Visibility == Visibility.Visible)
-            {
-                DebugUtil.Log("Close app setting panel.");
-                CloseAppSettingPanel();
-                e.Handled = true;
-            }
-        }
-         * */
 
         private void RemoteGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -1610,6 +1572,50 @@ namespace Kazyx.Uwpmm.Pages
             finally
             {
                 loader.PartLoaded -= RemoteContentsLoader_PartLoaded;
+            }
+        }
+
+        private void backButton_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            DebugUtil.Log("Backkey pressed.");
+            if (IsViewingDetail)
+            {
+                DebugUtil.Log("Release detail.");
+                ReleaseDetail();
+                e.Handled = true;
+            }
+
+            if (MovieDrawer.Visibility == Visibility.Visible || MovieStreamHelper.INSTANCE.IsProcessing)
+            {
+                DebugUtil.Log("Close movie stream.");
+                CloseMovieStream();
+                e.Handled = true;
+            }
+
+            if (RemoteGrid.SelectionMode == ListViewSelectionMode.Multiple)
+            {
+                DebugUtil.Log("Set selection mode none.");
+                UpdateInnerState(ViewerState.Single);
+                e.Handled = true;
+            }
+
+            if (LocalGrid.SelectionMode == ListViewSelectionMode.Multiple)
+            {
+                DebugUtil.Log("Set selection mode none.");
+                UpdateInnerState(ViewerState.Single);
+                e.Handled = true;
+            }
+
+            if (AppSettingPanel.Visibility == Visibility.Visible)
+            {
+                DebugUtil.Log("Close app setting panel.");
+                CloseAppSettingPanel();
+                e.Handled = true;
+            }
+
+            if (!e.Handled)
+            {
+                navigationHelper.GoBack();
             }
         }
     }
