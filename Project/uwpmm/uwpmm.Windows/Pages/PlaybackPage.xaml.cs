@@ -21,7 +21,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.UI.Core;
-using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -389,8 +388,6 @@ namespace Kazyx.Uwpmm.Pages
         }
 
         // private StatusBar statusBar = StatusBar.GetForCurrentView();
-
-        CommandBarManager CommandBarManager = new CommandBarManager();
 
         private ViewerState InnerState = ViewerState.Single;
 
