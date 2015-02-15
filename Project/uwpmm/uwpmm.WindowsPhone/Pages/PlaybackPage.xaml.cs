@@ -990,6 +990,12 @@ namespace Kazyx.Uwpmm.Pages
             if (InnerState == ViewerState.OutOfPage) return;
 
             DebugUtil.Log("ViewerPage: OnFetched");
+            if (!file.ContentType.StartsWith("image/", StringComparison.OrdinalIgnoreCase))
+            {
+                // Not to add video contents to local grid
+                return;
+            }
+
             await Dispatcher.RunAsync(CoreDispatcherPriority.High, () =>
             {
                 var content = new ContentInfo

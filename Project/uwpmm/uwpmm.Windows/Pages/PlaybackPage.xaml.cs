@@ -883,6 +883,12 @@ namespace Kazyx.Uwpmm.Pages
             DebugUtil.Log("ViewerPage: OnFetched");
             await Dispatcher.RunAsync(CoreDispatcherPriority.High, () =>
             {
+                if (!file.ContentType.StartsWith("image/", StringComparison.OrdinalIgnoreCase))
+                {
+                    // Not to add video contents to local grid
+                    return;
+                }
+
                 var content = new ContentInfo
                 {
                     Protected = false,
