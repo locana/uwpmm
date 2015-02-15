@@ -21,7 +21,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Windows.Phone.UI.Input;
 using Windows.Storage;
-using Windows.System;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
@@ -296,6 +295,7 @@ namespace Kazyx.Uwpmm.Pages
             LocalGridSource = new AlbumGroupCollection(false);
 
             CloseMovieStream();
+            FinishLocalMoviePlayback();
             MovieDrawer.DataContext = MovieStreamHelper.INSTANCE.MoviePlaybackData;
 
             PhotoScreen.DataContext = PhotoData;
@@ -333,6 +333,9 @@ namespace Kazyx.Uwpmm.Pages
 
             MovieStreamHelper.INSTANCE.StreamClosed += MovieStreamHelper_StreamClosed;
             MovieStreamHelper.INSTANCE.StatusChanged += MovieStream_StatusChanged;
+
+            LocalMoviePlayer.MediaFailed += LocalMoviePlayer_MediaFailed;
+            LocalMoviePlayer.MediaOpened += LocalMoviePlayer_MediaOpened;
 
             var param = e.Parameter as string;
             if (param == AUTO_JUMP_TO_DLNA_FLAG)
@@ -445,6 +448,10 @@ namespace Kazyx.Uwpmm.Pages
 
             CloseMovieStream();
             MovieDrawer.DataContext = null;
+
+            LocalMoviePlayer.MediaFailed -= LocalMoviePlayer_MediaFailed;
+            LocalMoviePlayer.MediaOpened -= LocalMoviePlayer_MediaOpened;
+            FinishLocalMoviePlayback();
 
             if (Canceller != null)
             {
@@ -1497,6 +1504,13 @@ namespace Kazyx.Uwpmm.Pages
                 e.Handled = true;
             }
 
+            if (LocalMovieDrawer.Visibility == Visibility.Visible)
+            {
+                DebugUtil.Log("Close local movie stream.");
+                FinishLocalMoviePlayback();
+                e.Handled = true;
+            }
+
             if (RemoteGrid.SelectionMode == ListViewSelectionMode.Multiple)
             {
                 DebugUtil.Log("Set selection mode none.");
@@ -1639,20 +1653,53 @@ namespace Kazyx.Uwpmm.Pages
             }
         }
 
-        private void PlaybackLocalMovie(Thumbnail content)
+        private async void PlaybackLocalMovie(Thumbnail content)
         {
+            ChangeProgressText(SystemUtil.GetStringResource("Progress_OpeningMovieStream"));
+
             try
             {
-                // TODO
-                // Use MediaPlayer control to playback local video contents.
-                // File URI can be retrieved from content.Source.OriginalUrl
-                ShowToast("[TMP] Local video playback is not yet implemented");
+                var stream = await content.CacheFile.OpenAsync(FileAccessMode.Read);
+                LocalMoviePlayer.SetSource(stream, content.CacheFile.ContentType);
             }
             catch (Exception)
             {
                 // TODO show error toast
                 DebugUtil.Log("Invalid URL: " + content.Source.OriginalUrl);
+                HideProgress();
             }
+        }
+
+        private void FinishLocalMoviePlayback()
+        {
+            UpdateInnerState(ViewerState.LocalSingle);
+
+            var task = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+            {
+                await DefaultPivotLockState();
+                LocalMoviePlayer.Stop();
+                LocalMovieDrawer.Visibility = Visibility.Collapsed;
+            });
+        }
+
+        void LocalMoviePlayer_MediaOpened(object sender, RoutedEventArgs e)
+        {
+            var task = Dispatcher.RunAsync(CoreDispatcherPriority.High, () =>
+            {
+                LocalMovieDrawer.Visibility = Visibility.Visible;
+                HideProgress();
+            });
+        }
+
+        void LocalMoviePlayer_MediaFailed(object sender, ExceptionRoutedEventArgs e)
+        {
+            var task = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                LocalMovieDrawer.Visibility = Visibility.Collapsed;
+                // TODO show error toast
+                DebugUtil.Log("LocalMoviePlayer MediaFailed: " + e.ErrorMessage);
+                HideProgress();
+            });
         }
 
         private async void LocalDelete_Click(object sender, RoutedEventArgs e)

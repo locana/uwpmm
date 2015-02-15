@@ -272,6 +272,12 @@
                                          PlaybackStatus="{Binding StreamingStatus}"/>
         </Border>
 
+        <Border x:Name="LocalMovieDrawer" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="Collapsed">
+            <MediaElement x:Name="LocalMoviePlayer"
+                          HorizontalAlignment="Center" VerticalAlignment="Center" Margin="12"
+                          IsLooping="False" Stretch="Uniform" />
+        </Border>
+
         <Grid Name="AppSettingPanel" Visibility="Collapsed"
               Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" >
             <ScrollViewer >
