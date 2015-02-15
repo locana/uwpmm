@@ -186,9 +186,26 @@ namespace Kazyx.Uwpmm.DataModel
                     if (ImageMode.Image == mode) { ThumbnailImage = bmp; }
                     else { LargeImage = bmp; }
                 }
+                return;
             }
-            catch { DebugUtil.Log("Failed to load thumbnail from cache."); }
+            catch { }
+
+            if (0 < RemainingRetryCount)
+            {
+                var delay = 1000 * (3 - RemainingRetryCount--);
+                DebugUtil.Log("Failed to load thumbnail from file. Retry " + delay + " msec later.");
+
+                await Task.Delay(delay);
+                NotifyChanged("ThumbnailImage");
+                NotifyChanged("LargeImage");
+            }
+            else
+            {
+                DebugUtil.Log("Failed to load thumbnail from file. Retry count exhausted.");
+            }
         }
+
+        private int RemainingRetryCount = 2;
 
         private BitmapImage _ThumbnailImage = null;
 

@@ -881,22 +881,10 @@ namespace Kazyx.Uwpmm.Pages
             if (InnerState == ViewerState.OutOfPage) return;
 
             DebugUtil.Log("ViewerPage: OnFetched");
+
             await Dispatcher.RunAsync(CoreDispatcherPriority.High, () =>
             {
-                if (!file.ContentType.StartsWith("image/", StringComparison.OrdinalIgnoreCase))
-                {
-                    // Not to add video contents to local grid
-                    return;
-                }
-
-                var content = new ContentInfo
-                {
-                    Protected = false,
-                    ContentType = ContentKind.StillImage,
-                    GroupName = folder.DisplayName,
-                };
-                var thumb = new Thumbnail(content, file);
-                LocalGridSource.Add(thumb);
+                LocalGridSource.Add(LocalContentsLoader.StorageFileToThumbnail(folder, file));
             });
         }
 
@@ -1446,16 +1434,28 @@ namespace Kazyx.Uwpmm.Pages
         {
             var item = sender as MenuFlyoutItem;
             var data = item.DataContext as Thumbnail;
-            DisplayLocalDetailImage(data);
+            PlaybackLocalContent(data);
         }
 
-        private async void DisplayLocalDetailImage(Thumbnail content)
+        private void PlaybackLocalContent(Thumbnail content)
         {
             if (IsViewingDetail)
             {
                 return;
             }
 
+            if (content.IsMovie)
+            {
+                PlaybackLocalMovie(content);
+            }
+            else
+            {
+                PlaybackLocalImage(content);
+            }
+        }
+
+        private async void PlaybackLocalImage(Thumbnail content)
+        {
             ChangeProgressText(SystemUtil.GetStringResource("Progress_OpeningDetailImage"));
 
             try
@@ -1481,8 +1481,27 @@ namespace Kazyx.Uwpmm.Pages
             }
             catch
             {
-                HideProgress();
                 ShowToast(SystemUtil.GetStringResource("Viewer_FailedToOpenDetail"));
+            }
+            finally
+            {
+                HideProgress();
+            }
+        }
+
+        private void PlaybackLocalMovie(Thumbnail content)
+        {
+            try
+            {
+                // TODO
+                // Use MediaPlayer control to playback local video contents.
+                // File URI can be retrieved from content.Source.OriginalUrl
+                ShowToast("[TMP] Local video playback is not yet implemented");
+            }
+            catch (Exception)
+            {
+                // TODO show error toast
+                DebugUtil.Log("Invalid URL: " + content.Source.OriginalUrl);
             }
         }
 
@@ -1540,7 +1559,7 @@ namespace Kazyx.Uwpmm.Pages
 
             var image = sender as Grid;
             var content = image.DataContext as Thumbnail;
-            DisplayLocalDetailImage(content);
+            PlaybackLocalContent(content);
         }
 
         private async void FetchMore_Click(object sender, RoutedEventArgs e)

@@ -23,6 +23,14 @@ namespace Kazyx.Uwpmm.Playback
 
         public override async Task Load(ContentsSet contentsSet, CancellationTokenSource cancel)
         {
+            await LoadPictures(cancel);
+            await LoadVideos(cancel);
+
+            OnCompleted();
+        }
+
+        private async Task LoadPictures(CancellationTokenSource cancel)
+        {
             var library = KnownFolders.PicturesLibrary;
 
             var folders = await library.GetFoldersAsync();
@@ -58,14 +66,51 @@ namespace Kazyx.Uwpmm.Playback
                     break;
                 }
             }
+        }
 
-            OnCompleted();
+        private async Task LoadVideos(CancellationTokenSource cancel)
+        {
+            var library = KnownFolders.VideosLibrary;
+
+            var folders = await library.GetFoldersAsync();
+
+            foreach (var folder in folders)
+            {
+                if (folder.Name != LOCANA_DIRECTORY)
+                {
+                    continue;
+                }
+
+                DebugUtil.Log("Load from local video folder: " + folder.Name);
+                await LoadContentsAsync(folder, cancel).ConfigureAwait(false);
+                if (cancel != null && cancel.IsCancellationRequested)
+                {
+                    OnCancelled();
+                    break;
+                }
+            }
+
+            foreach (var folder in folders)
+            {
+                if (folder.Name == LOCANA_DIRECTORY)
+                {
+                    continue;
+                }
+
+                DebugUtil.Log("Load from local video folder: " + folder.Name);
+                await LoadContentsAsync(folder, cancel).ConfigureAwait(false);
+                if (cancel != null && cancel.IsCancellationRequested)
+                {
+                    OnCancelled();
+                    break;
+                }
+            }
         }
 
         private async Task LoadContentsAsync(StorageFolder folder, CancellationTokenSource cancel)
         {
             var list = new List<StorageFile>();
-            await LoadPicturesRecursively(list, folder, cancel).ConfigureAwait(false);
+            await LoadFilesRecursively(list, folder, cancel).ConfigureAwait(false);
 
             if (cancel != null && cancel.IsCancellationRequested)
             {
@@ -74,7 +119,7 @@ namespace Kazyx.Uwpmm.Playback
 
             var thumbs = list.Select(file =>
                 {
-                    var thumb = new Thumbnail(new ContentInfo { Protected = false, ContentType = ContentKind.StillImage, GroupName = folder.DisplayName, }, file);
+                    var thumb = StorageFileToThumbnail(folder, file);
                     SingleContentLoaded.Raise(this, new SingleContentEventArgs { File = thumb });
                     return thumb;
                 }).ToList();
@@ -82,9 +127,23 @@ namespace Kazyx.Uwpmm.Playback
             OnPartLoaded(thumbs);
         }
 
-        readonly string[] IMAGE_MIME_TYPES = { "image/jpeg", "image/png", "image/bmp", "image/gif" };
+        public static Thumbnail StorageFileToThumbnail(StorageFolder folder, StorageFile file)
+        {
+            var type = file.ContentType.StartsWith("image/", StringComparison.OrdinalIgnoreCase)
+                ? ContentKind.StillImage : ContentKind.MovieMp4;
 
-        private async Task LoadPicturesRecursively(List<StorageFile> into, StorageFolder folder, CancellationTokenSource cancel)
+            return new Thumbnail(new ContentInfo
+            {
+                Protected = false,
+                ContentType = type,
+                GroupName = folder.DisplayName,
+                OriginalUrl = file.Path,
+            }, file);
+        }
+
+        // readonly string[] IMAGE_MIME_TYPES = { "image/jpeg", "image/png", "image/bmp", "image/gif", "video/mp4" };
+
+        private async Task LoadFilesRecursively(List<StorageFile> into, StorageFolder folder, CancellationTokenSource cancel)
         {
             var files = await folder.GetFilesAsync();
 
@@ -93,7 +152,10 @@ namespace Kazyx.Uwpmm.Playback
                 return;
             }
 
-            into.AddRange(files.Where(file => IMAGE_MIME_TYPES.Any(type => file.ContentType.Equals(type, StringComparison.OrdinalIgnoreCase))));
+            // into.AddRange(files.Where(file => IMAGE_MIME_TYPES.Any(type => file.ContentType.Equals(type, StringComparison.OrdinalIgnoreCase))));
+            into.AddRange(files.Where(file =>
+                file.ContentType.StartsWith("image/", StringComparison.OrdinalIgnoreCase)
+                || file.ContentType.StartsWith("video/", StringComparison.OrdinalIgnoreCase)));
 
             foreach (var child in await folder.GetFoldersAsync())
             {
@@ -101,7 +163,7 @@ namespace Kazyx.Uwpmm.Playback
                 {
                     return;
                 }
-                await LoadPicturesRecursively(into, child, cancel).ConfigureAwait(false);
+                await LoadFilesRecursively(into, child, cancel).ConfigureAwait(false);
             }
         }
 
