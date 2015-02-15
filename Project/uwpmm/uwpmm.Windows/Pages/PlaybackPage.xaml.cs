@@ -177,9 +177,9 @@ namespace Kazyx.Uwpmm.Pages
 
             LoadLocalContents();
 
-            PictureDownloader.Instance.Failed += OnDLError;
-            PictureDownloader.Instance.Fetched += OnFetched;
-            PictureDownloader.Instance.QueueStatusUpdated += OnFetchingImages;
+            MediaDownloader.Instance.Failed += OnDLError;
+            MediaDownloader.Instance.Fetched += OnFetched;
+            MediaDownloader.Instance.QueueStatusUpdated += OnFetchingImages;
 
             var devices = NetworkObserver.INSTANCE.CameraDevices;
             var dlna = NetworkObserver.INSTANCE.CdsProviders;
@@ -230,9 +230,9 @@ namespace Kazyx.Uwpmm.Pages
             }
             UpnpDevice = null;
 
-            PictureDownloader.Instance.Failed -= OnDLError;
-            PictureDownloader.Instance.Fetched -= OnFetched;
-            PictureDownloader.Instance.QueueStatusUpdated -= OnFetchingImages;
+            MediaDownloader.Instance.Failed -= OnDLError;
+            MediaDownloader.Instance.Fetched -= OnFetched;
+            MediaDownloader.Instance.QueueStatusUpdated -= OnFetchingImages;
 
             ThumbnailCacheLoader.INSTANCE.CleanupRemainingTasks();
 
@@ -546,10 +546,21 @@ namespace Kazyx.Uwpmm.Pages
 
         void Status_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
+            var status = sender as CameraStatus;
             switch (e.PropertyName)
             {
                 case "Storages":
                     UpdateStorageInfo();
+                    break;
+                case "PictureUrls":
+                    if (ApplicationSettings.GetInstance().IsPostviewTransferEnabled)
+                    {
+                        foreach (var url in status.PictureUrls)
+                        {
+                            // TODO If geo location is enabled, position is requried.
+                            MediaDownloader.Instance.EnqueuePostViewImage(new Uri(url, UriKind.Absolute), null);
+                        }
+                    }
                     break;
             }
         }
@@ -886,7 +897,7 @@ namespace Kazyx.Uwpmm.Pages
             });
         }
 
-        private void OnDLError(ImageFetchError error, GeotaggingResult geotaggingResult)
+        private void OnDLError(DownloaderError error, GeotaggingResult geotaggingResult)
         {
             DebugUtil.Log("ViewerPage: OnDLError");
             // TODO show toast according to error cause...
@@ -1079,7 +1090,7 @@ namespace Kazyx.Uwpmm.Pages
             {
                 try
                 {
-                    EnqueueImageDownload(item as Thumbnail);
+                    EnqueueDownload(item as Thumbnail);
                 }
                 catch (Exception e)
                 {
@@ -1088,16 +1099,20 @@ namespace Kazyx.Uwpmm.Pages
             }
         }
 
-        private void EnqueueImageDownload(Thumbnail source)
+        private void EnqueueDownload(Thumbnail source)
         {
-            if (ApplicationSettings.GetInstance().PrioritizeOriginalSizeContents && source.Source.OriginalUrl != null)
+            if (source.IsMovie)
             {
-                PictureDownloader.Instance.Enqueue(new Uri(source.Source.OriginalUrl));
+                MediaDownloader.Instance.EnqueueVideo(new Uri(source.Source.OriginalUrl), source.Source.Name);
+            }
+            else if (ApplicationSettings.GetInstance().PrioritizeOriginalSizeContents && source.Source.OriginalUrl != null)
+            {
+                MediaDownloader.Instance.EnqueueImage(new Uri(source.Source.OriginalUrl), source.Source.Name);
             }
             else
             {
                 // Fallback to large size image
-                PictureDownloader.Instance.Enqueue(new Uri(source.Source.LargeUrl));
+                MediaDownloader.Instance.EnqueueImage(new Uri(source.Source.LargeUrl), source.Source.Name);
             }
         }
 
@@ -1231,7 +1246,7 @@ namespace Kazyx.Uwpmm.Pages
             var item = sender as MenuFlyoutItem;
             try
             {
-                EnqueueImageDownload(item.DataContext as Thumbnail);
+                EnqueueDownload(item.DataContext as Thumbnail);
             }
             catch (Exception ex)
             {

@@ -127,7 +127,7 @@ namespace Kazyx.Uwpmm.CameraControl
                         try
                         {
                             var uri = new Uri(url);
-                            PictureDownloader.Instance.Enqueue(uri, position);
+                            MediaDownloader.Instance.EnqueuePostViewImage(uri, position);
                         }
                         catch (Exception e)
                         {

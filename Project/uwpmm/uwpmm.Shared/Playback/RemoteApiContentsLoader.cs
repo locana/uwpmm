@@ -236,6 +236,14 @@ namespace Kazyx.Uwpmm.Playback
                                 }
                             }
                         }
+                        else if (content.ContentKind == ContentKind.MovieMp4 || content.ContentKind == ContentKind.MovieXavcS)
+                        {
+                            foreach (var original in content.ImageContent.OriginalContents)
+                            {
+                                contentInfo.OriginalUrl = original.Url;
+                                break;
+                            }
+                        }
                         return contentInfo;
                     })
                     .ToList<ContentInfo>();

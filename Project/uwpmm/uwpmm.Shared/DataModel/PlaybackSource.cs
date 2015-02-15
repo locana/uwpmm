@@ -125,7 +125,7 @@ namespace Kazyx.Uwpmm.DataModel
                     case SelectivityFactor.None:
                         return true;
                     case SelectivityFactor.CopyToPhone:
-                        return !IsMovie;
+                        return IsCopyable;
                     case SelectivityFactor.Delete:
                         return !Source.Protected;
                     default:
@@ -136,7 +136,25 @@ namespace Kazyx.Uwpmm.DataModel
 
         public virtual bool IsDeletable { get { return !Source.Protected; } }
 
-        public virtual bool IsCopyable { get { return !IsMovie; } }
+        public virtual bool IsCopyable
+        {
+            get
+            {
+                switch (Source.ContentType)
+                {
+                    case ContentKind.StillImage:
+                    case ContentKind.MovieMp4:
+                        return true;
+#if WINDOWS_APP
+                    case ContentKind.MovieXavcS:
+                        // XAVC S is not supported on phone.
+                        return true;
+#endif
+                    default:
+                        return false;
+                }
+            }
+        }
 
         public virtual bool IsPlayable { get { return true; } }
 

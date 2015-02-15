@@ -101,13 +101,16 @@ namespace Kazyx.Uwpmm.Playback
             var list = new List<ContentInfo>();
             for (int i = 0; i < (fixedNum ? count : random.Next(1, count)); i++)
             {
+                var type = ContentType();
+                var thumb = ThumbnailUrl();
                 list.Add(new ContentInfo
                 {
-                    ContentType = ContentType(),
-                    ThumbnailUrl = ThumbnailUrl(),
+                    ContentType = type,
+                    ThumbnailUrl = thumb,
                     Name = FileName(),
                     CreatedTime = CreatedTime(),
-                    LargeUrl = "http://upload.wikimedia.org/wikipedia/commons/e/e5/Earth_.jpg",
+                    LargeUrl = thumb,
+                    OriginalUrl = type == ContentKind.StillImage ? "http://upload.wikimedia.org/wikipedia/commons/e/e5/Earth_.jpg" : "http://image.watch.impress.co.jp/avw/581732/MAH00028.mp4",
                     Protected = Protected(),
                 });
             }

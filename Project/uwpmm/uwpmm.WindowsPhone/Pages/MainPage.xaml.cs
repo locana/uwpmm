@@ -318,11 +318,11 @@ namespace Kazyx.Uwpmm.Pages
             InitializeUI();
             InitializeProximityDevice();
 
-            PictureDownloader.Instance.Fetched += PictureFetched;
-            PictureDownloader.Instance.Failed += PictureFetchFailed;
+            MediaDownloader.Instance.Fetched += PictureFetched;
+            MediaDownloader.Instance.Failed += PictureFetchFailed;
         }
 
-        private void PictureFetchFailed(ImageFetchError err, GeotaggingResult tagResult)
+        private void PictureFetchFailed(DownloaderError err, GeotaggingResult tagResult)
         {
             ShowError(SystemUtil.GetStringResource("ErrorMessage_ImageDL_Other") + err + " " + tagResult);
         }
@@ -393,8 +393,8 @@ namespace Kazyx.Uwpmm.Pages
             HardwareButtons.CameraHalfPressed -= HardwareButtons_CameraHalfPressed;
             HardwareButtons.CameraReleased -= HardwareButtons_CameraReleased;
             HardwareButtons.CameraPressed -= HardwareButtons_CameraPressed;
-            PictureDownloader.Instance.Fetched -= PictureFetched;
-            PictureDownloader.Instance.Failed -= PictureFetchFailed;
+            MediaDownloader.Instance.Fetched -= PictureFetched;
+            MediaDownloader.Instance.Failed -= PictureFetchFailed;
             StopProximityDevice();
         }
 
@@ -757,7 +757,7 @@ namespace Kazyx.Uwpmm.Pages
                     {
                         foreach (var url in status.PictureUrls)
                         {
-                            PictureDownloader.Instance.Enqueue(new Uri(url, UriKind.Absolute), CachedPosition);
+                            MediaDownloader.Instance.EnqueuePostViewImage(new Uri(url, UriKind.Absolute), CachedPosition);
                         }
                     }
                     break;
@@ -772,7 +772,7 @@ namespace Kazyx.Uwpmm.Pages
                     {
                         foreach (var result in status.ContShootingResult)
                         {
-                            PictureDownloader.Instance.Enqueue(new Uri(result.PostviewUrl, UriKind.Absolute), CachedPosition);
+                            MediaDownloader.Instance.EnqueuePostViewImage(new Uri(result.PostviewUrl, UriKind.Absolute), CachedPosition);
                         }
                     }
                     break;

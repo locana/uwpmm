@@ -1,6 +1,7 @@
-﻿using System;
+﻿using NtImageProcessor.MetaData;
+using NtImageProcessor.MetaData.Misc;
+using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -11,25 +12,25 @@ using Windows.UI.Core;
 
 namespace Kazyx.Uwpmm.Utility
 {
-    public class PictureDownloader
+    public class MediaDownloader
     {
-        private PictureDownloader() { }
+        private MediaDownloader() { }
 
         private static string DIRECTORY_NAME = SystemUtil.GetStringResource("ApplicationTitle");
 
-        private const int BUFFER_SIZE = 2048;
+        private const int BUFFER_SIZE = 8 * 1024;
 
         private static readonly HttpClient HttpClient = new HttpClient();
 
-        private static readonly PictureDownloader instance = new PictureDownloader();
-        public static PictureDownloader Instance
+        private static readonly MediaDownloader instance = new MediaDownloader();
+        public static MediaDownloader Instance
         {
             get { return instance; }
         }
 
         public Action<StorageFolder, StorageFile, GeotaggingResult> Fetched;
 
-        public Action<ImageFetchError, GeotaggingResult> Failed;
+        public Action<DownloaderError, GeotaggingResult> Failed;
 
         protected void OnFetched(StorageFolder folder, StorageFile file, GeotaggingResult geotaggingResult)
         {
@@ -37,19 +38,42 @@ namespace Kazyx.Uwpmm.Utility
             Fetched.Raise(folder, file, geotaggingResult);
         }
 
-        protected void OnFailed(ImageFetchError error, GeotaggingResult geotaggingResult)
+        protected void OnFailed(DownloaderError error, GeotaggingResult geotaggingResult)
         {
             DebugUtil.Log("PictureSyncManager: OnFailed" + error);
             Failed.Raise(error, geotaggingResult);
         }
 
-        public async void Enqueue(Uri uri, Geoposition position = null)
+        public void EnqueueVideo(Uri uri, string nameBase, string extension = ".mp4")
         {
-            DebugUtil.Log("PictureDownloader: Enqueue " + uri.AbsolutePath);
+            Enqueue(uri, nameBase, Mediatype.Video, extension, null);
+        }
+
+        public void EnqueueImage(Uri uri, string nameBase, Geoposition position = null, string extension = ".jpg")
+        {
+            Enqueue(uri, nameBase, Mediatype.Image, extension, position);
+        }
+
+        public void EnqueuePostViewImage(Uri uri, Geoposition position = null)
+        {
+            Enqueue(uri, DIRECTORY_NAME, Mediatype.Image, ".jpg", position);
+        }
+
+        private async void Enqueue(Uri uri, string namebase, Mediatype type, string extension, Geoposition position)
+        {
+            DebugUtil.Log("ContentsDownloader: Enqueue " + uri.AbsolutePath);
             await SystemUtil.GetCurrentDispatcher().RunAsync(CoreDispatcherPriority.Low, () =>
             {
-                var req = new DownloadRequest { Uri = uri, Completed = OnFetched, Error = OnFailed, GeoPosition = position };
-                DebugUtil.Log("Enqueue " + uri.AbsoluteUri);
+                var req = new DownloadRequest
+                {
+                    Uri = uri,
+                    NameBase = namebase,
+                    Completed = OnFetched,
+                    Error = OnFailed,
+                    GeoPosition = position,
+                    Mediatype = type,
+                    extension = extension
+                };
                 DownloadQueue.Enqueue(req);
                 QueueStatusUpdated.Raise(DownloadQueue.Count);
                 ProcessQueueSequentially();
@@ -86,7 +110,7 @@ namespace Kazyx.Uwpmm.Utility
             DebugUtil.Log("Download picture: " + req.Uri.OriginalString);
             try
             {
-                GeotaggingResult GeotaggingResult = GeotaggingResult.NotRequested;
+                var geoResult = GeotaggingResult.NotRequested;
 
                 var res = await HttpClient.GetAsync(req.Uri, HttpCompletionOption.ResponseContentRead).ConfigureAwait(false);
                 switch (res.StatusCode)
@@ -94,41 +118,49 @@ namespace Kazyx.Uwpmm.Utility
                     case HttpStatusCode.OK:
                         break;
                     case HttpStatusCode.Gone:
-                        req.Error.Raise(ImageFetchError.Gone, GeotaggingResult);
+                        req.Error.Raise(DownloaderError.Gone, geoResult);
                         return;
                     default:
-                        req.Error.Raise(ImageFetchError.Network, GeotaggingResult);
+                        req.Error.Raise(DownloaderError.Network, geoResult);
                         return;
                 }
 
-                Stream imageStream = await res.Content.ReadAsStreamAsync().ConfigureAwait(false);
-                if (req.GeoPosition != null)
+                var imageStream = await res.Content.ReadAsStreamAsync().ConfigureAwait(false);
+
+                if (req.Mediatype == Mediatype.Image && req.GeoPosition != null)
                 {
                     try
                     {
-                        imageStream = await NtImageProcessor.MetaData.MetaDataOperator.AddGeopositionAsync(imageStream, req.GeoPosition, false);
-                        GeotaggingResult = Utility.GeotaggingResult.OK;
+                        imageStream = await MetaDataOperator.AddGeopositionAsync(imageStream, req.GeoPosition, false);
+                        geoResult = Utility.GeotaggingResult.OK;
                     }
-                    catch (NtImageProcessor.MetaData.Misc.GpsInformationAlreadyExistsException)
+                    catch (GpsInformationAlreadyExistsException)
                     {
-                        GeotaggingResult = GeotaggingResult.GeotagAlreadyExists;
+                        geoResult = GeotaggingResult.GeotagAlreadyExists;
                     }
-                    catch (Exception)
+                    catch
                     {
-                        GeotaggingResult = GeotaggingResult.UnExpectedError;
+                        geoResult = GeotaggingResult.UnExpectedError;
                     }
                 }
 
                 using (imageStream)
                 {
-                    var library = KnownFolders.PicturesLibrary;
+                    StorageFolder rootFolder;
+                    switch (req.Mediatype)
+                    {
+                        case Mediatype.Image:
+                            rootFolder = KnownFolders.PicturesLibrary;
+                            break;
+                        case Mediatype.Video:
+                            rootFolder = KnownFolders.VideosLibrary;
+                            break;
+                        default:
+                            return;
+                    }
 
-                    DebugUtil.Log("Create folder: " + DIRECTORY_NAME);
-                    var folder = await library.CreateFolderAsync(DIRECTORY_NAME, CreationCollisionOption.OpenIfExists);
-
-                    var filename = string.Format(DIRECTORY_NAME + "_{0:yyyyMMdd_HHmmss}.jpg", DateTime.Now);
-                    DebugUtil.Log("Create file: " + filename);
-
+                    var folder = await rootFolder.CreateFolderAsync(DIRECTORY_NAME, CreationCollisionOption.OpenIfExists);
+                    var filename = string.Format(req.NameBase + "_{0:yyyyMMdd_HHmmss}" + req.extension, DateTime.Now);
                     var file = await folder.CreateFileAsync(filename, CreationCollisionOption.GenerateUniqueName);
                     using (var stream = await file.OpenAsync(FileAccessMode.ReadWrite))
                     {
@@ -142,7 +174,7 @@ namespace Kazyx.Uwpmm.Utility
                             }
                         }
                     }
-                    req.Completed.Raise(folder, file, GeotaggingResult);
+                    req.Completed.Raise(folder, file, geoResult);
                     return;
                 }
             }
@@ -150,7 +182,7 @@ namespace Kazyx.Uwpmm.Utility
             {
                 DebugUtil.Log(e.Message);
                 DebugUtil.Log(e.StackTrace);
-                req.Error.Raise(ImageFetchError.Unknown, GeotaggingResult.NotRequested); // TODO
+                req.Error.Raise(DownloaderError.Unknown, GeotaggingResult.NotRequested); // TODO
             }
         }
     }
@@ -158,12 +190,21 @@ namespace Kazyx.Uwpmm.Utility
     public class DownloadRequest
     {
         public Uri Uri;
+        public string NameBase;
+        public Mediatype Mediatype;
+        public string extension;
         public Geoposition GeoPosition;
         public Action<StorageFolder, StorageFile, GeotaggingResult> Completed;
-        public Action<ImageFetchError, GeotaggingResult> Error;
+        public Action<DownloaderError, GeotaggingResult> Error;
     }
 
-    public enum ImageFetchError
+    public enum Mediatype
+    {
+        Image,
+        Video,
+    }
+
+    public enum DownloaderError
     {
         Network,
         Saving,

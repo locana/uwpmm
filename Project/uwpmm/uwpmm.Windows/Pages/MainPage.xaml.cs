@@ -109,12 +109,12 @@ namespace Kazyx.Uwpmm.Pages
         {
             NetworkObserver.INSTANCE.CameraDiscovered += NetworkObserver_Discovered;
             NetworkObserver.INSTANCE.SearchCamera();
-            PictureDownloader.Instance.Fetched += OnFetchdImage;
+            MediaDownloader.Instance.Fetched += OnFetchdImage;
         }
 
         private void pageRoot_Unloaded(object sender, RoutedEventArgs e)
         {
-            PictureDownloader.Instance.Fetched -= OnFetchdImage;
+            MediaDownloader.Instance.Fetched -= OnFetchdImage;
         }
 
         private async void OnFetchdImage(StorageFolder folder, StorageFile file, GeotaggingResult geotaggingResult)
