@@ -87,6 +87,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)LocalizedStrings.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Playback\ContentsLoader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Playback\DlnaContentsLoader.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Playback\DummyContentsFlag.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Playback\DummyContentsLoader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Playback\LocalContentsLoader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Playback\PlaybackModeHelper.cs" />
@@ -118,7 +119,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Utility\NetworkObserver.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\ParameterUtil.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\PeriodicalShootingTask.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Utility\PictureDownloader.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utility\MediaDownloader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\Preference.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\ResourceManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\SafeDelegateExtensions.cs" />
