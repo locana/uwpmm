@@ -265,8 +265,6 @@ namespace Kazyx.Uwpmm.Pages
 
         // public const string AUTO_JUMP_TO_DLNA_FLAG = "auto_jump_to_dlna";
 
-        private const bool LOAD_DUMMY_CONTENTS = false;
-
         private HttpClient HttpClient = new HttpClient();
 
         /*
@@ -484,7 +482,7 @@ namespace Kazyx.Uwpmm.Pages
         /*
         private static bool ShouldUnlockPivot(TargetDevice device, UpnpDevice upnp)
         {
-            if (LOAD_DUMMY_CONTENTS)
+            if (DummyContentsFlag.Enabled)
             {
                 DebugUtil.Log("Unlock Pivot: Dummy contents mode enabled.");
                 return true;
@@ -993,7 +991,7 @@ namespace Kazyx.Uwpmm.Pages
         private void OnRemotePivotDisplayed()
         {
 #if DEBUG
-            if (LOAD_DUMMY_CONTENTS && !IsRemoteInitialized)
+            if (DummyContentsFlag.Enabled && !IsRemoteInitialized)
             {
                 UpdateInnerState(ViewerState.Single);
                 var task = InitializeRemote();
@@ -1551,7 +1549,7 @@ namespace Kazyx.Uwpmm.Pages
         private async Task LoadRemainingContents(RemainingContentsHolder holder)
         {
 #if DEBUG
-            if (LOAD_DUMMY_CONTENTS)
+            if (DummyContentsFlag.Enabled)
             {
                 var task = AddPartDummyContentsAsync(holder);
                 return;
