@@ -636,6 +636,7 @@ namespace Kazyx.Uwpmm.Pages
             finally
             {
                 loader.PartLoaded -= RemoteContentsLoader_PartLoaded;
+                HideProgress();
             }
         }
 
@@ -650,6 +651,7 @@ namespace Kazyx.Uwpmm.Pages
             finally
             {
                 loader.PartLoaded -= RemoteContentsLoader_PartLoaded;
+                HideProgress();
             }
         }
 #endif
@@ -761,18 +763,17 @@ namespace Kazyx.Uwpmm.Pages
                     // TODO
                     ShowToast("[TMP] Remote storage is empty");
                 }
-                HideProgress();
             }
             catch (SoapException e)
             {
                 DebugUtil.Log("SoapException while loading: " + e.StatusCode);
-                HideProgress();
                 // TODO
                 ShowToast("[TMP] Image item search is failed");
             }
             finally
             {
                 loader.PartLoaded -= RemoteContentsLoader_PartLoaded;
+                HideProgress();
             }
         }
 
@@ -800,25 +801,23 @@ namespace Kazyx.Uwpmm.Pages
                 {
                     await loader.Load(ApplicationSettings.GetInstance().RemoteContentsSet, Canceller).ConfigureAwait(false);
                     DebugUtil.Log("RemoteApiContentsLoader completed");
-                    HideProgress();
                 }
                 catch (StorageNotSupportedException)
                 {
                     // This will never happen no camera devices.
                     DebugUtil.Log("storage scheme is not supported");
-                    HideProgress();
                     // ShowToast(SystemUtil.GetStringResource("Viewer_StorageAccessNotSupported"));
                 }
                 catch (NoStorageException)
                 {
                     DebugUtil.Log("No storages");
-                    HideProgress();
                     // ShowToast(SystemUtil.GetStringResource("Viewer_NoStorage"));
                     return;
                 }
                 finally
                 {
                     loader.PartLoaded -= RemoteContentsLoader_PartLoaded;
+                    HideProgress();
                 }
             }
             catch (Exception e)
@@ -1579,12 +1578,12 @@ namespace Kazyx.Uwpmm.Pages
             catch (Exception e)
             {
                 DebugUtil.Log(e.StackTrace);
-                HideProgress();
                 ShowToast(SystemUtil.GetStringResource("Viewer_FailedToRefreshContents"));
             }
             finally
             {
                 loader.PartLoaded -= RemoteContentsLoader_PartLoaded;
+                HideProgress();
             }
         }
 
