@@ -1664,6 +1664,8 @@ namespace Kazyx.Uwpmm.Pages
         private async void PlaybackLocalMovie(Thumbnail content)
         {
             ChangeProgressText(SystemUtil.GetStringResource("Progress_OpeningMovieStream"));
+            UpdateInnerState(ViewerState.LocalMoviePlayback);
+            PivotRoot.IsLocked = true;
 
             try
             {
@@ -1673,7 +1675,9 @@ namespace Kazyx.Uwpmm.Pages
             catch (Exception)
             {
                 ShowToast(SystemUtil.GetStringResource("Viewer_FailedPlaybackMovie"));
+                var unlock = DefaultPivotLockState();
                 HideProgress();
+                UpdateInnerState(ViewerState.LocalSingle);
             }
         }
 
@@ -1681,9 +1685,9 @@ namespace Kazyx.Uwpmm.Pages
         {
             UpdateInnerState(ViewerState.LocalSingle);
 
-            var task = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+            var task = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
-                await DefaultPivotLockState();
+                var unlock = DefaultPivotLockState();
                 LocalMoviePlayer.Stop();
                 LocalMovieDrawer.Visibility = Visibility.Collapsed;
             });
@@ -1700,8 +1704,11 @@ namespace Kazyx.Uwpmm.Pages
 
         void LocalMoviePlayer_MediaFailed(object sender, ExceptionRoutedEventArgs e)
         {
+            UpdateInnerState(ViewerState.LocalSingle);
+
             var task = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
+                var unlock = DefaultPivotLockState();
                 LocalMovieDrawer.Visibility = Visibility.Collapsed;
                 DebugUtil.Log("LocalMoviePlayer MediaFailed: " + e.ErrorMessage);
                 ShowToast(SystemUtil.GetStringResource("Viewer_FailedPlaybackMovie"));
@@ -1821,6 +1828,7 @@ namespace Kazyx.Uwpmm.Pages
     {
         LocalSingle,
         LocalStillPlayback,
+        LocalMoviePlayback,
         LocalMulti,
         LocalSelecting,
         RemoteUnsupported,
