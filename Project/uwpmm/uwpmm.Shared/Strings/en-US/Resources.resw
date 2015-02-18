@@ -1113,4 +1113,7 @@ Open gallary to find contents in your camera device.</value>
   <data name="Viewer_EmptyMediaServer" xml:space="preserve">
     <value>No contents in this media server.</value>
   </data>
+  <data name="Nfc_Result" xml:space="preserve">
+    <value>Copy Wi-Fi password to clipboard</value>
+  </data>
 </root>

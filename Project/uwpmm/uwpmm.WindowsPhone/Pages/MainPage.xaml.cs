@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -476,7 +477,7 @@ namespace Kazyx.Uwpmm.Pages
             InitializeAppSettingPanel();
             FramingGuideSurface.DataContext = ApplicationSettings.GetInstance();
             NfcAvailable.Visibility = Visibility.Collapsed;
-            WifiPassword.Visibility = Visibility.Collapsed;
+            NfcDataGrid.Visibility = Visibility.Collapsed;
             WifiPassword.Text = "";
         }
 
@@ -637,11 +638,16 @@ namespace Kazyx.Uwpmm.Pages
             await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
                 ShowToast("[TMP] CDS discovered: " + e.CdService.FriendlyName);
-                StartLiveviewGuide.Visibility = Visibility.Collapsed;
-                ConnectionGuide.Visibility = Visibility.Collapsed;
-                DlnaGuide.Visibility = Visibility.Visible;
+                if (SUPRESS_MEDIA_SERVER_DISCOVERY.All(name => name != e.CdService.FriendlyName))
+                {
+                    StartLiveviewGuide.Visibility = Visibility.Collapsed;
+                    ConnectionGuide.Visibility = Visibility.Collapsed;
+                    DlnaGuide.Visibility = Visibility.Visible;
+                }
             });
         }
+
+        private string[] SUPRESS_MEDIA_SERVER_DISCOVERY = {"DSC-QX10", "DSC-QX100"};
 
         bool OnSettingCameraDevice = false;
 
@@ -1212,7 +1218,7 @@ namespace Kazyx.Uwpmm.Pages
                             if (PivotRoot.SelectedIndex != 0) { return; }
 
                             WifiPassword.Text = r.Password;
-                            WifiPassword.Visibility = Visibility.Visible;
+                            NfcDataGrid.Visibility = Visibility.Visible;
 
                             var sb = new StringBuilder();
                             sb.Append(SystemUtil.GetStringResource("Message_NFC_succeed"));
