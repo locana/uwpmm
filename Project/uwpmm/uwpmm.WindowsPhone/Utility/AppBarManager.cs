@@ -146,10 +146,8 @@ namespace Kazyx.Uwpmm.Utility
 
     public enum AppBarItem
     {
-        ControlPanel,
-        AppSetting,
-        AboutPage,
         PlaybackPage,
+        AboutPage,
         LoggerPage,
         CancelTouchAF,
         DownloadMultiple,
@@ -162,5 +160,7 @@ namespace Kazyx.Uwpmm.Utility
         HideDetailInfo,
         RotateLeft,
         Refresh,
+        AppSetting,
+        ControlPanel,
     }
 }
