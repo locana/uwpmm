@@ -128,7 +128,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\Logo.scale-240.png" />
-    <Content Include="Assets\NFC_Forum_N-Mark_RGB.png" />
     <Content Include="Assets\SmallLogo.scale-240.png" />
     <Content Include="Assets\SplashScreen.scale-240.png" />
     <Content Include="Assets\Splash_screen.png" />
