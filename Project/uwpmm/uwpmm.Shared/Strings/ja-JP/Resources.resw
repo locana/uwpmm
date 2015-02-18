@@ -1029,9 +1029,13 @@ PlayMemories Camera Appsストアで最新版にアップデートしてくだ�
     <value>カメラを検索しています。まだWi-Fiでカメラに接続していない場合は接続してください。</value>
   </data>
   <data name="FoundDlnaDeviceGuide" xml:space="preserve">
-    <value>DLNAサーバが見つかりました。ギャラリーを開くとカメラ内の画像が参照できます。</value>
+    <value>メディアサーバを発見しました。
+ギャラリーを開くとカメラ内の画像が参照できます。</value>
   </data>
   <data name="AppBar_Refresh" xml:space="preserve">
     <value>再読み込み</value>
+  </data>
+  <data name="Viewer_EmptyMediaServer" xml:space="preserve">
+    <value>表示するコンテンツがメディアサーバにありません</value>
   </data>
 </root>

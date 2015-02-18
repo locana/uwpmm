@@ -283,13 +283,13 @@ namespace Kazyx.Uwpmm.Pages
             }
             ChangeProgressText("processing.");
 
-
             UpdateInnerState(ViewerState.LocalSingle);
 
             Canceller = new CancellationTokenSource();
 
             InitializeRemoteGridContents();
             UnsupportedMessage.Visibility = Visibility.Collapsed;
+            NoContentsMessage.Visibility = Visibility.Collapsed;
 
             RemoteGridSource = new AlbumGroupCollection();
             LocalGridSource = new AlbumGroupCollection(false);
@@ -710,8 +710,7 @@ namespace Kazyx.Uwpmm.Pages
             }
             catch
             {
-                //TODO
-                ShowToast("[TMP] Failed to load local contents.");
+                ShowToast(SystemUtil.GetStringResource("Viewer_NoCameraRoll"));
             }
             finally
             {
@@ -854,6 +853,8 @@ namespace Kazyx.Uwpmm.Pages
         private async Task InitializeRemote()
         {
             IsRemoteInitialized = true;
+            UnsupportedMessage.Visibility = Visibility.Collapsed;
+            NoContentsMessage.Visibility = Visibility.Collapsed;
 
             if (TargetDevice != null)
             {
@@ -878,15 +879,16 @@ namespace Kazyx.Uwpmm.Pages
                 DebugUtil.Log("DlnaContentsLoader completed");
                 if (RemoteGridSource.Count == 0)
                 {
-                    // TODO
-                    ShowToast("[TMP] Remote storage is empty");
+                    var task = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                    {
+                        NoContentsMessage.Visibility = Visibility.Visible;
+                    });
                 }
             }
             catch (SoapException e)
             {
                 DebugUtil.Log("SoapException while loading: " + e.StatusCode);
-                // TODO
-                ShowToast("[TMP] Image item search is failed");
+                ShowToast(SystemUtil.GetStringResource("Viewer_FailedToRefreshContents"));
             }
             finally
             {
@@ -918,6 +920,13 @@ namespace Kazyx.Uwpmm.Pages
                 {
                     await loader.Load(ApplicationSettings.GetInstance().RemoteContentsSet, Canceller).ConfigureAwait(false);
                     DebugUtil.Log("RemoteApiContentsLoader completed");
+                    if (RemoteGridSource.Count == 0)
+                    {
+                        var task = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                        {
+                            NoContentsMessage.Visibility = Visibility.Visible;
+                        });
+                    }
                 }
                 catch (StorageNotSupportedException)
                 {
@@ -954,7 +963,6 @@ namespace Kazyx.Uwpmm.Pages
                 if (RemoteGridSource != null)
                 {
                     DebugUtil.Log("Adding " + e.Contents.Count + " contents to RemoteGrid");
-                    // RemoteGridSource.AddRange(e.Contents);
                     bool updateAppBarAfterAdded = false;
                     if (RemoteGridSource.Count == 0)
                     {
@@ -1245,7 +1253,7 @@ namespace Kazyx.Uwpmm.Pages
         {
             if (content == null || content.Source == null || content.Source.ContentType == null)
             {
-                ShowToast("Information for playback is lacking.");
+                ShowToast(SystemUtil.GetStringResource("Viewer_UnplayableContent"));
                 return;
             }
 
@@ -1664,8 +1672,7 @@ namespace Kazyx.Uwpmm.Pages
             }
             catch (Exception)
             {
-                // TODO show error toast
-                DebugUtil.Log("Invalid URL: " + content.Source.OriginalUrl);
+                ShowToast(SystemUtil.GetStringResource("Viewer_FailedPlaybackMovie"));
                 HideProgress();
             }
         }
@@ -1696,8 +1703,8 @@ namespace Kazyx.Uwpmm.Pages
             var task = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
                 LocalMovieDrawer.Visibility = Visibility.Collapsed;
-                // TODO show error toast
                 DebugUtil.Log("LocalMoviePlayer MediaFailed: " + e.ErrorMessage);
+                ShowToast(SystemUtil.GetStringResource("Viewer_FailedPlaybackMovie"));
                 HideProgress();
             });
         }

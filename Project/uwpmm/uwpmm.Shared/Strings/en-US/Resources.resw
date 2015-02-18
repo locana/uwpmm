@@ -1107,6 +1107,10 @@ Please update to the latest at PlayMemories Camera Apps store.</value>
     <value>Searching camera device. If this phone is not connected to your camera yet, open Wi-Fi setting and connet first.</value>
   </data>
   <data name="FoundDlnaDeviceGuide" xml:space="preserve">
-    <value>DLNA server is found. Open CameraRoll to find contents in your camera device.</value>
+    <value>Media server is online.
+Open gallary to find contents in your camera device.</value>
+  </data>
+  <data name="Viewer_EmptyMediaServer" xml:space="preserve">
+    <value>No contents in this media server.</value>
   </data>
 </root>

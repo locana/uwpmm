@@ -147,7 +147,12 @@
                                Text="{Binding [Viewer_StorageAccessNotSupportedDetail], Source={StaticResource LocalizedStrings}}"
                                TextWrapping="Wrap"
                                VerticalAlignment="Center" Margin="36,0"
-                               Style="{StaticResource SubheaderTextBlockStyle}"/>
+                               Style="{StaticResource BaseTextBlockStyle}"/>
+                    <TextBlock x:Name="NoContentsMessage"
+                               Text="{Binding [Viewer_EmptyMediaServer], Source={StaticResource LocalizedStrings}}"
+                               TextWrapping="Wrap"
+                               VerticalAlignment="Center" Margin="36,0"
+                               Style="{StaticResource BaseTextBlockStyle}"/>
                     <SemanticZoom x:Name="RemoteSemanticZoom">
                         <SemanticZoom.ZoomedInView>
                             <GridView x:Name="RemoteGrid"
