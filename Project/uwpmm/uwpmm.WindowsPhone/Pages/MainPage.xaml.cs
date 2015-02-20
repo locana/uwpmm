@@ -527,17 +527,22 @@ namespace Kazyx.Uwpmm.Pages
         {
             if (target != null)
             {
-                await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
-                {
-                    await Task.Delay(TimeSpan.FromMilliseconds(500));
-                    PivotRoot.IsLocked = true;
-                });
+                await LockRootPivotASync();
             }
             else
             {
                 EmptyAppBar();
                 SearchDevice();
             }
+        }
+
+        private async Task LockRootPivotASync()
+        {
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+            {
+                await Task.Delay(TimeSpan.FromMilliseconds(500));
+                PivotRoot.IsLocked = true;
+            });
         }
 
         private void LiveViewPageUnloaded()
@@ -679,7 +684,7 @@ namespace Kazyx.Uwpmm.Pages
 
             this.target = target;
 
-            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
             {
                 ProcessingDisplay.Visibility = Visibility.Collapsed;
                 screen_view_data = new LiveviewScreenViewData(target);
@@ -691,7 +696,17 @@ namespace Kazyx.Uwpmm.Pages
 
                 target.Status.PropertyChanged += Status_PropertyChanged;
                 HideProgress();
-                GoToLiveviewScreen();
+
+                if (PivotRoot.SelectedIndex == 0)
+                {
+                    GoToLiveviewScreen();
+                }
+                else
+                {
+                    // if already on shooting pivot, just lock it.
+                    await LockRootPivotASync();
+                }
+
                 CreateCameraControlAppBar();
 
                 ControlPanel.Children.Clear();
