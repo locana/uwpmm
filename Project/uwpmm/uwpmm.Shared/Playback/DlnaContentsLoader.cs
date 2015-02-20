@@ -253,7 +253,7 @@ namespace Kazyx.Uwpmm.Playback
             if (sum > MAX_AUTO_LOAD_THUMBNAILS)
             {
                 var remainingNum = contents.TotalMatches - contents.NumberReturned;
-                var remaining = new RemainingContentsHolder(containerId, containerName, UpnpDevice.UDN, loadedForLayer, contents.TotalMatches - loadedForLayer);
+                var remaining = new RemainingContentsHolder(containerId, FormatDateTitle(containerName), UpnpDevice.UDN, loadedForLayer, contents.TotalMatches - loadedForLayer);
                 var list = new List<Thumbnail>();
                 list.Add(remaining);
                 OnPartLoaded(list);
