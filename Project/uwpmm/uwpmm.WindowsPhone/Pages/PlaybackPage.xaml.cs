@@ -676,8 +676,7 @@ namespace Kazyx.Uwpmm.Pages
                     {
                         foreach (var url in status.PictureUrls)
                         {
-                            // TODO If geo location is enabled, position is requried.
-                            MediaDownloader.Instance.EnqueuePostViewImage(new Uri(url, UriKind.Absolute), null);
+                            MediaDownloader.Instance.EnqueuePostViewImage(new Uri(url, UriKind.Absolute), GeopositionManager.INSTANCE.LatestPosition);
                         }
                     }
                     break;
