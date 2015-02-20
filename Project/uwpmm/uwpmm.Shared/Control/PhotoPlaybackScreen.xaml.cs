@@ -120,8 +120,8 @@ namespace Kazyx.Uwpmm.Control
                 transform.ScaleY = LimitToRange(transform.ScaleY * e.Delta.Scale, MinScale, MaxScale);
 
                 var diagonalSize = Math.Sqrt(Math.Pow(element.RenderSize.Width, 2) + Math.Pow(element.RenderSize.Height, 2)) * transform.ScaleX;
-                var translateLimitX = diagonalSize / 3 + parent.ActualWidth / 2;
-                var translateLimitY = diagonalSize / 4 + parent.ActualHeight / 2.2;
+                var translateLimitX = diagonalSize / 3 + parent.ActualWidth / 3;
+                var translateLimitY = diagonalSize / 4 + parent.ActualHeight / 3;
                 transform.TranslateX = LimitToRange(transform.TranslateX + e.Delta.Translation.X, -translateLimitX, translateLimitX);
                 transform.TranslateY = LimitToRange(transform.TranslateY + e.Delta.Translation.Y, -translateLimitY, translateLimitY);
             }
