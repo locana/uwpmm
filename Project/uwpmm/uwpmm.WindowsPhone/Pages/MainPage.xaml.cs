@@ -46,7 +46,7 @@ namespace Kazyx.Uwpmm.Pages
     {
         private NavigationHelper navigationHelper;
         private ObservableDictionary defaultViewModel = new ObservableDictionary();
-        private LiveviewScreenViewData screenViewData;
+        private LiveviewScreenViewData screen_view_data;
         private HistogramCreator HistogramCreator;
         private StatusBar statusBar = StatusBar.GetForCurrentView();
 
@@ -421,7 +421,7 @@ namespace Kazyx.Uwpmm.Pages
                     ShowError(SystemUtil.GetStringResource("ErrorMessage_LocationAccessUnauthorized"));
                 }
             }
-            screenViewData.GeopositionEnabled = true;
+            screen_view_data.GeopositionEnabled = true;
         }
 
         private void DisableGeolocator()
@@ -441,12 +441,12 @@ namespace Kazyx.Uwpmm.Pages
             }
 
             CachedPosition = null;
-            screenViewData.GeopositionEnabled = false;
+            screen_view_data.GeopositionEnabled = false;
         }
 
         void _Geolocator_StatusChanged(Geolocator sender, StatusChangedEventArgs args)
         {
-            screenViewData.GeopositionStatus = args.Status;
+            screen_view_data.GeopositionStatus = args.Status;
             if (args.Status != PositionStatus.Ready)
             {
                 this.CachedPosition = null;
@@ -647,7 +647,7 @@ namespace Kazyx.Uwpmm.Pages
             });
         }
 
-        private string[] SUPRESS_MEDIA_SERVER_DISCOVERY = {"DSC-QX10", "DSC-QX100"};
+        private string[] SUPRESS_MEDIA_SERVER_DISCOVERY = { "DSC-QX10", "DSC-QX100" };
 
         bool OnSettingCameraDevice = false;
 
@@ -682,10 +682,11 @@ namespace Kazyx.Uwpmm.Pages
             await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
                 ProcessingDisplay.Visibility = Visibility.Collapsed;
-                screenViewData = new LiveviewScreenViewData(target);
-                Liveview.DataContext = screenViewData;
+                screen_view_data = new LiveviewScreenViewData(target);
+                Liveview.DataContext = screen_view_data;
+                SetLiveviewDataContext(screen_view_data);
                 LiveviewScreen.Visibility = Visibility.Visible;
-                ShutterButton.DataContext = screenViewData;
+                ShutterButton.DataContext = screen_view_data;
                 BatteryStatusDisplay.DataContext = target.Status.BatteryInfo;
 
                 target.Status.PropertyChanged += Status_PropertyChanged;
@@ -704,7 +705,7 @@ namespace Kazyx.Uwpmm.Pages
                 SetupFocusFrame(ApplicationSettings.GetInstance().RequestFocusFrameInfo);
                 _FocusFrameSurface.ClearFrames();
 
-                ShootingParamSliders.DataContext = new ShootingParamViewData() { Status = target.Status, Liveview = screenViewData };
+                ShootingParamSliders.DataContext = new ShootingParamViewData() { Status = target.Status, Liveview = screen_view_data };
 
                 if (ApplicationSettings.GetInstance().GeotagEnabled) { EnableGeolocator(); }
                 else { DisableGeolocator(); }
@@ -842,7 +843,7 @@ namespace Kazyx.Uwpmm.Pages
         private void LiveviewImage_Loaded(object sender, RoutedEventArgs e)
         {
             var image = sender as Image;
-            liveview_data.ScreenViewData = screenViewData;
+            SetLiveviewDataContext(screen_view_data);
             image.DataContext = liveview_data;
             liveview.JpegRetrieved += liveview_JpegRetrieved;
             liveview.FocusFrameRetrieved += liveview_FocusFrameRetrieved;
@@ -857,6 +858,15 @@ namespace Kazyx.Uwpmm.Pages
             liveview.JpegRetrieved -= liveview_JpegRetrieved;
             liveview.FocusFrameRetrieved -= liveview_FocusFrameRetrieved;
             liveview.Closed -= liveview_Closed;
+        }
+
+        void SetLiveviewDataContext(LiveviewScreenViewData data)
+        {
+            if (liveview_data != null && data != null)
+            {
+                DebugUtil.Log("Setting liveview data context.");
+                liveview_data.ScreenViewData = data;
+            }
         }
 
         private async void ZoomOutButton_Click(object sender, RoutedEventArgs e)
