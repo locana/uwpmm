@@ -216,7 +216,6 @@ namespace Kazyx.Uwpmm.Pages
 
         CommandBarManager _CommandBarManager = new CommandBarManager();
         Geolocator _Geolocator;
-        Geoposition CachedPosition = null;
         bool CdsDeviceFound = false;
 
         bool ControlPanelDisplayed = false;
@@ -440,7 +439,7 @@ namespace Kazyx.Uwpmm.Pages
                 }
             }
 
-            CachedPosition = null;
+            GeopositionManager.INSTANCE.Clear();
             screen_view_data.GeopositionEnabled = false;
         }
 
@@ -449,14 +448,13 @@ namespace Kazyx.Uwpmm.Pages
             screen_view_data.GeopositionStatus = args.Status;
             if (args.Status != PositionStatus.Ready)
             {
-                this.CachedPosition = null;
+                GeopositionManager.INSTANCE.Clear();
             }
         }
 
         private void _Geolocator_PositionChanged(Geolocator sender, PositionChangedEventArgs args)
         {
-            CachedPosition = args.Position;
-            DebugUtil.Log("position: " + args.Position.Coordinate.Point.Position.Longitude + " " + args.Position.Coordinate.Point.Position.Latitude);
+            GeopositionManager.INSTANCE.LatestPosition = args.Position;
         }
 
         void InitializeUI()
@@ -779,7 +777,7 @@ namespace Kazyx.Uwpmm.Pages
                     {
                         foreach (var url in status.PictureUrls)
                         {
-                            MediaDownloader.Instance.EnqueuePostViewImage(new Uri(url, UriKind.Absolute), CachedPosition);
+                            MediaDownloader.Instance.EnqueuePostViewImage(new Uri(url, UriKind.Absolute), GeopositionManager.INSTANCE.LatestPosition);
                         }
                     }
                     break;
@@ -794,7 +792,7 @@ namespace Kazyx.Uwpmm.Pages
                     {
                         foreach (var result in status.ContShootingResult)
                         {
-                            MediaDownloader.Instance.EnqueuePostViewImage(new Uri(result.PostviewUrl, UriKind.Absolute), CachedPosition);
+                            MediaDownloader.Instance.EnqueuePostViewImage(new Uri(result.PostviewUrl, UriKind.Absolute), GeopositionManager.INSTANCE.LatestPosition);
                         }
                     }
                     break;
@@ -1004,7 +1002,7 @@ namespace Kazyx.Uwpmm.Pages
                 }
                 try
                 {
-                    await SequentialOperation.TakePicture(target.Api, CachedPosition);
+                    await SequentialOperation.TakePicture(target.Api, GeopositionManager.INSTANCE.LatestPosition);
                     if (!ApplicationSettings.GetInstance().IsPostviewTransferEnabled)
                     {
                         ShowToast(SystemUtil.GetStringResource("Message_ImageCapture_Succeed"));
