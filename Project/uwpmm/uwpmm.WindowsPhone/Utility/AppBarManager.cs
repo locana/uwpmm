@@ -120,13 +120,19 @@ namespace Kazyx.Uwpmm.Utility
             foreach (AppBarItem item in EnabledItems[AppBarItemType.WithIcon])
             {
                 var button = NewButton(item);
-                button.Click += EventHolder[item];
+                if (EventHolder.ContainsKey(item))
+                {
+                    button.Click += EventHolder[item];
+                }
                 bar.PrimaryCommands.Add(button);
             }
             foreach (AppBarItem item in EnabledItems[AppBarItemType.OnlyText])
             {
                 var button = NewButton(item);
-                button.Click += EventHolder[item];
+                if (EventHolder.ContainsKey(item))
+                {
+                    button.Click += EventHolder[item];
+                }
                 bar.SecondaryCommands.Add(button);
             }
             return bar;
