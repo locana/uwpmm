@@ -193,7 +193,6 @@ namespace Kazyx.Uwpmm.Pages
 
         private async void TearDownCurrentTarget()
         {
-            LiveviewScreen.Visibility = Visibility.Collapsed;
 
             if (!PivotChangedByBackkey) { SearchDevice(); }
             LayoutRoot.DataContext = null;
@@ -205,6 +204,7 @@ namespace Kazyx.Uwpmm.Pages
                 _target.Observer.Stop();
                 _target.Status.PropertyChanged -= Status_PropertyChanged;
                 target = null;
+                LiveviewScreen.Visibility = Visibility.Collapsed;
             }
             else
             {
