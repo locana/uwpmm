@@ -357,11 +357,11 @@ namespace Kazyx.Uwpmm.Pages
             DebugUtil.Log("NetworkObserver_CameraDiscovered: " + e.CameraDevice.FriendlyName);
             NetworkObserver.INSTANCE.CdsDiscovered -= NetworkObserver_CdsDiscovered;
             NetworkObserver.INSTANCE.CameraDiscovered -= NetworkObserver_CameraDiscovered;
-            await Dispatcher.RunAsync(CoreDispatcherPriority.High, () =>
+            await Dispatcher.RunAsync(CoreDispatcherPriority.High, async () =>
             {
                 TargetDevice = e.CameraDevice;
+                var task = SetUpRemoteApiDevice();
             });
-            await SetUpRemoteApiDevice();
             await DefaultPivotLockState();
         }
 
@@ -671,15 +671,6 @@ namespace Kazyx.Uwpmm.Pages
                 case "Storages":
                     UpdateStorageInfo();
                     break;
-                case "PictureUrls":
-                    if (ApplicationSettings.GetInstance().IsPostviewTransferEnabled)
-                    {
-                        foreach (var url in status.PictureUrls)
-                        {
-                            MediaDownloader.Instance.EnqueuePostViewImage(new Uri(url, UriKind.Absolute), GeopositionManager.INSTANCE.LatestPosition);
-                        }
-                    }
-                    break;
             }
         }
 
@@ -852,8 +843,11 @@ namespace Kazyx.Uwpmm.Pages
         private async Task InitializeRemote()
         {
             IsRemoteInitialized = true;
-            UnsupportedMessage.Visibility = Visibility.Collapsed;
-            NoContentsMessage.Visibility = Visibility.Collapsed;
+            var task = Dispatcher.RunAsync(CoreDispatcherPriority.High, () =>
+            {
+                UnsupportedMessage.Visibility = Visibility.Collapsed;
+                NoContentsMessage.Visibility = Visibility.Collapsed;
+            });
 
             if (TargetDevice != null)
             {
