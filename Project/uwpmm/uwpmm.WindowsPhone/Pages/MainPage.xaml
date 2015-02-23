@@ -70,7 +70,13 @@
 
                 <PivotItem Name="Liveview" Margin="0">
                     <Grid Name="LiveviewScreenWrapper">
-                        <Grid Name="LiveviewScreen">
+                        <!-- Dummy processing screen; displayed before connected. -->
+                        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Center" Height="80" >
+                            <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Opacity="0.5"
+                                       Fill="{ThemeResource ApplicationPageBackgroundThemeBrush}"/>
+                            <ProgressBar HorizontalAlignment="Stretch" IsIndeterminate="True"/>
+                        </Grid>
+                        <Grid Name="LiveviewScreen" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
                             <Image x:Name="LiveviewImage" Source="{Binding Image, Mode=OneWay}" Loaded="LiveviewImage_Loaded" Unloaded="LiveviewImage_Unloaded" SizeChanged="LiveviewImage_SizeChanged" 
                                Visibility="{Binding Path=ScreenViewData.LiveviewImageDisplayed, FallbackValue=Collapsed, Converter={StaticResource B2VConverter}}"/>
                             <Image x:Name="AudioDummyScreen" Source="/Assets/Screen/audio_locana.png" Margin="30" 
@@ -245,7 +251,7 @@
                                 </ScrollViewer.Resources>
                                 <StackPanel x:Name="ControlPanel" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="Collapsed"/>
                             </ScrollViewer>
-                            
+
                             <Grid Name="AppSettingPanel" Visibility="Collapsed" >
                                 <Rectangle Fill="{ThemeResource ApplicationPageBackgroundThemeBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Opacity="0.9" Margin="-12,-36" />
                                 <ScrollViewer Margin="0,12,0,12">
@@ -261,11 +267,12 @@
                                     </Storyboard>
                                 </Grid.Resources>
                             </Grid>
-                        </Grid>
-                        <Grid Name="ProcessingDisplay" HorizontalAlignment="Stretch" VerticalAlignment="Center" Height="80" Visibility="{Binding Processing, Mode=OneWay, FallbackValue=Collapsed, Converter={StaticResource B2VConverter}}">
-                            <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Opacity="0.5"
+                            <Grid Name="ProcessingDisplay" HorizontalAlignment="Stretch" VerticalAlignment="Center" Height="80" 
+                              Visibility="{Binding Processing, Mode=OneWay, FallbackValue=Collapsed, Converter={StaticResource B2VConverter}}">
+                                <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Opacity="0.5"
                                        Fill="{ThemeResource ApplicationPageBackgroundThemeBrush}"/>
-                            <ProgressBar HorizontalAlignment="Stretch" IsIndeterminate="True"/>
+                                <ProgressBar HorizontalAlignment="Stretch" IsIndeterminate="True"/>
+                            </Grid>
                         </Grid>
                     </Grid>
                 </PivotItem>

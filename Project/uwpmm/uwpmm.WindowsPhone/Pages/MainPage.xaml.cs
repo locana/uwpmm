@@ -661,7 +661,6 @@ namespace Kazyx.Uwpmm.Pages
 
             await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
-                ProcessingDisplay.Visibility = Visibility.Visible;
                 DlnaGuide.Visibility = Visibility.Collapsed;
                 ConnectionGuide.Visibility = Visibility.Collapsed;
                 ChangeProgressText(SystemUtil.GetStringResource("ProgressMessageConnecting"));
@@ -684,7 +683,6 @@ namespace Kazyx.Uwpmm.Pages
 
             await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
             {
-                ProcessingDisplay.Visibility = Visibility.Collapsed;
                 screen_view_data = new LiveviewScreenViewData(target);
                 Liveview.DataContext = screen_view_data;
                 SetLiveviewDataContext(screen_view_data);

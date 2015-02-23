@@ -247,7 +247,6 @@ namespace Kazyx.Uwpmm.DataModel
         {
             get
             {
-
                 if (Device.Status == null) { return true; }
                 switch (Device.Status.Status)
                 {
