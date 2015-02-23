@@ -344,7 +344,7 @@ namespace Kazyx.Uwpmm.Pages
                 var image = new BitmapImage();
                 image.SetSource(thumb);
                 var path = file.Path.Split('\\');
-                var name = '\\' + path[path.Length - 2] + '\\' + path[path.Length - 1];
+                var name = "\r\n" + path[path.Length - 1];
                 var text = SystemUtil.GetStringResource("Message_ImageDL_Succeed");
                 switch (tagResult)
                 {

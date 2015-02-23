@@ -172,7 +172,7 @@
     <value>Failed to save the picture. Please try again with smaller image size to transfer.</value>
   </data>
   <data name="Message_ImageDL_Succeed" xml:space="preserve">
-    <value>The picture has been saved successfully!</value>
+    <value>Saved successfully!</value>
   </data>
   <data name="Setting_PostViewImageSize" xml:space="preserve">
     <value>Image size to receive</value>
@@ -223,7 +223,7 @@
     <value>Audio rec</value>
   </data>
   <data name="Message_ImageCapture_Succeed" xml:space="preserve">
-    <value>The picture has been captured successfully!</value>
+    <value>Captured successfully!</value>
   </data>
   <data name="IntervalSetting" xml:space="preserve">
     <value>Interval shooting mode</value>
@@ -482,7 +482,7 @@ Please check internet connection status</value>
     <value>Recorded</value>
   </data>
   <data name="Message_ImageDL_Succeed_withGeotag" xml:space="preserve">
-    <value>The picture has been saved with location info!</value>
+    <value>Saved with location info!</value>
   </data>
   <data name="Minute_Unit" xml:space="preserve">
     <value>min.</value>
