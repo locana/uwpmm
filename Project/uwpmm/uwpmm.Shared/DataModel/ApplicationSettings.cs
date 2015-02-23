@@ -1,7 +1,9 @@
 ﻿using Kazyx.Uwpmm.Control;
 using Kazyx.Uwpmm.Playback;
 using Kazyx.Uwpmm.Utility;
+using System;
 using Windows.UI;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 
@@ -10,6 +12,7 @@ namespace Kazyx.Uwpmm.DataModel
     public class ApplicationSettings : ObservableBase
     {
         private static ApplicationSettings sSettings = new ApplicationSettings();
+        public Action SettingUpdated;
 
         private ApplicationSettings()
         {
@@ -67,7 +70,6 @@ namespace Kazyx.Uwpmm.DataModel
         }
 
         private bool _IsIntervalShootingEnabled = false;
-
         public bool IsIntervalShootingEnabled
         {
             set
@@ -79,6 +81,7 @@ namespace Kazyx.Uwpmm.DataModel
 
                     NotifyChangedOnUI("IsIntervalShootingEnabled");
                     NotifyChangedOnUI("IntervalTimeVisibility");
+
 
                     // exclusion
                     if (value)
@@ -326,6 +329,12 @@ namespace Kazyx.Uwpmm.DataModel
                     NotifyChangedOnUI("RemoteContentsSet");
                 }
             }
+        }
+
+        protected override void NotifyChangedOnUI(string name, CoreDispatcherPriority priority = CoreDispatcherPriority.Normal)
+        {
+            base.NotifyChangedOnUI(name, priority);
+            SettingUpdated.Raise();
         }
     }
 }

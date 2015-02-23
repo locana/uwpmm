@@ -9,7 +9,7 @@ namespace Kazyx.Uwpmm.DataModel
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        protected async void NotifyChangedOnUI(string name, CoreDispatcherPriority priority = CoreDispatcherPriority.Normal)
+        protected async virtual void NotifyChangedOnUI(string name, CoreDispatcherPriority priority = CoreDispatcherPriority.Normal)
         {
             var dispatcher = SystemUtil.GetCurrentDispatcher();
             if (dispatcher == null) { return; }
