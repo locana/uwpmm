@@ -217,7 +217,7 @@
     <value>ON</value>
   </data>
   <data name="PostviewTransferSetting" xml:space="preserve">
-    <value>Receive captured pictures</value>
+    <value>Sync fresh pictures</value>
   </data>
   <data name="ShootModeAudio" xml:space="preserve">
     <value>Audio rec</value>
@@ -270,9 +270,6 @@
   <data name="ConnectedDevice" xml:space="preserve">
     <value>Connected to _ssid_</value>
   </data>
-  <data name="NFC_iiwake" xml:space="preserve">
-    <value>Please ignore incorrect system prompt!!</value>
-  </data>
   <data name="MessageCaption_NFC_Succeed" xml:space="preserve">
     <value>Opened successfully!</value>
   </data>
@@ -283,10 +280,10 @@
     <value>Application settings</value>
   </data>
   <data name="DisplayTakeImageButtonSetting" xml:space="preserve">
-    <value>Display shutter button on the screen.</value>
+    <value>Display shutter button on the screen</value>
   </data>
   <data name="Guide_DisplayTakeImageButtonSetting" xml:space="preserve">
-    <value>You can invoke remote shutter with your phone's hardware shutter key.</value>
+    <value>You can also invoke remote shutter with your phone's hardware shutter key.</value>
   </data>
   <data name="AppBar_AppSetting" xml:space="preserve">
     <value>Settings</value>
@@ -317,7 +314,7 @@ Please check internet connection status</value>
     <value>OK</value>
   </data>
   <data name="Guide_ReceiveCapturedImage" xml:space="preserve">
-    <value>Recieve pictures soon after taken and register them to Camera Roll. (Disabled while interval recording is going on.)</value>
+    <value>Download fresh pictures to Pictures folder. This option is inactive while interval recording is going on.</value>
   </data>
   <data name="AppBar_ControlPanel" xml:space="preserve">
     <value>Ctrl Panel</value>
@@ -496,9 +493,6 @@ Please check internet connection status</value>
   <data name="MovieFormatMode_XAVCS" xml:space="preserve">
     <value>XAVC S</value>
   </data>
-  <data name="PostviewTransferSetting1" xml:space="preserve">
-    <value>Receive captured pictures</value>
-  </data>
   <data name="ProgressMessageConnecting" xml:space="preserve">
     <value>Preparing connection...</value>
   </data>
@@ -599,7 +593,7 @@ Please check internet connection status</value>
     <value>Unavailable to access the function now. Please restart from shooting screen again.</value>
   </data>
   <data name="Viewer_NoCameraRoll" xml:space="preserve">
-    <value>Failed to load camera roll contents</value>
+    <value>Failed to load local contents</value>
   </data>
   <data name="Viewer_NoStorage" xml:space="preserve">
     <value>No storage seems to be attached</value>
@@ -620,7 +614,8 @@ Please check internet connection status</value>
     <value>Enable geotagging</value>
   </data>
   <data name="AddGeotag_guide" xml:space="preserve">
-    <value>Add geotag to the received photos. Be careful of your privacy when you share them. Note that cellular network is additionally required to obtain location info in some phone devices.﻿</value>
+    <value>Add geotag to the received fresh photos.
+Cellular network is additionally required to obtain location info on some devices.﻿</value>
   </data>
   <data name="AppBar_Delete" xml:space="preserve">
     <value>Delete</value>
@@ -969,13 +964,13 @@ Please update to the latest at PlayMemories Camera Apps store.</value>
     <value>Zoom setting</value>
   </data>
   <data name="Guide_FocusFrameDisplay" xml:space="preserve">
-    <value>Request to the camera to send focus frame information. This may cause performance issue on some devices.</value>
+    <value>Request to send focus frame information. This may cause performance issue on some devices.</value>
   </data>
   <data name="Guide_FramingGrids" xml:space="preserve">
     <value>Draw lines to assist photo composition.</value>
   </data>
   <data name="Guide_Histogram" xml:space="preserve">
-    <value>Analyze and display RGB histogram. This may cause performance issue on some devices.</value>
+    <value>Display RGB histogram of finder view. This may cause performance issue on some devices.</value>
   </data>
   <data name="Guide_PrioritizeOriginalSize" xml:space="preserve">
     <value>2M size images prior to the original by default.</value>

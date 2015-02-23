@@ -124,7 +124,8 @@
     <value>位置情報を付加する</value>
   </data>
   <data name="AddGeotag_guide" xml:space="preserve">
-    <value>カメラから取得した写真に位置情報を付加します。プライバシーにはご注意ください。</value>
+    <value>カメラから取得した最新の写真に位置情報を付加します。
+モバイルネットワークが必要な場合があります。</value>
   </data>
   <data name="Aperture" xml:space="preserve">
     <value>絞り</value>
@@ -711,9 +712,6 @@ PlayMemories Camera Appsストアで最新版にアップデートしてくだ�
   <data name="MovieQuality" xml:space="preserve">
     <value>動画画質</value>
   </data>
-  <data name="NFC_iiwake" xml:space="preserve">
-    <value>誤ったシステムエラーメッセージが表示されることがあります。</value>
-  </data>
   <data name="Off" xml:space="preserve">
     <value>オフ</value>
   </data>
@@ -897,7 +895,7 @@ PlayMemories Camera Appsストアで最新版にアップデートしてくだ�
     <value>この機能は現在使用できません。一度撮影画面に戻ってから再度お試しください。</value>
   </data>
   <data name="Viewer_NoCameraRoll" xml:space="preserve">
-    <value>カメラロール内コンテンツのロードに失敗しました</value>
+    <value>ローカルコンテンツのロードに失敗しました</value>
   </data>
   <data name="Viewer_NoStorage" xml:space="preserve">
     <value>メモリカードがセットされていないようです</value>
