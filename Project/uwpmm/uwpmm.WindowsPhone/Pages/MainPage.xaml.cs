@@ -324,6 +324,23 @@ namespace Kazyx.Uwpmm.Pages
                 catch (RemoteApiException) { }
             };
 
+            ApplicationSettings.GetInstance().PropertyChanged += (s, args) =>
+            {
+                switch (args.PropertyName)
+                {
+                    case "IsIntervalShootingEnabled":
+                        if (!ApplicationSettings.GetInstance().IsIntervalShootingEnabled)
+                        {
+                            // When periodical shooting is turned off, stop.
+                            if (PeriodicalShootingTask != null && PeriodicalShootingTask.IsRunning)
+                            {
+                                PeriodicalShootingTask.Stop();
+                            }
+                        }
+                        break;
+                }
+            };
+
             InitializeUI();
             InitializeProximityDevice();
 

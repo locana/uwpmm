@@ -65,6 +65,11 @@ namespace Kazyx.Uwpmm.DataModel
                 NotifyChangedOnUI("IsShootingParamSettingAvailable");
                 NotifyChangedOnUI("IsProgramShiftAvailable");
             };
+
+            ApplicationSettings.GetInstance().PropertyChanged += (sender, args) =>
+            {
+                NotifyChangedOnUI("ShutterButtonImage");
+            };
         }
 
         private static readonly BitmapImage StillImage = new BitmapImage(new Uri("ms-appx:///Assets/LiveviewScreen/Camera.png", UriKind.Absolute));
@@ -90,6 +95,8 @@ namespace Kazyx.Uwpmm.DataModel
         private static readonly BitmapImage AvailableMediaImage = new BitmapImage(new Uri("ms-appx:///Assets/LiveviewScreen/memory_card.png", UriKind.Absolute));
         private static readonly BitmapImage NoMediaImage = new BitmapImage(new Uri("ms-appx:///Assets/LiveviewScreen/no_memory_card.png", UriKind.Absolute));
 
+
+
         public BitmapImage ShutterButtonImage
         {
             get
@@ -108,6 +115,10 @@ namespace Kazyx.Uwpmm.DataModel
                             Device.Status.ContShootingMode.Current == ContinuousShootMode.MotionShot))
                         {
                             return ContShootingImage;
+                        }
+                        if (ApplicationSettings.GetInstance().IsIntervalShootingEnabled)
+                        {
+                            return IntervalStillImage;
                         }
                         return StillImage;
                     case ShootModeParam.Movie:
@@ -130,6 +141,7 @@ namespace Kazyx.Uwpmm.DataModel
                 switch (Device.Status.ShootMode.Current)
                 {
                     case ShootModeParam.Still:
+                        //
                         return StillModeImage;
                     case ShootModeParam.Movie:
                         return MovieModeImage;

@@ -1,7 +1,9 @@
 ﻿using Kazyx.Uwpmm.Control;
 using Kazyx.Uwpmm.Playback;
 using Kazyx.Uwpmm.Utility;
+using System;
 using Windows.UI;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 
@@ -67,7 +69,6 @@ namespace Kazyx.Uwpmm.DataModel
         }
 
         private bool _IsIntervalShootingEnabled = false;
-
         public bool IsIntervalShootingEnabled
         {
             set
@@ -79,6 +80,7 @@ namespace Kazyx.Uwpmm.DataModel
 
                     NotifyChangedOnUI("IsIntervalShootingEnabled");
                     NotifyChangedOnUI("IntervalTimeVisibility");
+
 
                     // exclusion
                     if (value)
