@@ -1,5 +1,7 @@
 ﻿using Kazyx.RemoteApi;
 using Kazyx.RemoteApi.Camera;
+using Kazyx.Uwpmm.Utility;
+using System;
 using System.Collections.Generic;
 
 namespace Kazyx.Uwpmm.DataModel
@@ -276,9 +278,23 @@ namespace Kazyx.Uwpmm.DataModel
             set
             {
                 _PictureUrls = value;
-                NotifyChangedOnUI("PictureUrls");
+                // NotifyChangedOnUI("PictureUrls");
+                // This logic should not be implemented here in DataModel... 
+                if (value != null && ApplicationSettings.GetInstance().IsPostviewTransferEnabled)
+                {
+                    foreach (var url in value)
+                    {
+                        try
+                        {
+                            MediaDownloader.Instance.EnqueuePostViewImage(new Uri(url, UriKind.Absolute), GeopositionManager.INSTANCE.LatestPosition);
+                        }
+                        catch (Exception e)
+                        {
+                            DebugUtil.Log(e.StackTrace);
+                        }
+                    }
+                }
             }
-            get { return _PictureUrls; }
         }
 
         private bool _ProgramShiftActivated = false;

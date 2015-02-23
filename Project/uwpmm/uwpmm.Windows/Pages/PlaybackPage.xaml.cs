@@ -550,16 +550,6 @@ namespace Kazyx.Uwpmm.Pages
                 case "Storages":
                     UpdateStorageInfo();
                     break;
-                case "PictureUrls":
-                    if (ApplicationSettings.GetInstance().IsPostviewTransferEnabled)
-                    {
-                        foreach (var url in status.PictureUrls)
-                        {
-                            // TODO If geo location is enabled, position is requried.
-                            MediaDownloader.Instance.EnqueuePostViewImage(new Uri(url, UriKind.Absolute), null);
-                        }
-                    }
-                    break;
             }
         }
 

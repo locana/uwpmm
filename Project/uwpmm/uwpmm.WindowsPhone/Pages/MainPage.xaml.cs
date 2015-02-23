@@ -168,6 +168,8 @@ namespace Kazyx.Uwpmm.Pages
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
             liveview.CloseConnection();
+            RemoveEventHandlers();
+            // TearDownCurrentTarget();
             TearDownNetworkObserver();
             this.navigationHelper.OnNavigatedFrom(e);
         }
@@ -191,18 +193,25 @@ namespace Kazyx.Uwpmm.Pages
             PivotRoot.SelectedIndex = 0;
         }
 
+        private void RemoveEventHandlers()
+        {
+            if (target != null)
+            {
+                target.Status.PropertyChanged -= Status_PropertyChanged;
+            }
+        }
+
         private async void TearDownCurrentTarget()
         {
-
-            if (!PivotChangedByBackkey) { SearchDevice(); }
+            // if (!PivotChangedByBackkey) { SearchDevice(); }
             LayoutRoot.DataContext = null;
             CreateEntranceAppBar();
+            RemoveEventHandlers();
             var _target = target;
             if (_target != null)
             {
                 await SequentialOperation.CloseLiveviewStream(target.Api, liveview);
                 _target.Observer.Stop();
-                _target.Status.PropertyChanged -= Status_PropertyChanged;
                 target = null;
                 LiveviewScreen.Visibility = Visibility.Collapsed;
             }
@@ -545,6 +554,7 @@ namespace Kazyx.Uwpmm.Pages
 
         private void LiveViewPageUnloaded()
         {
+            DebugUtil.Log("LiveviewPage Unloaded");
             TearDownCurrentTarget();
         }
 
@@ -768,15 +778,6 @@ namespace Kazyx.Uwpmm.Pages
                     {
                         HideCancelTouchAFButton();
                         _FocusFrameSurface.Focused = false;
-                    }
-                    break;
-                case "PictureUrls":
-                    if (ApplicationSettings.GetInstance().IsPostviewTransferEnabled)
-                    {
-                        foreach (var url in status.PictureUrls)
-                        {
-                            MediaDownloader.Instance.EnqueuePostViewImage(new Uri(url, UriKind.Absolute), GeopositionManager.INSTANCE.LatestPosition);
-                        }
                     }
                     break;
                 case "BatteryInfo":
