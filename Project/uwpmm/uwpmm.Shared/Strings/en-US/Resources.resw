@@ -187,7 +187,7 @@
     <value>Self timer</value>
   </data>
   <data name="ControlPanel" xml:space="preserve">
-    <value>Control Panel</value>
+    <value>Control panel</value>
   </data>
   <data name="Off" xml:space="preserve">
     <value>OFF</value>
@@ -292,7 +292,7 @@
     <value>Unlock AF</value>
   </data>
   <data name="AppBar_CameraRoll" xml:space="preserve">
-    <value>Camera Roll</value>
+    <value>Gallery</value>
   </data>
   <data name="Error_Message_FailedToGetInfo" xml:space="preserve">
     <value>Failed to retrieve information.
@@ -440,16 +440,16 @@ Please check internet connection status</value>
     <value>Camera</value>
   </data>
   <data name="MetaDataName_DateTime" xml:space="preserve">
-    <value>Date taken</value>
+    <value>Date time</value>
   </data>
   <data name="MetaDataName_ExposureCompensation" xml:space="preserve">
-    <value>Exposure Comp.</value>
+    <value>Exposure comp.</value>
   </data>
   <data name="MetaDataName_ExposureProgram" xml:space="preserve">
     <value>Exposure mode</value>
   </data>
   <data name="MetaDataName_ExposureTime" xml:space="preserve">
-    <value>Shutter Speed</value>
+    <value>Shutter speed</value>
   </data>
   <data name="MetaDataName_Flash" xml:space="preserve">
     <value>Flash</value>
@@ -541,11 +541,8 @@ Please check internet connection status</value>
   <data name="Support" xml:space="preserve">
     <value>Support</value>
   </data>
-  <data name="SupportUrl" xml:space="preserve">
-    <value>https://twitter.com/scrap_support</value>
-  </data>
   <data name="TrackingFocusMode" xml:space="preserve">
-    <value>Tracking Focus</value>
+    <value>Tracking focus</value>
   </data>
   <data name="TvColorSystem" xml:space="preserve">
     <value>TV system</value>
@@ -664,7 +661,7 @@ Please update to the latest at PlayMemories Camera Apps store.</value>
     <value>Cont. shoot.</value>
   </data>
   <data name="ContinuousShootMode_MotionShot" xml:space="preserve">
-    <value>MotionShot</value>
+    <value>Motion shot</value>
   </data>
   <data name="ContinuousShootMode_Single" xml:space="preserve">
     <value>Single</value>
@@ -859,7 +856,7 @@ Please update to the latest at PlayMemories Camera Apps store.</value>
     <value>Average</value>
   </data>
   <data name="Exif_MeteringMode_CenterWeightedAverage" xml:space="preserve">
-    <value>CenterWeightedAverage</value>
+    <value>Center-weighted average</value>
   </data>
   <data name="Exif_MeteringMode_MultiSegment" xml:space="preserve">
     <value>Multi-segment</value>
@@ -950,9 +947,6 @@ Please update to the latest at PlayMemories Camera Apps store.</value>
   </data>
   <data name="Color_White" xml:space="preserve">
     <value>White</value>
-  </data>
-  <data name="WifiSettingLauncherButtonText1" xml:space="preserve">
-    <value>Wi-Fi</value>
   </data>
   <data name="ZoomMode_ClearImageDigital" xml:space="preserve">
     <value>ClearImage zoom</value>
