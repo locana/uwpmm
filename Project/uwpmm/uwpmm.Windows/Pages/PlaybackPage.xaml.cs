@@ -772,18 +772,12 @@ namespace Kazyx.Uwpmm.Pages
             try
             {
                 // ChangeProgressText(SystemUtil.GetStringResource("Progress_ChangingCameraState"));
-                var res = await PlaybackModeHelper.MoveToContentTransferModeAsync(TargetDevice.Api.Camera, TargetDevice.Status).ConfigureAwait(false);
+                var res = await PlaybackModeHelper.MoveToContentTransferModeAsync(TargetDevice).ConfigureAwait(false);
                 DebugUtil.Log(res ? "ModeTransition successfully finished." : "ModeTransition failed");
 
                 if (!res)
                 {
-                    DebugUtil.Log("Failed state transition to shooting mode. Maybe in movie streaming mode...");
-                    await TargetDevice.Api.AvContent.StopStreamingAsync().ConfigureAwait(false);
-                    DebugUtil.Log("Successfully stopped movie streaming mode");
-                    if (!await PlaybackModeHelper.MoveToContentTransferModeAsync(TargetDevice.Api.Camera, TargetDevice.Status).ConfigureAwait(false))
-                    {
-                        throw new Exception();
-                    }
+                    throw new Exception();
                 }
 
                 // ChangeProgressText(SystemUtil.GetStringResource("Progress_CheckingStorage"));
