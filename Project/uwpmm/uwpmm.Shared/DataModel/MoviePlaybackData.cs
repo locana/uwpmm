@@ -28,7 +28,7 @@ namespace Kazyx.Uwpmm.DataModel
             }
         }
 
-        private string _FileName;
+        private string _FileName = "";
         public string FileName
         {
             get { return _FileName; }
@@ -56,7 +56,7 @@ namespace Kazyx.Uwpmm.DataModel
             }
         }
 
-        private string _StreamingStatus;
+        private string _StreamingStatus = "";
         public string StreamingStatus
         {
             get { return _StreamingStatus; }
@@ -70,7 +70,7 @@ namespace Kazyx.Uwpmm.DataModel
             }
         }
 
-        private string _StreamingStatusTransitionFactor;
+        private string _StreamingStatusTransitionFactor = "";
         public string StreamingStatusTransitionFactor
         {
             get { return _StreamingStatusTransitionFactor; }

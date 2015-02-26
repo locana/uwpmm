@@ -54,7 +54,16 @@ namespace Kazyx.Uwpmm.CameraControl
                 {
                     AvContent = null;
                 }
-                MoviePlaybackData.FileName = name;
+
+                var dispatcher = SystemUtil.GetCurrentDispatcher();
+                if (dispatcher != null)
+                {
+                    await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                    {
+                        MoviePlaybackData.FileName = name;
+                    });
+                }
+
                 return success;
             }
             catch (Exception e)

@@ -627,22 +627,25 @@ namespace Kazyx.Uwpmm.Pages
         private bool IsRemoteInitialized = false;
         internal PhotoPlaybackData PhotoData = new PhotoPlaybackData();
 
-        void MovieStream_StatusChanged(object sender, StreamingStatusEventArgs e)
+        async void MovieStream_StatusChanged(object sender, StreamingStatusEventArgs e)
         {
-            DebugUtil.Log("StreamStatusChanged: " + e.Status.Status + " - " + e.Status.Factor);
-            switch (e.Status.Factor)
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
-                case StreamStatusChangeFactor.FileError:
-                case StreamStatusChangeFactor.MediaError:
-                case StreamStatusChangeFactor.OtherError:
-                    ShowToast(SystemUtil.GetStringResource("Viewer_StreamClosedByExternalCause"));
-                    CloseMovieStream();
-                    break;
-                default:
-                    break;
-            }
-            MovieStreamHelper.INSTANCE.MoviePlaybackData.StreamingStatus = e.Status.Status;
-            MovieStreamHelper.INSTANCE.MoviePlaybackData.StreamingStatusTransitionFactor = e.Status.Factor;
+                DebugUtil.Log("StreamStatusChanged: " + e.Status.Status + " - " + e.Status.Factor);
+                switch (e.Status.Factor)
+                {
+                    case StreamStatusChangeFactor.FileError:
+                    case StreamStatusChangeFactor.MediaError:
+                    case StreamStatusChangeFactor.OtherError:
+                        ShowToast(SystemUtil.GetStringResource("Viewer_StreamClosedByExternalCause"));
+                        CloseMovieStream();
+                        break;
+                    default:
+                        break;
+                }
+                MovieStreamHelper.INSTANCE.MoviePlaybackData.StreamingStatus = e.Status.Status;
+                MovieStreamHelper.INSTANCE.MoviePlaybackData.StreamingStatusTransitionFactor = e.Status.Factor;
+            });            
         }
 
         private async void CloseMovieStream()
@@ -1340,7 +1343,7 @@ namespace Kazyx.Uwpmm.Pages
                             ShowToast(SystemUtil.GetStringResource("Viewer_FailedPlaybackMovie"));
                             CloseMovieStream();
                         }
-                        HideProgress();
+                        // HideProgress();
                     }
                     else
                     {
@@ -1752,6 +1755,7 @@ namespace Kazyx.Uwpmm.Pages
                 RemoteGridSource.Remove(holder, false);
                 var loadTask = LoadRemainingContents(holder);
             }
+            DebugUtil.Log("Tapped finished.");
         }
 
         private void LocalThumbnailGrid_Tapped(object sender, TappedRoutedEventArgs e)
