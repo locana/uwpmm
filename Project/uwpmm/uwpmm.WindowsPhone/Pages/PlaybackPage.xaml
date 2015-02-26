@@ -271,15 +271,15 @@
 
         <control:PhotoPlaybackScreen x:Name="PhotoScreen" Margin="0"/>
 
-        <Border x:Name="MovieDrawer" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="Collapsed">
-            <control:MoviePlaybackScreen x:Name="MovieScreen" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="12" 
+        <Border x:Name="MovieDrawer" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="Collapsed" Margin="0,-24,0,-20">
+            <control:MoviePlaybackScreen x:Name="MovieScreen" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0" 
                                          CurrentPosition="{Binding CurrentPosition}" Duration="{Binding Duration}" SeekAvailable="{Binding SeekAvailable}"
                                          PlaybackStatus="{Binding StreamingStatus}"/>
         </Border>
 
         <Border x:Name="LocalMovieDrawer" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="Collapsed">
             <MediaElement x:Name="LocalMoviePlayer"
-                          HorizontalAlignment="Center" VerticalAlignment="Center" Margin="12"
+                          HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0"
                           IsLooping="False" Stretch="Uniform" />
         </Border>
 

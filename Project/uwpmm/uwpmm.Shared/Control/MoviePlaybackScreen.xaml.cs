@@ -173,22 +173,22 @@ namespace Kazyx.Uwpmm.Control
 
         void UpdatePlaybackStatus(string status)
         {
-            PlaybackStatusIcon.Visibility = Windows.UI.Xaml.Visibility.Visible;
+            var image = new BitmapImage(new Uri("ms-appx:///Assets/PlaybackScreen/playback_paused.png", UriKind.Absolute));
             switch (status)
             {
                 case StreamStatus.Paused:
-                    PlaybackStatusIcon.Source = new BitmapImage(new Uri("ms-appx:///Assets/PlaybackScreen/playback_paused.png", UriKind.Absolute));
+                    image = new BitmapImage(new Uri("ms-appx:///Assets/PlaybackScreen/playback_playing.png", UriKind.Absolute));
                     break;
                 case StreamStatus.Started:
-                    PlaybackStatusIcon.Source = new BitmapImage(new Uri("ms-appx:///Assets/PlaybackScreen/playback_playing.png", UriKind.Absolute));
+                    image = new BitmapImage(new Uri("ms-appx:///Assets/PlaybackScreen/playback_paused.png", UriKind.Absolute));
                     break;
                 case StreamStatus.PausedByEdge:
-                    PlaybackStatusIcon.Source = new BitmapImage(new Uri("ms-appx:///Assets/PlaybackScreen/playback_stopped.png", UriKind.Absolute));
+                    image = new BitmapImage(new Uri("ms-appx:///Assets/PlaybackScreen/playback_playing.png", UriKind.Absolute));
                     break;
                 default:
-                    PlaybackStatusIcon.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
                     break;
             }
+            StartPauseButtonImage.Source = image;
         }
 
         public void Reset()
@@ -207,6 +207,11 @@ namespace Kazyx.Uwpmm.Control
         }
 
         private void Screen_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            // Todo: show/hide elements other than image
+        }
+
+        private void StartPauseButton_Tapped(object sender, TappedRoutedEventArgs e)
         {
             if (OnPlaybackOperationRequested != null)
             {
