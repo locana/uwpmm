@@ -1,6 +1,7 @@
 ﻿using Kazyx.RemoteApi;
 using Kazyx.RemoteApi.AvContent;
 using Kazyx.RemoteApi.Camera;
+using Kazyx.Uwpmm.CameraControl;
 using Kazyx.Uwpmm.DataModel;
 using Kazyx.Uwpmm.Utility;
 using System;
@@ -12,17 +13,17 @@ namespace Kazyx.Uwpmm.Playback
 {
     public class PlaybackModeHelper
     {
-        public static async Task<bool> MoveToShootingModeAsync(CameraApiClient camera, CameraStatus status, int timeoutMsec = 10000)
+        public static async Task<bool> MoveToShootingModeAsync(TargetDevice device, int timeoutMsec = 10000)
         {
-            return await MoveToSpecifiedModeAsync(camera, status, CameraFunction.RemoteShooting, EventParam.Idle, timeoutMsec);
+            return await MoveToSpecifiedModeAsync(device, CameraFunction.RemoteShooting, EventParam.Idle, timeoutMsec);
         }
 
-        public static async Task<bool> MoveToContentTransferModeAsync(CameraApiClient camera, CameraStatus status, int timeoutMsec = 10000)
+        public static async Task<bool> MoveToContentTransferModeAsync(TargetDevice device, int timeoutMsec = 10000)
         {
-            return await MoveToSpecifiedModeAsync(camera, status, CameraFunction.ContentTransfer, EventParam.ContentsTransfer, timeoutMsec);
+            return await MoveToSpecifiedModeAsync(device, CameraFunction.ContentTransfer, EventParam.ContentsTransfer, timeoutMsec);
         }
 
-        private static async Task<bool> MoveToSpecifiedModeAsync(CameraApiClient camera, CameraStatus status, string nextFunction, string nextState, int timeoutMsec)
+        private static async Task<bool> MoveToSpecifiedModeAsync(TargetDevice device, string nextFunction, string nextState, int timeoutMsec, bool isFirst = true)
         {
             var tcs = new TaskCompletionSource<bool>();
             var ct = new CancellationTokenSource(timeoutMsec); // State change timeout 10 sec.
@@ -54,9 +55,10 @@ namespace Kazyx.Uwpmm.Playback
             };
 
             DebugUtil.Log("Check current function at first...");
+            var getCurrentFailed = false;
             try
             {
-                var already = await CheckCurrentFunction(camera, nextFunction).ConfigureAwait(false);
+                var already = await CheckCurrentFunction(device.Api.Camera, nextFunction).ConfigureAwait(false);
                 if (already)
                 {
                     DebugUtil.Log("Already in specified mode: " + nextFunction);
@@ -66,13 +68,34 @@ namespace Kazyx.Uwpmm.Playback
             catch (RemoteApiException e)
             {
                 DebugUtil.Log("Failed to get current state: " + e.code);
-                return false;
+                if (isFirst)
+                {
+                    getCurrentFailed = true;
+                }
+                else
+                {
+                    DebugUtil.Log("No recovery for second trial");
+                    return false;
+                }
+            }
+
+            if (getCurrentFailed)
+            {
+                DebugUtil.Log("Maybe in movie streaming mode...");
+                try
+                {
+                    await device.Api.AvContent.StopStreamingAsync().ConfigureAwait(false);
+                    DebugUtil.Log("Successfully stopped movie streaming mode");
+                }
+                catch { }
+                DebugUtil.Log("Let's retry state transition");
+                return await MoveToSpecifiedModeAsync(device, nextFunction, nextState, timeoutMsec, false);
             }
 
             try
             {
-                status.PropertyChanged += status_observer;
-                await camera.SetCameraFunctionAsync(nextFunction).ConfigureAwait(false);
+                device.Status.PropertyChanged += status_observer;
+                await device.Api.Camera.SetCameraFunctionAsync(nextFunction).ConfigureAwait(false);
                 return await tcs.Task;
             }
             catch (RemoteApiException e)
@@ -86,13 +109,13 @@ namespace Kazyx.Uwpmm.Playback
             }
             finally
             {
-                status.PropertyChanged -= status_observer;
+                device.Status.PropertyChanged -= status_observer;
             }
 
             DebugUtil.Log("Check current function again...");
             try
             {
-                return await CheckCurrentFunction(camera, nextFunction).ConfigureAwait(false); ;
+                return await CheckCurrentFunction(device.Api.Camera, nextFunction).ConfigureAwait(false); ;
             }
             catch (RemoteApiException e)
             {
