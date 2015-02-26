@@ -645,7 +645,7 @@ namespace Kazyx.Uwpmm.Pages
                 }
                 MovieStreamHelper.INSTANCE.MoviePlaybackData.StreamingStatus = e.Status.Status;
                 MovieStreamHelper.INSTANCE.MoviePlaybackData.StreamingStatusTransitionFactor = e.Status.Factor;
-            });            
+            });
         }
 
         private async void CloseMovieStream()
@@ -898,11 +898,18 @@ namespace Kazyx.Uwpmm.Pages
             try
             {
                 ChangeProgressText(SystemUtil.GetStringResource("Progress_ChangingCameraState"));
-                var res = await PlaybackModeHelper.MoveToContentTransferModeAsync(TargetDevice.Api.Camera, TargetDevice.Status, 20000).ConfigureAwait(false);
+                var res = await PlaybackModeHelper.MoveToContentTransferModeAsync(TargetDevice.Api.Camera, TargetDevice.Status).ConfigureAwait(false);
                 DebugUtil.Log(res ? "ModeTransition successfully finished." : "ModeTransition failed");
+
                 if (!res)
                 {
-                    throw new Exception();
+                    DebugUtil.Log("Failed state transition to shooting mode. Maybe in movie streaming mode...");
+                    await TargetDevice.Api.AvContent.StopStreamingAsync().ConfigureAwait(false);
+                    DebugUtil.Log("Successfully stopped movie streaming mode");
+                    if (!await PlaybackModeHelper.MoveToContentTransferModeAsync(TargetDevice.Api.Camera, TargetDevice.Status).ConfigureAwait(false))
+                    {
+                        throw new Exception();
+                    }
                 }
 
                 ChangeProgressText(SystemUtil.GetStringResource("Progress_CheckingStorage"));
