@@ -1343,7 +1343,7 @@ namespace Kazyx.Uwpmm.Pages
                             ShowToast(SystemUtil.GetStringResource("Viewer_FailedPlaybackMovie"));
                             CloseMovieStream();
                         }
-                        // HideProgress();
+                        HideProgress();
                     }
                     else
                     {
