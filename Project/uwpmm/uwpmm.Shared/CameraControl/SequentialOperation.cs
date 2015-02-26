@@ -28,7 +28,7 @@ namespace Kazyx.Uwpmm.CameraControl
                     DebugUtil.Log("This device support ContentsTransfer mode. Turn on Shooting mode at first.");
                     if (!await PlaybackModeHelper.MoveToShootingModeAsync(device.Api.Camera, device.Status).ConfigureAwait(false))
                     {
-                        DebugUtil.Log("Failed state transition to shooting mode. Maybe in movie streaming mode...");
+                        DebugUtil.Log("Failed state transition to playback mode. Maybe in movie streaming mode...");
                         await device.Api.AvContent.StopStreamingAsync().ConfigureAwait(false);
                         DebugUtil.Log("Successfully stopped movie streaming mode");
                         await PlaybackModeHelper.MoveToShootingModeAsync(device.Api.Camera, device.Status).ConfigureAwait(false);
