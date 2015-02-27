@@ -9,6 +9,7 @@ using Kazyx.Uwpmm.Playback;
 using Kazyx.Uwpmm.UPnP;
 using Kazyx.Uwpmm.UPnP.ContentDirectory;
 using Kazyx.Uwpmm.Utility;
+using NtImageProcessor.MetaData;
 using NtImageProcessor.MetaData.Misc;
 using System;
 using System.Collections.Generic;
@@ -875,10 +876,7 @@ namespace Kazyx.Uwpmm.Pages
                 DebugUtil.Log("DlnaContentsLoader completed");
                 if (RemoteGridSource.Count == 0)
                 {
-                    var task = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-                    {
-                        NoContentsMessage.Visibility = Visibility.Visible;
-                    });
+                    await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => { NoContentsMessage.Visibility = Visibility.Visible; });
                 }
             }
             catch (SoapException e)
@@ -895,59 +893,47 @@ namespace Kazyx.Uwpmm.Pages
 
         private async Task InitializeRemoteApiDevice()
         {
+            var loader = new RemoteApiContentsLoader(TargetDevice);
             try
             {
                 ChangeProgressText(SystemUtil.GetStringResource("Progress_ChangingCameraState"));
-                var res = await PlaybackModeHelper.MoveToContentTransferModeAsync(TargetDevice).ConfigureAwait(false);
-                DebugUtil.Log(res ? "ModeTransition successfully finished." : "ModeTransition failed");
-
-                if (!res)
+                if (!await PlaybackModeHelper.MoveToContentTransferModeAsync(TargetDevice).ConfigureAwait(false))
                 {
+                    DebugUtil.Log("ModeTransition failed");
                     throw new Exception();
                 }
-
-                ChangeProgressText(SystemUtil.GetStringResource("Progress_CheckingStorage"));
-
-                var loader = new RemoteApiContentsLoader(TargetDevice);
-                loader.PartLoaded += RemoteContentsLoader_PartLoaded;
+                DebugUtil.Log("ModeTransition successfully finished");
 
                 ChangeProgressText(SystemUtil.GetStringResource("Progress_FetchingContents"));
+                loader.PartLoaded += RemoteContentsLoader_PartLoaded;
+                await loader.Load(ApplicationSettings.GetInstance().RemoteContentsSet, Canceller).ConfigureAwait(false);
+                DebugUtil.Log("RemoteApiContentsLoader completed");
 
-                try
+                if (RemoteGridSource.Count == 0)
                 {
-                    await loader.Load(ApplicationSettings.GetInstance().RemoteContentsSet, Canceller).ConfigureAwait(false);
-                    DebugUtil.Log("RemoteApiContentsLoader completed");
-                    if (RemoteGridSource.Count == 0)
-                    {
-                        var task = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-                        {
-                            NoContentsMessage.Visibility = Visibility.Visible;
-                        });
-                    }
+                    await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => { NoContentsMessage.Visibility = Visibility.Visible; });
                 }
-                catch (StorageNotSupportedException)
-                {
-                    // This will never happen no camera devices.
-                    DebugUtil.Log("storage scheme is not supported");
-                    ShowToast(SystemUtil.GetStringResource("Viewer_StorageAccessNotSupported"));
-                }
-                catch (NoStorageException)
-                {
-                    DebugUtil.Log("No storages");
-                    ShowToast(SystemUtil.GetStringResource("Viewer_NoStorage"));
-                    return;
-                }
-                finally
-                {
-                    loader.PartLoaded -= RemoteContentsLoader_PartLoaded;
-                    HideProgress();
-                }
+            }
+            catch (StorageNotSupportedException)
+            {
+                // This will never happen on camera devices.
+                DebugUtil.Log("storage scheme is not supported");
+                ShowToast(SystemUtil.GetStringResource("Viewer_StorageAccessNotSupported"));
+            }
+            catch (NoStorageException)
+            {
+                DebugUtil.Log("No storages");
+                ShowToast(SystemUtil.GetStringResource("Viewer_NoStorage"));
             }
             catch (Exception e)
             {
                 DebugUtil.Log(e.StackTrace);
-                HideProgress();
                 ShowToast(SystemUtil.GetStringResource("Viewer_FailedToRefreshContents"));
+            }
+            finally
+            {
+                HideProgress();
+                loader.PartLoaded -= RemoteContentsLoader_PartLoaded;
             }
         }
 
@@ -1289,7 +1275,7 @@ namespace Kazyx.Uwpmm.Pages
                                     PhotoScreen.SetBitmap();
                                     try
                                     {
-                                        PhotoData.MetaData = await NtImageProcessor.MetaData.JpegMetaDataParser.ParseImageAsync(replica);
+                                        PhotoData.MetaData = await JpegMetaDataParser.ParseImageAsync(replica);
                                     }
                                     catch (UnsupportedFileFormatException)
                                     {
