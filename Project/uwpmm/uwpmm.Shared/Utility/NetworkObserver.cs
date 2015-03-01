@@ -30,6 +30,26 @@ namespace Kazyx.Uwpmm.Utility
             cdsDiscovery.DescriptionObtained += cdsDiscovery_DescriptionObtained;
         }
 
+        public async Task Initialize()
+        {
+            var filter = new ConnectionProfileFilter
+            {
+                IsConnected = true,
+                IsWwanConnectionProfile = false,
+                IsWlanConnectionProfile = true,
+            };
+            var profiles = await NetworkInformation.FindConnectionProfilesAsync(filter);
+            foreach (var profile in profiles)
+            {
+                var ssid = profile.WlanConnectionProfileDetails.GetConnectedSsid();
+                if (IsCameraAccessPoint(ssid))
+                {
+                    PreviousSsid = ssid;
+                    return;
+                }
+            }
+        }
+
         public event EventHandler DevicesCleared;
 
         protected void OnDevicesCleared()
@@ -160,7 +180,17 @@ namespace Kazyx.Uwpmm.Utility
             OnDevicesCleared();
         }
 
-        private string PreviousSsid { set; get; }
+        public bool IsConnectedToCamera
+        {
+            get { return IsCameraAccessPoint(PreviousSsid); }
+        }
+
+        private bool IsCameraAccessPoint(string ssid)
+        {
+            return ssid != null && (ssid.StartsWith("direct-", StringComparison.OrdinalIgnoreCase) || DummyContentsFlag.Enabled);
+        }
+
+        public string PreviousSsid { private set; get; }
 
         private async Task checkConnection(CancellationTokenSource cancel)
         {
@@ -175,7 +205,7 @@ namespace Kazyx.Uwpmm.Utility
             {
                 var ssid = profile.WlanConnectionProfileDetails.GetConnectedSsid();
 
-                if (ssid != null && (ssid.StartsWith("direct-", StringComparison.OrdinalIgnoreCase) || DummyContentsFlag.Enabled))
+                if (IsCameraAccessPoint(ssid))
                 {
                     var previous = PreviousSsid;
                     PreviousSsid = ssid;

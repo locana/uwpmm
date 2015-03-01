@@ -135,12 +135,7 @@ namespace Kazyx.Uwpmm.Pages
 
         void NetworkObserver_DevicesCleared(object sender, EventArgs e)
         {
-            var task = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-            {
-                ConnectionGuide.Visibility = Visibility.Visible;
-                StartLiveviewGuide.Visibility = Visibility.Collapsed;
-                DlnaGuide.Visibility = Visibility.Collapsed;
-            });
+            UpdateMainDescription();
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
@@ -203,7 +198,7 @@ namespace Kazyx.Uwpmm.Pages
 
         bool ControlPanelDisplayed = false;
 
-        private void Page_Loaded(object sender, RoutedEventArgs e)
+        private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
             _CommandBarManager.SetEvent(AppBarItem.ControlPanel, (s, args) =>
             {
@@ -324,6 +319,9 @@ namespace Kazyx.Uwpmm.Pages
 
             MediaDownloader.Instance.Fetched += PictureFetched;
             MediaDownloader.Instance.Failed += PictureFetchFailed;
+
+            await NetworkObserver.INSTANCE.Initialize();
+            UpdateMainDescription();
         }
 
         void NetworkInformation_NetworkStatusChanged(object sender)
@@ -632,6 +630,7 @@ namespace Kazyx.Uwpmm.Pages
 
         private async void NetworkObserver_CdsDiscovered(object sender, CdServiceEventArgs e)
         {
+            UpdateMainDescription();
             /*
             var type = await e.CdService.LocalAddress.IPInformation.NetworkAdapter.GetConnectedProfileAsync();
             if (!NavigatedByInAppBackTransition && type.IsWlanConnectionProfile)
@@ -652,11 +651,34 @@ namespace Kazyx.Uwpmm.Pages
             await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
                 ShowToast("[TMP] CDS discovered: " + e.CdService.FriendlyName);
-                if (SUPRESS_MEDIA_SERVER_DISCOVERY.All(name => name != e.CdService.FriendlyName))
+            });
+        }
+
+        private void UpdateMainDescription()
+        {
+            var task = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                if (NetworkObserver.INSTANCE.IsConnectedToCamera)
                 {
-                    StartLiveviewGuide.Visibility = Visibility.Collapsed;
-                    ConnectionGuide.Visibility = Visibility.Collapsed;
-                    DlnaGuide.Visibility = Visibility.Visible;
+                    if (NetworkObserver.INSTANCE.CameraDevices.Count != 0)
+                    {
+                        MainDescription.Text = SystemUtil.GetStringResource("Guide_StartLiveView");
+                        return;
+                    }
+                    else if (NetworkObserver.INSTANCE.CdsProviders.Count != 0)
+                    {
+                        if (SUPRESS_MEDIA_SERVER_DISCOVERY.All(name => name != NetworkObserver.INSTANCE.CdsProviders[0].FriendlyName))
+                        {
+                            MainDescription.Text = SystemUtil.GetStringResource("FoundDlnaDeviceGuide");
+                            return;
+                        }
+                    }
+                    MainDescription.Text = SystemUtil.GetStringResource("WifiConnectionGuide").Replace("<ssid>", NetworkObserver.INSTANCE.PreviousSsid);
+                }
+                else
+                {
+                    MainDescription.Text = SystemUtil.GetStringResource("Guide_WiFiNotEnabled");
+                    return;
                 }
             });
         }
@@ -665,16 +687,11 @@ namespace Kazyx.Uwpmm.Pages
 
         private bool stayEntrance = false;
 
-        async void NetworkObserver_Discovered(object sender, CameraDeviceEventArgs e)
+        void NetworkObserver_Discovered(object sender, CameraDeviceEventArgs e)
         {
-            target = e.CameraDevice;
+            UpdateMainDescription();
 
-            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-            {
-                StartLiveviewGuide.Visibility = Visibility.Visible;
-                DlnaGuide.Visibility = Visibility.Collapsed;
-                ConnectionGuide.Visibility = Visibility.Collapsed;
-            });
+            target = e.CameraDevice;
 
             if (stayEntrance)
             {

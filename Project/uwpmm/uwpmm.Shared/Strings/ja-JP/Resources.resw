@@ -573,10 +573,6 @@ PlayMemories Camera Appsストアで最新版にアップデートしてくだ�
   <data name="Grid_Square" xml:space="preserve">
     <value>正方形</value>
   </data>
-  <data name="Guide_CantFindDevice" xml:space="preserve">
-    <value>デバイスを見つけられませんでした。表示されているSSIDがお使いのカメラのものと一致しているか確認してください。</value>
-    <comment>Couldn't find the devide. Make sure the connected SSID is same as your device's one.</comment>
-  </data>
   <data name="Guide_DisplayTakeImageButtonSetting" xml:space="preserve">
     <value>本体のシャッターキーで撮影する場合には非表示にもできます。</value>
   </data>
