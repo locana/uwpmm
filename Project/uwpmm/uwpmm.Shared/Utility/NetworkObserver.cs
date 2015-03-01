@@ -1,10 +1,14 @@
 ﻿using Kazyx.DeviceDiscovery;
 using Kazyx.Uwpmm.CameraControl;
+using Kazyx.Uwpmm.Playback;
 using Kazyx.Uwpmm.UPnP;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Xml.Linq;
+using Windows.Networking.Connectivity;
 
 namespace Kazyx.Uwpmm.Utility
 {
@@ -24,32 +28,13 @@ namespace Kazyx.Uwpmm.Utility
         {
             discovery.SonyCameraDeviceDiscovered += discovery_SonyCameraDeviceDiscovered;
             cdsDiscovery.DescriptionObtained += cdsDiscovery_DescriptionObtained;
-            discovery.Finished += discovery_Finished;
-            cdsDiscovery.Finished += cdsDiscovery_Finished;
         }
 
-        void cdsDiscovery_Finished(object sender, EventArgs e)
+        public event EventHandler DevicesCleared;
+
+        protected void OnDevicesCleared()
         {
-            OnDlnaDiscoveryFinished();
-        }
-
-        public event EventHandler CdsDiscoveryFinished;
-
-        protected void OnDlnaDiscoveryFinished()
-        {
-            CdsDiscoveryFinished.Raise(this, null);
-        }
-
-        void discovery_Finished(object sender, EventArgs e)
-        {
-            OnCameraDiscoveryFinished();
-        }
-
-        public event EventHandler CameraDiscoveryFinished;
-
-        protected void OnCameraDiscoveryFinished()
-        {
-            CameraDiscoveryFinished.Raise(this, null);
+            DevicesCleared.Raise(this, null);
         }
 
         private Dictionary<string, TargetDevice> devices = new Dictionary<string, TargetDevice>();
@@ -124,30 +109,128 @@ namespace Kazyx.Uwpmm.Utility
 
         }
 
-        public void ForceOffline(TargetDevice device)
+        private bool Started = false;
+
+        public void ForceRestart()
         {
-            devices.Remove(device.Udn);
+            Finish();
+            Start();
         }
 
-        public void ForceOffline(UpnpDevice device)
+        public void Start()
         {
-            cdServices.Remove(device.UDN);
+            if (Started)
+            {
+                return;
+            }
+
+            Started = true;
+            NetworkInformation.NetworkStatusChanged += NetworkInformation_NetworkStatusChanged;
+
+            startTask();
         }
 
-        public void SearchCds()
+        public void Finish()
+        {
+            NetworkInformation.NetworkStatusChanged -= NetworkInformation_NetworkStatusChanged;
+            Clear();
+            Started = false;
+        }
+
+        private void SearchCds()
         {
             cdsDiscovery.SearchUpnpDevices("urn:schemas-upnp-org:service:ContentDirectory:1");
         }
 
-        public void SearchCamera()
+        private void SearchCamera()
         {
             discovery.SearchSonyCameraDevices();
         }
 
-        public void Clear()
+        private void Clear()
+        {
+            PreviousSsid = null;
+            RefreshDevices();
+        }
+
+        public void RefreshDevices()
         {
             devices.Clear();
             cdServices.Clear();
+            OnDevicesCleared();
+        }
+
+        private string PreviousSsid { set; get; }
+
+        private async Task checkConnection(CancellationTokenSource cancel)
+        {
+            var filter = new ConnectionProfileFilter
+            {
+                IsConnected = true,
+                IsWwanConnectionProfile = false,
+                IsWlanConnectionProfile = true,
+            };
+            var profiles = await NetworkInformation.FindConnectionProfilesAsync(filter);
+            foreach (var profile in profiles)
+            {
+                var ssid = profile.WlanConnectionProfileDetails.GetConnectedSsid();
+
+                if (ssid != null && (ssid.StartsWith("direct-", StringComparison.OrdinalIgnoreCase) || DummyContentsFlag.Enabled))
+                {
+                    var previous = PreviousSsid;
+                    PreviousSsid = ssid;
+                    // Connected to Access Point and it is a camera device.
+                    if (ssid == previous && (devices.Count != 0 || CdsProviders.Count != 0))
+                    {
+                        DebugUtil.Log("Some devices discovered on the previous SSID. Finish auto discovery.");
+                        return;
+                    }
+
+                    if (ssid != previous)
+                    {
+                        DebugUtil.Log("New access point detected. Refresh.");
+                        RefreshDevices();
+                    }
+                    else
+                    {
+                        DebugUtil.Log("No devices discovered yet. keep searching.");
+                    }
+
+                    SearchCamera();
+                    SearchCds();
+                    await Task.Delay(5000);
+
+                    if (!cancel.IsCancellationRequested)
+                    {
+                        await checkConnection(cancel);
+                    }
+                    return;
+                }
+            }
+
+            DebugUtil.Log("Not connected to camera device.");
+            Clear();
+        }
+
+        CancellationTokenSource Canceller;
+
+        void NetworkInformation_NetworkStatusChanged(object sender)
+        {
+            DebugUtil.Log("NetworkInformation NetworkStatusChanged");
+            startTask();
+        }
+
+        private void startTask()
+        {
+            if (Canceller != null)
+            {
+                Canceller.Cancel();
+                Canceller = null;
+            }
+
+            var cancel = new CancellationTokenSource();
+            Canceller = cancel;
+            var task = checkConnection(cancel);
         }
     }
 

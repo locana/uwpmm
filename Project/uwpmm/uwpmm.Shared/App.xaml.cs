@@ -133,7 +133,7 @@ namespace Kazyx.Uwpmm
         /// </summary>
         private async void OnSuspending(object sender, SuspendingEventArgs e)
         {
-            NetworkObserver.INSTANCE.Clear();
+            NetworkObserver.INSTANCE.Finish();
 
 #if WINDOWS_PHONE_APP
             var rootFrame = Window.Current.Content as Frame;

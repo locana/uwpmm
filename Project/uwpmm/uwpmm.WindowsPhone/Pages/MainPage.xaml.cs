@@ -19,6 +19,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.Devices.Geolocation;
 using Windows.Foundation;
+using Windows.Networking.Connectivity;
 using Windows.Networking.Proximity;
 using Windows.Phone.UI.Input;
 using Windows.Storage;
@@ -124,45 +125,22 @@ namespace Kazyx.Uwpmm.Pages
 
             NavigatedByInAppBackTransition = e.NavigationMode == NavigationMode.Back;
             SetupNetworkObserver();
-            SearchDevice();
         }
 
         private void SetupNetworkObserver()
         {
             NetworkObserver.INSTANCE.CameraDiscovered += NetworkObserver_Discovered;
-            NetworkObserver.INSTANCE.CameraDiscoveryFinished += NetworkObserver_CameraDiscoveryFinished;
             NetworkObserver.INSTANCE.CdsDiscovered += NetworkObserver_CdsDiscovered;
-            NetworkObserver.INSTANCE.CdsDiscoveryFinished += NetworkObserver_CdsDiscoveryFinished;
         }
 
-        private static void SearchDevice()
+        void NetworkObserver_DevicesCleared(object sender, EventArgs e)
         {
-            NetworkObserver.INSTANCE.Clear();
-            NetworkObserver.INSTANCE.SearchCamera();
-            NetworkObserver.INSTANCE.SearchCds();
-        }
-
-        void NetworkObserver_CdsDiscoveryFinished(object sender, EventArgs e)
-        {
-            if (this.target == null && !CdsDeviceFound && !OnSettingCameraDevice)
+            var task = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
-                DebugUtil.Log("Dlna discovery finished. Search again.");
-                NetworkObserver.INSTANCE.SearchCds();
-            }
-        }
-
-        void NetworkObserver_CameraDiscoveryFinished(object sender, EventArgs e)
-        {
-            if (!OnSettingCameraDevice && this.target == null)
-            {
+                ConnectionGuide.Visibility = Visibility.Visible;
                 StartLiveviewGuide.Visibility = Visibility.Collapsed;
-                DebugUtil.Log("Camera discovery finished. Search again.");
-                NetworkObserver.INSTANCE.SearchCamera();
-            }
-            else
-            {
-                StartLiveviewGuide.Visibility = Visibility.Visible;
-            }
+                DlnaGuide.Visibility = Visibility.Collapsed;
+            });
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
@@ -178,8 +156,6 @@ namespace Kazyx.Uwpmm.Pages
         {
             NetworkObserver.INSTANCE.CameraDiscovered -= NetworkObserver_Discovered;
             NetworkObserver.INSTANCE.CdsDiscovered -= NetworkObserver_CdsDiscovered;
-            NetworkObserver.INSTANCE.CameraDiscoveryFinished -= NetworkObserver_CameraDiscoveryFinished;
-            NetworkObserver.INSTANCE.CdsDiscoveryFinished -= NetworkObserver_CdsDiscoveryFinished;
         }
 
         #endregion
@@ -203,7 +179,6 @@ namespace Kazyx.Uwpmm.Pages
 
         private async void TearDownCurrentTarget()
         {
-            // if (!PivotChangedByBackkey) { SearchDevice(); }
             LayoutRoot.DataContext = null;
             CreateEntranceAppBar();
             RemoveEventHandlers();
@@ -225,10 +200,8 @@ namespace Kazyx.Uwpmm.Pages
 
         CommandBarManager _CommandBarManager = new CommandBarManager();
         Geolocator _Geolocator;
-        bool CdsDeviceFound = false;
 
         bool ControlPanelDisplayed = false;
-        bool PivotChangedByBackkey = false;
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
@@ -264,7 +237,7 @@ namespace Kazyx.Uwpmm.Pages
             });
             _CommandBarManager.SetEvent(AppBarItem.WifiSetting, async (s, args) =>
             {
-                NetworkObserver.INSTANCE.Clear();
+                NetworkObserver.INSTANCE.ForceRestart();
                 await Launcher.LaunchUriAsync(new Uri("ms-settings-wifi:"));
             });
             _CommandBarManager.SetEvent(AppBarItem.Donation, (s, args) =>
@@ -278,6 +251,11 @@ namespace Kazyx.Uwpmm.Pages
             HardwareButtons.CameraHalfPressed += HardwareButtons_CameraHalfPressed;
             HardwareButtons.CameraReleased += HardwareButtons_CameraReleased;
             HardwareButtons.CameraPressed += HardwareButtons_CameraPressed;
+
+            NetworkObserver.INSTANCE.DevicesCleared += NetworkObserver_DevicesCleared;
+            NetworkObserver.INSTANCE.ForceRestart();
+
+            NetworkInformation.NetworkStatusChanged += NetworkInformation_NetworkStatusChanged;
 
             _FocusFrameSurface.OnTouchFocusOperated += async (obj, args) =>
             {
@@ -348,6 +326,12 @@ namespace Kazyx.Uwpmm.Pages
             MediaDownloader.Instance.Failed += PictureFetchFailed;
         }
 
+        void NetworkInformation_NetworkStatusChanged(object sender)
+        {
+            DebugUtil.Log("NetworkStatusChanged. Unlock stay entrance mode.");
+            stayEntrance = false;
+        }
+
         private void PictureFetchFailed(DownloaderError err, GeotaggingResult tagResult)
         {
             ShowError(SystemUtil.GetStringResource("ErrorMessage_ImageDL_Other") + err + " " + tagResult);
@@ -410,7 +394,6 @@ namespace Kazyx.Uwpmm.Pages
             catch (RemoteApiException) { }
         }
 
-
         private void Page_Unloaded(object sender, RoutedEventArgs e)
         {
             _CommandBarManager.ClearEvents();
@@ -421,6 +404,9 @@ namespace Kazyx.Uwpmm.Pages
             HardwareButtons.CameraPressed -= HardwareButtons_CameraPressed;
             MediaDownloader.Instance.Fetched -= PictureFetched;
             MediaDownloader.Instance.Failed -= PictureFetchFailed;
+            NetworkInformation.NetworkStatusChanged -= NetworkInformation_NetworkStatusChanged;
+            NetworkObserver.INSTANCE.DevicesCleared -= NetworkObserver_DevicesCleared;
+            NetworkObserver.INSTANCE.Finish();
             StopProximityDevice();
         }
 
@@ -538,25 +524,24 @@ namespace Kazyx.Uwpmm.Pages
             {
                 case 0:
                     LiveViewPageUnloaded();
-
                     break;
                 case 1:
                     LiveViewPageLoaded();
                     break;
             }
-            PivotChangedByBackkey = false;
         }
 
         private async void LiveViewPageLoaded()
         {
             if (target != null)
             {
+                SetUpShooting();
                 await LockRootPivotASync();
             }
             else
             {
                 EmptyAppBar();
-                SearchDevice();
+                NetworkObserver.INSTANCE.ForceRestart();
             }
         }
 
@@ -584,7 +569,7 @@ namespace Kazyx.Uwpmm.Pages
         {
             if (PivotRoot.SelectedIndex == 0)
             {
-                NetworkObserver.INSTANCE.Clear();
+                NetworkObserver.INSTANCE.Finish();
                 return;
             }
 
@@ -609,8 +594,8 @@ namespace Kazyx.Uwpmm.Pages
                 return;
             }
 
-            PivotChangedByBackkey = true;
-            GoToEntranceScreen();
+            NetworkObserver.INSTANCE.ForceRestart();
+            GoToEntranceScreen(true);
             e.Handled = true;
         }
 
@@ -647,7 +632,6 @@ namespace Kazyx.Uwpmm.Pages
 
         private async void NetworkObserver_CdsDiscovered(object sender, CdServiceEventArgs e)
         {
-            CdsDeviceFound = true;
             /*
             var type = await e.CdService.LocalAddress.IPInformation.NetworkAdapter.GetConnectedProfileAsync();
             if (!NavigatedByInAppBackTransition && type.IsWlanConnectionProfile)
@@ -679,45 +663,63 @@ namespace Kazyx.Uwpmm.Pages
 
         private string[] SUPRESS_MEDIA_SERVER_DISCOVERY = { "DSC-QX10", "DSC-QX100" };
 
-        bool OnSettingCameraDevice = false;
+        private bool stayEntrance = false;
 
         async void NetworkObserver_Discovered(object sender, CameraDeviceEventArgs e)
         {
-            var target = e.CameraDevice;
-            OnSettingCameraDevice = true;
+            target = e.CameraDevice;
 
             await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
+                StartLiveviewGuide.Visibility = Visibility.Visible;
                 DlnaGuide.Visibility = Visibility.Collapsed;
                 ConnectionGuide.Visibility = Visibility.Collapsed;
+            });
+
+            if (stayEntrance)
+            {
+                return;
+            }
+
+            SetUpShooting();
+        }
+
+        private async void SetUpShooting()
+        {
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
                 ChangeProgressText(SystemUtil.GetStringResource("ProgressMessageConnecting"));
             });
 
+            var tmpTarget = target;
+
+            if (tmpTarget == null)
+            {
+                GoToEntranceScreen();
+            }
+
             try
             {
-                await SequentialOperation.SetUp(target, liveview);
+                await SequentialOperation.SetUp(tmpTarget, liveview);
             }
             catch (Exception ex)
             {
                 HideProgress();
                 DebugUtil.Log("Failed setup: " + ex.Message);
                 ShowError(SystemUtil.GetStringResource("ErrorMessage_fatal"));
-                OnSettingCameraDevice = false;
                 return;
             }
 
-            this.target = target;
-
             await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
             {
-                screen_view_data = new LiveviewScreenViewData(target);
+                screen_view_data = new LiveviewScreenViewData(tmpTarget);
                 Liveview.DataContext = screen_view_data;
                 SetLiveviewDataContext(screen_view_data);
                 LiveviewScreen.Visibility = Visibility.Visible;
                 ShutterButton.DataContext = screen_view_data;
-                BatteryStatusDisplay.DataContext = target.Status.BatteryInfo;
+                BatteryStatusDisplay.DataContext = tmpTarget.Status.BatteryInfo;
 
-                target.Status.PropertyChanged += Status_PropertyChanged;
+                tmpTarget.Status.PropertyChanged += Status_PropertyChanged;
                 HideProgress();
 
                 if (PivotRoot.SelectedIndex == 0)
@@ -733,7 +735,7 @@ namespace Kazyx.Uwpmm.Pages
                 CreateCameraControlAppBar();
 
                 ControlPanel.Children.Clear();
-                var panels = SettingPanelBuilder.CreateNew(target);
+                var panels = SettingPanelBuilder.CreateNew(tmpTarget);
                 var pn = panels.GetPanelsToShow();
                 foreach (var panel in pn)
                 {
@@ -743,12 +745,11 @@ namespace Kazyx.Uwpmm.Pages
                 SetupFocusFrame(ApplicationSettings.GetInstance().RequestFocusFrameInfo);
                 _FocusFrameSurface.ClearFrames();
 
-                ShootingParamSliders.DataContext = new ShootingParamViewData() { Status = target.Status, Liveview = screen_view_data };
+                ShootingParamSliders.DataContext = new ShootingParamViewData() { Status = tmpTarget.Status, Liveview = screen_view_data };
 
                 if (ApplicationSettings.GetInstance().GeotagEnabled) { EnableGeolocator(); }
                 else { DisableGeolocator(); }
             });
-            OnSettingCameraDevice = false;
         }
 
         private async void SetupFocusFrame(bool RequestFocusFrameEnabled)
@@ -839,8 +840,9 @@ namespace Kazyx.Uwpmm.Pages
             PivotRoot.SelectedIndex = 1;
         }
 
-        private void GoToEntranceScreen()
+        private void GoToEntranceScreen(bool disableAutoStart = false)
         {
+            stayEntrance = disableAutoStart;
             PivotRoot.IsLocked = false;
             PivotRoot.SelectedIndex = 0;
         }

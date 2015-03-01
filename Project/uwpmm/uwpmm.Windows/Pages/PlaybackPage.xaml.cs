@@ -199,8 +199,8 @@ namespace Kazyx.Uwpmm.Pages
                 DebugUtil.Log("No target device detected. Search again.");
                 NetworkObserver.INSTANCE.CdsDiscovered += NetworkObserver_CdsDiscovered;
                 NetworkObserver.INSTANCE.CameraDiscovered += NetworkObserver_CameraDiscovered;
-                NetworkObserver.INSTANCE.SearchCamera();
-                NetworkObserver.INSTANCE.SearchCds();
+                NetworkObserver.INSTANCE.DevicesCleared += NetworkObserver_DevicesCleared;
+                NetworkObserver.INSTANCE.Start();
             }
 
             // await DefaultPivotLockState();
@@ -276,6 +276,13 @@ namespace Kazyx.Uwpmm.Pages
             }
         }
          * */
+
+        void NetworkObserver_DevicesCleared(object sender, EventArgs e)
+        {
+            TargetDevice = null;
+            UpnpDevice = null;
+            // TODO hide remote tab
+        }
 
         private async void NetworkObserver_CameraDiscovered(object sender, CameraDeviceEventArgs e)
         {

@@ -312,9 +312,12 @@ namespace Kazyx.Uwpmm.Pages
             var dlna = NetworkObserver.INSTANCE.CdsProviders;
             if (devices.Count > 0)
             {
-                DebugUtil.Log("Apply " + devices[0].FriendlyName + " as target");
-                TargetDevice = devices[0]; // TODO choise of device should be exposed to user.
-                await SetUpRemoteApiDevice();
+                if (devices[0].Api.AvContent != null)
+                {
+                    DebugUtil.Log("Apply " + devices[0].FriendlyName + " as target");
+                    TargetDevice = devices[0]; // TODO choise of device should be exposed to user.
+                    await SetUpRemoteApiDevice();
+                }
             }
             else if (dlna.Count > 0)
             {
@@ -326,8 +329,8 @@ namespace Kazyx.Uwpmm.Pages
                 DebugUtil.Log("No target device detected. Search again.");
                 NetworkObserver.INSTANCE.CdsDiscovered += NetworkObserver_CdsDiscovered;
                 NetworkObserver.INSTANCE.CameraDiscovered += NetworkObserver_CameraDiscovered;
-                NetworkObserver.INSTANCE.SearchCamera();
-                NetworkObserver.INSTANCE.SearchCds();
+                NetworkObserver.INSTANCE.DevicesCleared += NetworkObserver_DevicesCleared;
+                NetworkObserver.INSTANCE.Start();
             }
 
             await DefaultPivotLockState();
@@ -345,6 +348,13 @@ namespace Kazyx.Uwpmm.Pages
             }
         }
 
+        void NetworkObserver_DevicesCleared(object sender, EventArgs e)
+        {
+            TargetDevice = null;
+            UpnpDevice = null;
+            var task = DefaultPivotLockState();
+        }
+
         private void MoveToRemotePivot()
         {
             if (!PivotRoot.IsLocked)
@@ -358,7 +368,7 @@ namespace Kazyx.Uwpmm.Pages
             DebugUtil.Log("NetworkObserver_CameraDiscovered: " + e.CameraDevice.FriendlyName);
             NetworkObserver.INSTANCE.CdsDiscovered -= NetworkObserver_CdsDiscovered;
             NetworkObserver.INSTANCE.CameraDiscovered -= NetworkObserver_CameraDiscovered;
-            await Dispatcher.RunAsync(CoreDispatcherPriority.High, async () =>
+            await Dispatcher.RunAsync(CoreDispatcherPriority.High, () =>
             {
                 TargetDevice = e.CameraDevice;
                 var task = SetUpRemoteApiDevice();
@@ -431,6 +441,8 @@ namespace Kazyx.Uwpmm.Pages
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
+            NetworkObserver.INSTANCE.DevicesCleared -= NetworkObserver_DevicesCleared;
+
             MovieStreamHelper.INSTANCE.StreamClosed -= MovieStreamHelper_StreamClosed;
             MovieStreamHelper.INSTANCE.StatusChanged -= MovieStream_StatusChanged;
 
