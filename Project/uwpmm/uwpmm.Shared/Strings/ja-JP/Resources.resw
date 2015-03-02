@@ -1023,7 +1023,7 @@ PlayMemories Camera Appsストアで最新版にアップデートしてくだ�
   </data>
   <data name="WifiConnectionGuide" xml:space="preserve">
     <value>&lt;ssid&gt; に接続中。
-カメラの検索を処理を実行しています。</value>
+カメラの検索処理を実行しています。</value>
   </data>
   <data name="FoundDlnaDeviceGuide" xml:space="preserve">
     <value>&lt;ssid&gt; にメディアサーバを発見しました。
