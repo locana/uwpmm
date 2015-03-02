@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
@@ -9,7 +8,7 @@ namespace Kazyx.Uwpmm.Utility
 {
     public class AnimationHelper
     {
-        public static Storyboard CreateSlideInAnimation(FrameworkElement target, AnimationOrientation orientation, TimeSpan d, EventHandler<object> completed = null)
+        public static Storyboard CreateSlideAnimation(FrameworkElement target, FadeSide edge, FadeType fadetype, TimeSpan d, EventHandler<object> completed = null)
         {
             double distance = 0;
             var sb = new Storyboard();
@@ -18,50 +17,50 @@ namespace Kazyx.Uwpmm.Utility
             var transform = new TranslateTransform();
             var duration = d.Milliseconds;
 
+            var KeyframeTimes = new List<double>() { 0, duration / 6, duration }; // 3 key frames.
+            List<double> KeyframeDistance = new List<double>();
+            List<double> KeyframeOpacity = new List<double>();
+
             Storyboard.SetTarget(slide, transform);
             Storyboard.SetTargetProperty(fade, "Opacity");
             Storyboard.SetTarget(fade, target);
             target.RenderTransform = transform;
 
-            switch (orientation)
+            switch (fadetype)
             {
-                case AnimationOrientation.Up:
-                case AnimationOrientation.Down:
-                    distance = -target.ActualHeight;
-                    transform.Y = distance;
-                    Storyboard.SetTargetProperty(slide, "Y");
-                    break;
-                case AnimationOrientation.Left:
-                case AnimationOrientation.Right:
-                    distance = -target.ActualWidth;
-                    transform.X = distance;
-                    Storyboard.SetTargetProperty(slide, "X");
-                    break;
-            }
-
-            var KeyframeTimes = new List<double>() { 0, duration / 6, duration }; // 3 key frames.
-            List<double> KeyframeDistance = new List<double>();
-            List<double> KeyframeOpacity = new List<double>();
-
-            switch (orientation)
-            {
-                case AnimationOrientation.Down:
-                    KeyframeDistance = new List<double>() { distance, distance * 0.2, 0 };
+                case FadeType.FadeIn:
                     KeyframeOpacity = new List<double>() { 0, 0.8, 1.0 };
+
+                    switch (edge)
+                    {
+                        case FadeSide.Top:
+                            distance = -target.ActualHeight;
+                            Storyboard.SetTargetProperty(slide, "Y");
+                            KeyframeDistance = new List<double>() { distance, distance * 0.5, 0 };
+                            break;
+                        case FadeSide.Bottom:
+                            distance = target.ActualHeight;
+                            Storyboard.SetTargetProperty(slide, "Y");
+                            KeyframeDistance = new List<double>() { distance, distance * 0.5, 0 };
+                            break;
+                    }
                     break;
-                case AnimationOrientation.Up:
-                    KeyframeDistance = new List<double>() { 0, distance * 0.5, distance };
+                case FadeType.FadeOut:
                     KeyframeOpacity = new List<double>() { 1.0, 0.6, 0 };
-                    break;
-                case AnimationOrientation.Left:
-                    // todo: tune-up
-                    KeyframeDistance = new List<double>() { 0, distance * 0.5, distance };
-                    KeyframeOpacity = new List<double>() { 1.0, 0.6, 0 };
-                    break;
-                case AnimationOrientation.Right:
-                    // todo
-                    KeyframeDistance = new List<double>() { distance, distance * 0.2, 0 };
-                    KeyframeOpacity = new List<double>() { 0, 0.8, 1.0 };
+
+                    switch (edge)
+                    {
+                        case FadeSide.Top:
+                            distance = -target.ActualHeight;
+                            Storyboard.SetTargetProperty(slide, "Y");
+                            KeyframeDistance = new List<double>() { 0, distance * 0.2, distance };
+                            break;
+                        case FadeSide.Bottom:
+                            distance = target.ActualHeight;
+                            Storyboard.SetTargetProperty(slide, "Y");
+                            KeyframeDistance = new List<double>() { 0, distance * 0.2, distance };
+                            break;
+                    }
                     break;
             }
 
@@ -78,11 +77,17 @@ namespace Kazyx.Uwpmm.Utility
         }
     }
 
-    public enum AnimationOrientation
+    public enum FadeSide
     {
-        Up,
-        Down,
         Left,
+        Top,
         Right,
+        Bottom,
+    }
+
+    public enum FadeType
+    {
+        FadeIn,
+        FadeOut,
     }
 }

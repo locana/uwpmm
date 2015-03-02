@@ -150,7 +150,7 @@ namespace Kazyx.Uwpmm.CameraControl
 
         async void StreamProcessor_PlaybackInfoRetrieved(object sender, PlaybackInfoEventArgs e)
         {
-            DebugUtil.Log("playback info: " + MoviePlaybackData.FileName + " " + e.Packet.Duration.TotalSeconds);
+            // DebugUtil.Log("playback info: " + MoviePlaybackData.FileName + " " + e.Packet.Duration.TotalSeconds);
             var dispatcher = SystemUtil.GetCurrentDispatcher();
             if (dispatcher == null) { return; }
 

@@ -33,14 +33,14 @@ namespace Kazyx.Uwpmm.Control
             ToastGrid.DataContext = Contents.ElementAt(0);
             DebugUtil.Log("Dequeue toast:" + Contents.ElementAt(0).Text);
             Running = true;
-            AnimationHelper.CreateSlideInAnimation(ToastGrid, AnimationOrientation.Down, TimeSpan.FromMilliseconds(120), SlideInAnimationCompleted).Begin();
+            AnimationHelper.CreateSlideAnimation(ToastGrid, FadeSide.Top, FadeType.FadeIn, TimeSpan.FromMilliseconds(120), SlideInAnimationCompleted).Begin();
         }
 
         async void SlideInAnimationCompleted(object sender, object e)
         {
             await System.Threading.Tasks.Task.Delay(TimeSpan.FromMilliseconds(3000));
 
-            AnimationHelper.CreateSlideInAnimation(ToastGrid, AnimationOrientation.Up, TimeSpan.FromMilliseconds(120), (e_, sender_) =>
+            AnimationHelper.CreateSlideAnimation(ToastGrid, FadeSide.Top, FadeType.FadeOut, TimeSpan.FromMilliseconds(120), (e_, sender_) =>
             {
                 Contents.RemoveAt(0);
                 Running = false;

@@ -2,10 +2,12 @@
 using Kazyx.Uwpmm.Utility;
 using System;
 using System.Text;
+using System.Threading.Tasks;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Media.Imaging;
 
 // The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
@@ -58,7 +60,7 @@ namespace Kazyx.Uwpmm.Control
         {
             if (duration.TotalMilliseconds <= 0)
             {
-                PlaybackInfo.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                DetailInfoSurface.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
                 return;
             }
             double value = current.TotalMilliseconds / duration.TotalMilliseconds * 1000;
@@ -66,7 +68,7 @@ namespace Kazyx.Uwpmm.Control
             this.SeekBar.Value = value;
             this.ProgressBar.Value = value;
             PositionText.Text = ToString(current);
-            PlaybackInfo.Visibility = Windows.UI.Xaml.Visibility.Visible;
+            DetailInfoSurface.Visibility = Windows.UI.Xaml.Visibility.Visible;
         }
 
         public TimeSpan Duration
@@ -203,12 +205,54 @@ namespace Kazyx.Uwpmm.Control
             }
             PositionText.Text = "--";
             DurationText.Text = "--:--";
-            PlaybackInfo.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
         }
 
+        bool DetailInfoDisplayed = true;
+        bool AnimationRunning = false;
         private void Screen_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            // Todo: show/hide elements other than image
+            if (AnimationRunning) { return; }
+
+            if (DetailInfoDisplayed)
+            {
+                StartToHideInfo();
+            }
+            else
+            {
+                StartToShowInfo();
+            }
+        }
+
+        async void StartToHideInfo()
+        {
+            AnimationRunning = true;
+            var time = TimeSpan.FromMilliseconds(200);
+            var fade = FadeType.FadeOut;
+            AnimationHelper.CreateSlideAnimation(HeaderForeground, FadeSide.Top, fade, time).Begin();
+            AnimationHelper.CreateSlideAnimation(FooterForeground, FadeSide.Bottom, fade, time).Begin();
+            await Task.Delay(TimeSpan.FromMilliseconds(50));
+            AnimationHelper.CreateSlideAnimation(HeaderBackground, FadeSide.Top, fade, time).Begin();
+            AnimationHelper.CreateSlideAnimation(FooterBackground, FadeSide.Bottom, fade, time, (sender, obj) =>
+            {
+                DetailInfoDisplayed = false;
+                AnimationRunning = false;
+            }).Begin();
+        }
+
+        async void StartToShowInfo()
+        {
+            AnimationRunning = true;
+            var time = TimeSpan.FromMilliseconds(200);
+            var fade = FadeType.FadeIn;
+            AnimationHelper.CreateSlideAnimation(HeaderBackground, FadeSide.Top, fade, time).Begin();
+            AnimationHelper.CreateSlideAnimation(FooterBackground, FadeSide.Bottom, fade, time).Begin();
+            await Task.Delay(TimeSpan.FromMilliseconds(50));
+            AnimationHelper.CreateSlideAnimation(HeaderForeground, FadeSide.Top, fade, time).Begin();
+            AnimationHelper.CreateSlideAnimation(FooterForeground, FadeSide.Bottom, fade, time, (sender, obj) =>
+            {
+                DetailInfoDisplayed = true;
+                AnimationRunning = false;
+            }).Begin();
         }
 
         private void StartPauseButton_Tapped(object sender, TappedRoutedEventArgs e)
