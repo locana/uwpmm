@@ -10,7 +10,7 @@
     d:DesignWidth="400">
 
     <Grid x:Name="LayoutRoot" Background="Transparent" Margin="3,20" VerticalAlignment="Stretch">
-        <Grid x:Name="Background" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Opacity="0.7"/>
+        <Grid x:Name="Background" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Opacity="0.9"/>
         <Grid x:Name="PlaybackSurface">
             <Image Grid.Row="0" Name="Screen" Source="{Binding Image}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Tapped="Screen_Tapped" Margin="8"/>
         </Grid>

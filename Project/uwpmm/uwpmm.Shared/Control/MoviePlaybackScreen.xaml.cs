@@ -21,13 +21,27 @@ namespace Kazyx.Uwpmm.Control
             this.InitializeComponent();
             SeekBar.AddHandler(PointerReleasedEvent, new PointerEventHandler(Slider_PointerReleased), true);
 
+            InfoTimer.Interval = new TimeSpan(0, 0, 0, 3); // 3 sec. to hide.
+            InfoTimer.Tick += (obj, sender) =>
+            {
+                if (!AnimationRunning && DetailInfoDisplayed)
+                {
+                    StartToHideInfo();
+                }
+                InfoTimer.Stop();
+            };
+
+
         }
 
         public event EventHandler<SeekBarOperationArgs> SeekOperated;
         public event EventHandler<PlaybackRequestArgs> OnPlaybackOperationRequested;
 
+        DispatcherTimer InfoTimer = new DispatcherTimer();
+
         private void Slider_PointerReleased(object sender, PointerRoutedEventArgs e)
         {
+            RenewInfoTimer();
             if (SeekOperated != null && Duration.TotalMilliseconds > 0)
             {
                 SeekOperated(this, new SeekBarOperationArgs() { SeekPosition = TimeSpan.FromMilliseconds(Duration.TotalMilliseconds * (sender as Slider).Value / 1000) });
@@ -205,12 +219,14 @@ namespace Kazyx.Uwpmm.Control
             }
             PositionText.Text = "--";
             DurationText.Text = "--:--";
+            InfoTimer.Stop();
         }
 
         bool DetailInfoDisplayed = true;
         bool AnimationRunning = false;
         private void Screen_Tapped(object sender, TappedRoutedEventArgs e)
         {
+            RenewInfoTimer();
             if (AnimationRunning) { return; }
 
             if (DetailInfoDisplayed)
@@ -226,7 +242,7 @@ namespace Kazyx.Uwpmm.Control
         async void StartToHideInfo()
         {
             AnimationRunning = true;
-            var time = TimeSpan.FromMilliseconds(200);
+            var time = TimeSpan.FromMilliseconds(250);
             var fade = FadeType.FadeOut;
             AnimationHelper.CreateSlideAnimation(HeaderForeground, FadeSide.Top, fade, time).Begin();
             AnimationHelper.CreateSlideAnimation(FooterForeground, FadeSide.Bottom, fade, time).Begin();
@@ -242,7 +258,7 @@ namespace Kazyx.Uwpmm.Control
         async void StartToShowInfo()
         {
             AnimationRunning = true;
-            var time = TimeSpan.FromMilliseconds(200);
+            var time = TimeSpan.FromMilliseconds(250);
             var fade = FadeType.FadeIn;
             AnimationHelper.CreateSlideAnimation(HeaderBackground, FadeSide.Top, fade, time).Begin();
             AnimationHelper.CreateSlideAnimation(FooterBackground, FadeSide.Bottom, fade, time).Begin();
@@ -252,11 +268,13 @@ namespace Kazyx.Uwpmm.Control
             {
                 DetailInfoDisplayed = true;
                 AnimationRunning = false;
+                InfoTimer.Start();
             }).Begin();
         }
 
         private void StartPauseButton_Tapped(object sender, TappedRoutedEventArgs e)
         {
+            RenewInfoTimer();
             if (OnPlaybackOperationRequested != null)
             {
                 var r = PlaybackRequest.None;
@@ -277,6 +295,18 @@ namespace Kazyx.Uwpmm.Control
                     OnPlaybackOperationRequested(this, new PlaybackRequestArgs() { Request = r });
                 }
             }
+        }
+
+        public void NotifyStartingMoviePlayback()
+        {
+            if (!DetailInfoDisplayed) { StartToShowInfo(); }
+            InfoTimer.Start();
+        }
+
+        void RenewInfoTimer()
+        {
+            InfoTimer.Stop();
+            InfoTimer.Start();
         }
     }
 
