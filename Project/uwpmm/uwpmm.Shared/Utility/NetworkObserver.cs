@@ -153,6 +153,11 @@ namespace Kazyx.Uwpmm.Utility
         public void Finish()
         {
             NetworkInformation.NetworkStatusChanged -= NetworkInformation_NetworkStatusChanged;
+            if (Canceller != null)
+            {
+                Canceller.Cancel();
+                Canceller = null;
+            }
             Clear();
             Started = false;
         }
