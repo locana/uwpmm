@@ -177,7 +177,8 @@ Hint: Access point name of Sony camera devices starts from "DIRECT-".</value>
     <value>Image size to receive</value>
   </data>
   <data name="Guide_StartLiveView" xml:space="preserve">
-    <value>A camera device has been detected.
+    <value>A camera device has been detected on &lt;ssid&gt;.
+
 Swipe left or right to start remote control.</value>
   </data>
   <data name="Switch" xml:space="preserve">
@@ -1097,7 +1098,7 @@ Please update to the latest at PlayMemories Camera Apps store.</value>
 Now detecting connected camera device...</value>
   </data>
   <data name="FoundDlnaDeviceGuide" xml:space="preserve">
-    <value>Media server is online.
+    <value>Media server is active on &lt;ssid&gt;.
 Open gallary to find contents in your camera device.</value>
   </data>
   <data name="Viewer_EmptyMediaServer" xml:space="preserve">

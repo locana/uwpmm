@@ -662,14 +662,14 @@ namespace Kazyx.Uwpmm.Pages
                 {
                     if (NetworkObserver.INSTANCE.CameraDevices.Count != 0)
                     {
-                        MainDescription.Text = SystemUtil.GetStringResource("Guide_StartLiveView");
+                        MainDescription.Text = SystemUtil.GetStringResource("Guide_StartLiveView").Replace("<ssid>", NetworkObserver.INSTANCE.PreviousSsid);
                         return;
                     }
                     else if (NetworkObserver.INSTANCE.CdsProviders.Count != 0)
                     {
                         if (SUPRESS_MEDIA_SERVER_DISCOVERY.All(name => name != NetworkObserver.INSTANCE.CdsProviders[0].FriendlyName))
                         {
-                            MainDescription.Text = SystemUtil.GetStringResource("FoundDlnaDeviceGuide");
+                            MainDescription.Text = SystemUtil.GetStringResource("FoundDlnaDeviceGuide").Replace("<ssid>", NetworkObserver.INSTANCE.PreviousSsid);
                             return;
                         }
                     }
