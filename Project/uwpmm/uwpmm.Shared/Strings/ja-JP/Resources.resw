@@ -595,7 +595,9 @@ PlayMemories Camera Appsストアで最新版にアップデートしてくだ�
     <value>撮影後にカメラから画像を受信し、カメラロールに保存します。（インターバル撮影中は無効となります）</value>
   </data>
   <data name="Guide_StartLiveView" xml:space="preserve">
-    <value>左右にスワイプしてリモコンを開始できます</value>
+    <value>&lt;ssid&gt; のカメラを操作する準備が整いました。
+
+左右にスワイプしてリモコンを開始できます</value>
   </data>
   <data name="Guide_WiFiNotEnabled" xml:space="preserve">
     <value>Wi-Fi設定から、対応したカメラ機器に接続してください</value>
@@ -1020,10 +1022,11 @@ PlayMemories Camera Appsストアで最新版にアップデートしてくだ�
     <value>https://twitter.com/scrap_support</value>
   </data>
   <data name="WifiConnectionGuide" xml:space="preserve">
-    <value>カメラを検索しています。まだWi-Fiでカメラに接続していない場合は接続してください。</value>
+    <value>&lt;ssid&gt; に接続中。
+カメラの検索を処理を実行しています。</value>
   </data>
   <data name="FoundDlnaDeviceGuide" xml:space="preserve">
-    <value>メディアサーバを発見しました。
+    <value>&lt;ssid&gt; にメディアサーバを発見しました。
 ギャラリーを開くとカメラ内の画像が参照できます。</value>
   </data>
   <data name="AppBar_Refresh" xml:space="preserve">
