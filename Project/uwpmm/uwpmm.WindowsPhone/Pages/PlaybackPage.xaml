@@ -66,7 +66,7 @@
                                                 <RowDefinition Height="*"/>
                                                 <RowDefinition Height="48"/>
                                             </Grid.RowDefinitions>
-                                            <Image Grid.ColumnSpan="3" Grid.RowSpan="3" Width="108" Height="108" Stretch="Uniform"
+                                            <Image Grid.ColumnSpan="3" Grid.RowSpan="3" Width="116" Height="116" Stretch="Uniform"
                                                    Source="{Binding ThumbnailImage}"/>
                                             <Image Grid.Row="0" Grid.Column="0" Source="/Assets/Screen/focused.png"
                                                    Visibility="{Binding IsRecent, Converter={StaticResource B2VConverter}}"
@@ -180,7 +180,7 @@
                                                 <RowDefinition Height="*"/>
                                                 <RowDefinition Height="48"/>
                                             </Grid.RowDefinitions>
-                                            <Image Grid.ColumnSpan="3" Grid.RowSpan="2" Width="108" Height="108" Stretch="Uniform"
+                                            <Image Grid.ColumnSpan="3" Grid.RowSpan="2" Width="116" Height="116" Stretch="Uniform"
                                                    Source="{Binding ThumbnailImage}"/>
                                             <Image Grid.Row="1" Grid.Column="0" Source="/Assets/Screen/protected.png"
                                                    Visibility="{Binding Path=Source.Protected, Converter={StaticResource B2VConverter}}"
