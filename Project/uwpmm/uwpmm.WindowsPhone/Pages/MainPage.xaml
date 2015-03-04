@@ -28,24 +28,22 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-
-
         <Grid Grid.Row="1" x:Name="ContentRoot" Margin="0">
             <Pivot Name="PivotRoot">
                 <PivotItem Name="Entrance" Loaded="Entrance_Loaded">
                     <Grid Name="EntrancePage">
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="320" />
+                            <RowDefinition Height="5*" />
                             <RowDefinition Height="auto" />
-                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="3*" />
                         </Grid.RowDefinitions>
-                        <StackPanel Margin="6,0,6,80">
+                        <StackPanel Margin="6,0">
                             <TextBlock Text="{Binding [ApplicationTitle], Source={StaticResource LocalizedStrings}}"
                                        Style="{StaticResource SubheaderTextBlockStyle}" Margin="0,0,0,30" FontWeight="Bold" />
                             <TextBlock Text="{Binding [WifiConnectionGuide], Source={StaticResource LocalizedStrings}}" TextWrapping="WrapWholeWords" 
                                        Style="{StaticResource BaseTextBlockStyle}" x:Name="MainDescription" Margin="0,6"/>
                         </StackPanel>
-                        <Grid Grid.Row="1" Name="NfcAvailable">
+                        <Grid Grid.Row="1" Name="NfcAvailable" Margin="0,0,0,15">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="auto" />
                                 <ColumnDefinition Width="*" />
@@ -55,11 +53,11 @@
                                 Text="{Binding [Guide_NFC], Source={StaticResource LocalizedStrings}}" HorizontalAlignment="Stretch" VerticalAlignment="Center"
                                 Style="{ThemeResource BaseTextBlockStyle}" TextWrapping="WrapWholeWords" Margin="0" />
                         </Grid>
-                        <StackPanel x:Name="NfcDataGrid" VerticalAlignment="Top" Grid.Row="2" Margin="0,30,0,0">
+                        <StackPanel x:Name="NfcDataGrid" VerticalAlignment="Top" Grid.Row="2" Margin="0">
                             <TextBlock Text="{Binding [Nfc_Result], Source={StaticResource LocalizedStrings}}"
                                        Style="{ThemeResource BaseTextBlockStyle}" Margin="40,0"/>
-                            <TextBox x:Name="WifiPassword" Margin="60,10,60,20" TextAlignment="Center" BorderThickness="1" IsReadOnly="True" 
-                                      Background="{ThemeResource ApplicationForegroundThemeBrush}" />
+                            <TextBox x:Name="WifiPassword" Margin="60,10,60,20" TextAlignment="Center"
+                                     BorderThickness="1" IsReadOnly="True" />
                         </StackPanel>
                     </Grid>
                 </PivotItem>
