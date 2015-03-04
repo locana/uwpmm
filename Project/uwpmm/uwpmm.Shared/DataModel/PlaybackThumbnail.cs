@@ -2,10 +2,6 @@
 using Kazyx.Uwpmm.Playback;
 using Kazyx.Uwpmm.Utility;
 using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.ComponentModel;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.Storage;
@@ -76,6 +72,7 @@ namespace Kazyx.Uwpmm.DataModel
             GroupTitle = content.GroupName;
             Source = content;
             DeviceUuid = uuid;
+            IsRecent = false;
         }
 
         public Thumbnail(ContentInfo content, StorageFile localfile)
@@ -84,6 +81,7 @@ namespace Kazyx.Uwpmm.DataModel
             CacheFile = localfile;
             Source = content;
             DeviceUuid = "localhost";
+            IsRecent = false;
         }
 
         public ContentInfo Source { private set; get; }
@@ -159,6 +157,8 @@ namespace Kazyx.Uwpmm.DataModel
         public virtual bool IsPlayable { get { return true; } }
 
         public virtual bool IsContent { get { return true; } }
+
+        public bool IsRecent { set; get; }
 
         private string DeviceUuid { set; get; }
 
@@ -287,232 +287,5 @@ namespace Kazyx.Uwpmm.DataModel
         None,
         CopyToPhone,
         Delete,
-    }
-
-    public class Album : List<Thumbnail>, INotifyPropertyChanged, INotifyCollectionChanged
-    {
-        public string Key { private set; get; }
-
-        private Thumbnail Thumb;
-
-        public BitmapImage RandomThumbnail
-        {
-            get
-            {
-                if (Thumb == null)
-                {
-                    lock (this)
-                    {
-                        Thumb = this[new Random().Next(0, Count - 1)];
-                    }
-                    Thumb.PropertyChanged += Thumb_PropertyChanged;
-                }
-                return Thumb.LargeImage;
-            }
-        }
-
-        void Thumb_PropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == "LargeImage")
-            {
-                OnPropertyChanged("RandomThumbnail");
-            }
-        }
-
-        public SelectivityFactor SelectivityFactor
-        {
-            set
-            {
-                lock (this)
-                {
-                    foreach (var thumb in this)
-                    {
-                        thumb.SelectivityFactor = value;
-                    }
-                }
-            }
-        }
-
-        public Album(string key)
-        {
-            Key = key;
-        }
-
-        new public void Add(Thumbnail content)
-        {
-            lock (this)
-            {
-                var previous = Count;
-                base.Add(content);
-                OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, content, previous));
-                if (previous == 0)
-                {
-                    Thumb = null;
-                    OnPropertyChanged("RandomThumbnail");
-                }
-            }
-        }
-
-        new public bool Remove(Thumbnail content)
-        {
-            lock (this)
-            {
-                var index = IndexOf(content);
-                var removed = base.Remove(content);
-                if (removed)
-                {
-                    OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, content, index));
-                }
-                return removed;
-            }
-        }
-
-        new public void AddRange(IEnumerable<Thumbnail> contents)
-        {
-            lock (this)
-            {
-                var previous = Count;
-                base.AddRange(contents);
-                var list = new List<Thumbnail>(contents);
-                OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, list, previous));
-            }
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        private void OnPropertyChanged(string name)
-        {
-            PropertyChanged.Raise(this, new PropertyChangedEventArgs(name));
-        }
-
-        public event NotifyCollectionChangedEventHandler CollectionChanged;
-        private void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
-        {
-            OnPropertyChanged("Count");
-            OnPropertyChanged("Item[]");
-            try
-            {
-                CollectionChanged.Raise(this, e);
-            }
-            catch (NotSupportedException)
-            {
-                OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
-            }
-        }
-    }
-
-    public class AlbumGroupCollection : List<Album>, INotifyPropertyChanged, INotifyCollectionChanged
-    {
-        private readonly bool SortAlbum;
-
-        public AlbumGroupCollection(bool sortAlbum = true)
-        {
-            SortAlbum = sortAlbum;
-        }
-
-        private SelectivityFactor _SelectivityFactor = SelectivityFactor.None;
-        public SelectivityFactor SelectivityFactor
-        {
-            get { return _SelectivityFactor; }
-            set
-            {
-                _SelectivityFactor = value;
-                lock (this)
-                {
-                    foreach (var group in this)
-                    {
-                        group.SelectivityFactor = value;
-                    }
-                }
-            }
-        }
-
-        new public void Clear()
-        {
-            base.Clear();
-            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
-        }
-
-        public bool Remove(Thumbnail content, bool deleteGroupIfEmpty = true)
-        {
-            lock (this)
-            {
-                var group = GetGroup(content.GroupTitle);
-                if (group == null)
-                {
-                    DebugUtil.Log("Remove: group does not exist");
-                    return false;
-                }
-                var res = group.Remove(content);
-                if (deleteGroupIfEmpty && group.Count == 0)
-                {
-                    DebugUtil.Log("Remove no item group: " + group.Key);
-                    var index = IndexOf(group);
-                    var removed = Remove(group);
-                    if (removed)
-                    {
-                        OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, group, index));
-                    }
-                }
-                return res;
-            }
-        }
-
-        public void Add(Thumbnail content)
-        {
-            lock (this)
-            {
-                var group = GetGroup(content.GroupTitle);
-                if (group == null)
-                {
-                    group = new Album(content.GroupTitle);
-                    SortAdd(group);
-                }
-                group.Add(content);
-            }
-        }
-
-        private void SortAdd(Album item)
-        {
-            int insertAt = Count;
-            if (SortAlbum)
-            {
-                for (int i = 0; i < Count; i++)
-                {
-                    if (string.CompareOrdinal(this[i].Key, item.Key) < 0)
-                    {
-                        insertAt = i;
-                        break;
-                    }
-                }
-            }
-            Insert(insertAt, item);
-            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, item, insertAt));
-        }
-
-        private Album GetGroup(string key)
-        {
-            return this.SingleOrDefault(item => item.Key == key);
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        private void OnPropertyChanged(string name)
-        {
-            PropertyChanged.Raise(this, new PropertyChangedEventArgs(name));
-        }
-
-        public event NotifyCollectionChangedEventHandler CollectionChanged;
-        private void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
-        {
-            OnPropertyChanged("Count");
-            OnPropertyChanged("Item[]");
-            try
-            {
-                CollectionChanged.Raise(this, e);
-            }
-            catch (NotSupportedException)
-            {
-                OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
-            }
-        }
     }
 }

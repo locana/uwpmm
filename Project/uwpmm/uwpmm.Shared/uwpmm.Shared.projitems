@@ -83,7 +83,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)DataModel\MoviePlaybackData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataModel\ObservableBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataModel\PhotoPlaybackData.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)DataModel\PlaybackSource.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DataModel\PlaybackAlbum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DataModel\PlaybackAlbumCollection.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DataModel\PlaybackThumbnail.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)LocalizedStrings.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Playback\ContentsLoader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Playback\DlnaContentsLoader.cs" />

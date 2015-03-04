@@ -62,15 +62,19 @@
                                                 <ColumnDefinition Width="48"/>
                                             </Grid.ColumnDefinitions>
                                             <Grid.RowDefinitions>
+                                                <RowDefinition Height="48"/>
                                                 <RowDefinition Height="*"/>
                                                 <RowDefinition Height="48"/>
                                             </Grid.RowDefinitions>
-                                            <Image Grid.ColumnSpan="3" Grid.RowSpan="2" Width="108" Height="108" Stretch="Uniform"
+                                            <Image Grid.ColumnSpan="3" Grid.RowSpan="3" Width="108" Height="108" Stretch="Uniform"
                                                    Source="{Binding ThumbnailImage}"/>
-                                            <Image Grid.Row="1" Grid.Column="2" Source="/Assets/Screen/mode_movie.png"
+                                            <Image Grid.Row="0" Grid.Column="0" Source="/Assets/Screen/focused.png"
+                                                   Visibility="{Binding IsRecent, Converter={StaticResource B2VConverter}}"
+                                                   IsHitTestVisible="False" CacheMode="BitmapCache" Margin="0,0,20,20"/>
+                                            <Image Grid.Row="2" Grid.Column="2" Source="/Assets/Screen/mode_movie.png"
                                                    Visibility="{Binding IsMovie, Converter={StaticResource B2VConverter}}"
                                                    IsHitTestVisible="False" CacheMode="BitmapCache" Margin="0,0,20,20"/>
-                                            <Border Grid.RowSpan="2" Grid.ColumnSpan="3"
+                                            <Border Grid.RowSpan="3" Grid.ColumnSpan="3"
                                                     Visibility="{Binding IsSelectable, Converter={StaticResource B2VRConverter}}">
                                                 <Border.Background>
                                                     <SolidColorBrush Color="{ThemeResource ContentDialogDimmingColor}"/>

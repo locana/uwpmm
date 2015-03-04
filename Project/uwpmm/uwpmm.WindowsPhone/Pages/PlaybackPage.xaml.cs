@@ -293,7 +293,10 @@ namespace Kazyx.Uwpmm.Pages
             NoContentsMessage.Visibility = Visibility.Collapsed;
 
             RemoteGridSource = new AlbumGroupCollection();
-            LocalGridSource = new AlbumGroupCollection(false);
+            LocalGridSource = new AlbumGroupCollection(false)
+            {
+                ContentSortOrder = Album.SortOrder.NewOneFirst,
+            };
 
             CloseMovieStream();
             FinishLocalMoviePlayback();
@@ -1004,7 +1007,9 @@ namespace Kazyx.Uwpmm.Pages
 
             await Dispatcher.RunAsync(CoreDispatcherPriority.High, () =>
             {
-                LocalGridSource.Add(LocalContentsLoader.StorageFileToThumbnail(folder, file));
+                var thumb = LocalContentsLoader.StorageFileToThumbnail(folder, file);
+                thumb.IsRecent = true;
+                LocalGridSource.Add(thumb);
             });
         }
 
