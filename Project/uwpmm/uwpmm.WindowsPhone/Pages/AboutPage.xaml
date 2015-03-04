@@ -15,7 +15,8 @@
         <Pivot Title="{Binding [ApplicationTitle], Source={StaticResource LocalizedStrings}}">
             <PivotItem Margin="12,14,12,0">
                 <PivotItem.Header>
-                    <TextBlock Text="{Binding [AppInfo], Source={StaticResource LocalizedStrings}}" Margin="0,8,0,0" Style="{StaticResource SubheaderTextBlockStyle}" FontWeight="Bold" Width="320"/>
+                    <TextBlock Text="{Binding [AppInfo], Source={StaticResource LocalizedStrings}}" Margin="0,8,0,0"
+                               FontSize="{StaticResource ComboBoxItemMinHeightThemeSize}" FontWeight="Bold" Width="320"/>
                 </PivotItem.Header>
                 <ScrollViewer>
                     <StackPanel>
@@ -41,7 +42,8 @@
 
             <PivotItem Margin="12,14,12,0">
                 <PivotItem.Header>
-                    <TextBlock Text="{Binding [OSSText], Source={StaticResource LocalizedStrings}}" Margin="0,8,0,0" Style="{StaticResource SubheaderTextBlockStyle}" FontWeight="Bold" Width="320"/>
+                    <TextBlock Text="{Binding [OSSText], Source={StaticResource LocalizedStrings}}" Margin="0,8,0,0"
+                               FontSize="{StaticResource ComboBoxItemMinHeightThemeSize}" FontWeight="Bold" Width="320"/>
                 </PivotItem.Header>
                 <Grid>
                     <Grid.RowDefinitions>

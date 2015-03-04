@@ -16,7 +16,7 @@
         <Hub >
             <HubSection Margin="0">
                 <HubSection.Header>
-                    <TextBlock Text="Log Files" Margin="0,8,0,0" Style="{StaticResource SubheaderTextBlockStyle}" FontWeight="Bold"/>
+                    <TextBlock Text="Log Files" Margin="0,8,0,0" FontSize="{StaticResource ComboBoxItemMinHeightThemeSize}" FontWeight="Bold"/>
                 </HubSection.Header>
                 <HubSection.ContentTemplate>
                     <DataTemplate>
@@ -27,7 +27,7 @@
 
             <HubSection Margin="0">
                 <HubSection.Header>
-                    <TextBlock x:Name="ContentHeader" Text="Content" Margin="0,8,0,0" Style="{StaticResource SubheaderTextBlockStyle}" FontWeight="Bold"/>
+                    <TextBlock x:Name="ContentHeader" Text="Content" Margin="0,8,0,0" FontSize="{StaticResource ComboBoxItemMinHeightThemeSize}" FontWeight="Bold"/>
                 </HubSection.Header>
                 <HubSection.ContentTemplate>
                     <DataTemplate>
