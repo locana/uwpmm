@@ -977,6 +977,7 @@ namespace Kazyx.Uwpmm.Pages
 
         private async Task StartContShooting()
         {
+            if (target == null) { return; }
             if ((PeriodicalShootingTask == null || !PeriodicalShootingTask.IsRunning) && IsContinuousShootingMode())
             {
                 try
@@ -993,6 +994,7 @@ namespace Kazyx.Uwpmm.Pages
 
         private async Task StopContShooting()
         {
+            if (target == null) { return; }
             if ((PeriodicalShootingTask == null || !PeriodicalShootingTask.IsRunning) && IsContinuousShootingMode())
             {
                 try
@@ -1009,7 +1011,7 @@ namespace Kazyx.Uwpmm.Pages
 
         bool IsContinuousShootingMode()
         {
-            return target.Status != null &&
+            return target != null && target.Status != null &&
                 target.Status.ShootMode.Current == ShootModeParam.Still &&
                 target.Status.ContShootingMode != null &&
                 (target.Status.ContShootingMode.Current == ContinuousShootMode.Cont ||
