@@ -70,7 +70,7 @@
                                        Fill="{ThemeResource ApplicationPageBackgroundThemeBrush}"/>
                             <ProgressBar HorizontalAlignment="Stretch" IsIndeterminate="True"/>
                         </Grid>
-                        <Grid Name="LiveviewScreen" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+                        <Grid Name="LiveviewScreen" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Visibility="Collapsed">
                             <Image x:Name="LiveviewImage" Source="{Binding Image, Mode=OneWay}" Loaded="LiveviewImage_Loaded" Unloaded="LiveviewImage_Unloaded" SizeChanged="LiveviewImage_SizeChanged" 
                                Visibility="{Binding Path=ScreenViewData.LiveviewImageDisplayed, FallbackValue=Collapsed, Converter={StaticResource B2VConverter}}"/>
                             <Image x:Name="AudioDummyScreen" Source="/Assets/Screen/audio_locana.png" Margin="30" 
