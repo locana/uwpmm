@@ -99,7 +99,10 @@ namespace Kazyx.Uwpmm.Control
             {
                 transform.ScaleX = 1;
                 transform.ScaleY = 1;
-                transform.Rotation = 0;
+                if (transform.Rotation != 0)
+                {
+                    RotateSmoothly(Image, -transform.Rotation);
+                }
                 transform.TranslateX = 0;
                 transform.TranslateY = 0;
             }
