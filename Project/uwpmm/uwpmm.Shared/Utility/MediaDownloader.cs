@@ -153,7 +153,9 @@ namespace Kazyx.Uwpmm.Utility
                             rootFolder = KnownFolders.PicturesLibrary;
                             break;
                         case Mediatype.Video:
-                            rootFolder = KnownFolders.VideosLibrary;
+                            rootFolder = KnownFolders.PicturesLibrary;
+                            // Use Pictures folder according to the behavior of built-in Camera apps
+                            // rootFolder = KnownFolders.VideosLibrary;
                             break;
                         default:
                             return;
