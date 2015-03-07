@@ -42,24 +42,15 @@ namespace Kazyx.Uwpmm.Control
             }
         }
 
-        public void RotateSmoothly(UIElement target, double angle)
+        bool IsRotating = false;
+        public void RotateSmoothly(FrameworkElement target, double angle)
         {
-            var transform = Image.RenderTransform as CompositeTransform;
-
-            var duration = new Duration(TimeSpan.FromMilliseconds(200));
-            var sb = new Storyboard() { Duration = duration };
-            var animation = new DoubleAnimationUsingKeyFrames();
-
-            sb.Children.Add(animation);
-
-            Storyboard.SetTarget(animation, transform);
-            Storyboard.SetTargetProperty(animation, "Rotation");
-
-            animation.KeyFrames.Add(new EasingDoubleKeyFrame() { KeyTime = KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(0)), Value = transform.Rotation });
-            animation.KeyFrames.Add(new EasingDoubleKeyFrame() { KeyTime = KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(60)), Value = transform.Rotation + angle * 0.7 });
-            animation.KeyFrames.Add(new EasingDoubleKeyFrame() { KeyTime = KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(180)), Value = transform.Rotation + angle });
-
-            sb.Begin();
+            if (IsRotating) { return; }
+            IsRotating = true;
+            AnimationHelper.CreateSmoothRotateAnimation(new AnimationRequest() { Target = target, Completed = (obj, sender) => {
+                IsRotating = false;
+            }
+            }, angle).Begin();
         }
 
         public static readonly DependencyProperty SourceBitmapProperty = DependencyProperty.Register(

@@ -75,6 +75,42 @@ namespace Kazyx.Uwpmm.Utility
             if (completed != null) { sb.Completed += completed; }
             return sb;
         }
+
+        public static Storyboard CreateSmoothRotateAnimation(AnimationRequest request, double angle)
+        {
+            var transform = request.Target.RenderTransform as CompositeTransform;
+
+            var duration = new Duration(TimeSpan.FromMilliseconds(200));
+            if (request.Duration != null && request.Duration.Milliseconds != 0)
+            {
+                duration = request.Duration;
+            }
+
+            var sb = new Storyboard() { Duration = duration };
+            var animation = new DoubleAnimationUsingKeyFrames();
+
+            sb.Children.Add(animation);
+
+            Storyboard.SetTarget(animation, transform);
+            Storyboard.SetTargetProperty(animation, "Rotation");
+
+            if (request.Completed != null)
+            {
+                sb.Completed += request.Completed;
+            }
+
+            animation.KeyFrames.Add(new EasingDoubleKeyFrame() { KeyTime = KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(0)), Value = transform.Rotation });
+            animation.KeyFrames.Add(new EasingDoubleKeyFrame() { KeyTime = KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(duration.TimeSpan.Milliseconds / 3)), Value = transform.Rotation + angle * 0.7 });
+            animation.KeyFrames.Add(new EasingDoubleKeyFrame() { KeyTime = KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(duration.TimeSpan.Milliseconds)), Value = transform.Rotation + angle });
+            return sb;
+        }
+    }
+
+    public class AnimationRequest
+    {
+        public FrameworkElement Target { get; set; }
+        public TimeSpan Duration { get; set; }
+        public EventHandler<object> Completed { get; set; }
     }
 
     public enum FadeSide
@@ -90,4 +126,6 @@ namespace Kazyx.Uwpmm.Utility
         FadeIn,
         FadeOut,
     }
+
+
 }
