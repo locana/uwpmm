@@ -18,7 +18,7 @@ namespace Kazyx.Uwpmm.Playback
 
         public const int CONTENT_LOOP_STEP = 50;
 
-        public const int MAX_AUTO_LOAD_THUMBNAILS = 30;
+        public const int MAX_AUTO_LOAD_THUMBNAILS = 15;
 
         public RemoteApiContentsLoader(TargetDevice device)
         {

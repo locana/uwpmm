@@ -14,9 +14,9 @@ namespace Kazyx.Uwpmm.Playback
     {
         private readonly UpnpDevice UpnpDevice;
 
-        public const int CONTENT_LOOP_STEP = 50;
+        public const int CONTENT_LOOP_STEP = 15;
 
-        public const int MAX_AUTO_LOAD_THUMBNAILS = 30;
+        public const int MAX_AUTO_LOAD_THUMBNAILS = 14;
 
         public DlnaContentsLoader(UpnpDevice upnp)
         {
@@ -246,17 +246,23 @@ namespace Kazyx.Uwpmm.Playback
             OnPartLoaded(Translate(containerName, contents.Result.Items));
 
             loadedForLayer += contents.NumberReturned;
-            sum += contents.NumberReturned;
+            sum += contents.Result.Items.Count;
 
             var containers = new List<Container>(contents.Result.Containers);
 
+            var diff = sum - MAX_AUTO_LOAD_THUMBNAILS;
             if (sum > MAX_AUTO_LOAD_THUMBNAILS)
             {
-                var remainingNum = contents.TotalMatches - contents.NumberReturned;
-                var remaining = new RemainingContentsHolder(containerId, FormatDateTitle(containerName), UpnpDevice.UDN, loadedForLayer, contents.TotalMatches - loadedForLayer);
-                var list = new List<Thumbnail>();
-                list.Add(remaining);
-                OnPartLoaded(list);
+
+                var remainingNum = contents.TotalMatches - loadedForLayer;
+                if (remainingNum != 0)
+                {
+                    var remaining = new RemainingContentsHolder(containerId,
+                        FormatDateTitle(containerName), UpnpDevice.UDN, loadedForLayer, remainingNum);
+                    var list = new List<Thumbnail>();
+                    list.Add(remaining);
+                    OnPartLoaded(list);
+                }
                 return containers;
             }
 

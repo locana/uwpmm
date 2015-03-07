@@ -23,6 +23,7 @@ namespace Kazyx.Uwpmm.DataModel
         public RemainingContentsHolder(string containerId, string groupTitle, string uuid, int startsFrom, int count)
             : base(new ContentInfo { GroupName = groupTitle }, uuid)
         {
+            DebugUtil.Log("Creating remaining contents holder: " + startsFrom + " - " + count + " - " + containerId);
             StartsFrom = startsFrom;
             RemainingCount = count;
             CdsContainerId = containerId;
