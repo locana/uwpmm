@@ -267,9 +267,9 @@
                 </Grid>
             </PivotItem>
         </Pivot>
-        <Border x:Name="HeaderBlocker" Height="56" VerticalAlignment="Top" Visibility="Collapsed"
-                Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-            <TextBlock x:Name="HeaderBlockerText" VerticalAlignment="Bottom"
+        <Border x:Name="HeaderBlocker" Height="44" VerticalAlignment="Top" Visibility="Collapsed"
+                Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Margin="0,-6,0,0">
+            <TextBlock x:Name="HeaderBlockerText" VerticalAlignment="Top"
                        Style="{StaticResource SubheaderTextBlockStyle}" Margin="18,0,0,2" />
         </Border>
 
