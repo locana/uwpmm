@@ -21,4 +21,13 @@ namespace Kazyx.Uwpmm.UPnP
         public const string JpegSmall = "JPEG_SM";
         public const string JpegThumbnail = "JPEG_TN";
     }
+
+    public class MimeType
+    {
+        public const string Image = "image/";
+        public const string Jpeg = "image/jpeg";
+        public const string Video = "video/";
+        public const string Mp4 = "video/mp4";
+        public const string AvcHd = "video/vnd.dlna.mpeg-tts";
+    }
 }

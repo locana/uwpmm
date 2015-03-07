@@ -130,7 +130,8 @@ namespace Kazyx.Uwpmm.Playback
         private static string GetLargeImageResource(Item item)
         {
             var matched = item.Resources
-                .FirstOrDefault(res => res.ProtocolInfo != null && res.ProtocolInfo.MimeType == "image/jpeg" && res.ProtocolInfo.DlnaProfileName == DlnaProfileName.JpegLarge);
+                .FirstOrDefault(res => res.ProtocolInfo != null
+                    && res.ProtocolInfo.MimeType == "image/jpeg" && res.ProtocolInfo.DlnaProfileName == DlnaProfileName.JpegLarge);
 
             if (matched != null)
             {
@@ -146,17 +147,31 @@ namespace Kazyx.Uwpmm.Playback
 
         private static string GetOriginalImageResource(Item item)
         {
-            var matched = item.Resources
-                .FirstOrDefault(res => res.ProtocolInfo != null && res.ProtocolInfo.MimeType == "image/jpeg" && res.ProtocolInfo.IsOriginalContent);
-
-            if (matched != null)
+            if (item.Class.StartsWith(Class.ImageItem, System.StringComparison.OrdinalIgnoreCase))
             {
-                return matched.ResourceUrl;
+                var matched = item.Resources
+                    .FirstOrDefault(res => res.ProtocolInfo != null
+                        && res.ProtocolInfo.MimeType == MimeType.Jpeg && res.ProtocolInfo.IsOriginalContent);
+
+                if (matched != null)
+                {
+                    return matched.ResourceUrl;
+                }
+
+                if (item.Class.StartsWith(Class.ImageItem))
+                {
+                    return item.Resources[0].ResourceUrl;
+                }
             }
-
-            if (item.Class.StartsWith(Class.ImageItem))
+            else if (item.Class.StartsWith(Class.VideoItem, System.StringComparison.OrdinalIgnoreCase))
             {
-                return item.Resources[0].ResourceUrl;
+                var matched = item.Resources
+                    .FirstOrDefault(res => res.ProtocolInfo != null
+                        && res.ProtocolInfo.MimeType.StartsWith(MimeType.Video, System.StringComparison.OrdinalIgnoreCase));
+                if (matched != null)
+                {
+                    return matched.ResourceUrl;
+                }
             }
             return null;
         }
