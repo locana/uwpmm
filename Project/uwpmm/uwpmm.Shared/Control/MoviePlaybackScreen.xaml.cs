@@ -1,12 +1,15 @@
 ﻿using Kazyx.RemoteApi.AvContent;
+using Kazyx.Uwpmm.DataModel;
 using Kazyx.Uwpmm.Utility;
 using System;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Media.Imaging;
 
@@ -31,20 +34,72 @@ namespace Kazyx.Uwpmm.Control
                 InfoTimer.Stop();
             };
 
+            LocalMoviePlayer.MediaFailed += LocalMoviePlayer_MediaFailed;
+            LocalMoviePlayer.MediaOpened += LocalMoviePlayer_MediaOpened;
+            LocalMoviePlayer.CurrentStateChanged += LocalMoviePlayer_CurrentStateChanged;
 
+            LocalMoviePositionTimer.Interval = TimeSpan.FromMilliseconds(200);
+            LocalMoviePositionTimer.Tick += (obj, sender) =>
+            {
+                if (this.DataContext != null && MovieType == MovieFileType.LocalMovie)
+                {
+                    (this.DataContext as MoviePlaybackData).CurrentPosition = LocalMoviePlayer.Position;
+                }
+            };
+        }
+
+        void LocalMoviePlayer_CurrentStateChanged(object sender, RoutedEventArgs e)
+        {
+            var data = this.DataContext as MoviePlaybackData;
+            switch (LocalMoviePlayer.CurrentState)
+            {
+                case MediaElementState.Paused:
+                    data.StreamingStatus = StreamStatus.Paused;
+                    break;
+                case MediaElementState.Playing:
+                    data.StreamingStatus = StreamStatus.Started;
+                    break;
+                case MediaElementState.Stopped:
+                    data.StreamingStatus = StreamStatus.PausedByEdge;
+                    break;
+            }
+        }
+
+        private void LocalMoviePlayer_MediaOpened(object sender, RoutedEventArgs e)
+        {
+            if (LocalMediaOpened != null) { LocalMediaOpened(sender, e); }
+            var data = this.DataContext as MoviePlaybackData;
+            data.Duration = LocalMoviePlayer.NaturalDuration.TimeSpan;
+        }
+
+        private void LocalMoviePlayer_MediaFailed(object sender, ExceptionRoutedEventArgs e)
+        {
+            if (LocalMediaFailed != null) { LocalMediaFailed(sender, e.ErrorMessage); }
         }
 
         public event EventHandler<SeekBarOperationArgs> SeekOperated;
-        public event EventHandler<PlaybackRequestArgs> OnPlaybackOperationRequested;
+        public event EventHandler<PlaybackRequestArgs> OnStreamingOperationRequested;
+        public event EventHandler<RoutedEventArgs> LocalMediaOpened;
+        public event EventHandler<string> LocalMediaFailed;
 
         DispatcherTimer InfoTimer = new DispatcherTimer();
+        DispatcherTimer LocalMoviePositionTimer = new DispatcherTimer();
 
         private void Slider_PointerReleased(object sender, PointerRoutedEventArgs e)
         {
             RenewInfoTimer();
-            if (SeekOperated != null && Duration.TotalMilliseconds > 0)
+            var targetPosition = TimeSpan.FromMilliseconds(Duration.TotalMilliseconds * (sender as Slider).Value / 1000);
+            switch (this.MovieType)
             {
-                SeekOperated(this, new SeekBarOperationArgs() { SeekPosition = TimeSpan.FromMilliseconds(Duration.TotalMilliseconds * (sender as Slider).Value / 1000) });
+                case MovieFileType.SimpleStreamingMovie:
+                    if (SeekOperated != null && Duration.TotalMilliseconds > 0)
+                    {
+                        SeekOperated(this, new SeekBarOperationArgs() { SeekPosition = targetPosition });
+                    }
+                    break;
+                case MovieFileType.LocalMovie:
+                    LocalMoviePlayer.Position = targetPosition;
+                    break;
             }
         }
 
@@ -207,6 +262,40 @@ namespace Kazyx.Uwpmm.Control
             StartPauseButtonImage.Source = image;
         }
 
+        public static readonly DependencyProperty MovieTypeProperty = DependencyProperty.Register(
+            "MovieType",
+            typeof(MovieFileType),
+            typeof(MoviePlaybackScreen),
+            new PropertyMetadata(MovieFileType.LocalMovie, new PropertyChangedCallback(MoviePlaybackScreen.OnMovieTypeUpdated)));
+
+        private static void OnMovieTypeUpdated(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            (d as MoviePlaybackScreen).SetupForMovieType((MovieFileType)(e.NewValue));
+        }
+
+        private void SetupForMovieType(MovieFileType movieFileType)
+        {
+            switch (movieFileType)
+            {
+                case MovieFileType.LocalMovie:
+                    LocalMoviePlayer.Visibility = Visibility.Visible;
+                    StreamingPlayer.Visibility = Visibility.Collapsed;
+                    LocalMoviePositionTimer.Start();
+                    break;
+                case MovieFileType.SimpleStreamingMovie:
+                    LocalMoviePlayer.Visibility = Visibility.Collapsed;
+                    StreamingPlayer.Visibility = Visibility.Visible;
+                    LocalMoviePositionTimer.Stop();
+                    break;
+            }
+        }
+
+        public MovieFileType MovieType
+        {
+            get { return (MovieFileType)GetValue(MovieTypeProperty); }
+            set { SetValue(MovieTypeProperty, value); }
+        }
+
         public void Reset()
         {
             if (SeekAvailable)
@@ -285,29 +374,47 @@ namespace Kazyx.Uwpmm.Control
         private void StartPauseButton_Tapped(object sender, TappedRoutedEventArgs e)
         {
             RenewInfoTimer();
-            if (OnPlaybackOperationRequested != null)
+
+            switch (this.MovieType)
             {
-                var r = PlaybackRequest.None;
-                switch (this.PlaybackStatus)
-                {
-                    case StreamStatus.Paused:
-                        r = PlaybackRequest.Start;
-                        break;
-                    case StreamStatus.Started:
-                        r = PlaybackRequest.Pause;
-                        break;
-                    case StreamStatus.PausedByEdge:
-                        r = PlaybackRequest.Start;
-                        break;
-                }
-                if (r != PlaybackRequest.None)
-                {
-                    OnPlaybackOperationRequested(this, new PlaybackRequestArgs() { Request = r });
-                }
+                case MovieFileType.SimpleStreamingMovie:
+                    if (OnStreamingOperationRequested != null)
+                    {
+                        var r = PlaybackRequest.None;
+                        switch (this.PlaybackStatus)
+                        {
+                            case StreamStatus.Paused:
+                                r = PlaybackRequest.Start;
+                                break;
+                            case StreamStatus.Started:
+                                r = PlaybackRequest.Pause;
+                                break;
+                            case StreamStatus.PausedByEdge:
+                                r = PlaybackRequest.Start;
+                                break;
+                        }
+                        if (r != PlaybackRequest.None)
+                        {
+                            OnStreamingOperationRequested(this, new PlaybackRequestArgs() { Request = r });
+                        }
+                    }
+                    break;
+                case MovieFileType.LocalMovie:
+                    switch (LocalMoviePlayer.CurrentState)
+                    {
+                        case MediaElementState.Paused:
+                        case MediaElementState.Stopped:
+                            LocalMoviePlayer.Play();
+                            break;
+                        case MediaElementState.Playing:
+                            LocalMoviePlayer.Pause();
+                            break;
+                    }
+                    break;
             }
         }
 
-        public void NotifyStartingMoviePlayback()
+        public void NotifyStartingStreamingMoviePlayback()
         {
             if (!DetailInfoDisplayed) { StartToShowInfo(); }
             InfoTimer.Start();
@@ -317,6 +424,34 @@ namespace Kazyx.Uwpmm.Control
         {
             InfoTimer.Stop();
             InfoTimer.Start();
+        }
+
+        public async void SetLocalContent(Thumbnail content)
+        {
+            try
+            {
+                var stream = await content.CacheFile.OpenAsync(FileAccessMode.Read);
+                LocalMoviePlayer.SetSource(stream, content.CacheFile.ContentType);
+
+                var data = this.DataContext as MoviePlaybackData;
+                data.FileName = content.CacheFile.Name;
+                data.CurrentPosition = TimeSpan.FromMilliseconds(0);
+                data.SeekAvailable = LocalMoviePlayer.CanSeek;
+
+                LocalMoviePlayer.Play();
+
+                if (!DetailInfoDisplayed) { StartToShowInfo(); }
+                InfoTimer.Start();
+            }
+            catch (Exception ex)
+            {
+                if (LocalMediaFailed != null) { LocalMediaFailed(this, ex.Message); }
+            }
+        }
+
+        public void Finish()
+        {
+
         }
     }
 
@@ -335,5 +470,17 @@ namespace Kazyx.Uwpmm.Control
         None,
         Start,
         Pause,
+    }
+
+    public enum MovieFileType
+    {
+        /// <summary>
+        /// Using embedded movie player for movies on local storage.
+        /// </summary>
+        LocalMovie,
+        /// <summary>
+        /// To support jpeg based streaming from camera device.
+        /// </summary>
+        SimpleStreamingMovie,
     }
 }

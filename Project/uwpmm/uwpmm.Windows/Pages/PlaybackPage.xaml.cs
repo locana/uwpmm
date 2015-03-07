@@ -100,7 +100,7 @@ namespace Kazyx.Uwpmm.Pages
                 catch (RemoteApi.RemoteApiException) { }
                 HideProgress();
             };
-            MovieScreen.OnPlaybackOperationRequested += async (sender, arg) =>
+            MovieScreen.OnStreamingOperationRequested += async (sender, arg) =>
             {
                 try
                 {

@@ -12,7 +12,8 @@
     <Grid x:Name="LayoutRoot" Background="Transparent" Margin="3,20" VerticalAlignment="Stretch">
         <Grid x:Name="Background" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Opacity="0.9"/>
         <Grid x:Name="PlaybackSurface">
-            <Image Grid.Row="0" Name="Screen" Source="{Binding Image}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Tapped="Screen_Tapped" Margin="8"/>
+            <Image Grid.Row="0" Name="StreamingPlayer" Source="{Binding Image}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Tapped="Screen_Tapped" Margin="8"/>
+            <MediaElement x:Name="LocalMoviePlayer" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="8" IsLooping="False" Stretch="Uniform" Tapped="Screen_Tapped"  />
         </Grid>
 
         <Grid x:Name="DetailInfoSurface" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">

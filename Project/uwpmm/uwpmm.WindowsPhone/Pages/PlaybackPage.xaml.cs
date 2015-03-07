@@ -194,7 +194,7 @@ namespace Kazyx.Uwpmm.Pages
                 catch (RemoteApi.RemoteApiException) { }
                 HideProgress();
             };
-            MovieScreen.OnPlaybackOperationRequested += async (sender, arg) =>
+            MovieScreen.OnStreamingOperationRequested += async (sender, arg) =>
             {
                 try
                 {
@@ -348,8 +348,8 @@ namespace Kazyx.Uwpmm.Pages
             MovieStreamHelper.INSTANCE.StreamClosed += MovieStreamHelper_StreamClosed;
             MovieStreamHelper.INSTANCE.StatusChanged += MovieStream_StatusChanged;
 
-            LocalMoviePlayer.MediaFailed += LocalMoviePlayer_MediaFailed;
-            LocalMoviePlayer.MediaOpened += LocalMoviePlayer_MediaOpened;
+            LocalMovieScreen.LocalMediaFailed += LocalMoviePlayer_MediaFailed;
+            LocalMovieScreen.LocalMediaOpened += LocalMoviePlayer_MediaOpened;
 
             var param = e.Parameter as string;
             if (param == AUTO_JUMP_TO_DLNA_FLAG)
@@ -472,8 +472,8 @@ namespace Kazyx.Uwpmm.Pages
             CloseMovieStream();
             MovieDrawer.DataContext = null;
 
-            LocalMoviePlayer.MediaFailed -= LocalMoviePlayer_MediaFailed;
-            LocalMoviePlayer.MediaOpened -= LocalMoviePlayer_MediaOpened;
+            LocalMovieScreen.LocalMediaFailed -= LocalMoviePlayer_MediaFailed;
+            LocalMovieScreen.LocalMediaOpened -= LocalMoviePlayer_MediaOpened;
             FinishLocalMoviePlayback();
 
             if (Canceller != null)
@@ -1394,7 +1394,7 @@ namespace Kazyx.Uwpmm.Pages
                             ShowToast(SystemUtil.GetStringResource("Viewer_FailedPlaybackMovie"));
                             CloseMovieStream();
                         }
-                        MovieScreen.NotifyStartingMoviePlayback();
+                        MovieScreen.NotifyStartingStreamingMoviePlayback();
                         HideProgress();
                     }
                     else
@@ -1709,24 +1709,16 @@ namespace Kazyx.Uwpmm.Pages
             }
         }
 
-        private async void PlaybackLocalMovie(Thumbnail content)
+        MoviePlaybackData LocalMovieData = new MoviePlaybackData();
+
+        private void PlaybackLocalMovie(Thumbnail content)
         {
             ChangeProgressText(SystemUtil.GetStringResource("Progress_OpeningMovieStream"));
             UpdateInnerState(ViewerState.LocalMoviePlayback);
             PivotRoot.IsLocked = true;
 
-            try
-            {
-                var stream = await content.CacheFile.OpenAsync(FileAccessMode.Read);
-                LocalMoviePlayer.SetSource(stream, content.CacheFile.ContentType);
-            }
-            catch (Exception)
-            {
-                ShowToast(SystemUtil.GetStringResource("Viewer_FailedPlaybackMovie"));
-                var unlock = DefaultPivotLockState();
-                HideProgress();
-                UpdateInnerState(ViewerState.LocalSingle);
-            }
+            LocalMovieDrawer.DataContext = LocalMovieData;
+            LocalMovieScreen.SetLocalContent(content);
         }
 
         private void FinishLocalMoviePlayback()
@@ -1736,7 +1728,7 @@ namespace Kazyx.Uwpmm.Pages
             var task = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
                 var unlock = DefaultPivotLockState();
-                LocalMoviePlayer.Stop();
+                LocalMovieScreen.Finish();
                 LocalMovieDrawer.Visibility = Visibility.Collapsed;
             });
         }
@@ -1750,7 +1742,7 @@ namespace Kazyx.Uwpmm.Pages
             });
         }
 
-        void LocalMoviePlayer_MediaFailed(object sender, ExceptionRoutedEventArgs e)
+        void LocalMoviePlayer_MediaFailed(object sender, string e)
         {
             UpdateInnerState(ViewerState.LocalSingle);
 
@@ -1758,7 +1750,7 @@ namespace Kazyx.Uwpmm.Pages
             {
                 var unlock = DefaultPivotLockState();
                 LocalMovieDrawer.Visibility = Visibility.Collapsed;
-                DebugUtil.Log("LocalMoviePlayer MediaFailed: " + e.ErrorMessage);
+                DebugUtil.Log("LocalMoviePlayer MediaFailed: " + e);
                 ShowToast(SystemUtil.GetStringResource("Viewer_FailedPlaybackMovie"));
                 HideProgress();
             });

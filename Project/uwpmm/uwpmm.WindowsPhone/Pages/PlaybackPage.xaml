@@ -278,13 +278,13 @@
         <Border x:Name="MovieDrawer" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="Collapsed" Margin="0,-24,0,-20">
             <control:MoviePlaybackScreen x:Name="MovieScreen" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0" 
                                          CurrentPosition="{Binding CurrentPosition}" Duration="{Binding Duration}" SeekAvailable="{Binding SeekAvailable}"
-                                         PlaybackStatus="{Binding StreamingStatus}"/>
+                                         PlaybackStatus="{Binding StreamingStatus}" MovieType="SimpleStreamingMovie"/>
         </Border>
 
-        <Border x:Name="LocalMovieDrawer" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="Collapsed">
-            <MediaElement x:Name="LocalMoviePlayer"
-                          HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0"
-                          IsLooping="False" Stretch="Uniform" />
+        <Border x:Name="LocalMovieDrawer" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="Collapsed"  Margin="0,-24,0,-20">
+            <control:MoviePlaybackScreen x:Name="LocalMovieScreen" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0" 
+                                         CurrentPosition="{Binding CurrentPosition}" Duration="{Binding Duration}"  SeekAvailable="{Binding SeekAvailable}"
+                                         PlaybackStatus="{Binding StreamingStatus}" MovieType="LocalMovie"/>
         </Border>
 
         <Grid Name="AppSettingPanel" Visibility="Collapsed"
