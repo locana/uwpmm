@@ -142,7 +142,9 @@
     <Content Include="Assets\store_50.png" />
     <Content Include="Assets\WideLogo.scale-240.png" />
     <Content Include="Assets\wide_310.png" />
+    <!--
     <None Include="Package.StoreAssociation.xml" />
+    -->
     <Content Include="StoreManifest.xml" />
   </ItemGroup>
   <ItemGroup>
