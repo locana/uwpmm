@@ -8,14 +8,14 @@ namespace Kazyx.Uwpmm.Utility
 {
     public class AnimationHelper
     {
-        public static Storyboard CreateSlideAnimation(FrameworkElement target, FadeSide edge, FadeType fadetype, TimeSpan d, EventHandler<object> completed = null)
+        public static Storyboard CreateSlideAnimation(AnimationRequest request, FadeSide edge, FadeType fadetype)
         {
             double distance = 0;
             var sb = new Storyboard();
             var slide = new DoubleAnimationUsingKeyFrames();
             var fade = new DoubleAnimationUsingKeyFrames();
             var transform = new TranslateTransform();
-            var duration = d.Milliseconds;
+            var duration = request.Duration.Milliseconds;
 
             var KeyframeTimes = new List<double>() { 0, duration / 6, duration }; // 3 key frames.
             List<double> KeyframeDistance = new List<double>();
@@ -23,8 +23,8 @@ namespace Kazyx.Uwpmm.Utility
 
             Storyboard.SetTarget(slide, transform);
             Storyboard.SetTargetProperty(fade, "Opacity");
-            Storyboard.SetTarget(fade, target);
-            target.RenderTransform = transform;
+            Storyboard.SetTarget(fade, request.Target);
+            request.Target.RenderTransform = transform;
 
             switch (fadetype)
             {
@@ -34,12 +34,12 @@ namespace Kazyx.Uwpmm.Utility
                     switch (edge)
                     {
                         case FadeSide.Top:
-                            distance = -target.ActualHeight;
+                            distance = -request.Target.ActualHeight;
                             Storyboard.SetTargetProperty(slide, "Y");
                             KeyframeDistance = new List<double>() { distance, distance * 0.5, 0 };
                             break;
                         case FadeSide.Bottom:
-                            distance = target.ActualHeight;
+                            distance = request.Target.ActualHeight;
                             Storyboard.SetTargetProperty(slide, "Y");
                             KeyframeDistance = new List<double>() { distance, distance * 0.5, 0 };
                             break;
@@ -51,12 +51,12 @@ namespace Kazyx.Uwpmm.Utility
                     switch (edge)
                     {
                         case FadeSide.Top:
-                            distance = -target.ActualHeight;
+                            distance = -request.Target.ActualHeight;
                             Storyboard.SetTargetProperty(slide, "Y");
                             KeyframeDistance = new List<double>() { 0, distance * 0.2, distance };
                             break;
                         case FadeSide.Bottom:
-                            distance = target.ActualHeight;
+                            distance = request.Target.ActualHeight;
                             Storyboard.SetTargetProperty(slide, "Y");
                             KeyframeDistance = new List<double>() { 0, distance * 0.2, distance };
                             break;
@@ -72,7 +72,7 @@ namespace Kazyx.Uwpmm.Utility
 
             sb.Children.Add(slide);
             sb.Children.Add(fade);
-            if (completed != null) { sb.Completed += completed; }
+            if (request.Completed != null) { sb.Completed += request.Completed; }
             return sb;
         }
 

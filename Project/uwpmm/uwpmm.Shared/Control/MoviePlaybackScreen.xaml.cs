@@ -244,15 +244,20 @@ namespace Kazyx.Uwpmm.Control
             AnimationRunning = true;
             var time = TimeSpan.FromMilliseconds(250);
             var fade = FadeType.FadeOut;
-            AnimationHelper.CreateSlideAnimation(HeaderForeground, FadeSide.Top, fade, time).Begin();
-            AnimationHelper.CreateSlideAnimation(FooterForeground, FadeSide.Bottom, fade, time).Begin();
+            AnimationHelper.CreateSlideAnimation(new AnimationRequest() { Target = HeaderForeground, Duration = time }, FadeSide.Top, fade).Begin();
+            AnimationHelper.CreateSlideAnimation(new AnimationRequest() { Target = FooterForeground, Duration = time }, FadeSide.Bottom, fade).Begin();
             await Task.Delay(TimeSpan.FromMilliseconds(50));
-            AnimationHelper.CreateSlideAnimation(HeaderBackground, FadeSide.Top, fade, time).Begin();
-            AnimationHelper.CreateSlideAnimation(FooterBackground, FadeSide.Bottom, fade, time, (sender, obj) =>
+            AnimationHelper.CreateSlideAnimation(new AnimationRequest() { Target = HeaderBackground, Duration = time }, FadeSide.Top, fade).Begin();
+            AnimationHelper.CreateSlideAnimation(new AnimationRequest()
             {
-                DetailInfoDisplayed = false;
-                AnimationRunning = false;
-            }).Begin();
+                Target = FooterBackground,
+                Duration = time,
+                Completed = (sender, obj) =>
+                {
+                    DetailInfoDisplayed = false;
+                    AnimationRunning = false;
+                }
+            }, FadeSide.Bottom, fade).Begin();
         }
 
         async void StartToShowInfo()
@@ -260,16 +265,21 @@ namespace Kazyx.Uwpmm.Control
             AnimationRunning = true;
             var time = TimeSpan.FromMilliseconds(250);
             var fade = FadeType.FadeIn;
-            AnimationHelper.CreateSlideAnimation(HeaderBackground, FadeSide.Top, fade, time).Begin();
-            AnimationHelper.CreateSlideAnimation(FooterBackground, FadeSide.Bottom, fade, time).Begin();
+            AnimationHelper.CreateSlideAnimation(new AnimationRequest() { Target = HeaderBackground, Duration = time }, FadeSide.Top, fade).Begin();
+            AnimationHelper.CreateSlideAnimation(new AnimationRequest() { Target = FooterBackground, Duration = time }, FadeSide.Bottom, fade).Begin();
             await Task.Delay(TimeSpan.FromMilliseconds(50));
-            AnimationHelper.CreateSlideAnimation(HeaderForeground, FadeSide.Top, fade, time).Begin();
-            AnimationHelper.CreateSlideAnimation(FooterForeground, FadeSide.Bottom, fade, time, (sender, obj) =>
+            AnimationHelper.CreateSlideAnimation(new AnimationRequest() { Target = HeaderForeground, Duration = time }, FadeSide.Top, fade).Begin();
+            AnimationHelper.CreateSlideAnimation(new AnimationRequest()
             {
-                DetailInfoDisplayed = true;
-                AnimationRunning = false;
-                InfoTimer.Start();
-            }).Begin();
+                Target = FooterForeground,
+                Duration = time,
+                Completed = (sender, obj) =>
+                {
+                    DetailInfoDisplayed = true;
+                    AnimationRunning = false;
+                    InfoTimer.Start();
+                }
+            }, FadeSide.Bottom, fade).Begin();
         }
 
         private void StartPauseButton_Tapped(object sender, TappedRoutedEventArgs e)
