@@ -7,7 +7,11 @@ namespace Kazyx.Uwpmm.Playback
         {
             get
             {
+#if DEBUG
                 return false;
+#else
+                return false;
+#endif
             }
         }
     }

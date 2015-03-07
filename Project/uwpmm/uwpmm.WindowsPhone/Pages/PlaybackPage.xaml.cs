@@ -562,13 +562,11 @@ namespace Kazyx.Uwpmm.Pages
                         {
                             var tmp = CommandBarManager.Clear()
                                 .NoIcon(AppBarItem.AppSetting);
-                            if (UpnpDevice != null || TargetDevice != null)
-                            {
-                                tmp.Icon(AppBarItem.Refresh);
-                            }
+
                             if (RemoteGridSource != null && RemoteGridSource.Count != 0)
                             {
-                                tmp.Icon(AppBarItem.DownloadMultiple)
+                                tmp.Icon(AppBarItem.Refresh)
+                                .Icon(AppBarItem.DownloadMultiple)
                                 .Icon(AppBarItem.DeleteMultiple);
                             }
                             BottomAppBar = tmp.CreateNew(0.5);
@@ -750,10 +748,9 @@ namespace Kazyx.Uwpmm.Pages
         }
 
 #if DEBUG
-        DummyContentsLoader loader = new DummyContentsLoader();
-
         private async Task AddDummyContentsAsync()
         {
+            var loader = new DummyContentsLoader();
             loader.PartLoaded += RemoteContentsLoader_PartLoaded;
 
             try
@@ -769,6 +766,7 @@ namespace Kazyx.Uwpmm.Pages
 
         private async Task AddPartDummyContentsAsync(RemainingContentsHolder holder)
         {
+            var loader = new DummyContentsLoader();
             loader.PartLoaded += RemoteContentsLoader_PartLoaded;
 
             try
@@ -867,6 +865,14 @@ namespace Kazyx.Uwpmm.Pages
                 UnsupportedMessage.Visibility = Visibility.Collapsed;
                 NoContentsMessage.Visibility = Visibility.Collapsed;
             });
+
+#if DEBUG
+            if (DummyContentsFlag.Enabled)
+            {
+                var dummytask = AddDummyContentsAsync();
+                return;
+            }
+#endif
 
             if (TargetDevice != null)
             {
@@ -1103,11 +1109,14 @@ namespace Kazyx.Uwpmm.Pages
         private void OnRemotePivotDisplayed()
         {
 #if DEBUG
-            if (DummyContentsFlag.Enabled && !IsRemoteInitialized)
+            if (DummyContentsFlag.Enabled)
             {
+                if (!IsRemoteInitialized)
+                {
+                    var task = InitializeRemote();
+                }
                 UpdateInnerState(ViewerState.RemoteSingle);
-                var task = InitializeRemote();
-                var dummytask = AddDummyContentsAsync();
+                return;
             }
 #endif
 
