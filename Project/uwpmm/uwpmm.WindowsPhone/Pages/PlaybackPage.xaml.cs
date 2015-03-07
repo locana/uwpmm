@@ -174,6 +174,9 @@ namespace Kazyx.Uwpmm.Pages
                         {
                             ApplicationSettings.GetInstance().RemoteContentsSet = (ContentsSet)newValue;
                             InitializeRemoteGridContents();
+                            InitializeLocalGridContents();
+                            UpdateAppBar();
+                            LoadLocalContents();
                         }
                     },
                     SettingValueConverter.FromContentsSet(EnumUtil<ContentsSet>.GetValueEnumerable()))));
@@ -742,6 +745,15 @@ namespace Kazyx.Uwpmm.Pages
             {
                 if (LocalGridSource != null)
                 {
+                    switch (ApplicationSettings.GetInstance().RemoteContentsSet)
+                    {
+                        case ContentsSet.Images:
+                            if (e.File.IsMovie) return;
+                            break;
+                        case ContentsSet.Movies:
+                            if (!e.File.IsMovie) return;
+                            break;
+                    }
                     LocalGridSource.Add(e.File);
                     if (updateAppBarAfterAdded)
                     {
@@ -846,7 +858,15 @@ namespace Kazyx.Uwpmm.Pages
             await Dispatcher.RunAsync(CoreDispatcherPriority.High, () =>
             {
                 RemoteGridSource.Clear();
-                UpdateAppBar();
+            });
+        }
+
+        private async void InitializeLocalGridContents()
+        {
+            DebugUtil.Log("InitializeLocalGridContents");
+            await Dispatcher.RunAsync(CoreDispatcherPriority.High, () =>
+            {
+                LocalGridSource.Clear();
             });
         }
 
@@ -982,6 +1002,15 @@ namespace Kazyx.Uwpmm.Pages
                     }
                     foreach (var content in e.Contents)
                     {
+                        switch(ApplicationSettings.GetInstance().RemoteContentsSet) {
+                            case ContentsSet.Images:
+                                if (content.IsMovie) continue;
+                                break;
+                            case ContentsSet.Movies:
+                                if (!content.IsMovie) continue;
+                                break;
+                        }
+
                         RemoteGridSource.Add(content);
                         if (updateAppBarAfterAdded)
                         {
