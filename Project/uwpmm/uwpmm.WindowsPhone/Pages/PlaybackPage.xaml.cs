@@ -313,7 +313,11 @@ namespace Kazyx.Uwpmm.Pages
 
             var devices = NetworkObserver.INSTANCE.CameraDevices;
             var dlna = NetworkObserver.INSTANCE.CdsProviders;
-            if (devices.Count > 0)
+            if (DummyContentsFlag.Enabled)
+            {
+                DebugUtil.Log("Dummy contents mode is enabled. No search required.");
+            }
+            else if (devices.Count > 0)
             {
                 if (devices[0].Api.AvContent != null)
                 {

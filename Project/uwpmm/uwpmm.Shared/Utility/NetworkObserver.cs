@@ -192,7 +192,7 @@ namespace Kazyx.Uwpmm.Utility
 
         private bool IsCameraAccessPoint(string ssid)
         {
-            return ssid != null && (ssid.StartsWith("direct-", StringComparison.OrdinalIgnoreCase) || DummyContentsFlag.Enabled);
+            return ssid != null && ssid.StartsWith("direct-", StringComparison.OrdinalIgnoreCase);
         }
 
         public string PreviousSsid { private set; get; }

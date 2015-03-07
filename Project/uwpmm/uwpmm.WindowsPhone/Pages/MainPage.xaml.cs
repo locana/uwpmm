@@ -536,6 +536,9 @@ namespace Kazyx.Uwpmm.Pages
                 SetUpShooting();
                 await LockRootPivotASync();
             }
+            else if (!NetworkObserver.INSTANCE.IsConnectedToCamera) {
+                GoToEntranceScreen();
+            }
             else
             {
                 EmptyAppBar();
