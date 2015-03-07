@@ -513,7 +513,7 @@ Please check internet connection status</value>
     <value>Deleting selected contents...</value>
   </data>
   <data name="Progress_FetchingContents" xml:space="preserve">
-    <value>Fetching contents...</value>
+    <value>Fetching remote contents...</value>
   </data>
   <data name="Progress_LoadingLocalContents" xml:space="preserve">
     <value>Loading local images...</value>

@@ -58,7 +58,7 @@ namespace Kazyx.Uwpmm.Pages
             {
                 DebugUtil.Log("Download clicked");
                 UpdateRemoteSelectionMode(SelectivityFactor.CopyToPhone);
-                UpdateInnerState(ViewerState.RemoteSelecting);
+                UpdateInnerState(ViewerState.RemoteMulti);
             });
             CommandBarManager.SetEvent(AppBarItem.DeleteMultiple, (sender, e) =>
             {
@@ -67,11 +67,11 @@ namespace Kazyx.Uwpmm.Pages
                 {
                     case ViewerState.LocalSingle:
                         UpdateLocalSelectionMode(SelectivityFactor.Delete);
-                        UpdateInnerState(ViewerState.LocalSelecting);
+                        UpdateInnerState(ViewerState.LocalMulti);
                         break;
                     case ViewerState.RemoteSingle:
                         UpdateRemoteSelectionMode(SelectivityFactor.Delete);
-                        UpdateInnerState(ViewerState.RemoteSelecting);
+                        UpdateInnerState(ViewerState.RemoteMulti);
                         break;
                 }
             });
@@ -717,7 +717,6 @@ namespace Kazyx.Uwpmm.Pages
             try
             {
                 await loader.Load(ContentsSet.Images, Canceller).ConfigureAwait(false);
-                HideProgress();
             }
             catch
             {
@@ -726,6 +725,7 @@ namespace Kazyx.Uwpmm.Pages
             finally
             {
                 loader.SingleContentLoaded -= LocalContentsLoader_SingleContentLoaded;
+                HideProgress();
             }
         }
 
@@ -757,6 +757,8 @@ namespace Kazyx.Uwpmm.Pages
             var loader = new DummyContentsLoader();
             loader.PartLoaded += RemoteContentsLoader_PartLoaded;
 
+            ChangeProgressText(SystemUtil.GetStringResource("Progress_FetchingContents"));
+
             try
             {
                 await loader.Load(ContentsSet.Images, Canceller).ConfigureAwait(false);
@@ -772,6 +774,8 @@ namespace Kazyx.Uwpmm.Pages
         {
             var loader = new DummyContentsLoader();
             loader.PartLoaded += RemoteContentsLoader_PartLoaded;
+
+            ChangeProgressText(SystemUtil.GetStringResource("Progress_FetchingContents"));
 
             try
             {
@@ -1048,7 +1052,6 @@ namespace Kazyx.Uwpmm.Pages
             if (visible)
             {
                 PivotRoot.IsLocked = true;
-                HideProgress();
                 IsViewingDetail = true;
                 PhotoScreen.Visibility = Visibility.Visible;
                 RemoteGrid.IsEnabled = false;
@@ -1065,7 +1068,6 @@ namespace Kazyx.Uwpmm.Pages
             else
             {
                 await DefaultPivotLockState();
-                HideProgress();
                 IsViewingDetail = false;
                 PhotoScreen.Visibility = Visibility.Collapsed;
                 RemoteGrid.IsEnabled = true;
