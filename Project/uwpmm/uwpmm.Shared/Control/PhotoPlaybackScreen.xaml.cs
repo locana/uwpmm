@@ -73,8 +73,9 @@ namespace Kazyx.Uwpmm.Control
             (d as PhotoPlaybackScreen).SourceBitmap = (BitmapImage)e.NewValue;
         }
 
-        const double MaxScale = 5.0;
-        const double MinScale = 0.9;
+        const double MAX_SCALE = 5.0;
+        const double MIN_SCALE = 0.9;
+        const double IMAGE_CLEARANCE = 50;
 
         BitmapImage _SourceBitmap;
         public BitmapImage SourceBitmap
@@ -116,12 +117,22 @@ namespace Kazyx.Uwpmm.Control
             CompositeTransform transform = element.RenderTransform as CompositeTransform;
             if (transform != null && parent != null)
             {
-                transform.ScaleX = LimitToRange(transform.ScaleX * e.Delta.Scale, MinScale, MaxScale);
-                transform.ScaleY = LimitToRange(transform.ScaleY * e.Delta.Scale, MinScale, MaxScale);
+                transform.ScaleX = LimitToRange(transform.ScaleX * e.Delta.Scale, MIN_SCALE, MAX_SCALE);
+                transform.ScaleY = LimitToRange(transform.ScaleY * e.Delta.Scale, MIN_SCALE, MAX_SCALE);
 
-                var diagonalSize = Math.Sqrt(Math.Pow(element.RenderSize.Width, 2) + Math.Pow(element.RenderSize.Height, 2)) * transform.ScaleX;
-                var translateLimitX = diagonalSize / 3 + parent.ActualWidth / 3;
-                var translateLimitY = diagonalSize / 4 + parent.ActualHeight / 3;
+                double h_size, v_size;
+                if (transform.Rotation % 180 == 0)
+                {
+                    h_size = element.RenderSize.Width * transform.ScaleX;
+                    v_size = element.RenderSize.Height * transform.ScaleY;
+                }
+                else
+                {
+                    h_size = element.RenderSize.Height * transform.ScaleY;
+                    v_size = element.RenderSize.Width * transform.ScaleX;
+                }
+                var translateLimitX = (parent.ActualWidth + h_size) / 2 - IMAGE_CLEARANCE;
+                var translateLimitY = (parent.ActualHeight + v_size) / 2 - IMAGE_CLEARANCE;
                 transform.TranslateX = LimitToRange(transform.TranslateX + e.Delta.Translation.X, -translateLimitX, translateLimitX);
                 transform.TranslateY = LimitToRange(transform.TranslateY + e.Delta.Translation.Y, -translateLimitY, translateLimitY);
             }
