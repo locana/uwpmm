@@ -1358,6 +1358,9 @@ namespace Kazyx.Uwpmm.Pages
                     catch (Exception ex)
                     {
                         DebugUtil.Log(ex.StackTrace);
+                    }
+                    finally
+                    {
                         HideProgress();
                     }
                     break;
