@@ -137,14 +137,22 @@ namespace Kazyx.Uwpmm
 
 #if WINDOWS_PHONE_APP
             var rootFrame = Window.Current.Content as Frame;
-            if (rootFrame.CanGoBack)
-            {
-                rootFrame.GoBack();
-            }
-            else if (rootFrame.Content is MainPage)
+            if (rootFrame.Content is MainPage)
             {
                 var page = rootFrame.Content as MainPage;
                 page.OnSuspending();
+                return;
+            }
+            else if (rootFrame.Content is HiddenPage)
+            {
+                // Only HiddenPage should not be closed
+                return;
+            }
+            else if (rootFrame.CanGoBack)
+            {
+                // Other pages should be closed to open Entrance page
+                rootFrame.GoBack();
+                return;
             }
 #else
             var deferral = e.SuspendingOperation.GetDeferral();

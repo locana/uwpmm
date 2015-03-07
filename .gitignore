@@ -172,3 +172,7 @@ UpgradeLog*.htm
 
 # Microsoft Fakes
 FakesAssemblies/
+
+# Universal app build files
+BundleArtifacts/
+Package.StoreAssociation.xml
