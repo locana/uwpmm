@@ -215,8 +215,9 @@ namespace Kazyx.Uwpmm.Utility
                     var previous = PreviousSsid;
                     PreviousSsid = ssid;
                     // Connected to Access Point and it is a camera device.
-                    if (ssid == previous && (devices.Count != 0 || CdsProviders.Count != 0))
+                    if (ssid == previous && devices.Count != 0)
                     {
+                        // Keep searching even if CDS provider is discovered.
                         DebugUtil.Log("Some devices discovered on the previous SSID. Finish auto discovery.");
                         return;
                     }
