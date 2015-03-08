@@ -1035,4 +1035,7 @@ PlayMemories Camera Appsストアで最新版にアップデートしてくだ�
   <data name="Viewer_EmptyMediaServer" xml:space="preserve">
     <value>表示するコンテンツがメディアサーバにありません</value>
   </data>
+  <data name="Viewer_UnsupportedFileType" xml:space="preserve">
+    <value>&lt;file&gt; は、このデバイス上では取り扱えません。</value>
+  </data>
 </root>

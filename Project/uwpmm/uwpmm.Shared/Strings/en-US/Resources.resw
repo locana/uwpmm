@@ -1107,4 +1107,7 @@ Open gallary to find contents in your camera device.</value>
   <data name="Nfc_Result" xml:space="preserve">
     <value>Copy Wi-Fi password to clipboard</value>
   </data>
+  <data name="Viewer_UnsupportedFileType" xml:space="preserve">
+    <value>&lt;file&gt; can't be supported on this device.</value>
+  </data>
 </root>

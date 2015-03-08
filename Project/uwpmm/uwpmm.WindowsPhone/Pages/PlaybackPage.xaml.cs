@@ -1049,6 +1049,14 @@ namespace Kazyx.Uwpmm.Pages
 
             DebugUtil.Log("PlaybackPage: OnFetched");
 
+            if (!file.ContentType.StartsWith(Playback.MimeType.Image) &&
+                !file.ContentType.StartsWith(Playback.MimeType.Video))
+            {
+                var message = SystemUtil.GetStringResource("Viewer_UnsupportedFileType").Replace("<file>", file.Name);
+                ShowToast(message);
+                return;
+            }
+
             await Dispatcher.RunAsync(CoreDispatcherPriority.High, () =>
             {
                 var thumb = LocalContentsLoader.StorageFileToThumbnail(folder, file);
