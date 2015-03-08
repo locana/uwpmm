@@ -1269,12 +1269,13 @@ namespace Kazyx.Uwpmm.Pages
             }
             else if (ApplicationSettings.GetInstance().PrioritizeOriginalSizeContents && source.Source.OriginalUrl != null)
             {
-                MediaDownloader.Instance.EnqueueImage(new Uri(source.Source.OriginalUrl), source.Source.Name);
+                MediaDownloader.Instance.EnqueueImage(new Uri(source.Source.OriginalUrl), source.Source.Name,
+                    source.Source.MimeType == Playback.MimeType.Jpeg ? ".jpg" : null);
             }
             else
             {
                 // Fallback to large size image
-                MediaDownloader.Instance.EnqueueImage(new Uri(source.Source.LargeUrl), source.Source.Name);
+                MediaDownloader.Instance.EnqueueImage(new Uri(source.Source.LargeUrl), source.Source.Name, ".jpg");
             }
         }
 

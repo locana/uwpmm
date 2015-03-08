@@ -44,31 +44,35 @@ namespace Kazyx.Uwpmm.Utility
             Failed.Raise(error, geotaggingResult);
         }
 
-        public void EnqueueVideo(Uri uri, string nameBase, string extension = ".mp4")
+        public void EnqueueVideo(Uri uri, string nameBase, string extension = null)
         {
-            Enqueue(uri, nameBase, Mediatype.Video, extension, null);
+            Enqueue(uri, nameBase, Mediatype.Video, null, extension);
         }
 
-        public void EnqueueImage(Uri uri, string nameBase, Geoposition position = null, string extension = ".jpg")
+        public void EnqueueImage(Uri uri, string nameBase, string extension, Geoposition position = null)
         {
-            Enqueue(uri, nameBase, Mediatype.Image, extension, position);
+            Enqueue(uri, nameBase, Mediatype.Image, position, extension);
         }
 
         public void EnqueuePostViewImage(Uri uri, Geoposition position = null)
         {
-            Enqueue(uri, DIRECTORY_NAME, Mediatype.Image, ".jpg", position);
+            Enqueue(uri, DIRECTORY_NAME, Mediatype.Image, position, ".jpg");
         }
 
-        private async void Enqueue(Uri uri, string namebase, Mediatype type, string extension, Geoposition position)
+        private async void Enqueue(Uri uri, string namebase, Mediatype type, Geoposition position, string extension = null)
         {
             DebugUtil.Log("ContentsDownloader: Enqueue " + uri.AbsolutePath);
 
-            var split = uri.AbsolutePath.Split('.');
-            if (split.Length > 0)
+            if (extension == null)
             {
-                extension = "." + split[split.Length - 1].ToLower();
-                DebugUtil.Log("detected file extension: " + extension);
+                var split = uri.AbsolutePath.Split('.');
+                if (split.Length > 0)
+                {
+                    extension = "." + split[split.Length - 1].ToLower();
+                    DebugUtil.Log("detected file extension: " + extension);
+                }
             }
+
             await SystemUtil.GetCurrentDispatcher().RunAsync(CoreDispatcherPriority.Low, () =>
             {
                 var req = new DownloadRequest

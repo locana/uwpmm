@@ -80,7 +80,7 @@ namespace Kazyx.Uwpmm.Playback
                 Id = source.Id,
                 MimeType = mime,
                 CreatedTime = source.Date,
-                Name = source.Title,
+                Name = WithoutExtension(source.Title),
                 Protected = source.Restricted,
                 OriginalUrl = original == null ? null : original.ResourceUrl,
                 LargeUrl = GetLargeImageResource(source),
@@ -88,6 +88,24 @@ namespace Kazyx.Uwpmm.Playback
                 GroupName = containerName,
                 RemotePlaybackAvailable = mime == MimeType.Jpeg,
             };
+        }
+
+        private static string WithoutExtension(string name)
+        {
+            if (name == null || name.Length == 0)
+            {
+                return "notitle";
+            }
+            var split = name.Split('.');
+            if (split.Length == 0)
+            {
+                return "notitle";
+            }
+            if (split.Length == 1)
+            {
+                return split[0];
+            }
+            return split[split.Length - 2];
         }
 
         private static string FormatDateTitle(string containerName)
