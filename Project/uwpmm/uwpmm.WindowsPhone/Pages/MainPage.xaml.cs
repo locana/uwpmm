@@ -516,14 +516,15 @@ namespace Kazyx.Uwpmm.Pages
 
         async void PivotRoot_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            await Task.Delay(TimeSpan.FromMilliseconds(500));
-
             switch ((sender as Pivot).SelectedIndex)
             {
                 case 0:
+                    await Task.Delay(TimeSpan.FromMilliseconds(500));
                     LiveViewPageUnloaded();
                     break;
                 case 1:
+                    stayEntrance = false;
+                    await Task.Delay(TimeSpan.FromMilliseconds(500));
                     LiveViewPageLoaded();
                     break;
             }
@@ -536,7 +537,8 @@ namespace Kazyx.Uwpmm.Pages
                 SetUpShooting();
                 await LockRootPivotASync();
             }
-            else if (!NetworkObserver.INSTANCE.IsConnectedToCamera) {
+            else if (!NetworkObserver.INSTANCE.IsConnectedToCamera)
+            {
                 GoToEntranceScreen();
             }
             else
@@ -715,7 +717,10 @@ namespace Kazyx.Uwpmm.Pages
 
             if (tmpTarget == null)
             {
+                HideProgress();
+                DebugUtil.Log("No target to setup");
                 GoToEntranceScreen();
+                return;
             }
 
             try
@@ -726,6 +731,7 @@ namespace Kazyx.Uwpmm.Pages
             {
                 HideProgress();
                 DebugUtil.Log("Failed setup: " + ex.Message);
+                GoToEntranceScreen();
                 ShowError(SystemUtil.GetStringResource("ErrorMessage_fatal"));
                 return;
             }
@@ -762,7 +768,12 @@ namespace Kazyx.Uwpmm.Pages
                     ControlPanel.Children.Add(panel);
                 }
 
-                SetupFocusFrame(ApplicationSettings.GetInstance().RequestFocusFrameInfo);
+                if (!await SetupFocusFrame(ApplicationSettings.GetInstance().RequestFocusFrameInfo))
+                {
+                    GoToEntranceScreen();
+                    return;
+                }
+
                 _FocusFrameSurface.ClearFrames();
 
                 ShootingParamSliders.DataContext = new ShootingParamViewData() { Status = tmpTarget.Status, Liveview = screen_view_data };
@@ -772,8 +783,13 @@ namespace Kazyx.Uwpmm.Pages
             });
         }
 
-        private async void SetupFocusFrame(bool RequestFocusFrameEnabled)
+        private async Task<bool> SetupFocusFrame(bool RequestFocusFrameEnabled)
         {
+            if (target == null)
+            {
+                DebugUtil.Log("No target to set up focus frame is available.");
+                return false;
+            }
             if (target.Api.Capability.IsAvailable("setLiveviewFrameInfo"))
             {
                 await target.Api.Camera.SetLiveviewFrameInfo(new FrameInfoSetting() { TransferFrameInfo = RequestFocusFrameEnabled });
@@ -785,6 +801,7 @@ namespace Kazyx.Uwpmm.Pages
                 _FocusFrameSurface.SelfDrawTouchAFFrame = true;
             }
             else { _FocusFrameSurface.SelfDrawTouchAFFrame = false; }
+            return true;
         }
 
         void Status_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -822,7 +839,7 @@ namespace Kazyx.Uwpmm.Pages
                     BatteryStatusDisplay.BatteryInfo = status.BatteryInfo;
                     break;
                 case "AvailableApis":
-                    SetupFocusFrame(ApplicationSettings.GetInstance().RequestFocusFrameInfo);
+                    var task = SetupFocusFrame(ApplicationSettings.GetInstance().RequestFocusFrameInfo);
                     break;
                 case "ContShootingResult":
                     if (ApplicationSettings.GetInstance().IsPostviewTransferEnabled)
@@ -862,9 +879,12 @@ namespace Kazyx.Uwpmm.Pages
 
         private void GoToEntranceScreen(bool disableAutoStart = false)
         {
-            stayEntrance = disableAutoStart;
-            PivotRoot.IsLocked = false;
-            PivotRoot.SelectedIndex = 0;
+            var task = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                stayEntrance = disableAutoStart;
+                PivotRoot.IsLocked = false;
+                PivotRoot.SelectedIndex = 0;
+            });
         }
 
         private bool IsRendering = false;

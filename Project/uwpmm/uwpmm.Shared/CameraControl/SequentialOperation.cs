@@ -60,7 +60,7 @@ namespace Kazyx.Uwpmm.CameraControl
             {
                 DebugUtil.Log("Failed setup: " + e.code);
                 device.Observer.Stop();
-                throw e;
+                throw;
             }
         }
 

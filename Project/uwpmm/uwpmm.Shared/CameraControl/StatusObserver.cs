@@ -4,6 +4,7 @@ using Kazyx.Uwpmm.DataModel;
 using Kazyx.Uwpmm.Utility;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Kazyx.Uwpmm.CameraControl
@@ -32,6 +33,8 @@ namespace Kazyx.Uwpmm.CameraControl
 
         private ApiVersion version = ApiVersion.V1_0;
 
+        private CancellationTokenSource cancel;
+
         public async Task<bool> StartAsync()
         {
             DebugUtil.Log("StatusObserver: Start");
@@ -53,6 +56,8 @@ namespace Kazyx.Uwpmm.CameraControl
                 return false;
             }
 
+            cancel = new CancellationTokenSource();
+
             IsProcessing = true;
             PollingLoop();
             return true;
@@ -61,6 +66,10 @@ namespace Kazyx.Uwpmm.CameraControl
         public void Stop()
         {
             DebugUtil.Log("StatusObserver: Stop");
+            if (cancel != null)
+            {
+                cancel.Cancel();
+            }
             IsProcessing = false;
         }
 
@@ -202,7 +211,7 @@ namespace Kazyx.Uwpmm.CameraControl
 
             try
             {
-                OnSuccess(await api.Camera.GetEventAsync(true, version).ConfigureAwait(false));
+                OnSuccess(await api.Camera.GetEventAsync(true, version, cancel).ConfigureAwait(false));
             }
             catch (RemoteApiException e)
             {
@@ -240,6 +249,10 @@ namespace Kazyx.Uwpmm.CameraControl
                     break;
                 case StatusCode.DuplicatePolling:
                     DebugUtil.Log("GetEvent failed duplicate polling");
+                    // Long polling is now cancellable. Duplicated polling should not happen.
+                    break;
+                case StatusCode.Cancelled:
+                    DebugUtil.Log("GetEvent polling loop cancelled.");
                     return;
                 default:
                     DebugUtil.Log("GetEvent failed with code: " + code);
