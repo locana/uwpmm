@@ -30,6 +30,7 @@ namespace Kazyx.Uwpmm
         {
             this.InitializeComponent();
             this.Suspending += this.OnSuspending;
+            this.Resuming += OnResuming;
         }
 
         /// <summary>
@@ -158,6 +159,13 @@ namespace Kazyx.Uwpmm
             var deferral = e.SuspendingOperation.GetDeferral();
             await SuspensionManager.SaveAsync();
             deferral.Complete();
+#endif
+        }
+
+        void OnResuming(object sender, object e)
+        {
+#if WINDOWS_PHONE_APP
+            NetworkObserver.INSTANCE.ForceRestart();
 #endif
         }
     }
