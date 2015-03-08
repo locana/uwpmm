@@ -16,7 +16,7 @@ namespace Kazyx.Uwpmm.DataModel
         public string OriginalUrl { set; get; }
         public string LargeUrl { set; get; }
         public string ThumbnailUrl { set; get; }
-        public string ContentType { set; get; }
+        public string MimeType { set; get; }
         public string CreatedTime { set; get; }
         public bool Protected { set; get; }
 

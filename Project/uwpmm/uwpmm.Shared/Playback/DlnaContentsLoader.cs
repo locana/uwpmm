@@ -1,5 +1,4 @@
-﻿using Kazyx.RemoteApi.AvContent;
-using Kazyx.Uwpmm.DataModel;
+﻿using Kazyx.Uwpmm.DataModel;
 using Kazyx.Uwpmm.UPnP;
 using Kazyx.Uwpmm.UPnP.ContentDirectory;
 using Kazyx.Uwpmm.Utility;
@@ -26,7 +25,6 @@ namespace Kazyx.Uwpmm.Playback
         public override async Task Load(ContentsSet contentsSet, CancellationTokenSource cancel)
         {
             await RetrieveContentsByBrowse("Root", "0", cancel);
-            // await RetrieveAllImageMetadataRecursivelyAsync(cancel, 0);
             OnCompleted();
         }
 
@@ -74,35 +72,22 @@ namespace Kazyx.Uwpmm.Playback
                 return null;
             }
 
-            var type = ParseContentType(source.Class);
+            var original = GetOriginalResource(source);
+            var mime = original == null && original.ProtocolInfo != null ? null : original.ProtocolInfo.MimeType;
 
             return new DlnaContentInfo
             {
                 Id = source.Id,
-                ContentType = type,
+                MimeType = mime,
                 CreatedTime = source.Date,
                 Name = source.Title,
                 Protected = source.Restricted,
-                OriginalUrl = GetOriginalImageResource(source),
+                OriginalUrl = original == null ? null : original.ResourceUrl,
                 LargeUrl = GetLargeImageResource(source),
                 ThumbnailUrl = GetThumbnailResource(source),
                 GroupName = containerName,
-                RemotePlaybackAvailable = type == ContentKind.StillImage,
+                RemotePlaybackAvailable = mime == MimeType.Jpeg,
             };
-        }
-
-        private static string ParseContentType(string upnpClass)
-        {
-            if (upnpClass.StartsWith(Class.ImageItem))
-            {
-                return ContentKind.StillImage;
-            }
-            if (upnpClass.StartsWith(Class.VideoItem))
-            {
-                // TODO other types
-                return ContentKind.MovieMp4;
-            }
-            return ContentKind.Unknown;
         }
 
         private static string FormatDateTitle(string containerName)
@@ -131,7 +116,7 @@ namespace Kazyx.Uwpmm.Playback
         {
             var matched = item.Resources
                 .FirstOrDefault(res => res.ProtocolInfo != null
-                    && res.ProtocolInfo.MimeType == "image/jpeg" && res.ProtocolInfo.DlnaProfileName == DlnaProfileName.JpegLarge);
+                    && res.ProtocolInfo.MimeType == MimeType.Jpeg && res.ProtocolInfo.DlnaProfileName == DlnaProfileName.JpegLarge);
 
             if (matched != null)
             {
@@ -145,7 +130,7 @@ namespace Kazyx.Uwpmm.Playback
             return null;
         }
 
-        private static string GetOriginalImageResource(Item item)
+        private static Resource GetOriginalResource(Item item)
         {
             if (item.Class.StartsWith(Class.ImageItem, System.StringComparison.OrdinalIgnoreCase))
             {
@@ -155,12 +140,12 @@ namespace Kazyx.Uwpmm.Playback
 
                 if (matched != null)
                 {
-                    return matched.ResourceUrl;
+                    return matched;
                 }
 
                 if (item.Class.StartsWith(Class.ImageItem))
                 {
-                    return item.Resources[0].ResourceUrl;
+                    return item.Resources[0];
                 }
             }
             else if (item.Class.StartsWith(Class.VideoItem, System.StringComparison.OrdinalIgnoreCase))
@@ -170,7 +155,7 @@ namespace Kazyx.Uwpmm.Playback
                         && res.ProtocolInfo.MimeType.StartsWith(MimeType.Video, System.StringComparison.OrdinalIgnoreCase));
                 if (matched != null)
                 {
-                    return matched.ResourceUrl;
+                    return matched;
                 }
             }
             return null;
@@ -268,7 +253,6 @@ namespace Kazyx.Uwpmm.Playback
             var diff = sum - MAX_AUTO_LOAD_THUMBNAILS;
             if (sum > MAX_AUTO_LOAD_THUMBNAILS)
             {
-
                 var remainingNum = contents.TotalMatches - loadedForLayer;
                 if (remainingNum != 0)
                 {

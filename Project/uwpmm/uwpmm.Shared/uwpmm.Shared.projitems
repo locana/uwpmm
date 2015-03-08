@@ -92,6 +92,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Playback\DummyContentsFlag.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Playback\DummyContentsLoader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Playback\LocalContentsLoader.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Playback\MimeType.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Playback\PlaybackModeHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Playback\RemoteApiContentsLoader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Settings\SettingPanelBuilder.cs" />

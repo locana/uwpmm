@@ -105,7 +105,7 @@ namespace Kazyx.Uwpmm.Playback
                 var thumb = ThumbnailUrl();
                 list.Add(new ContentInfo
                 {
-                    ContentType = type,
+                    MimeType = type,
                     ThumbnailUrl = thumb,
                     Name = FileName(),
                     CreatedTime = CreatedTime(),
@@ -151,7 +151,7 @@ namespace Kazyx.Uwpmm.Playback
 
         private string ContentType()
         {
-            return random.NextDouble() > 0.1 ? ContentKind.StillImage : ContentKind.MovieMp4;
+            return random.NextDouble() > 0.1 ? MimeType.Jpeg : MimeType.Mp4;
         }
 
         private int Year()

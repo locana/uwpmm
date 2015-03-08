@@ -217,7 +217,7 @@ namespace Kazyx.Uwpmm.Playback
                             Name = RemoveExtension(content.ImageContent.OriginalContents[0].FileName),
                             LargeUrl = content.ImageContent.LargeImageUrl,
                             ThumbnailUrl = content.ImageContent.ThumbnailUrl,
-                            ContentType = content.ContentKind,
+                            MimeType = ContentKindToMimeType(content.ContentKind),
                             Uri = content.Uri,
                             CreatedTime = content.CreatedTime,
                             Protected = content.IsProtected == TextBoolean.True,
@@ -247,6 +247,22 @@ namespace Kazyx.Uwpmm.Playback
                         return contentInfo;
                     })
                     .ToList<ContentInfo>();
+        }
+
+        private static string ContentKindToMimeType(string contentKind)
+        {
+            switch (contentKind)
+            {
+                case ContentKind.StillImage:
+                    return MimeType.Jpeg;
+                case ContentKind.MovieMp4:
+                    return MimeType.Mp4;
+                case ContentKind.MovieXavcS:
+                    // TODO check Mime type of XAVCS
+                    return MimeType.VideoUnknown;
+                default:
+                    return MimeType.Unknown;
+            }
         }
 
         private static string RemoveExtension(string name)

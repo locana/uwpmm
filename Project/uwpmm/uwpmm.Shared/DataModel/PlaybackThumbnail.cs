@@ -1,5 +1,4 @@
-﻿using Kazyx.RemoteApi.AvContent;
-using Kazyx.Uwpmm.Playback;
+﻿using Kazyx.Uwpmm.Playback;
 using Kazyx.Uwpmm.Utility;
 using System;
 using System.Threading;
@@ -93,14 +92,7 @@ namespace Kazyx.Uwpmm.DataModel
         {
             get
             {
-                switch (Source.ContentType)
-                {
-                    case ContentKind.MovieMp4:
-                    case ContentKind.MovieXavcS:
-                        return true;
-                    default:
-                        return false;
-                }
+                return Source.MimeType.StartsWith(MimeType.Video, StringComparison.OrdinalIgnoreCase);
             }
         }
 
@@ -139,19 +131,7 @@ namespace Kazyx.Uwpmm.DataModel
         {
             get
             {
-                switch (Source.ContentType)
-                {
-                    case ContentKind.StillImage:
-                    case ContentKind.MovieMp4:
-                        return true;
-#if WINDOWS_APP
-                    case ContentKind.MovieXavcS:
-                        // XAVC S is not supported on phone.
-                        return true;
-#endif
-                    default:
-                        return false;
-                }
+                return Source.MimeType.StartsWith(MimeType.Image) || Source.MimeType.StartsWith(MimeType.Video);
             }
         }
 

@@ -129,13 +129,10 @@ namespace Kazyx.Uwpmm.Playback
 
         public static Thumbnail StorageFileToThumbnail(StorageFolder folder, StorageFile file)
         {
-            var type = file.ContentType.StartsWith("image/", StringComparison.OrdinalIgnoreCase)
-                ? ContentKind.StillImage : ContentKind.MovieMp4;
-
             return new Thumbnail(new ContentInfo
             {
                 Protected = false,
-                ContentType = type,
+                MimeType = file.ContentType,
                 GroupName = folder.DisplayName,
                 OriginalUrl = file.Path,
             }, file);
@@ -154,8 +151,8 @@ namespace Kazyx.Uwpmm.Playback
 
             // into.AddRange(files.Where(file => IMAGE_MIME_TYPES.Any(type => file.ContentType.Equals(type, StringComparison.OrdinalIgnoreCase))));
             into.AddRange(files.Where(file =>
-                file.ContentType.StartsWith("image/", StringComparison.OrdinalIgnoreCase)
-                || file.ContentType.StartsWith("video/", StringComparison.OrdinalIgnoreCase)));
+                file.ContentType.StartsWith(MimeType.Image, StringComparison.OrdinalIgnoreCase)
+                || file.ContentType.StartsWith(MimeType.Video, StringComparison.OrdinalIgnoreCase)));
 
             foreach (var child in await folder.GetFoldersAsync())
             {

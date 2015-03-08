@@ -125,6 +125,7 @@ namespace Kazyx.Uwpmm.Pages
 
             NavigatedByInAppBackTransition = e.NavigationMode == NavigationMode.Back;
             SetupNetworkObserver();
+            UpdateMainDescription();
         }
 
         private void SetupNetworkObserver()
@@ -249,6 +250,7 @@ namespace Kazyx.Uwpmm.Pages
 
             NetworkObserver.INSTANCE.DevicesCleared += NetworkObserver_DevicesCleared;
             NetworkObserver.INSTANCE.ForceRestart();
+            UpdateMainDescription();
 
             NetworkInformation.NetworkStatusChanged += NetworkInformation_NetworkStatusChanged;
 
