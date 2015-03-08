@@ -173,7 +173,7 @@ namespace Kazyx.Uwpmm.Pages
             }
         }
 
-        private async void TearDownCurrentTarget()
+        private void TearDownCurrentTarget()
         {
             LayoutRoot.DataContext = null;
             CreateEntranceAppBar();
@@ -181,15 +181,11 @@ namespace Kazyx.Uwpmm.Pages
             var _target = target;
             if (_target != null)
             {
-                await SequentialOperation.CloseLiveviewStream(target.Api, liveview);
-                _target.Observer.Stop();
                 target = null;
+                _target.Observer.Stop();
                 LiveviewScreen.Visibility = Visibility.Collapsed;
             }
-            else
-            {
-                liveview.CloseConnection();
-            }
+            liveview.CloseConnection();
         }
 
         private bool NavigatedByInAppBackTransition = false;

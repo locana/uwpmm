@@ -41,6 +41,7 @@ namespace Kazyx.Uwpmm
         /// <param name="e">Details about the launch request and process.</param>
         protected override async void OnLaunched(LaunchActivatedEventArgs e)
         {
+            DebugUtil.Log("OnLaunched");
 #if DEBUG
             if (System.Diagnostics.Debugger.IsAttached)
             {
@@ -109,6 +110,10 @@ namespace Kazyx.Uwpmm
                 }
             }
 
+#if WINDOWS_PHONE_APP
+            NetworkObserver.INSTANCE.Start();
+#endif
+
             // Ensure the current window is active
             Window.Current.Activate();
         }
@@ -134,6 +139,7 @@ namespace Kazyx.Uwpmm
         /// </summary>
         private async void OnSuspending(object sender, SuspendingEventArgs e)
         {
+            DebugUtil.Log("OnSuspending");
             NetworkObserver.INSTANCE.Finish();
 
 #if WINDOWS_PHONE_APP
@@ -164,8 +170,9 @@ namespace Kazyx.Uwpmm
 
         void OnResuming(object sender, object e)
         {
+            DebugUtil.Log("OnResuming");
 #if WINDOWS_PHONE_APP
-            NetworkObserver.INSTANCE.ForceRestart();
+            NetworkObserver.INSTANCE.Start();
 #endif
         }
     }
