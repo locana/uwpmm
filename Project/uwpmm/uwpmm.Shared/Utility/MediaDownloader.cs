@@ -66,7 +66,7 @@ namespace Kazyx.Uwpmm.Utility
             var split = uri.AbsolutePath.Split('.');
             if (split.Length > 0)
             {
-                extension = split[split.Length - 1].ToLower();
+                extension = "." + split[split.Length - 1].ToLower();
                 DebugUtil.Log("detected file extension: " + extension);
             }
             await SystemUtil.GetCurrentDispatcher().RunAsync(CoreDispatcherPriority.Low, () =>
