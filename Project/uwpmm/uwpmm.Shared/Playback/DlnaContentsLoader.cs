@@ -61,7 +61,14 @@ namespace Kazyx.Uwpmm.Playback
         {
             var group = FormatDateTitle(containerName);
             return source.Where(item => item.Resources.Count != 0)
-                .Select(item => new Thumbnail(Translate(group, item), UpnpDevice.UDN))
+                .Select(item =>
+                {
+                    var content = Translate(group, item);
+                    return new Thumbnail(content, UpnpDevice.UDN)
+                    {
+                        IsPlayable = content.MimeType == MimeType.Jpeg,
+                    };
+                })
                 .ToList();
         }
 

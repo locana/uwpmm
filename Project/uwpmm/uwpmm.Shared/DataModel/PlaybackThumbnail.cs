@@ -17,6 +17,7 @@ namespace Kazyx.Uwpmm.DataModel
             StartsFrom = startsFrom;
             RemainingCount = count;
             AlbumGroup = date;
+            IsPlayable = false;
         }
 
         public RemainingContentsHolder(string containerId, string groupTitle, string uuid, int startsFrom, int count)
@@ -26,6 +27,7 @@ namespace Kazyx.Uwpmm.DataModel
             StartsFrom = startsFrom;
             RemainingCount = count;
             CdsContainerId = containerId;
+            IsPlayable = false;
         }
 
         public int StartsFrom { private set; get; }
@@ -58,7 +60,6 @@ namespace Kazyx.Uwpmm.DataModel
 
         public override bool IsMovie { get { return false; } }
         public override bool IsDeletable { get { return false; } }
-        public override bool IsPlayable { get { return false; } }
         public override bool IsCopyable { get { return false; } }
         public override bool IsContent { get { return false; } }
         public override BitmapImage ThumbnailImage { get { return null; } }
@@ -135,7 +136,7 @@ namespace Kazyx.Uwpmm.DataModel
             }
         }
 
-        public virtual bool IsPlayable { get { return true; } }
+        public bool IsPlayable { set; get; }
 
         public virtual bool IsContent { get { return true; } }
 
