@@ -9,6 +9,8 @@ namespace Kazyx.Uwpmm.DataModel
 {
     public class Album : List<Thumbnail>, INotifyPropertyChanged, INotifyCollectionChanged
     {
+        public static string LOCANA_DIRECTORY = SystemUtil.GetStringResource("ApplicationTitle");
+
         public string Key { private set; get; }
 
         private Thumbnail Thumb;

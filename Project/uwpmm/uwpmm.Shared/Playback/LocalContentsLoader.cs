@@ -1,5 +1,4 @@
-﻿using Kazyx.RemoteApi.AvContent;
-using Kazyx.Uwpmm.DataModel;
+﻿using Kazyx.Uwpmm.DataModel;
 using Kazyx.Uwpmm.Utility;
 using System;
 using System.Collections.Generic;
@@ -19,8 +18,6 @@ namespace Kazyx.Uwpmm.Playback
             SingleContentLoaded.Raise(this, new SingleContentEventArgs { File = file });
         }
 
-        private static string LOCANA_DIRECTORY = SystemUtil.GetStringResource("ApplicationTitle");
-
         public override async Task Load(ContentsSet contentsSet, CancellationTokenSource cancel)
         {
             await LoadPictures(cancel);
@@ -37,7 +34,7 @@ namespace Kazyx.Uwpmm.Playback
 
             foreach (var folder in folders)
             {
-                if (folder.Name != LOCANA_DIRECTORY)
+                if (folder.Name != Album.LOCANA_DIRECTORY)
                 {
                     continue;
                 }
@@ -53,7 +50,7 @@ namespace Kazyx.Uwpmm.Playback
 
             foreach (var folder in folders)
             {
-                if (folder.Name == LOCANA_DIRECTORY)
+                if (folder.Name == Album.LOCANA_DIRECTORY)
                 {
                     continue;
                 }
@@ -76,7 +73,7 @@ namespace Kazyx.Uwpmm.Playback
 
             foreach (var folder in folders)
             {
-                if (folder.Name != LOCANA_DIRECTORY)
+                if (folder.Name != Album.LOCANA_DIRECTORY)
                 {
                     continue;
                 }
@@ -92,7 +89,7 @@ namespace Kazyx.Uwpmm.Playback
 
             foreach (var folder in folders)
             {
-                if (folder.Name == LOCANA_DIRECTORY)
+                if (folder.Name == Album.LOCANA_DIRECTORY)
                 {
                     continue;
                 }

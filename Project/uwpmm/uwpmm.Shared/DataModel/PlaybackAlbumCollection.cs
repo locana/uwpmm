@@ -84,7 +84,12 @@ namespace Kazyx.Uwpmm.DataModel
         private void AddAlbum(Album item)
         {
             int insertAt = Count;
-            if (SortAlbum)
+            if (item.Key == Album.LOCANA_DIRECTORY)
+            {
+                // Display Locana group at the top of the list
+                insertAt = 0;
+            }
+            else if (SortAlbum)
             {
                 for (int i = 0; i < Count; i++)
                 {
