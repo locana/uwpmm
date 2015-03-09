@@ -451,7 +451,8 @@ namespace Kazyx.Uwpmm.Control
 
         public void Finish()
         {
-
+            LocalMoviePlayer.Stop();
+            LocalMoviePositionTimer.Stop();
         }
     }
 
