@@ -1377,10 +1377,10 @@ namespace Kazyx.Uwpmm.Pages
 
             FocusFrameSetting = new AppSettingData<bool>(SystemUtil.GetStringResource("FocusFrameDisplay"), SystemUtil.GetStringResource("Guide_FocusFrameDisplay"),
                 () => { return ApplicationSettings.GetInstance().RequestFocusFrameInfo; },
-                enabled =>
+                async enabled =>
                 {
                     ApplicationSettings.GetInstance().RequestFocusFrameInfo = enabled;
-                    SetupFocusFrame(enabled);
+                    await SetupFocusFrame(enabled);
                     if (!enabled) { _FocusFrameSurface.ClearFrames(); }
                 });
             display_settings.Add(new CheckBoxSetting(FocusFrameSetting));
