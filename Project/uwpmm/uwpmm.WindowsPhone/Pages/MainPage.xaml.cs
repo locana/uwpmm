@@ -16,6 +16,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Windows.Devices.Geolocation;
 using Windows.Foundation;
@@ -578,6 +579,7 @@ namespace Kazyx.Uwpmm.Pages
         {
             if (PivotRoot.SelectedIndex == 0)
             {
+                cancel.CancelIfNotNull();
                 stayEntrance = false;
                 NetworkObserver.INSTANCE.Finish();
                 return;
@@ -605,6 +607,7 @@ namespace Kazyx.Uwpmm.Pages
             }
 
             NetworkObserver.INSTANCE.ForceRestart();
+            cancel.CancelIfNotNull();
             GoToEntranceScreen(true);
             e.Handled = true;
         }
@@ -713,6 +716,8 @@ namespace Kazyx.Uwpmm.Pages
             SetUpShooting();
         }
 
+        private CancellationTokenSource cancel;
+
         private async void SetUpShooting()
         {
             await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
@@ -730,9 +735,10 @@ namespace Kazyx.Uwpmm.Pages
                 return;
             }
 
+            cancel = new CancellationTokenSource();
             try
             {
-                await SequentialOperation.SetUp(tmpTarget, liveview);
+                await SequentialOperation.SetUp(tmpTarget, liveview, cancel);
             }
             catch (Exception ex)
             {
@@ -741,6 +747,10 @@ namespace Kazyx.Uwpmm.Pages
                 GoToEntranceScreen();
                 ShowError(SystemUtil.GetStringResource("ErrorMessage_fatal"));
                 return;
+            }
+            finally
+            {
+                cancel = null;
             }
 
             await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>

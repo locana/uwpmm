@@ -4,6 +4,7 @@ using Kazyx.Uwpmm.DataModel;
 using Kazyx.Uwpmm.Playback;
 using Kazyx.Uwpmm.Utility;
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Windows.Devices.Geolocation;
 
@@ -11,17 +12,20 @@ namespace Kazyx.Uwpmm.CameraControl
 {
     public class SequentialOperation
     {
-        public static async Task SetUp(TargetDevice device, StreamProcessor liveview)
+        public static async Task SetUp(TargetDevice device, StreamProcessor liveview, CancellationTokenSource cancel = null)
         {
             DebugUtil.Log("Set up control");
             try
             {
                 await device.Api.RetrieveApiList();
                 var info = await device.Api.Camera.GetApplicationInfoAsync().ConfigureAwait(false);
+                cancel.ThrowIfCancelled();
+
                 device.Api.Capability.Version = new ServerVersion(info.Version);
                 device.Api.Capability.AvailableApis = await device.Api.Camera.GetAvailableApiListAsync().ConfigureAwait(false);
 
                 await device.Observer.StartAsync().ConfigureAwait(false);
+                cancel.ThrowIfCancelled();
 
                 if (device.Api.AvContent != null)
                 {
@@ -30,11 +34,13 @@ namespace Kazyx.Uwpmm.CameraControl
                     {
                         throw new Exception();
                     }
+                    cancel.ThrowIfCancelled();
                 }
 
                 if (device.Api.Capability.IsSupported("startRecMode"))
                 {
                     await device.Api.Camera.StartRecModeAsync().ConfigureAwait(false);
+                    cancel.ThrowIfCancelled();
                 }
                 if (device.Api.Capability.IsAvailable("startLiveview"))
                 {
@@ -44,6 +50,7 @@ namespace Kazyx.Uwpmm.CameraControl
                         DebugUtil.Log("Failed to open liveview connection.");
                         throw new Exception("Failed to open liveview connection.");
                     }
+                    cancel.ThrowIfCancelled();
                 }
 
                 if (device.Api.Capability.IsSupported("setCurrentTime"))
@@ -54,11 +61,18 @@ namespace Kazyx.Uwpmm.CameraControl
                             DateTimeOffset.UtcNow, (int)DateTimeOffset.Now.Offset.TotalMinutes).ConfigureAwait(false);
                     }
                     catch (RemoteApiException) { } // This API always fails on some models.
+                    cancel.ThrowIfCancelled();
                 }
             }
             catch (RemoteApiException e)
             {
                 DebugUtil.Log("Failed setup: " + e.code);
+                device.Observer.Stop();
+                throw;
+            }
+            catch (OperationCanceledException e)
+            {
+                DebugUtil.Log("Operation cancelled");
                 device.Observer.Stop();
                 throw;
             }
