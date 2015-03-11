@@ -214,6 +214,7 @@ namespace Kazyx.Uwpmm.DataModel
                 {
                     case ShootModeParam.Still:
                         if (Device.Status.Status == EventParam.Idle) { return true; }
+                        if (ApplicationSettings.GetInstance().IsIntervalShootingEnabled) { return true; }
                         if (
                             Device.Status.Status == EventParam.StCapturing &&
                             Device.Status.ContShootingMode != null &&
