@@ -5,7 +5,6 @@ using Kazyx.Uwpmm.DataModel;
 using Kazyx.Uwpmm.Utility;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Threading.Tasks;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -296,37 +295,6 @@ namespace Kazyx.Uwpmm.Settings
             }
             await DataSource.Device.Observer.Refresh();
         }
-
-        //private StackPanel BuildComboBoxPanel(string key, string title_key, SelectionChangedEventHandler handler)
-        //{
-        //    var box = new ComboBox
-        //    {
-        //        Margin = new Thickness(4, 0, 0, 0)
-        //    };
-        //    box.SetBinding(ComboBox.IsEnabledProperty, new Binding
-        //    {
-        //        Source = DataSource,
-        //        Path = new PropertyPath("IsAvailable" + key),
-        //        Mode = BindingMode.OneWay
-        //    });
-        //    box.SetBinding(ComboBox.ItemsSourceProperty, new Binding
-        //    {
-        //        Source = DataSource,
-        //        Path = new PropertyPath("Candidates" + key),
-        //        Mode = BindingMode.OneWay
-        //    });
-        //    box.SetBinding(ComboBox.SelectedIndexProperty, new Binding
-        //    {
-        //        Source = DataSource,
-        //        Path = new PropertyPath("SelectedIndex" + key),
-        //        Mode = BindingMode.TwoWay
-        //    });
-        //    box.SelectionChanged += handler;
-
-        //    var parent = BuildBasicPanel(SystemUtil.GetStringResource(title_key));
-        //    parent.Children.Add(box);
-        //    return parent;
-        //}
 
         private StackPanel BuildComboBoxPanel(string key, string title_key, EventHandler<object> handler)
         {

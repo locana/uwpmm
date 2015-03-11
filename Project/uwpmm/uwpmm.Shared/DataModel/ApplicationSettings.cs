@@ -1,9 +1,7 @@
 ﻿using Kazyx.Uwpmm.Control;
 using Kazyx.Uwpmm.Playback;
 using Kazyx.Uwpmm.Utility;
-using System;
 using Windows.UI;
-using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 
@@ -80,18 +78,6 @@ namespace Kazyx.Uwpmm.DataModel
 
                     NotifyChangedOnUI("IsIntervalShootingEnabled");
                     NotifyChangedOnUI("IntervalTimeVisibility");
-
-
-                    // exclusion
-                    if (value)
-                    {
-                        /* TODO
-                        if (manager.Status.IsAvailable("setSelfTimer") && manager.IntervalManager != null)
-                        {
-                            SetSelfTimerOff();
-                        }
-                         * */
-                    }
                 }
             }
             get
@@ -99,21 +85,6 @@ namespace Kazyx.Uwpmm.DataModel
                 return _IsIntervalShootingEnabled;
             }
         }
-
-        /* TODO
-        private async void SetSelfTimerOff()
-        {
-            try
-            {
-                await manager.CameraApi.SetSelfTimerAsync(SelfTimerParam.Off);
-            }
-            catch (RemoteApiException e)
-            {
-                DebugUtil.Log("Failed to set selftimer off: " + e.code);
-
-            }
-        }
-         * */
 
         public Visibility IntervalTimeVisibility
         {
