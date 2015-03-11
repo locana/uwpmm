@@ -1085,7 +1085,7 @@ Please update to the latest at PlayMemories Camera Apps store.</value>
     <value>Open FAQ page</value>
   </data>
   <data name="OpenGithub" xml:space="preserve">
-    <value>Open Github</value>
+    <value>Open GitHub</value>
   </data>
   <data name="OpenSupportTwitter" xml:space="preserve">
     <value>Open support account on Twitter</value>
@@ -1101,7 +1101,7 @@ Now detecting connected camera device...</value>
   <data name="FoundDlnaDeviceGuide" xml:space="preserve">
     <value>Media server is active on &lt;ssid&gt;.
 
-Open gallary to find contents in your camera device.</value>
+Open gallary to browse contents in your camera device.</value>
   </data>
   <data name="Viewer_EmptyMediaServer" xml:space="preserve">
     <value>No contents in this media server.</value>
@@ -1111,5 +1111,8 @@ Open gallary to find contents in your camera device.</value>
   </data>
   <data name="Viewer_UnsupportedFileType" xml:space="preserve">
     <value>&lt;file&gt; can't be supported on this device.</value>
+  </data>
+  <data name="OpenGallery" xml:space="preserve">
+    <value>Open gallary to browse contents in your camera device!</value>
   </data>
 </root>

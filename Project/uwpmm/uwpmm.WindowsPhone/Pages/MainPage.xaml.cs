@@ -648,27 +648,6 @@ namespace Kazyx.Uwpmm.Pages
         private async void NetworkObserver_CdsDiscovered(object sender, CdServiceEventArgs e)
         {
             UpdateMainDescription();
-            /*
-            var type = await e.CdService.LocalAddress.IPInformation.NetworkAdapter.GetConnectedProfileAsync();
-            if (!NavigatedByInAppBackTransition && type.IsWlanConnectionProfile)
-            {
-                var ssid = type.WlanConnectionProfileDetails.GetConnectedSsid();
-                if (ssid != null && ssid.StartsWith("Direct-", StringComparison.OrdinalIgnoreCase))
-                {
-                    DebugUtil.Log("It seems to be connected to camera directly. Navigate to PlaybackPage automatically.");
-                    await Dispatcher.RunAsync(CoreDispatcherPriority.High, () =>
-                    {
-                        Frame.Navigate(typeof(PlaybackPage), PlaybackPage.AUTO_JUMP_TO_DLNA_FLAG);
-                    });
-                    return;
-                }
-            }
-             * */
-            // TODO
-            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-            {
-                ShowToast("[TMP] CDS discovered: " + e.CdService.FriendlyName);
-            });
         }
 
         private void UpdateMainDescription()
@@ -687,6 +666,12 @@ namespace Kazyx.Uwpmm.Pages
                         if (SUPRESS_MEDIA_SERVER_DISCOVERY.All(name => name != NetworkObserver.INSTANCE.CdsProviders[0].FriendlyName))
                         {
                             MainDescription.Text = SystemUtil.GetStringResource("FoundDlnaDeviceGuide").Replace("<ssid>", NetworkObserver.INSTANCE.PreviousSsid);
+                            Toast.PushToast(new Control.ToastContent()
+                            {
+                                Icon = new BitmapImage(new Uri("ms-appx:///Assets/AppBar/appBar_playback.png", UriKind.Absolute)),
+                                Text = SystemUtil.GetStringResource("OpenGallery"),
+                                Duration = TimeSpan.FromSeconds(8)
+                            });
                             return;
                         }
                     }

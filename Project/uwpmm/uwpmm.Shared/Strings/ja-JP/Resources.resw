@@ -1013,7 +1013,7 @@ PlayMemories Camera Appsストアで最新版にアップデートしてくだ�
     <value>FAQページを開く</value>
   </data>
   <data name="OpenGithub" xml:space="preserve">
-    <value>Githubリポジトリを開く</value>
+    <value>GitHubリポジトリを開く</value>
   </data>
   <data name="OpenSupportTwitter" xml:space="preserve">
     <value>Twitterのアカウントを開く</value>
@@ -1039,5 +1039,8 @@ PlayMemories Camera Appsストアで最新版にアップデートしてくだ�
   </data>
   <data name="Viewer_UnsupportedFileType" xml:space="preserve">
     <value>&lt;file&gt; は、このデバイス上では取り扱えません。</value>
+  </data>
+  <data name="OpenGallery" xml:space="preserve">
+    <value>ギャラリーを開いてカメラ内のコンテンツを転送しましょう！</value>
   </data>
 </root>
