@@ -612,7 +612,7 @@ PlayMemories Camera Appsストアで最新版にアップデートしてくだ�
     <value>撮影枚数</value>
   </data>
   <data name="IntervalSetting" xml:space="preserve">
-    <value>インターバル撮影モード</value>
+    <value>インターバル撮影</value>
   </data>
   <data name="IntervalTime" xml:space="preserve">
     <value>インターバル間隔</value>
