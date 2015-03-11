@@ -30,7 +30,7 @@ namespace Kazyx.Uwpmm.CameraControl
                 if (device.Api.AvContent != null)
                 {
                     DebugUtil.Log("This device support ContentsTransfer mode. Turn on Shooting mode at first.");
-                    if (!await PlaybackModeHelper.MoveToShootingModeAsync(device).ConfigureAwait(false))
+                    if (!await PlaybackModeHelper.MoveToShootingModeAsync(device, cancel).ConfigureAwait(false))
                     {
                         throw new Exception();
                     }

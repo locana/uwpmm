@@ -476,10 +476,9 @@ namespace Kazyx.Uwpmm.Pages
             LocalMovieScreen.LocalMediaOpened -= LocalMoviePlayer_MediaOpened;
             FinishLocalMoviePlayback();
 
-            if (Canceller != null)
-            {
-                Canceller.Cancel();
-            }
+            Canceller.CancelIfNotNull();
+            StateChangeCanceller.CancelIfNotNull();
+
             if (RemoteGridSource != null)
             {
                 RemoteGridSource.Clear();
@@ -803,6 +802,8 @@ namespace Kazyx.Uwpmm.Pages
 
         private CancellationTokenSource Canceller;
 
+        private CancellationTokenSource StateChangeCanceller;
+
         private AlbumGroupCollection RemoteGridSource;
 
         private AlbumGroupCollection LocalGridSource;
@@ -946,10 +947,18 @@ namespace Kazyx.Uwpmm.Pages
             try
             {
                 ChangeProgressText(SystemUtil.GetStringResource("Progress_ChangingCameraState"));
-                if (!await PlaybackModeHelper.MoveToContentTransferModeAsync(TargetDevice).ConfigureAwait(false))
+                try
                 {
-                    DebugUtil.Log("ModeTransition failed");
-                    throw new Exception();
+                    StateChangeCanceller = new CancellationTokenSource(15000);
+                    if (!await PlaybackModeHelper.MoveToContentTransferModeAsync(TargetDevice, StateChangeCanceller).ConfigureAwait(false))
+                    {
+                        DebugUtil.Log("ModeTransition failed");
+                        throw new Exception();
+                    }
+                }
+                finally
+                {
+                    StateChangeCanceller = null;
                 }
                 DebugUtil.Log("ModeTransition successfully finished");
 

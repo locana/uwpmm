@@ -168,6 +168,8 @@ namespace Kazyx.Uwpmm.Pages
                 PeriodicalShootingTask.Stop();
             }
 
+            cancel.CancelIfNotNull();
+
             TearDownCurrentTarget();
             PivotRoot.IsLocked = false;
             PivotRoot.SelectedIndex = 0;
@@ -735,14 +737,15 @@ namespace Kazyx.Uwpmm.Pages
                 return;
             }
 
-            cancel = new CancellationTokenSource();
+            cancel.CancelIfNotNull();
+            cancel = new CancellationTokenSource(15000);
             try
             {
                 await SequentialOperation.SetUp(tmpTarget, liveview, cancel);
             }
+            catch (OperationCanceledException) { return; }
             catch (Exception ex)
             {
-                HideProgress();
                 DebugUtil.Log("Failed setup: " + ex.Message);
                 GoToEntranceScreen();
                 ShowError(SystemUtil.GetStringResource("ErrorMessage_fatal"));
@@ -751,6 +754,7 @@ namespace Kazyx.Uwpmm.Pages
             finally
             {
                 cancel = null;
+                HideProgress();
             }
 
             await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
@@ -763,7 +767,6 @@ namespace Kazyx.Uwpmm.Pages
                 BatteryStatusDisplay.DataContext = tmpTarget.Status.BatteryInfo;
 
                 tmpTarget.Status.PropertyChanged += Status_PropertyChanged;
-                HideProgress();
 
                 if (PivotRoot.SelectedIndex == 0)
                 {

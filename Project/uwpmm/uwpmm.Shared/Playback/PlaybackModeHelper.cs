@@ -13,21 +13,23 @@ namespace Kazyx.Uwpmm.Playback
 {
     public class PlaybackModeHelper
     {
-        public static async Task<bool> MoveToShootingModeAsync(TargetDevice device, int timeoutMsec = 10000)
+        public static async Task<bool> MoveToShootingModeAsync(TargetDevice device, CancellationTokenSource cancel)
         {
-            return await MoveToSpecifiedModeAsync(device, CameraFunction.RemoteShooting, EventParam.Idle, timeoutMsec);
+            return await MoveToSpecifiedModeAsync(device, cancel, CameraFunction.RemoteShooting, EventParam.Idle);
         }
 
-        public static async Task<bool> MoveToContentTransferModeAsync(TargetDevice device, int timeoutMsec = 10000)
+        public static async Task<bool> MoveToContentTransferModeAsync(TargetDevice device, CancellationTokenSource cancel)
         {
-            return await MoveToSpecifiedModeAsync(device, CameraFunction.ContentTransfer, EventParam.ContentsTransfer, timeoutMsec);
+            return await MoveToSpecifiedModeAsync(device, cancel, CameraFunction.ContentTransfer, EventParam.ContentsTransfer);
         }
 
-        private static async Task<bool> MoveToSpecifiedModeAsync(TargetDevice device, string nextFunction, string nextState, int timeoutMsec, bool isFirst = true)
+        private static async Task<bool> MoveToSpecifiedModeAsync(TargetDevice device, CancellationTokenSource cancel, string nextFunction, string nextState, bool isFirst = true)
         {
             var tcs = new TaskCompletionSource<bool>();
-            var ct = new CancellationTokenSource(timeoutMsec); // State change timeout 10 sec.
-            ct.Token.Register(() => tcs.TrySetCanceled(), useSynchronizationContext: false);
+            if (cancel != null)
+            {
+                cancel.Token.Register(() => tcs.TrySetCanceled(), useSynchronizationContext: false);
+            }
 
             PropertyChangedEventHandler status_observer = (sender, e) =>
             {
@@ -64,6 +66,7 @@ namespace Kazyx.Uwpmm.Playback
                     DebugUtil.Log("Already in specified mode: " + nextFunction);
                     return true;
                 }
+                cancel.ThrowIfCancelled();
             }
             catch (RemoteApiException e)
             {
@@ -88,8 +91,9 @@ namespace Kazyx.Uwpmm.Playback
                     DebugUtil.Log("Successfully stopped movie streaming mode");
                 }
                 catch { }
+                cancel.ThrowIfCancelled();
                 DebugUtil.Log("Let's retry state transition");
-                return await MoveToSpecifiedModeAsync(device, nextFunction, nextState, timeoutMsec, false);
+                return await MoveToSpecifiedModeAsync(device, cancel, nextFunction, nextState, false);
             }
 
             try
