@@ -1095,10 +1095,12 @@ Please update to the latest at PlayMemories Camera Apps store.</value>
   </data>
   <data name="WifiConnectionGuide" xml:space="preserve">
     <value>Connected to &lt;ssid&gt;.
+
 Now detecting connected camera device...</value>
   </data>
   <data name="FoundDlnaDeviceGuide" xml:space="preserve">
     <value>Media server is active on &lt;ssid&gt;.
+
 Open gallary to find contents in your camera device.</value>
   </data>
   <data name="Viewer_EmptyMediaServer" xml:space="preserve">
