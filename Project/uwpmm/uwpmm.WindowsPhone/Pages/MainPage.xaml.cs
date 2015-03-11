@@ -161,6 +161,11 @@ namespace Kazyx.Uwpmm.Pages
         /// </summary>
         public void OnSuspending()
         {
+            if (PeriodicalShootingTask != null && PeriodicalShootingTask.IsRunning)
+            {
+                PeriodicalShootingTask.Stop();
+            }
+
             TearDownCurrentTarget();
             PivotRoot.SelectedIndex = 0;
         }
