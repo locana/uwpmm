@@ -1013,7 +1013,7 @@ PlayMemories Camera Appsストアで最新版にアップデートしてくだ�
     <value>FAQページを開く</value>
   </data>
   <data name="OpenGithub" xml:space="preserve">
-    <value>Githubリポジトリを開く</value>
+    <value>GitHubリポジトリを開く</value>
   </data>
   <data name="OpenSupportTwitter" xml:space="preserve">
     <value>Twitterのアカウントを開く</value>
