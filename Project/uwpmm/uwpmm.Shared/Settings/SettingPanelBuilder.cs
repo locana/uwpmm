@@ -371,7 +371,7 @@ namespace Kazyx.Uwpmm.Settings
             indicator.SetBinding(TextBlock.TextProperty, new Binding()
             {
                 Source = ApplicationSettings.GetInstance(),
-                Path = new PropertyPath("IntervalTime"),
+                Path = new PropertyPath("IntervalTimeDisplayString"),
                 Mode = BindingMode.OneWay,
             });
 

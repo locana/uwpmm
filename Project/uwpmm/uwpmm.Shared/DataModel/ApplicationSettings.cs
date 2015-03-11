@@ -132,12 +132,18 @@ namespace Kazyx.Uwpmm.DataModel
                     _IntervalTime = value;
                     // DebugUtil.Log("IntervalTime changed: " + value);
                     NotifyChangedOnUI("IntervalTime");
+                    NotifyChangedOnUI("IntervalTimeDisplayString");
                 }
             }
             get
             {
                 return _IntervalTime;
             }
+        }
+
+        public string IntervalTimeDisplayString
+        {
+            get { return _IntervalTime + SystemUtil.GetStringResource("Seconds"); }
         }
 
         private bool _IsShootButtonDisplayed = true;
