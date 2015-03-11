@@ -141,6 +141,7 @@ namespace Kazyx.Uwpmm.Pages
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
+            PivotRoot.IsLocked = false;
             liveview.CloseConnection();
             RemoveEventHandlers();
             // TearDownCurrentTarget();
@@ -162,7 +163,9 @@ namespace Kazyx.Uwpmm.Pages
         public void OnSuspending()
         {
             TearDownCurrentTarget();
+            PivotRoot.IsLocked = false;
             PivotRoot.SelectedIndex = 0;
+            stayEntrance = false;
         }
 
         private void RemoveEventHandlers()
@@ -570,6 +573,7 @@ namespace Kazyx.Uwpmm.Pages
         {
             if (PivotRoot.SelectedIndex == 0)
             {
+                stayEntrance = false;
                 NetworkObserver.INSTANCE.Finish();
                 return;
             }
