@@ -774,17 +774,27 @@ namespace Kazyx.Uwpmm.Pages
             }
         }
 
+        private CancellationTokenSource StateChangeCanceller;
+
         private async Task InitializeRemoteApiDevice()
         {
             try
             {
-                // ChangeProgressText(SystemUtil.GetStringResource("Progress_ChangingCameraState"));
-                var res = await PlaybackModeHelper.MoveToContentTransferModeAsync(TargetDevice).ConfigureAwait(false);
-                DebugUtil.Log(res ? "ModeTransition successfully finished." : "ModeTransition failed");
-
-                if (!res)
+                try
                 {
-                    throw new Exception();
+                    StateChangeCanceller = new CancellationTokenSource(15000);
+                    // ChangeProgressText(SystemUtil.GetStringResource("Progress_ChangingCameraState"));
+                    var res = await PlaybackModeHelper.MoveToContentTransferModeAsync(TargetDevice, StateChangeCanceller).ConfigureAwait(false);
+                    DebugUtil.Log(res ? "ModeTransition successfully finished." : "ModeTransition failed");
+
+                    if (!res)
+                    {
+                        throw new Exception();
+                    }
+                }
+                finally
+                {
+                    StateChangeCanceller = null;
                 }
 
                 // ChangeProgressText(SystemUtil.GetStringResource("Progress_CheckingStorage"));
