@@ -76,6 +76,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)DataModel\AppSettingData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataModel\AsyncConversionSource.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataModel\CameraStatus.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DataModel\CompositiveDataModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataModel\ContentInfo.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataModel\ControlPanelDataSource.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataModel\ImageDataSource.cs" />

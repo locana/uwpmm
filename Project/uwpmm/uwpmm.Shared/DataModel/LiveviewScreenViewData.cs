@@ -500,12 +500,19 @@ namespace Kazyx.Uwpmm.DataModel
         {
             get { return !IsAudioMode; }
         }
-    }
 
-    public class ShootingParamViewData
-    {
-        public ShootingParamViewData() { }
-        public LiveviewScreenViewData Liveview { get; set; }
-        public CameraStatus Status { get; set; }
+        private bool _FramingGridDisplayed = false;
+        public bool FramingGridDisplayed
+        {
+            get { return _FramingGridDisplayed; }
+            set
+            {
+                if (_FramingGridDisplayed != value)
+                {
+                    _FramingGridDisplayed = value;
+                    NotifyChangedOnUI("FramingGridDisplayed");
+                }
+            }
+        }
     }
 }

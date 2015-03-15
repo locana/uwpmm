@@ -49,6 +49,7 @@ namespace Kazyx.Uwpmm.Pages
         private NavigationHelper navigationHelper;
         private ObservableDictionary defaultViewModel = new ObservableDictionary();
         private LiveviewScreenViewData screen_view_data;
+        private OptionalElementsViewData optionalElementsViewData;
         private HistogramCreator HistogramCreator;
         private StatusBar statusBar = StatusBar.GetForCurrentView();
 
@@ -492,7 +493,10 @@ namespace Kazyx.Uwpmm.Pages
             HistogramControl.DataContext = ApplicationSettings.GetInstance();
             ShutterButtonWrapper.DataContext = ApplicationSettings.GetInstance();
             InitializeAppSettingPanel();
-            FramingGuideSurface.DataContext = ApplicationSettings.GetInstance();
+
+            optionalElementsViewData = new OptionalElementsViewData() { AppSetting = ApplicationSettings.GetInstance() };
+            FramingGuideSurface.DataContext = optionalElementsViewData;
+
             NfcAvailable.Visibility = Visibility.Collapsed;
             NfcDataGrid.Visibility = Visibility.Collapsed;
             WifiPassword.Text = "";
@@ -749,6 +753,7 @@ namespace Kazyx.Uwpmm.Pages
                 SetLiveviewDataContext(screen_view_data);
                 LiveviewScreen.Visibility = Visibility.Visible;
                 ShutterButton.DataContext = screen_view_data;
+                FramingGuideSurface.DataContext = new OptionalElementsViewData() { Liveview = screen_view_data, AppSetting = ApplicationSettings.GetInstance() };
                 BatteryStatusDisplay.DataContext = tmpTarget.Status.BatteryInfo;
 
                 tmpTarget.Status.PropertyChanged += Status_PropertyChanged;
@@ -896,6 +901,8 @@ namespace Kazyx.Uwpmm.Pages
 
         async void liveview_JpegRetrieved(object sender, JpegEventArgs e)
         {
+            if (!screen_view_data.FramingGridDisplayed) { screen_view_data.FramingGridDisplayed = true; }
+
             if (IsRendering) { return; }
 
             IsRendering = true;

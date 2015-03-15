@@ -76,8 +76,12 @@
                             <Image x:Name="AudioDummyScreen" Source="/Assets/Screen/audio_locana.png" Margin="30" 
                                Visibility="{Binding IsAudioMode, FallbackValue=Collapsed, Converter={StaticResource B2VConverter}}"/>
                             <controls:FramingGridsSurface x:Name="FramingGuideSurface" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                                                      Type="{Binding GridType, Mode=OneWay}"
-                                                   Stroke="{Binding GridColorBrush,Mode=OneWay}" FibonacciOrigin="{Binding FibonacciLineOrigin, Mode=OneWay}"/>
+                                                          Type="{Binding Path=AppSetting.GridType, Mode=OneWay}"
+                                                          Visibility="{Binding Path=Liveview.FramingGridDisplayed, FallbackValue=Collapsed, Converter={StaticResource B2VConverter}}"
+                                                          Stroke="{Binding Path=AppSetting.GridColorBrush,Mode=OneWay}" 
+                                                          FibonacciOrigin="{Binding Path=AppSetting.FibonacciLineOrigin, Mode=OneWay}"
+                                                          />
+                            
                             <controls:FocusFrameSurface x:Name="_FocusFrameSurface" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
                             <Grid Name="Top" HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="14,0">
                                 <Grid.ColumnDefinitions>
