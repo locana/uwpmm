@@ -164,9 +164,8 @@ namespace Kazyx.Uwpmm.Pages
                     () => { return ApplicationSettings.GetInstance().PrioritizeOriginalSizeContents; },
                     enabled => { ApplicationSettings.GetInstance().PrioritizeOriginalSizeContents = enabled; })));
 
-            var contents_type_settings = new SettingSection("Contents type");
-            contents_type_settings.Add(new ComboBoxSetting(
-                new AppSettingData<int>("Contents type", "Filter types",
+            storage_access_settings.Add(new ComboBoxSetting(
+                new AppSettingData<int>(SystemUtil.GetStringResource("ContentTypes"), SystemUtil.GetStringResource("ContentTypesGuide"),
                     () => { return (int)ApplicationSettings.GetInstance().RemoteContentsSet; },
                     newValue =>
                     {
@@ -180,7 +179,6 @@ namespace Kazyx.Uwpmm.Pages
                         }
                     },
                     SettingValueConverter.FromContentsSet(EnumUtil<ContentsSet>.GetValueEnumerable()))));
-            AppSettings.Children.Add(contents_type_settings);
 
             HideSettingAnimation.Completed += HideSettingAnimation_Completed;
 
