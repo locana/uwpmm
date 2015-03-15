@@ -8,11 +8,11 @@ namespace Kazyx.Uwpmm.Utility
     {
         private Preference() { }
 
-        private const string key_sync_postview = "SyncPostview";
-        private const string interval_enable_key = "interval_enable";
-        private const string interval_time_key = "interval_time";
-        private const string display_take_image_button_key = "display_take_image_button";
-        private const string display_histogram_key = "display_histogram";
+        private const string sync_postview = "sync_postview";
+        private const string enable_interval = "enable_interval";
+        private const string interval_time = "interval_time";
+        private const string display_take_image_button = "display_take_image_button";
+        private const string display_histogram = "display_histogram";
         private const string add_geotag = "add_geotag";
         private const string fraiming_grids = "fraiming_grids";
         private const string framing_grids_color = "framing_grids_color";
@@ -39,32 +39,32 @@ namespace Kazyx.Uwpmm.Utility
 
         public static bool PostviewSyncEnabled
         {
-            get { return GetProperty(key_sync_postview, true); }
-            set { SetProperty(key_sync_postview, value); }
+            get { return GetProperty(sync_postview, true); }
+            set { SetProperty(sync_postview, value); }
         }
 
         public static bool IntervalShootingEnabled
         {
-            get { return GetProperty(key_sync_postview, false); }
-            set { SetProperty(key_sync_postview, value); }
+            get { return GetProperty(enable_interval, false); }
+            set { SetProperty(enable_interval, value); }
         }
 
         public static int IntervalTime
         {
-            get { return GetProperty(interval_time_key, 10); }
-            set { SetProperty(interval_time_key, value); }
+            get { return GetProperty(interval_time, 10); }
+            set { SetProperty(interval_time, value); }
         }
 
         public static bool ShootButtonVisible
         {
-            get { return GetProperty(display_take_image_button_key, true); }
-            set { SetProperty(display_take_image_button_key, value); }
+            get { return GetProperty(display_take_image_button, true); }
+            set { SetProperty(display_take_image_button, value); }
         }
 
         public static bool HistogramVisible
         {
-            get { return GetProperty(display_histogram_key, true); }
-            set { SetProperty(display_histogram_key, value); }
+            get { return GetProperty(display_histogram, true); }
+            set { SetProperty(display_histogram, value); }
         }
 
         public static bool GeoTaggingEnabled
