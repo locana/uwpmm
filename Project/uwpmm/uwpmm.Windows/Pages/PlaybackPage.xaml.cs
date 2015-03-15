@@ -965,8 +965,8 @@ namespace Kazyx.Uwpmm.Pages
 
         private void ReleaseDetail()
         {
-            PhotoScreen.ReleaseImage();
             SetStillDetailVisibility(false);
+            PhotoScreen.ReleaseImage();
         }
 
         private bool IsViewingDetail = false;
@@ -1178,7 +1178,7 @@ namespace Kazyx.Uwpmm.Pages
                                     catch (UnsupportedFileFormatException)
                                     {
                                         PhotoData.MetaData = null;
-                                        PhotoScreen.DetailInfoVisibility = Visibility.Collapsed;
+                                        PhotoScreen.DetailInfoDisplayed = false;
                                     }
                                     SetStillDetailVisibility(true);
                                 }
@@ -1482,7 +1482,7 @@ namespace Kazyx.Uwpmm.Pages
                     catch (UnsupportedFileFormatException)
                     {
                         PhotoData.MetaData = null;
-                        PhotoScreen.DetailInfoVisibility = Visibility.Collapsed;
+                        PhotoScreen.DetailInfoDisplayed = false;
                     }
                     SetStillDetailVisibility(true);
                 }

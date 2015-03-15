@@ -17,12 +17,54 @@ namespace Kazyx.Uwpmm.Control
         public PhotoPlaybackScreen()
         {
             this.InitializeComponent();
+            StartSlideAnimatoin(false);
         }
 
-        public Visibility DetailInfoVisibility
+        public bool AnimationRunning = false;
+
+        private bool _DetailInfoDisplayed = false;
+        public bool DetailInfoDisplayed
         {
-            get { return DetailInfoPanel.Visibility; }
-            set { DetailInfoPanel.Visibility = value; }
+            get { return _DetailInfoDisplayed; }
+            set
+            {
+                if (_DetailInfoDisplayed != value)
+                {
+                    StartSlideAnimatoin(value);
+                }
+            }
+        }
+
+        void StartSlideAnimatoin(bool displayed)
+        {
+            if (AnimationRunning) { return; }
+            AnimationRunning = true;
+            if (displayed)
+            {
+                AnimationHelper.CreateSlideAnimation(new AnimationRequest()
+                {
+                    Target = DetailInfoPanel,
+                    Duration = TimeSpan.FromMilliseconds(160),
+                    Completed = (sender, obj) =>
+                    {
+                        _DetailInfoDisplayed = true;
+                        AnimationRunning = false;
+                    }
+                }, FadeSide.Right, FadeType.FadeIn).Begin();
+            }
+            else
+            {
+                AnimationHelper.CreateSlideAnimation(new AnimationRequest()
+                {
+                    Target = DetailInfoPanel,
+                    Duration = TimeSpan.FromMilliseconds(200),
+                    Completed = (sender, obj) =>
+                    {
+                        _DetailInfoDisplayed = false;
+                        AnimationRunning = false;
+                    }
+                }, FadeSide.Right, FadeType.FadeOut).Begin();
+            }
         }
 
         public void RotateImage(Rotation r)
@@ -47,9 +89,13 @@ namespace Kazyx.Uwpmm.Control
         {
             if (IsRotating) { return; }
             IsRotating = true;
-            AnimationHelper.CreateSmoothRotateAnimation(new AnimationRequest() { Target = target, Completed = (obj, sender) => {
-                IsRotating = false;
-            }
+            AnimationHelper.CreateSmoothRotateAnimation(new AnimationRequest()
+            {
+                Target = target,
+                Completed = (obj, sender) =>
+                {
+                    IsRotating = false;
+                }
             }, angle).Begin();
         }
 

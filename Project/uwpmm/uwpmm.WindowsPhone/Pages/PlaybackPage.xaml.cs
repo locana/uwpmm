@@ -77,7 +77,7 @@ namespace Kazyx.Uwpmm.Pages
             });
             CommandBarManager.SetEvent(AppBarItem.ShowDetailInfo, (sender, e) =>
             {
-                PhotoScreen.DetailInfoVisibility = Visibility.Visible;
+                PhotoScreen.DetailInfoDisplayed = true;
                 BottomAppBar = CommandBarManager.Clear()
                     .Icon(AppBarItem.RotateRight)
                     .Icon(AppBarItem.HideDetailInfo)
@@ -86,7 +86,7 @@ namespace Kazyx.Uwpmm.Pages
             });
             CommandBarManager.SetEvent(AppBarItem.HideDetailInfo, (sender, e) =>
             {
-                PhotoScreen.DetailInfoVisibility = Visibility.Collapsed;
+                PhotoScreen.DetailInfoDisplayed = false;
                 BottomAppBar = CommandBarManager.Clear()
                     .Icon(AppBarItem.RotateRight)
                     .Icon(AppBarItem.ShowDetailInfo)
@@ -585,7 +585,7 @@ namespace Kazyx.Uwpmm.Pages
                         break;
                     case ViewerState.LocalStillPlayback:
                     case ViewerState.RemoteStillPlayback:
-                        if (PhotoScreen.DetailInfoVisibility == Visibility.Visible)
+                        if (PhotoScreen.DetailInfoDisplayed)
                         {
                             BottomAppBar = CommandBarManager.Clear()
                                 .Icon(AppBarItem.RotateRight)
@@ -1369,7 +1369,7 @@ namespace Kazyx.Uwpmm.Pages
                             catch (UnsupportedFileFormatException)
                             {
                                 PhotoData.MetaData = null;
-                                PhotoScreen.DetailInfoVisibility = Visibility.Collapsed;
+                                PhotoScreen.DetailInfoDisplayed = false;
                             }
                             SetStillDetailVisibility(true);
                         }
@@ -1719,7 +1719,7 @@ namespace Kazyx.Uwpmm.Pages
                     catch (UnsupportedFileFormatException)
                     {
                         PhotoData.MetaData = null;
-                        PhotoScreen.DetailInfoVisibility = Visibility.Collapsed;
+                        PhotoScreen.DetailInfoDisplayed = false;
                     }
                     SetStillDetailVisibility(true);
                 }
