@@ -479,6 +479,8 @@ namespace Kazyx.Uwpmm.Pages
 
         void InitializeUI()
         {
+            StartToHideControlPanel();
+
             HistogramControl.Init(Histogram.ColorType.White, 1500);
 
             HistogramCreator = null;
@@ -620,28 +622,29 @@ namespace Kazyx.Uwpmm.Pages
 
         private void StartToShowControlPanel()
         {
-            ControlPanel.Visibility = Visibility.Visible;
-            SlideTransform.X = 200;
-            ShowControlPanelStoryBoard.Begin();
-            SlideInControlPanel.Begin();
+            AnimationHelper.CreateSlideAnimation(new AnimationRequest()
+            {
+                Target = ControlPanelScrollViewer,
+                Duration = TimeSpan.FromMilliseconds(150),
+                Completed = (sender, obj) =>
+                {
+                    ControlPanelDisplayed = true;
+                }
+            }, FadeSide.Right, FadeType.FadeIn).Begin();
         }
 
         private void StartToHideControlPanel()
         {
-            HideControlPanelStoryBoard.Begin();
-            SlideOutControlPanel.Begin();
-        }
-
-        private void ShowControlPanelStoryBoard_Completed(object sender, object e)
-        {
-            ControlPanelDisplayed = true;
-            SlideTransform.X = 0;
-        }
-
-        private void HideControlPanelStoryBoard_Completed(object sender, object e)
-        {
-            ControlPanel.Visibility = Visibility.Collapsed;
-            ControlPanelDisplayed = false;
+            AnimationHelper.CreateSlideAnimation(new AnimationRequest()
+            {
+                Target = ControlPanelScrollViewer,
+                Duration = TimeSpan.FromMilliseconds(150),
+                Completed = (sender, obj) =>
+                {
+                    ControlPanelDisplayed = false;
+                }
+            },
+                FadeSide.Right, FadeType.FadeOut).Begin();
         }
 
         private TargetDevice target;

@@ -39,7 +39,7 @@
             </Image>
         </ScrollViewer>
 
-        <Grid VerticalAlignment="Stretch" Width="230" HorizontalAlignment="Right" Name="DetailInfoPanel" Visibility="Collapsed">
+        <Grid VerticalAlignment="Stretch" Width="230" HorizontalAlignment="Right" Name="DetailInfoPanel">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="4*"/>
                 <ColumnDefinition Width="auto"/>

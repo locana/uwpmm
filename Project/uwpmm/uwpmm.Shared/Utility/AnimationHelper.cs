@@ -43,11 +43,20 @@ namespace Kazyx.Uwpmm.Utility
                             Storyboard.SetTargetProperty(slide, "Y");
                             KeyframeDistance = new List<double>() { distance, distance * 0.5, 0 };
                             break;
+                        case FadeSide.Left:
+                            distance = -request.Target.ActualWidth;
+                            Storyboard.SetTargetProperty(slide, "X");
+                            KeyframeDistance = new List<double>() { distance, distance * 0.5, 0 };
+                            break;
+                        case FadeSide.Right:
+                            distance = request.Target.ActualWidth;
+                            Storyboard.SetTargetProperty(slide, "X");
+                            KeyframeDistance = new List<double>() { distance, distance * 0.5, 0 };
+                            break;
                     }
                     break;
                 case FadeType.FadeOut:
                     KeyframeOpacity = new List<double>() { 1.0, 0.6, 0 };
-
                     switch (edge)
                     {
                         case FadeSide.Top:
@@ -58,6 +67,16 @@ namespace Kazyx.Uwpmm.Utility
                         case FadeSide.Bottom:
                             distance = request.Target.ActualHeight;
                             Storyboard.SetTargetProperty(slide, "Y");
+                            KeyframeDistance = new List<double>() { 0, distance * 0.2, distance };
+                            break;
+                        case FadeSide.Left:
+                            distance = -request.Target.ActualWidth;
+                            Storyboard.SetTargetProperty(slide, "X");
+                            KeyframeDistance = new List<double>() { 0, distance * 0.2, distance };
+                            break;
+                        case FadeSide.Right:
+                            distance = request.Target.ActualWidth;
+                            Storyboard.SetTargetProperty(slide, "X");
                             KeyframeDistance = new List<double>() { 0, distance * 0.2, distance };
                             break;
                     }
