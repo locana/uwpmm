@@ -159,7 +159,7 @@ namespace Kazyx.Uwpmm.Pages
 
             var storage_access_settings = new SettingSection(SystemUtil.GetStringResource("SettingSection_ContentsSync"));
             AppSettings.Children.Add(storage_access_settings);
-            storage_access_settings.Add(new CheckBoxSetting(
+            storage_access_settings.Add(new ToggleSetting(
                 new AppSettingData<bool>(SystemUtil.GetStringResource("Setting_PrioritizeOriginalSize"), SystemUtil.GetStringResource("Guide_PrioritizeOriginalSize"),
                     () => { return ApplicationSettings.GetInstance().PrioritizeOriginalSizeContents; },
                     enabled => { ApplicationSettings.GetInstance().PrioritizeOriginalSizeContents = enabled; })));

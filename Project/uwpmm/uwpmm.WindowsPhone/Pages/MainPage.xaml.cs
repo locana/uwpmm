@@ -1363,7 +1363,7 @@ namespace Kazyx.Uwpmm.Pages
 
             AppSettings.Children.Add(image_settings);
 
-            image_settings.Add(new CheckBoxSetting(
+            image_settings.Add(new ToggleSetting(
                 new AppSettingData<bool>(SystemUtil.GetStringResource("PostviewTransferSetting"), SystemUtil.GetStringResource("Guide_ReceiveCapturedImage"),
                 () => { return ApplicationSettings.GetInstance().IsPostviewTransferEnabled; },
                 enabled => { ApplicationSettings.GetInstance().IsPostviewTransferEnabled = enabled; })));
@@ -1376,18 +1376,18 @@ namespace Kazyx.Uwpmm.Pages
                     if (enabled) { EnableGeolocator(); }
                     else { DisableGeolocator(); }
                 });
-            image_settings.Add(new CheckBoxSetting(geoSetting));
+            image_settings.Add(new ToggleSetting(geoSetting));
 
             var display_settings = new SettingSection(SystemUtil.GetStringResource("SettingSection_Display"));
 
             AppSettings.Children.Add(display_settings);
 
-            display_settings.Add(new CheckBoxSetting(
+            display_settings.Add(new ToggleSetting(
                 new AppSettingData<bool>(SystemUtil.GetStringResource("DisplayTakeImageButtonSetting"), SystemUtil.GetStringResource("Guide_DisplayTakeImageButtonSetting"),
                 () => { return ApplicationSettings.GetInstance().IsShootButtonDisplayed; },
                 enabled => { ApplicationSettings.GetInstance().IsShootButtonDisplayed = enabled; })));
 
-            display_settings.Add(new CheckBoxSetting(
+            display_settings.Add(new ToggleSetting(
                 new AppSettingData<bool>(SystemUtil.GetStringResource("DisplayHistogram"), SystemUtil.GetStringResource("Guide_Histogram"),
                 () => { return ApplicationSettings.GetInstance().IsHistogramDisplayed; },
                 enabled => { ApplicationSettings.GetInstance().IsHistogramDisplayed = enabled; })));
@@ -1400,7 +1400,7 @@ namespace Kazyx.Uwpmm.Pages
                     await SetupFocusFrame(enabled);
                     if (!enabled) { _FocusFrameSurface.ClearFrames(); }
                 });
-            display_settings.Add(new CheckBoxSetting(FocusFrameSetting));
+            display_settings.Add(new ToggleSetting(FocusFrameSetting));
 
             display_settings.Add(new ComboBoxSetting(
                 new AppSettingData<int>(SystemUtil.GetStringResource("FramingGrids"), SystemUtil.GetStringResource("Guide_FramingGrids"),

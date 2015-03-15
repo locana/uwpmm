@@ -9,17 +9,17 @@
     d:DesignHeight="300"
     d:DesignWidth="400">
 
-    <Grid x:Name="LayoutRoot" Visibility="{Binding SettingVisibility,Mode=OneWay, FallbackValue=Visible}">
+    <Grid x:Name="LayoutRoot" Visibility="{Binding SettingVisibility,Mode=OneWay, FallbackValue=Visible}" Margin="0,5">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <TextBlock Text="{Binding Title, Mode=OneWay}" Name="SettingName" TextWrapping="Wrap" 
-                       VerticalAlignment="Center" Grid.Row="0" FontSize="22" Margin="35, 15, 10,5"/>
-        <ComboBox Name="Picker" Grid.Row="2" BorderThickness="1" Margin="50,0,40,5" HorizontalAlignment="Stretch" VerticalAlignment="Center" 
+                       VerticalAlignment="Center" Grid.Row="0" FontSize="22" Margin="0,0,10,5"/>
+        <ComboBox Name="Picker" Grid.Row="2" BorderThickness="1" Margin="40,5" HorizontalAlignment="Stretch" VerticalAlignment="Center" 
                   IsEnabled="{Binding IsActive, Mode=OneWay}" ItemsSource="{Binding Candidates, Mode=OneWay}" SelectedIndex="{Binding CurrentSetting, Mode=TwoWay}" />
-        <TextBlock Grid.Row="1"  TextWrapping="Wrap"  Foreground="{ThemeResource AppBarItemDisabledForegroundThemeBrush}" FontSize="20"
-                   Name="SettingGuide" Text="{Binding Guide, Mode=OneWay}" Margin="50, 0, 0,0" Visibility="{Binding GuideVisibility, Mode=OneWay}"/>
+        <TextBlock Grid.Row="1"  TextWrapping="Wrap"  Foreground="{ThemeResource AppBarItemDisabledForegroundThemeBrush}" FontSize="18"
+                   Name="SettingGuide" Text="{Binding Guide, Mode=OneWay}" Margin="5,0,0,0" Visibility="{Binding GuideVisibility, Mode=OneWay}"/>
     </Grid>
 </UserControl>
