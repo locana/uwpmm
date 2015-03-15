@@ -280,7 +280,6 @@ namespace Kazyx.Uwpmm.Control
                 case MovieFileType.LocalMovie:
                     LocalMoviePlayer.Visibility = Visibility.Visible;
                     StreamingPlayer.Visibility = Visibility.Collapsed;
-                    LocalMoviePositionTimer.Start();
                     break;
                 case MovieFileType.SimpleStreamingMovie:
                     LocalMoviePlayer.Visibility = Visibility.Collapsed;
@@ -439,6 +438,7 @@ namespace Kazyx.Uwpmm.Control
                 data.SeekAvailable = LocalMoviePlayer.CanSeek;
 
                 LocalMoviePlayer.Play();
+                LocalMoviePositionTimer.Start();
 
                 if (!DetailInfoDisplayed) { StartToShowInfo(); }
                 InfoTimer.Start();
