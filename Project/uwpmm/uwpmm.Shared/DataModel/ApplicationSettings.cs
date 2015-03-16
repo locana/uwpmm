@@ -14,7 +14,6 @@ namespace Kazyx.Uwpmm.DataModel
         private ApplicationSettings()
         {
             IsPostviewTransferEnabled = Preference.PostviewSyncEnabled;
-            IsIntervalShootingEnabled = Preference.IntervalShootingEnabled;
             IntervalTime = Preference.IntervalTime;
             IsShootButtonDisplayed = Preference.ShootButtonVisible;
             IsHistogramDisplayed = Preference.HistogramVisible;
@@ -73,22 +72,15 @@ namespace Kazyx.Uwpmm.DataModel
             {
                 if (_IsIntervalShootingEnabled != value)
                 {
-                    Preference.IntervalShootingEnabled = value;
                     _IsIntervalShootingEnabled = value;
 
                     NotifyChangedOnUI("IsIntervalShootingEnabled");
-                    NotifyChangedOnUI("IntervalTimeVisibility");
                 }
             }
             get
             {
                 return _IsIntervalShootingEnabled;
             }
-        }
-
-        public Visibility IntervalTimeVisibility
-        {
-            get { return IsIntervalShootingEnabled ? Visibility.Visible : Visibility.Collapsed; }
         }
 
         private int _IntervalTime = 10;
@@ -161,7 +153,6 @@ namespace Kazyx.Uwpmm.DataModel
                     Preference.GeoTaggingEnabled = value;
                     _GeotagEnabled = value;
                     NotifyChangedOnUI("GeotagEnabled");
-                    NotifyChangedOnUI("GeopositionStatusVisibility");
                 }
             }
             get { return _GeotagEnabled; }

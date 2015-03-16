@@ -9,7 +9,6 @@ namespace Kazyx.Uwpmm.Utility
         private Preference() { }
 
         private const string sync_postview = "sync_postview";
-        private const string enable_interval = "enable_interval";
         private const string interval_time = "interval_time";
         private const string display_take_image_button = "display_take_image_button";
         private const string display_histogram = "display_histogram";
@@ -41,12 +40,6 @@ namespace Kazyx.Uwpmm.Utility
         {
             get { return GetProperty(sync_postview, true); }
             set { SetProperty(sync_postview, value); }
-        }
-
-        public static bool IntervalShootingEnabled
-        {
-            get { return GetProperty(enable_interval, false); }
-            set { SetProperty(enable_interval, value); }
         }
 
         public static int IntervalTime
