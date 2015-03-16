@@ -20,11 +20,11 @@
         </Grid.ColumnDefinitions>
         <TextBlock Text="{Binding Title, Mode=OneWay}" Visibility="{Binding GuideVisibility, Mode=OneWay}" Name="SettingName" 
                        Grid.Column="0" TextWrapping="Wrap" VerticalAlignment="Center"
-                       FontSize="22" Margin="0" Grid.ColumnSpan="2"/>
-        <ToggleSwitch Grid.Column="1" Name="SettingCheckBox" VerticalAlignment="Center" HorizontalAlignment="Right" 
+                       FontSize="22" Margin="0"/>
+        <ToggleSwitch Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Right" 
                           IsOn="{Binding CurrentSetting, Mode=TwoWay}" IsEnabled="{Binding IsActive, Mode=OneWay}" Margin="0,5,0,0" HorizontalContentAlignment="Right" RenderTransformOrigin="0.5,0.5" Padding="0,-10">
             <ToggleSwitch.RenderTransform>
-                <CompositeTransform ScaleX="0.8" ScaleY="0.8"/>
+                <CompositeTransform ScaleX="0.8" ScaleY="0.8" TranslateX="-16"/>
             </ToggleSwitch.RenderTransform>
             <ToggleSwitch.OffContent>
                 <Rectangle Height="1" Width="1" AutomationProperties.Name="Off" Visibility="Collapsed"/>
