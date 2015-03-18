@@ -479,8 +479,6 @@ namespace Kazyx.Uwpmm.Pages
 
         void InitializeUI()
         {
-            StartToHideControlPanel();
-
             HistogramControl.Init(Histogram.ColorType.White, 1500);
 
             HistogramCreator = null;
