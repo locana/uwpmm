@@ -1015,6 +1015,7 @@ namespace Kazyx.Uwpmm.Pages
             {
                 await StartContShooting();
             }
+            else { ShutterButtonPressed(); }
         }
 
         private void ShutterButton_Tapped(object sender, TappedRoutedEventArgs e)
