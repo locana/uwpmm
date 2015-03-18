@@ -17,7 +17,6 @@ namespace Kazyx.Uwpmm.Control
         public PhotoPlaybackScreen()
         {
             this.InitializeComponent();
-            StartSlideAnimatoin(false);
         }
 
         public bool AnimationRunning = false;
@@ -30,12 +29,12 @@ namespace Kazyx.Uwpmm.Control
             {
                 if (_DetailInfoDisplayed != value)
                 {
-                    StartSlideAnimatoin(value);
+                    StartSlideAnimation(value);
                 }
             }
         }
 
-        void StartSlideAnimatoin(bool displayed)
+        void StartSlideAnimation(bool displayed)
         {
             if (AnimationRunning) { return; }
             AnimationRunning = true;

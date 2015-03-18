@@ -44,6 +44,9 @@
                 <ColumnDefinition Width="4*"/>
                 <ColumnDefinition Width="auto"/>
             </Grid.ColumnDefinitions>
+            <Grid.RenderTransform>
+                <TranslateTransform x:Name="SlideTransform" X="230"/>
+            </Grid.RenderTransform>
             <Border HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Opacity="0.7"/>
 
             <ScrollViewer HorizontalAlignment="Center" VerticalAlignment="Stretch" Grid.Column="1" Margin="0" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" >
