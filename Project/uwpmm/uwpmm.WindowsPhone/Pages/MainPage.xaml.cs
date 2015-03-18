@@ -760,6 +760,7 @@ namespace Kazyx.Uwpmm.Pages
                 BatteryStatusDisplay.DataContext = tmpTarget.Status.BatteryInfo;
 
                 tmpTarget.Status.PropertyChanged += Status_PropertyChanged;
+                tmpTarget.Api.AvailiableApisUpdated += Api_AvailiableApisUpdated;
 
                 if (PivotRoot.SelectedIndex == 0)
                 {
@@ -794,6 +795,20 @@ namespace Kazyx.Uwpmm.Pages
                 if (ApplicationSettings.GetInstance().GeotagEnabled) { EnableGeolocator(); }
                 else { DisableGeolocator(); }
             });
+        }
+
+        async void Api_AvailiableApisUpdated(object sender, AvailableApiEventArgs e)
+        {
+            await SetupFocusFrame(ApplicationSettings.GetInstance().RequestFocusFrameInfo);
+
+            if (target.Api.Capability.IsAvailable("setLiveviewFrameInfo"))
+            {
+                FocusFrameSetting.SettingVisibility = Visibility.Visible;
+            }
+            else
+            {
+                FocusFrameSetting.SettingVisibility = Visibility.Collapsed;
+            }
         }
 
         private async Task<bool> SetupFocusFrame(bool RequestFocusFrameEnabled)
@@ -850,9 +865,6 @@ namespace Kazyx.Uwpmm.Pages
                     break;
                 case "BatteryInfo":
                     BatteryStatusDisplay.BatteryInfo = status.BatteryInfo;
-                    break;
-                case "AvailableApis":
-                    var task = SetupFocusFrame(ApplicationSettings.GetInstance().RequestFocusFrameInfo);
                     break;
                 case "ContShootingResult":
                     if (ApplicationSettings.GetInstance().IsPostviewTransferEnabled)
