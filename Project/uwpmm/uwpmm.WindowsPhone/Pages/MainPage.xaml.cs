@@ -573,6 +573,7 @@ namespace Kazyx.Uwpmm.Pages
         private void LiveViewPageUnloaded()
         {
             DebugUtil.Log("LiveviewPage Unloaded");
+            Ready = false;
             TearDownCurrentTarget();
         }
 
@@ -710,8 +711,29 @@ namespace Kazyx.Uwpmm.Pages
 
         private CancellationTokenSource cancel;
 
+        private bool _Ready = false;
+        private bool Ready
+        {
+            set
+            {
+                if (_Ready != value)
+                {
+                    _Ready = value;
+                    DebugUtil.Log(value ? "Ready" : "Unready");
+                }
+            }
+            get { return _Ready; }
+        }
+        private bool SetupInProgress = false;
+
         private async void SetUpShooting()
         {
+            if (Ready || SetupInProgress)
+            {
+                DebugUtil.Log("Suppress duplicated setup");
+                return;
+            }
+
             await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
                 ChangeProgressText(SystemUtil.GetStringResource("ProgressMessageConnecting"));
@@ -731,7 +753,9 @@ namespace Kazyx.Uwpmm.Pages
             cancel = new CancellationTokenSource(15000);
             try
             {
+                SetupInProgress = true;
                 await SequentialOperation.SetUp(tmpTarget, liveview, cancel);
+                Ready = true;
             }
             catch (OperationCanceledException) { return; }
             catch (Exception ex)
@@ -744,6 +768,7 @@ namespace Kazyx.Uwpmm.Pages
             finally
             {
                 cancel = null;
+                SetupInProgress = false;
                 HideProgress();
             }
 
