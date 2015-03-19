@@ -22,7 +22,6 @@ namespace Kazyx.Uwpmm.CameraControl
                 cancel.ThrowIfCancelled();
 
                 device.Api.Capability.Version = new ServerVersion(info.Version);
-                device.Api.Capability.AvailableApis = await device.Api.Camera.GetAvailableApiListAsync().ConfigureAwait(false);
 
                 await device.Observer.StartAsync().ConfigureAwait(false);
                 cancel.ThrowIfCancelled();
@@ -45,10 +44,15 @@ namespace Kazyx.Uwpmm.CameraControl
 
                 // No need to check runtime availability. We have to open stream.
                 var res = await OpenLiveviewStream(device.Api, liveview).ConfigureAwait(false);
-                if (!res)
+
+                if (!await OpenLiveviewStream(device.Api, liveview).ConfigureAwait(false))
                 {
-                    DebugUtil.Log("Failed to open liveview connection.");
-                    throw new Exception("Failed to open liveview connection.");
+                    if (!device.Status.Status.StartsWith("audio", StringComparison.OrdinalIgnoreCase))
+                    {
+                        DebugUtil.Log("Failed to open liveview connection.");
+                        throw new Exception("Failed to open liveview connection.");
+                    }
+                    // Audio recording mode may not allow us to open stream.S
                 }
                 cancel.ThrowIfCancelled();
 
