@@ -42,16 +42,15 @@ namespace Kazyx.Uwpmm.CameraControl
                     await device.Api.Camera.StartRecModeAsync().ConfigureAwait(false);
                     cancel.ThrowIfCancelled();
                 }
-                if (device.Api.Capability.IsAvailable("startLiveview"))
+
+                // No need to check runtime availability. We have to open stream.
+                var res = await OpenLiveviewStream(device.Api, liveview).ConfigureAwait(false);
+                if (!res)
                 {
-                    var res = await OpenLiveviewStream(device.Api, liveview).ConfigureAwait(false);
-                    if (!res)
-                    {
-                        DebugUtil.Log("Failed to open liveview connection.");
-                        throw new Exception("Failed to open liveview connection.");
-                    }
-                    cancel.ThrowIfCancelled();
+                    DebugUtil.Log("Failed to open liveview connection.");
+                    throw new Exception("Failed to open liveview connection.");
                 }
+                cancel.ThrowIfCancelled();
 
                 if (device.Api.Capability.IsSupported("setCurrentTime"))
                 {

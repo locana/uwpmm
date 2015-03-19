@@ -931,9 +931,15 @@ namespace Kazyx.Uwpmm.Pages
             });
         }
 
-        void liveview_Closed(object sender, EventArgs e)
+        async void liveview_Closed(object sender, EventArgs e)
         {
             DebugUtil.Log("Liveview connection closed");
+            IsRendering = true;
+            await Dispatcher.RunAsync(CoreDispatcherPriority.High, () =>
+            {
+                liveview_data.Image = null;
+            });
+            IsRendering = false;
         }
 
         private void LiveviewImage_Loaded(object sender, RoutedEventArgs e)
