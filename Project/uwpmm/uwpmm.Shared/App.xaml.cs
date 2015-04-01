@@ -60,7 +60,7 @@ namespace Kazyx.Uwpmm
 #if DEBUG
             IsTrial = false;
 #else
-            if (CurrentApp.LicenseInformation.IsTrial)
+            if (Windows.ApplicationModel.Store.CurrentApp.LicenseInformation.IsTrial)
             {
                 var diff = DateTimeOffset.Now.Subtract(init);
                 IsTrial = diff.Days > 7;
