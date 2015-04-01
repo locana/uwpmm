@@ -1,5 +1,6 @@
 ﻿using Kazyx.Uwpmm.Control;
 using Kazyx.Uwpmm.Playback;
+using System;
 using Windows.Storage;
 
 namespace Kazyx.Uwpmm.Utility
@@ -20,6 +21,8 @@ namespace Kazyx.Uwpmm.Utility
         private const string prioritize_original_contents = "prioritize_original_contents";
         private const string remote_contents_set = "remote_contents_set";
 
+        private const string init_launched_datetime = "init_datetime";
+
         public static T GetProperty<T>(string key, T defaultValue)
         {
             var settings = ApplicationData.Current.LocalSettings;
@@ -34,6 +37,16 @@ namespace Kazyx.Uwpmm.Utility
         {
             var settings = ApplicationData.Current.LocalSettings;
             settings.Values[key] = value;
+        }
+
+        public static DateTimeOffset InitialLaunchedDateTime
+        {
+            get
+            {
+                var now = DateTimeOffset.Now.ToString();
+                var date = GetProperty(init_launched_datetime, now);
+                return DateTimeOffset.Parse(date);
+            }
         }
 
         public static bool PostviewSyncEnabled

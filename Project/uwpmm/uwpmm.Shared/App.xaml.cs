@@ -4,6 +4,7 @@ using Kazyx.Uwpmm.Utility;
 using System;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
+using Windows.ApplicationModel.Store;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Animation;
@@ -33,6 +34,12 @@ namespace Kazyx.Uwpmm
             this.Resuming += OnResuming;
         }
 
+        public bool IsTrial
+        {
+            private set;
+            get;
+        }
+
         /// <summary>
         /// Invoked when the application is launched normally by the end user.  Other entry points
         /// will be used when the application is launched to open a specific file, to display
@@ -46,6 +53,22 @@ namespace Kazyx.Uwpmm
             if (System.Diagnostics.Debugger.IsAttached)
             {
                 this.DebugSettings.EnableFrameRateCounter = true;
+            }
+#endif
+
+            var init = Preference.InitialLaunchedDateTime;
+            DebugUtil.Log("Initial launched datetime: " + init.ToString());
+#if DEBUG
+            IsTrial = false;
+#else
+            if (CurrentApp.LicenseInformation.IsTrial)
+            {
+                var diff = DateTimeOffset.Now.Subtract(init);
+                IsTrial = diff.Days > 7;
+            }
+            else
+            {
+                IsTrial = false;
             }
 #endif
 
