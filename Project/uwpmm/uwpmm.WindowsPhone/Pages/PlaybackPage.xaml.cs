@@ -20,8 +20,10 @@ using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using Windows.ApplicationModel.Store;
 using Windows.Phone.UI.Input;
 using Windows.Storage;
+using Windows.System;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
@@ -892,6 +894,16 @@ namespace Kazyx.Uwpmm.Pages
                 UnsupportedMessage.Visibility = Visibility.Collapsed;
                 NoContentsMessage.Visibility = Visibility.Collapsed;
             });
+
+            if ((App.Current as App).IsTrial)
+            {
+                var trialTask = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                {
+                    TrialMessagePanel.Visibility = Visibility.Visible;
+                });
+                // TODO trial message
+                return;
+            }
 
 #if DEBUG
             if (DummyContentsFlag.Enabled)
@@ -1885,6 +1897,11 @@ namespace Kazyx.Uwpmm.Pages
                 loader.PartLoaded -= RemoteContentsLoader_PartLoaded;
                 HideProgress();
             }
+        }
+
+        private async void TrialButton_Click(object sender, RoutedEventArgs e)
+        {
+            await Launcher.LaunchUriAsync(CurrentApp.LinkUri);
         }
     }
 

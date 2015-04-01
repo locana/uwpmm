@@ -1121,4 +1121,13 @@ Open gallary to browse contents in your camera device.</value>
   <data name="ContentTypesGuide" xml:space="preserve">
     <value>Content types to be displayed.</value>
   </data>
+  <data name="FullVersion" xml:space="preserve">
+    <value>Full version</value>
+  </data>
+  <data name="TrialMessage" xml:space="preserve">
+    <value>Feature limited in the trial version.</value>
+  </data>
+  <data name="TrialVersion" xml:space="preserve">
+    <value>Trial version</value>
+  </data>
 </root>

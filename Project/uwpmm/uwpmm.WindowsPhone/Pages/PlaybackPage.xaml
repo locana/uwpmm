@@ -264,6 +264,14 @@
                             </GridView>
                         </SemanticZoom.ZoomedOutView>
                     </SemanticZoom>
+                    <StackPanel x:Name="TrialMessagePanel" VerticalAlignment="Center" HorizontalAlignment="Center" Visibility="Collapsed">
+                        <TextBlock Text="{Binding [TrialMessage], Source={StaticResource LocalizedStrings}}"
+                               TextWrapping="Wrap" Margin="36,0,36,36"
+                               Style="{StaticResource BaseTextBlockStyle}"/>
+                        <Button x:Name="TrialButton"
+                                Content="{Binding [FullVersion], Source={StaticResource LocalizedStrings}}"
+                                Click="TrialButton_Click" HorizontalAlignment="Center" />
+                    </StackPanel>
                 </Grid>
             </PivotItem>
         </Pivot>

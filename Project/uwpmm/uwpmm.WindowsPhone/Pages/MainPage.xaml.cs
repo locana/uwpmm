@@ -18,6 +18,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Windows.ApplicationModel.Store;
 using Windows.Devices.Geolocation;
 using Windows.Foundation;
 using Windows.Networking.Connectivity;
@@ -248,6 +249,11 @@ namespace Kazyx.Uwpmm.Pages
             {
                 Frame.Navigate(typeof(HiddenPage));
             });
+
+            if (CurrentApp.LicenseInformation.IsTrial)
+            {
+                TrialPrefix.Visibility = Visibility.Visible;
+            }
 
             PivotRoot.SelectionChanged += PivotRoot_SelectionChanged;
 
