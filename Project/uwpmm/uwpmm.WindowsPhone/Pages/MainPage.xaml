@@ -44,7 +44,7 @@
                                 <TextBlock x:Name="TrialPrefix"
                                        Text="{Binding [TrialVersion], Source={StaticResource LocalizedStrings}}"
                                        Style="{StaticResource SubheaderTextBlockStyle}" Margin="15,7,0,0" FontWeight="Bold"
-                                       FontSize="24" VerticalAlignment="Top" />
+                                       FontSize="24" VerticalAlignment="Top" Visibility="Collapsed" />
                             </StackPanel>
                             <TextBlock Text="{Binding [WifiConnectionGuide], Source={StaticResource LocalizedStrings}}" TextWrapping="WrapWholeWords" 
                                        Style="{StaticResource BaseTextBlockStyle}" x:Name="MainDescription" Margin="0,6"/>
