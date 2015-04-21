@@ -1,5 +1,6 @@
 ﻿using Kazyx.ImageStream;
 using Kazyx.RemoteApi;
+using Kazyx.RemoteApi.Camera;
 using Kazyx.Uwpmm.DataModel;
 using Kazyx.Uwpmm.Playback;
 using Kazyx.Uwpmm.Utility;
@@ -188,6 +189,25 @@ namespace Kazyx.Uwpmm.CameraControl
                 catch (RemoteApiException) { }
                 DebugUtil.Log("failed to stop cont shooting. retry count: " + retry);
                 await Task.Delay(TimeSpan.FromMilliseconds(200));
+            }
+        }
+
+        internal static async Task CleanupShootingMode(TargetDevice device)
+        {
+            switch (device.Status.Status)
+            {
+                case EventParam.MvRecording:
+                    try { await device.Api.Camera.StopMovieRecAsync(); }
+                    catch (RemoteApiException) { }
+                    break;
+                case EventParam.AuRecording:
+                    try { await device.Api.Camera.StopAudioRecAsync(); }
+                    catch (RemoteApiException) { }
+                    break;
+                case EventParam.ItvRecording:
+                    try { await device.Api.Camera.StopIntervalStillRecAsync(); }
+                    catch (RemoteApiException) { }
+                    break;
             }
         }
     }

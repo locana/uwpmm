@@ -142,9 +142,13 @@ namespace Kazyx.Uwpmm.Pages
             UpdateMainDescription();
         }
 
-        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        protected override async void OnNavigatedFrom(NavigationEventArgs e)
         {
             PivotRoot.IsLocked = false;
+            if (target != null)
+            {
+                await SequentialOperation.CleanupShootingMode(target);
+            }
             liveview.CloseConnection();
             RemoveEventHandlers();
             // TearDownCurrentTarget();
