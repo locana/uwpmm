@@ -1043,4 +1043,22 @@ PlayMemories Camera Appsストアで最新版にアップデートしてくだ�
   <data name="OpenGallery" xml:space="preserve">
     <value>ギャラリーを開いてカメラ内のコンテンツを転送しましょう！</value>
   </data>
+  <data name="Constraint" xml:space="preserve">
+    <value>プレミアム機能</value>
+  </data>
+  <data name="Constraint_limited" xml:space="preserve">
+    <value>一部機能が制限されています。トライアル期間が終了しました。</value>
+  </data>
+  <data name="Constraint_trial" xml:space="preserve">
+    <value>トライアル期間中はすべての機能が使用可能です。</value>
+  </data>
+  <data name="Constraint_unlimited" xml:space="preserve">
+    <value>すべての機能が使用可能です。ご購入ありがとうございます。</value>
+  </data>
+  <data name="FullVersion" xml:space="preserve">
+    <value>無制限版にアップグレード</value>
+  </data>
+  <data name="TrialMessage" xml:space="preserve">
+    <value>機能体験期間が終了しました。</value>
+  </data>
 </root>

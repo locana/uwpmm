@@ -33,7 +33,7 @@ namespace Kazyx.Uwpmm
             this.Resuming += OnResuming;
         }
 
-        public bool IsTrial
+        public bool IsFunctionLimited
         {
             private set;
             get;
@@ -58,16 +58,16 @@ namespace Kazyx.Uwpmm
             var init = Preference.InitialLaunchedDateTime;
             DebugUtil.Log("Initial launched datetime: " + init.ToString());
 #if DEBUG
-            IsTrial = false;
+            IsFunctionLimited = true;
 #else
             if (Windows.ApplicationModel.Store.CurrentApp.LicenseInformation.IsTrial)
             {
                 var diff = DateTimeOffset.Now.Subtract(init);
-                IsTrial = diff.Days > 7;
+                IsFunctionLimited = diff.Days > 7;
             }
             else
             {
-                IsTrial = false;
+                IsFunctionLimited = false;
             }
 #endif
 

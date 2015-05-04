@@ -4,6 +4,7 @@ using System;
 using System.IO;
 using System.Reflection;
 using Windows.ApplicationModel;
+using Windows.ApplicationModel.Store;
 using Windows.System;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
@@ -80,6 +81,28 @@ namespace Kazyx.Uwpmm.Pages
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             this.navigationHelper.OnNavigatedTo(e);
+
+            if ((App.Current as App).IsFunctionLimited)
+            {
+                Unlimited.Visibility = Visibility.Collapsed;
+                Trial.Visibility = Visibility.Collapsed;
+                Limited.Visibility = Visibility.Visible;
+                TrialButton.Visibility = Visibility.Visible;
+            }
+            else if (CurrentApp.LicenseInformation.IsTrial)
+            {
+                Unlimited.Visibility = Visibility.Collapsed;
+                Trial.Visibility = Visibility.Visible;
+                Limited.Visibility = Visibility.Collapsed;
+                TrialButton.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                Unlimited.Visibility = Visibility.Visible;
+                Trial.Visibility = Visibility.Collapsed;
+                Limited.Visibility = Visibility.Collapsed;
+                TrialButton.Visibility = Visibility.Collapsed;
+            }
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
@@ -201,6 +224,11 @@ namespace Kazyx.Uwpmm.Pages
         {
             var success = await Launcher.LaunchUriAsync(new Uri(SystemUtil.GetStringResource("SupportTwitterURL")));
             if (!success) DebugUtil.Log("Failed to open Support page.");
+        }
+
+        private async void TrialButton_Click(object sender, RoutedEventArgs e)
+        {
+            await Launcher.LaunchUriAsync(CurrentApp.LinkUri);
         }
     }
 }

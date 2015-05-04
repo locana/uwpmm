@@ -895,7 +895,7 @@ namespace Kazyx.Uwpmm.Pages
                 NoContentsMessage.Visibility = Visibility.Collapsed;
             });
 
-            if ((App.Current as App).IsTrial)
+            if ((App.Current as App).IsFunctionLimited)
             {
                 var trialTask = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
                 {

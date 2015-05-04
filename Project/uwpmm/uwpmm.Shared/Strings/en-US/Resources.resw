@@ -1122,12 +1122,24 @@ Open gallary to browse contents in your camera device.</value>
     <value>Content types to be displayed.</value>
   </data>
   <data name="FullVersion" xml:space="preserve">
-    <value>Full version</value>
+    <value>Upgrade to Full version</value>
   </data>
   <data name="TrialMessage" xml:space="preserve">
     <value>Feature limited in the trial version.</value>
   </data>
   <data name="TrialVersion" xml:space="preserve">
     <value>Trial version</value>
+  </data>
+  <data name="Constraint" xml:space="preserve">
+    <value>Premium features</value>
+  </data>
+  <data name="Constraint_limited" xml:space="preserve">
+    <value>Some features limited by the end of trial period.</value>
+  </data>
+  <data name="Constraint_trial" xml:space="preserve">
+    <value>Full features active during the trial period.</value>
+  </data>
+  <data name="Constraint_unlimited" xml:space="preserve">
+    <value>Full features unlimited. Thanks for the purchase!!</value>
   </data>
 </root>
