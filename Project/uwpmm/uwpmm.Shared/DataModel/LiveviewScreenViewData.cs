@@ -40,6 +40,7 @@ namespace Kazyx.Uwpmm.DataModel
                 NotifyChangedOnUI("ShutterSpeedDisplayValue");
                 NotifyChangedOnUI("IsAudioMode");
                 NotifyChangedOnUI("LiveviewImageDisplayed");
+                NotifyChangedOnUI("FramingGridDisplayed");
             };
             Device.Api.AvailiableApisUpdated += (sender, e) =>
             {
@@ -504,7 +505,11 @@ namespace Kazyx.Uwpmm.DataModel
         private bool _FramingGridDisplayed = false;
         public bool FramingGridDisplayed
         {
-            get { return _FramingGridDisplayed; }
+            get
+            {
+                if (IsAudioMode) { return false; }
+                return _FramingGridDisplayed;
+            }
             set
             {
                 if (_FramingGridDisplayed != value)
