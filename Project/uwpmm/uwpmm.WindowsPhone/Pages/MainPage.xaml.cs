@@ -787,7 +787,7 @@ namespace Kazyx.Uwpmm.Pages
                 screen_view_data = new LiveviewScreenViewData(tmpTarget);
                 Liveview.DataContext = screen_view_data;
                 SetLiveviewDataContext(screen_view_data);
-                LiveviewScreen.Visibility = Visibility.Visible;
+                ShowLiveviewScreen();
                 ShutterButton.DataContext = screen_view_data;
                 FramingGuideSurface.DataContext = new OptionalElementsViewData() { Liveview = screen_view_data, AppSetting = ApplicationSettings.GetInstance() };
                 BatteryStatusDisplay.DataContext = tmpTarget.Status.BatteryInfo;
@@ -916,6 +916,7 @@ namespace Kazyx.Uwpmm.Pages
                     }
                     break;
                 case "ShootMode":
+                    DebugUtil.Log("Shootmode updated: " + status.ShootMode.Current);
                     if (status.ShootMode.Current == ShootModeParam.Audio) { ToAudioMode(); }
                     else { FromAudioMode(); }
                     break;
@@ -928,13 +929,23 @@ namespace Kazyx.Uwpmm.Pages
         {
             if (target != null && target.Api != null && liveview != null)
             {
-                await SequentialOperation.ReOpenLiveviewStream(target.Api, liveview);
+                await SequentialOperation.OpenLiveviewStream(target.Api, liveview);
             }
+        }
+
+        private void ShowLiveviewScreen()
+        {
+            if (LiveviewScreen != null) { LiveviewScreen.Visibility = Visibility.Visible; }
+        }
+
+        private void HideLiveviewScreen()
+        {
+            if (LiveviewScreen != null) { LiveviewScreen.Visibility = Visibility.Collapsed; }
         }
 
         private async void ToAudioMode()
         {
-            if (target != null && target.Api != null && liveview != null)
+            if (target != null && target.Api != null && liveview != null && liveview.ConnectionState == ConnectionState.Connected)
             {
                 await SequentialOperation.CloseLiveviewStream(target.Api, liveview);
             }
@@ -993,6 +1004,7 @@ namespace Kazyx.Uwpmm.Pages
             await Dispatcher.RunAsync(CoreDispatcherPriority.High, () =>
             {
                 liveview_data.Image = null;
+                HideLiveviewScreen();
             });
             IsRendering = false;
         }
