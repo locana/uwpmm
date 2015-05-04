@@ -268,7 +268,7 @@
                         <TextBlock Text="{Binding [TrialMessage], Source={StaticResource LocalizedStrings}}"
                                TextWrapping="Wrap" Margin="36,0,36,36"
                                Style="{StaticResource BaseTextBlockStyle}"/>
-                        <Button x:Name="TrialButton"
+                        <Button x:Name="TrialButton" BorderThickness="1"
                                 Content="{Binding [FullVersion], Source={StaticResource LocalizedStrings}}"
                                 Click="TrialButton_Click" HorizontalAlignment="Center" />
                     </StackPanel>
