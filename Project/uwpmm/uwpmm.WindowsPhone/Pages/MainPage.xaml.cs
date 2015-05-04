@@ -1004,7 +1004,7 @@ namespace Kazyx.Uwpmm.Pages
             await Dispatcher.RunAsync(CoreDispatcherPriority.High, () =>
             {
                 liveview_data.Image = null;
-                HideLiveviewScreen();
+                if (target.Status.ShootMode.Current == ShootModeParam.Audio) { HideLiveviewScreen(); }
             });
             IsRendering = false;
         }
