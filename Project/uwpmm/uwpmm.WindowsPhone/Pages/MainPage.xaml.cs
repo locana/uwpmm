@@ -915,8 +915,28 @@ namespace Kazyx.Uwpmm.Pages
                         status.RecordingTimeSec = 0;
                     }
                     break;
+                case "ShootMode":
+                    if (status.ShootMode.Current == ShootModeParam.Audio) { ToAudioMode(); }
+                    else { FromAudioMode(); }
+                    break;
                 default:
                     break;
+            }
+        }
+
+        private async void FromAudioMode()
+        {
+            if (target != null && target.Api != null && liveview != null)
+            {
+                await SequentialOperation.ReOpenLiveviewStream(target.Api, liveview);
+            }
+        }
+
+        private async void ToAudioMode()
+        {
+            if (target != null && target.Api != null && liveview != null)
+            {
+                await SequentialOperation.CloseLiveviewStream(target.Api, liveview);
             }
         }
 
