@@ -192,7 +192,7 @@ namespace Kazyx.Uwpmm.Utility
             {
                 case BeepMode.On:
                     return SystemUtil.GetStringResource("On");
-                case BeepMode.Silent:
+                case BeepMode.Off:
                     return SystemUtil.GetStringResource("Off");
                 case BeepMode.Shutter:
                     return SystemUtil.GetStringResource("BeepModeShutterOnly");

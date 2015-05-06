@@ -853,7 +853,7 @@ namespace Kazyx.Uwpmm.Pages
             }
             if (target.Api.Capability.IsAvailable("setLiveviewFrameInfo"))
             {
-                await target.Api.Camera.SetLiveviewFrameInfo(new FrameInfoSetting() { TransferFrameInfo = RequestFocusFrameEnabled });
+                await target.Api.Camera.SetLiveviewFrameInfoAsync(new FrameInfoSetting() { TransferFrameInfo = RequestFocusFrameEnabled });
             }
 
             if (RequestFocusFrameEnabled && !target.Api.Capability.IsSupported("setLiveviewFrameInfo") && target.Api.Capability.IsAvailable("setTouchAFPosition"))
