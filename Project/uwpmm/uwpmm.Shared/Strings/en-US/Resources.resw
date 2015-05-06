@@ -1142,4 +1142,16 @@ Open gallary to browse contents in your camera device.</value>
   <data name="Constraint_unlimited" xml:space="preserve">
     <value>Full features unlimited. Thanks for the purchase!!</value>
   </data>
+  <data name="AudioRecording" xml:space="preserve">
+    <value>Audio rec. w/movie</value>
+  </data>
+  <data name="LoopRecTime" xml:space="preserve">
+    <value>Loop rec. time</value>
+  </data>
+  <data name="LoopTime_Unlimited" xml:space="preserve">
+    <value>Unlimited</value>
+  </data>
+  <data name="WindNoiseReduction" xml:space="preserve">
+    <value>Wind noise reduction</value>
+  </data>
 </root>

@@ -42,6 +42,7 @@ namespace Kazyx.Uwpmm.Settings
             Panels.Add("setContShootingSpeed", BuildComboBoxPanel("ContShootingSpeed", "ContShootingSpeed", OnContShootingSpeedChanged));
             Panels.Add("setIntervalTime", BuildComboBoxPanel("IntervalTime", "IntervalTime1", OnIntervalTimeChanged));
             Panels.Add("setFlashMode", BuildComboBoxPanel("FlashMode", "FlashMode", OnFlashModeChanged));
+            Panels.Add("setLoopRecTime", BuildComboBoxPanel("LoopRecTime", "LoopRecTime", OnLoopRecTimeChanged));
 
             Panels.Add("setWhiteBalance", BuildComboBoxPanel("WhiteBalance", "WhiteBalance", OnWhiteBalanceChanged));
             Panels.Add("ColorTemperture", BuildColorTemperturePanel());
@@ -63,6 +64,8 @@ namespace Kazyx.Uwpmm.Settings
             Panels.Add("setPostviewImageSize", BuildComboBoxPanel("PostviewSize", "Setting_PostViewImageSize", OnPostviewSizeChanged));
             Panels.Add("setAutoPowerOff", BuildComboBoxPanel("AutoPowerOff", "AutoPowerOff", OnAutoPowerOffChanged));
             Panels.Add("setTvColorSystem", BuildComboBoxPanel("TvColorSystem", "TvColorSystem", OnTvColorSystemChanged));
+            Panels.Add("setAudioRecording", BuildComboBoxPanel("AudioRecording", "AudioRecording", OnAudioRecordingChanged));
+            Panels.Add("setWindNoiseReduction", BuildComboBoxPanel("WindNoiseReduction", "WindNoiseReduction", OnWindNoiseReductionChanged));
 
             VisibilityBinding = new Binding()
             {
@@ -73,7 +76,6 @@ namespace Kazyx.Uwpmm.Settings
                 FallbackValue = Visibility.Collapsed
             };
         }
-
 
         public List<StackPanel> GetPanelsToShow()
         {
@@ -253,6 +255,24 @@ namespace Kazyx.Uwpmm.Settings
                         }
                     }
                 });
+        }
+
+        private async void OnLoopRecTimeChanged(object sender, object e)
+        {
+            await OnSelectionChanged(sender, Status.LoopRecTime,
+                async (value) => { await Api.Camera.SetLoopRecTimeAsync(new LoopRecTimeSetting() { TimeInMinutes = value }); });
+        }
+
+        private async void OnWindNoiseReductionChanged(object sender, object e)
+        {
+            await OnSelectionChanged(sender, Status.WindNoiseReduction,
+                async (mode) => { await Api.Camera.SetWindNoiseReductionAsync(new WindNoiseReductionSetting() { Mode = mode }); });
+        }
+
+        private async void OnAudioRecordingChanged(object sender, object e)
+        {
+            await OnSelectionChanged(sender, Status.AudioRecording,
+                async (mode) => { await Api.Camera.SetAudioRecordingAsync(new AudioRecordingSetting() { Mode = mode }); });
         }
 
         private async Task OnSelectionChanged<T>(object sender, Capability<T> param, AsyncAction<T> action)

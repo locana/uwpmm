@@ -581,6 +581,39 @@ namespace Kazyx.Uwpmm.DataModel
             }
             get { return _AutoPowerOff; }
         }
+
+        private Capability<string> _LoopRecTime;
+        public Capability<string> LoopRecTime
+        {
+            set
+            {
+                _LoopRecTime = value;
+                NotifyChangedOnUI("LoopRecTime");
+            }
+            get { return _LoopRecTime; }
+        }
+
+        private Capability<string> _WindNoiseReduction;
+        public Capability<string> WindNoiseReduction
+        {
+            set
+            {
+                _WindNoiseReduction = value;
+                NotifyChangedOnUI("WindNoiseReduction");
+            }
+            get { return _WindNoiseReduction; }
+        }
+
+        private Capability<string> _AudioRecording;
+        public Capability<string> AudioRecording
+        {
+            set
+            {
+                _AudioRecording = value;
+                NotifyChangedOnUI("AudioRecording");
+            }
+            get { return _AudioRecording; }
+        }
     }
 
     public enum AutoFocusType

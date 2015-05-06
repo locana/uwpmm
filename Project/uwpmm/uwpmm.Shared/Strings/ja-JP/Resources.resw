@@ -1061,4 +1061,16 @@ PlayMemories Camera Appsストアで最新版にアップデートしてくだ�
   <data name="TrialMessage" xml:space="preserve">
     <value>機能体験期間が終了しました。</value>
   </data>
+  <data name="AudioRecording" xml:space="preserve">
+    <value>動画の音声記録</value>
+  </data>
+  <data name="LoopRecTime" xml:space="preserve">
+    <value>ループ記録時間</value>
+  </data>
+  <data name="LoopTime_Unlimited" xml:space="preserve">
+    <value>無制限</value>
+  </data>
+  <data name="WindNoiseReduction" xml:space="preserve">
+    <value>風音低減</value>
+  </data>
 </root>

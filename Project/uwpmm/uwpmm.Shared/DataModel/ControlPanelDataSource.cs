@@ -801,6 +801,91 @@ namespace Kazyx.Uwpmm.DataModel
             }
         }
 
+        public int SelectedIndexLoopRecTime
+        {
+            get
+            {
+                return SettingValueConverter.GetSelectedIndex(Device.Status.LoopRecTime);
+            }
+            set
+            {
+                ParameterUtil.SetSelectedAsCurrent(Device.Status.LoopRecTime, value);
+            }
+        }
+
+        public List<string> CandidatesLoopRecTime
+        {
+            get
+            {
+                return SettingValueConverter.FromLoopRecTime(Device.Status.LoopRecTime).Candidates;
+            }
+        }
+
+        public bool IsAvailableLoopRecTime
+        {
+            get
+            {
+                return Device.Api.Capability.IsAvailable("setLoopRecTime") && Device.Status.LoopRecTime != null;
+            }
+        }
+
+        public int SelectedIndexWindNoiseReduction
+        {
+            get
+            {
+                return SettingValueConverter.GetSelectedIndex(Device.Status.WindNoiseReduction);
+            }
+            set
+            {
+                ParameterUtil.SetSelectedAsCurrent(Device.Status.WindNoiseReduction, value);
+            }
+        }
+
+        public List<string> CandidatesWindNoiseReduction
+        {
+            get
+            {
+                return SettingValueConverter.FromWindNoiseReduction(Device.Status.WindNoiseReduction).Candidates;
+            }
+        }
+
+        public bool IsAvailableWindNoiseReduction
+        {
+            get
+            {
+                return Device.Api.Capability.IsAvailable("setWindNoiseReduction") && Device.Status.WindNoiseReduction != null;
+            }
+        }
+
+        public int SelectedIndexAudioRecording
+        {
+            get
+            {
+                return SettingValueConverter.GetSelectedIndex(Device.Status.AudioRecording);
+            }
+            set
+            {
+                ParameterUtil.SetSelectedAsCurrent(Device.Status.AudioRecording, value);
+            }
+        }
+
+        public List<string> CandidatesAudioRecording
+        {
+            get
+            {
+                return SettingValueConverter.FromAudioRecording(Device.Status.AudioRecording).Candidates;
+            }
+        }
+
+        public bool IsAvailableAudioRecording
+        {
+            get
+            {
+                return Device.Api.Capability.IsAvailable("setAudioRecording") && Device.Status.AudioRecording != null;
+            }
+        }
+
+
         public bool IsPeriodicalShootingAvailable
         {
             get

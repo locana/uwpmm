@@ -592,6 +592,63 @@ namespace Kazyx.Uwpmm.Utility
             return val + " " + SystemUtil.GetStringResource("Seconds");
         }
 
+        internal static Capability<string> FromLoopRecTime(Capability<string> info)
+        {
+            return AsDisplayNames<string>(info, FromLoopRecTime);
+        }
+
+        private static string FromLoopRecTime(string val)
+        {
+            switch (val)
+            {
+                case LoopTime.MIN_5:
+                    return "5" + SystemUtil.GetStringResource("Minute_Unit");
+                case LoopTime.MIN_20:
+                    return "20" + SystemUtil.GetStringResource("Minute_Unit");
+                case LoopTime.MIN_60:
+                    return "60" + SystemUtil.GetStringResource("Minute_Unit");
+                case LoopTime.MIN_120:
+                    return "120" + SystemUtil.GetStringResource("Minute_Unit");
+                case LoopTime.UNLIMITED:
+                    return SystemUtil.GetStringResource("LoopTime_Unlimited");
+            }
+            return val;
+        }
+
+        internal static Capability<string> FromWindNoiseReduction(Capability<string> info)
+        {
+            return AsDisplayNames<string>(info, FromWindNoiseReduction);
+        }
+
+        private static string FromWindNoiseReduction(string val)
+        {
+            switch (val)
+            {
+                case WindNoiseReductionMode.On:
+                    return SystemUtil.GetStringResource("On");
+                case WindNoiseReductionMode.Off:
+                    return SystemUtil.GetStringResource("Off");
+            }
+            return val;
+        }
+
+        internal static Capability<string> FromAudioRecording(Capability<string> info)
+        {
+            return AsDisplayNames<string>(info, FromAudioRecording);
+        }
+
+        private static string FromAudioRecording(string val)
+        {
+            switch (val)
+            {
+                case AudioRecordingMode.On:
+                    return SystemUtil.GetStringResource("On");
+                case AudioRecordingMode.Off:
+                    return SystemUtil.GetStringResource("Off");
+            }
+            return val;
+        }
+
         internal static string[] FromFramingGrid(IEnumerable<FramingGridTypes> keys)
         {
             return keys.Select(key =>

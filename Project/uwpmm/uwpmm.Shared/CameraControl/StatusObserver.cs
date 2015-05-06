@@ -136,6 +136,9 @@ namespace Kazyx.Uwpmm.CameraControl
             TrySetNotNull(@event.TvColorSystem, val => status.TvColorSystem = val);
             TrySetNotNull(@event.AutoPowerOff, val => status.AutoPowerOff = val);
             TrySetNotNull(@event.ImageQuality, val => status.StillQuality = val);
+            TrySetNotNull(@event.LoopRecTime, val => status.LoopRecTime = val);
+            TrySetNotNull(@event.WindNoiseReduction, val => status.WindNoiseReduction = val);
+            TrySetNotNull(@event.AudioRecording, val => status.AudioRecording = val);
 
             if (@event.StillImageSize != null)
             {
