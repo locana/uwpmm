@@ -54,6 +54,9 @@ namespace Kazyx.Uwpmm.DataModel
                 NotifyChangedOnUI("IsAvailableInfraredRemoteControl");
                 NotifyChangedOnUI("IsAvailableTvColorSystem");
                 NotifyChangedOnUI("IsAvailableAutoPowerOff");
+                NotifyChangedOnUI("IsAvailableLoopRecTime");
+                NotifyChangedOnUI("IsAvailableWindNoiseReduction");
+                NotifyChangedOnUI("IsAvailableAudioRecording");
             };
             Device.Api.ServerVersionDetected += (sender, e) =>
             {
