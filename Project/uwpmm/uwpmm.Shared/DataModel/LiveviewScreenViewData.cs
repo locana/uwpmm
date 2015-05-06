@@ -79,11 +79,13 @@ namespace Kazyx.Uwpmm.DataModel
         private static readonly BitmapImage StopImage = new BitmapImage(new Uri("ms-appx:///Assets/LiveviewScreen/Stop.png", UriKind.Absolute));
         private static readonly BitmapImage IntervalStillImage = new BitmapImage(new Uri("ms-appx:///Assets/LiveviewScreen/IntervalStillRecButton.png", UriKind.Absolute));
         private static readonly BitmapImage ContShootingImage = new BitmapImage(new Uri("ms-appx:///Assets/LiveviewScreen/ContShootingButton.png", UriKind.Absolute));
+        private static readonly BitmapImage LoopRecImage = new BitmapImage(new Uri("ms-appx:///Assets/LiveviewScreen/LoopRecButton.png", UriKind.Absolute));
 
         private static readonly BitmapImage StillModeImage = new BitmapImage(new Uri("ms-appx:///Assets/LiveviewScreen/mode_photo.png", UriKind.Absolute));
         private static readonly BitmapImage MovieModeImage = new BitmapImage(new Uri("ms-appx:///Assets/LiveviewScreen/mode_movie.png", UriKind.Absolute));
         private static readonly BitmapImage IntervalModeImage = new BitmapImage(new Uri("ms-appx:///Assets/LiveviewScreen/mode_interval.png", UriKind.Absolute));
         private static readonly BitmapImage AudioModeImage = new BitmapImage(new Uri("ms-appx:///Assets/LiveviewScreen/mode_audio.png", UriKind.Absolute));
+        private static readonly BitmapImage LoopModeImage = new BitmapImage(new Uri("ms-appx:///Assets/LiveviewScreen/mode_loop.png", UriKind.Absolute));
 
         private static readonly BitmapImage AModeImage = new BitmapImage(new Uri("ms-appx:///Assets/LiveviewScreen/ExposureMode_A.png", UriKind.Absolute));
         private static readonly BitmapImage IAModeImage = new BitmapImage(new Uri("ms-appx:///Assets/LiveviewScreen/ExposureMode_iA.png", UriKind.Absolute));
@@ -128,6 +130,8 @@ namespace Kazyx.Uwpmm.DataModel
                         return AudioImage;
                     case ShootModeParam.Interval:
                         return IntervalStillImage;
+                    case ShootModeParam.Loop:
+                        return LoopRecImage;
                     default:
                         return null;
                 }
@@ -142,7 +146,6 @@ namespace Kazyx.Uwpmm.DataModel
                 switch (Device.Status.ShootMode.Current)
                 {
                     case ShootModeParam.Still:
-                        //
                         return StillModeImage;
                     case ShootModeParam.Movie:
                         return MovieModeImage;
@@ -150,6 +153,8 @@ namespace Kazyx.Uwpmm.DataModel
                         return IntervalModeImage;
                     case ShootModeParam.Audio:
                         return AudioImage;
+                    case ShootModeParam.Loop:
+                        return LoopModeImage;
                 }
                 return null;
             }
@@ -226,14 +231,13 @@ namespace Kazyx.Uwpmm.DataModel
                         }
                         break;
                     case ShootModeParam.Movie:
-                        if (Device.Status.Status == EventParam.Idle || Device.Status.Status == EventParam.MvRecording) { return true; }
-                        break;
+                        return Device.Status.Status == EventParam.Idle || Device.Status.Status == EventParam.MvRecording;
                     case ShootModeParam.Audio:
-                        if (Device.Status.Status == EventParam.Idle || Device.Status.Status == EventParam.AuRecording) { return true; }
-                        break;
+                        return Device.Status.Status == EventParam.Idle || Device.Status.Status == EventParam.AuRecording ;
                     case ShootModeParam.Interval:
-                        if (Device.Status.Status == EventParam.Idle || Device.Status.Status == EventParam.ItvRecording) { return true; }
-                        break;
+                        return Device.Status.Status == EventParam.Idle || Device.Status.Status == EventParam.ItvRecording;
+                    case ShootModeParam.Loop:
+                        return Device.Status.Status == EventParam.Idle || Device.Status.Status == EventParam.LoopRecording;
                 }
                 return false;
             }
@@ -251,6 +255,7 @@ namespace Kazyx.Uwpmm.DataModel
                     case EventParam.MvRecording:
                     case EventParam.AuRecording:
                     case EventParam.ItvRecording:
+                    case EventParam.LoopRecording:
                         return true;
                 }
                 return false;
@@ -268,6 +273,7 @@ namespace Kazyx.Uwpmm.DataModel
                     case EventParam.MvRecording:
                     case EventParam.AuRecording:
                     case EventParam.ItvRecording:
+                    case EventParam.LoopRecording:
                         return false;
                 }
                 return true;
@@ -319,6 +325,7 @@ namespace Kazyx.Uwpmm.DataModel
                                 return storage.RecordableImages.ToString();
                             case ShootModeParam.Movie:
                             case ShootModeParam.Audio:
+                            case ShootModeParam.Loop:
                                 if (storage.RecordableMovieLength == -1) { return ""; }
                                 return storage.RecordableMovieLength.ToString() + " min.";
                             default:
@@ -339,6 +346,7 @@ namespace Kazyx.Uwpmm.DataModel
                 {
                     case ShootModeParam.Movie:
                     case ShootModeParam.Audio:
+                    case ShootModeParam.Loop:
                         if (Device.Status.RecordingTimeSec < 0) { return ""; }
                         var min = Device.Status.RecordingTimeSec / 60;
                         var sec = Device.Status.RecordingTimeSec - min * 60;
@@ -362,6 +370,8 @@ namespace Kazyx.Uwpmm.DataModel
                         return Device.Status.RecordingTimeSec >= 0 && Device.Status.Status == EventParam.MvRecording;
                     case ShootModeParam.Audio:
                         return Device.Status.RecordingTimeSec >= 0 && Device.Status.Status == EventParam.AuRecording;
+                    case ShootModeParam.Loop:
+                        return Device.Status.RecordingTimeSec >= 0 && Device.Status.Status == EventParam.LoopRecording;
                     case ShootModeParam.Interval:
                         return Device.Status.NumberOfShots >= 0 && Device.Status.Status == EventParam.ItvRecording;
                 }

@@ -1149,97 +1149,102 @@ namespace Kazyx.Uwpmm.Pages
         async void ShutterButtonPressed()
         {
             if (target == null || target.Status.ShootMode == null) { return; }
-            if (target.Status.ShootMode.Current == ShootModeParam.Still)
-            {
-                if (PeriodicalShootingTask != null && PeriodicalShootingTask.IsRunning)
-                {
-                    PeriodicalShootingTask.Stop();
-                    return;
-                }
-                if (ApplicationSettings.GetInstance().IsIntervalShootingEnabled &&
-                    (target.Status.ContShootingMode == null || (target.Status.ContShootingMode != null && target.Status.ContShootingMode.Current == ContinuousShootMode.Single)))
-                {
-                    PeriodicalShootingTask = SetupPeriodicalShooting();
-                    PeriodicalShootingTask.Start();
-                    return;
-                }
-                try
-                {
-                    await SequentialOperation.TakePicture(target.Api, GeopositionManager.INSTANCE.LatestPosition);
-                    if (!ApplicationSettings.GetInstance().IsPostviewTransferEnabled)
-                    {
-                        ShowToast(SystemUtil.GetStringResource("Message_ImageCapture_Succeed"));
-                    }
-                }
-                catch (RemoteApiException ex)
-                {
-                    DebugUtil.Log(ex.StackTrace);
-                    ShowError(SystemUtil.GetStringResource("ErrorMessage_shootingFailure"));
-                }
 
-            }
-            else if (target.Status.ShootMode.Current == ShootModeParam.Movie)
+            switch (target.Status.ShootMode.Current)
             {
-                if (target.Status.Status == EventParam.Idle)
-                {
-                    try { await target.Api.Camera.StartMovieRecAsync(); }
-                    catch (RemoteApiException ex)
+                case ShootModeParam.Still:
+                    await TakeStillImage();
+                    break;
+                case ShootModeParam.Movie:
+                    if (target.Status.Status == EventParam.Idle)
                     {
-                        DebugUtil.Log(ex.StackTrace);
-                        ShowError(SystemUtil.GetStringResource("ErrorMessage_shootingFailure"));
+                        TryToRecord(target.Api.Camera.StartMovieRecAsync);
                     }
-                }
-                else if (target.Status.Status == EventParam.MvRecording)
-                {
-                    try { await target.Api.Camera.StopMovieRecAsync(); }
-                    catch (RemoteApiException ex)
+                    else if (target.Status.Status == EventParam.MvRecording)
                     {
-                        DebugUtil.Log(ex.StackTrace);
-                        ShowError(SystemUtil.GetStringResource("ErrorMessage_fatal"));
+                        TryToStop(target.Api.Camera.StopMovieRecAsync);
                     }
+                    break;
+                case ShootModeParam.Audio:
+                    if (target.Status.Status == EventParam.Idle)
+                    {
+                        TryToRecord(target.Api.Camera.StartAudioRecAsync);
+                    }
+                    else if (target.Status.Status == EventParam.AuRecording)
+                    {
+                        TryToStop(target.Api.Camera.StopAudioRecAsync);
+                    }
+                    break;
+                case ShootModeParam.Interval:
+                    if (target.Status.Status == EventParam.Idle)
+                    {
+                        TryToRecord(target.Api.Camera.StartIntervalStillRecAsync);
+                    }
+                    else if (target.Status.Status == EventParam.ItvRecording)
+                    {
+                        TryToStop(target.Api.Camera.StopIntervalStillRecAsync);
+                    }
+                    break;
+                case ShootModeParam.Loop:
+                    if (target.Status.Status == EventParam.Idle)
+                    {
+                        TryToRecord(target.Api.Camera.StartLoopRecAsync);
+                    }
+                    else if (target.Status.Status == EventParam.LoopRecording)
+                    {
+                        TryToStop(target.Api.Camera.StopLoopRecAsync);
+                    }
+                    break;
+            }
+        }
+
+        private async Task TakeStillImage()
+        {
+            if (PeriodicalShootingTask != null && PeriodicalShootingTask.IsRunning)
+            {
+                PeriodicalShootingTask.Stop();
+                return;
+            }
+            if (ApplicationSettings.GetInstance().IsIntervalShootingEnabled &&
+                (target.Status.ContShootingMode == null || (target.Status.ContShootingMode != null && target.Status.ContShootingMode.Current == ContinuousShootMode.Single)))
+            {
+                PeriodicalShootingTask = SetupPeriodicalShooting();
+                PeriodicalShootingTask.Start();
+                return;
+            }
+            try
+            {
+                await SequentialOperation.TakePicture(target.Api, GeopositionManager.INSTANCE.LatestPosition);
+                if (!ApplicationSettings.GetInstance().IsPostviewTransferEnabled)
+                {
+                    ShowToast(SystemUtil.GetStringResource("Message_ImageCapture_Succeed"));
                 }
             }
-            else if (target.Status.ShootMode.Current == ShootModeParam.Audio)
+            catch (RemoteApiException ex)
             {
-                if (target.Status.Status == EventParam.Idle)
-                {
-                    try { await target.Api.Camera.StartAudioRecAsync(); }
-                    catch (RemoteApiException ex)
-                    {
-                        DebugUtil.Log(ex.StackTrace);
-                        ShowError(SystemUtil.GetStringResource("ErrorMessage_shootingFailure"));
-                    }
-                }
-                else if (target.Status.Status == EventParam.AuRecording)
-                {
-                    try { await target.Api.Camera.StopAudioRecAsync(); }
-                    catch (RemoteApiException ex)
-                    {
-                        DebugUtil.Log(ex.StackTrace);
-                        ShowError(SystemUtil.GetStringResource("ErrorMessage_fatal"));
-                    }
-                }
+                DebugUtil.Log(ex.StackTrace);
+                ShowError(SystemUtil.GetStringResource("ErrorMessage_shootingFailure"));
             }
-            else if (target.Status.ShootMode.Current == ShootModeParam.Interval)
+        }
+
+        private delegate Task RemoteRequestTask();
+        private async void TryToRecord(RemoteRequestTask task)
+        {
+            try { await task(); }
+            catch (RemoteApiException ex)
             {
-                if (target.Status.Status == EventParam.Idle)
-                {
-                    try { await target.Api.Camera.StartIntervalStillRecAsync(); }
-                    catch (RemoteApiException ex)
-                    {
-                        DebugUtil.Log(ex.StackTrace);
-                        ShowError(SystemUtil.GetStringResource("ErrorMessage_shootingFailure"));
-                    }
-                }
-                else if (target.Status.Status == EventParam.ItvRecording)
-                {
-                    try { await target.Api.Camera.StopIntervalStillRecAsync(); }
-                    catch (RemoteApiException ex)
-                    {
-                        DebugUtil.Log(ex.StackTrace);
-                        ShowError(SystemUtil.GetStringResource("ErrorMessage_fatal"));
-                    }
-                }
+                DebugUtil.Log(ex.StackTrace);
+                ShowError(SystemUtil.GetStringResource("ErrorMessage_shootingFailure"));
+            }
+        }
+
+        private async void TryToStop(RemoteRequestTask task)
+        {
+            try { await task(); }
+            catch (RemoteApiException ex)
+            {
+                DebugUtil.Log(ex.StackTrace);
+                ShowError(SystemUtil.GetStringResource("ErrorMessage_fatal"));
             }
         }
 

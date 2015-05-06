@@ -132,6 +132,8 @@ namespace Kazyx.Uwpmm.Utility
                     return SystemUtil.GetStringResource("ShootModeAudio");
                 case ShootModeParam.Interval:
                     return SystemUtil.GetStringResource("ShootModeIntervalStill");
+                case ShootModeParam.Loop:
+                    return SystemUtil.GetStringResource("LoopRec");
                 default:
                     return val;
             }

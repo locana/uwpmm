@@ -1073,4 +1073,7 @@ PlayMemories Camera Appsストアで最新版にアップデートしてくだ�
   <data name="WindNoiseReduction" xml:space="preserve">
     <value>風音低減</value>
   </data>
+  <data name="LoopRec" xml:space="preserve">
+    <value>ループ記録</value>
+  </data>
 </root>
