@@ -89,7 +89,7 @@ namespace Kazyx.Uwpmm.Pages
                 Limited.Visibility = Visibility.Visible;
                 TrialButton.Visibility = Visibility.Visible;
             }
-            else if (CurrentApp.LicenseInformation.IsTrial)
+            else if ((App.Current as App).IsTrialVersion)
             {
                 Unlimited.Visibility = Visibility.Collapsed;
                 Trial.Visibility = Visibility.Visible;

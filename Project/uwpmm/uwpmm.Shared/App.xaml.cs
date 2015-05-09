@@ -39,6 +39,12 @@ namespace Kazyx.Uwpmm
             get;
         }
 
+        public bool IsTrialVersion
+        {
+            private set;
+            get;
+        }
+
         /// <summary>
         /// Invoked when the application is launched normally by the end user.  Other entry points
         /// will be used when the application is launched to open a specific file, to display
@@ -58,9 +64,11 @@ namespace Kazyx.Uwpmm
             var init = Preference.InitialLaunchedDateTime;
             DebugUtil.Log("Initial launched datetime: " + init.ToString());
 #if DEBUG
-            IsFunctionLimited = true;
+            IsTrialVersion = true;
 #else
-            if (Windows.ApplicationModel.Store.CurrentApp.LicenseInformation.IsTrial)
+            IsTrialVersion = Windows.ApplicationModel.Store.CurrentApp.LicenseInformation.IsTrial;
+#endif
+            if (IsTrialVersion)
             {
                 var diff = DateTimeOffset.Now.Subtract(init);
                 IsFunctionLimited = diff.Days > 14;
@@ -69,7 +77,6 @@ namespace Kazyx.Uwpmm
             {
                 IsFunctionLimited = false;
             }
-#endif
 
             Frame rootFrame = Window.Current.Content as Frame;
 

@@ -18,7 +18,6 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Windows.ApplicationModel.Store;
 using Windows.Devices.Geolocation;
 using Windows.Foundation;
 using Windows.Networking.Connectivity;
@@ -236,10 +235,10 @@ namespace Kazyx.Uwpmm.Pages
             {
                 Frame.Navigate(typeof(AboutPage));
             });
-//            _CommandBarManager.SetEvent(AppBarItem.LoggerPage, (s, args) =>
-//            {
-//                Frame.Navigate(typeof(LogViewerPage));
-//            });
+            //            _CommandBarManager.SetEvent(AppBarItem.LoggerPage, (s, args) =>
+            //            {
+            //                Frame.Navigate(typeof(LogViewerPage));
+            //            });
             _CommandBarManager.SetEvent(AppBarItem.PlaybackPage, (s, args) =>
             {
                 Frame.Navigate(typeof(PlaybackPage));
@@ -254,7 +253,7 @@ namespace Kazyx.Uwpmm.Pages
                 Frame.Navigate(typeof(HiddenPage));
             });
 
-            if (CurrentApp.LicenseInformation.IsTrial)
+            if ((App.Current as App).IsTrialVersion)
             {
                 TrialSuffix.Visibility = Visibility.Visible;
             }
@@ -518,7 +517,7 @@ namespace Kazyx.Uwpmm.Pages
                 .Icon(AppBarItem.WifiSetting)//
                 .NoIcon(AppBarItem.AboutPage)//
                 .Icon(AppBarItem.PlaybackPage)//
-//                .NoIcon(AppBarItem.LoggerPage)//
+                //                .NoIcon(AppBarItem.LoggerPage)//
                 .Icon(AppBarItem.Donation)//
                 .CreateNew(0.6);
         }
