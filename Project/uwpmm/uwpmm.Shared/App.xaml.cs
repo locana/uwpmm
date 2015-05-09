@@ -63,7 +63,7 @@ namespace Kazyx.Uwpmm
             if (Windows.ApplicationModel.Store.CurrentApp.LicenseInformation.IsTrial)
             {
                 var diff = DateTimeOffset.Now.Subtract(init);
-                IsFunctionLimited = diff.Days > 7;
+                IsFunctionLimited = diff.Days > 14;
             }
             else
             {

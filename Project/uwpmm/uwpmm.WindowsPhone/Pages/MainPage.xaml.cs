@@ -236,10 +236,10 @@ namespace Kazyx.Uwpmm.Pages
             {
                 Frame.Navigate(typeof(AboutPage));
             });
-            _CommandBarManager.SetEvent(AppBarItem.LoggerPage, (s, args) =>
-            {
-                Frame.Navigate(typeof(LogViewerPage));
-            });
+//            _CommandBarManager.SetEvent(AppBarItem.LoggerPage, (s, args) =>
+//            {
+//                Frame.Navigate(typeof(LogViewerPage));
+//            });
             _CommandBarManager.SetEvent(AppBarItem.PlaybackPage, (s, args) =>
             {
                 Frame.Navigate(typeof(PlaybackPage));
@@ -256,7 +256,7 @@ namespace Kazyx.Uwpmm.Pages
 
             if (CurrentApp.LicenseInformation.IsTrial)
             {
-                TrialPrefix.Visibility = Visibility.Visible;
+                TrialSuffix.Visibility = Visibility.Visible;
             }
 
             PivotRoot.SelectionChanged += PivotRoot_SelectionChanged;
@@ -518,7 +518,7 @@ namespace Kazyx.Uwpmm.Pages
                 .Icon(AppBarItem.WifiSetting)//
                 .NoIcon(AppBarItem.AboutPage)//
                 .Icon(AppBarItem.PlaybackPage)//
-                .NoIcon(AppBarItem.LoggerPage)//
+//                .NoIcon(AppBarItem.LoggerPage)//
                 .Icon(AppBarItem.Donation)//
                 .CreateNew(0.6);
         }
