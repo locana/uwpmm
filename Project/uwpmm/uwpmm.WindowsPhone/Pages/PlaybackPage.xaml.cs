@@ -1551,7 +1551,14 @@ namespace Kazyx.Uwpmm.Pages
         private void CloseAppSettingPanel()
         {
             HideSettingAnimation.Begin();
-            UpdateInnerState(ViewerState.RemoteSingle);
+            if (PivotRoot.SelectedIndex == 0)
+            {
+                UpdateInnerState(ViewerState.LocalSingle);
+            }
+            else
+            {
+                UpdateInnerState(ViewerState.RemoteSingle);
+            }
         }
 
         void HideSettingAnimation_Completed(object sender, object e)
