@@ -283,14 +283,14 @@
 
         <control:PhotoPlaybackScreen x:Name="PhotoScreen" Margin="0"/>
 
-        <Border x:Name="MovieDrawer" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="Collapsed" Margin="0,-24,0,-20">
-            <control:MoviePlaybackScreen x:Name="MovieScreen" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0" 
+        <Border x:Name="MovieDrawer" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="Collapsed" Margin="-20,-24,-20,-30">
+            <control:MoviePlaybackScreen x:Name="MovieScreen" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10,0,10,10" 
                                          CurrentPosition="{Binding CurrentPosition}" Duration="{Binding Duration}" SeekAvailable="{Binding SeekAvailable}"
                                          PlaybackStatus="{Binding StreamingStatus}" MovieType="SimpleStreamingMovie"/>
         </Border>
 
-        <Border x:Name="LocalMovieDrawer" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="Collapsed"  Margin="0,-24,0,-20">
-            <control:MoviePlaybackScreen x:Name="LocalMovieScreen" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0" 
+        <Border x:Name="LocalMovieDrawer" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="Collapsed"  Margin="-20,-24,-20,-30">
+            <control:MoviePlaybackScreen x:Name="LocalMovieScreen" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10,0,10,10" 
                                          CurrentPosition="{Binding CurrentPosition}" Duration="{Binding Duration}"  SeekAvailable="{Binding SeekAvailable}"
                                          PlaybackStatus="{Binding StreamingStatus}" MovieType="LocalMovie"/>
         </Border>

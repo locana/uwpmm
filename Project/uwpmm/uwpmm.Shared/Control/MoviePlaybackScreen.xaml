@@ -32,7 +32,7 @@
                 <Rectangle x:Name="FooterBackground" Fill="{ThemeResource ApplicationPageBackgroundThemeBrush}" Opacity="0.7" Visibility="Visible" VerticalAlignment="top"
                             Height="120" />
 
-                <Grid Name="FooterForeground" Visibility="Visible" HorizontalAlignment="Stretch" Height="120" VerticalAlignment="top" >
+                <Grid Name="FooterForeground" Visibility="Visible" HorizontalAlignment="Stretch" Height="120" VerticalAlignment="top" Margin="15,0">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="auto"/>
                         <RowDefinition Height="auto"/>
