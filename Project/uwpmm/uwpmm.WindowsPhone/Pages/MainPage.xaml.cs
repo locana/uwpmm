@@ -1039,6 +1039,10 @@ namespace Kazyx.Uwpmm.Pages
                 DebugUtil.Log("Setting liveview data context.");
                 liveview_data.ScreenViewData = data;
             }
+            else
+            {
+                DebugUtil.Log("Failed to set liveview data context.");
+            }
         }
 
         private async void ZoomOutButton_Click(object sender, RoutedEventArgs e)
