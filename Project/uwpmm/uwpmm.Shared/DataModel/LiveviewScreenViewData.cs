@@ -367,13 +367,13 @@ namespace Kazyx.Uwpmm.DataModel
                 switch (Device.Status.ShootMode.Current)
                 {
                     case ShootModeParam.Movie:
-                        return Device.Status.RecordingTimeSec >= 0 && Device.Status.Status == EventParam.MvRecording;
+                        return Device.Status.RecordingTimeSec > 0 && Device.Status.Status == EventParam.MvRecording;
                     case ShootModeParam.Audio:
-                        return Device.Status.RecordingTimeSec >= 0 && Device.Status.Status == EventParam.AuRecording;
+                        return Device.Status.RecordingTimeSec > 0 && Device.Status.Status == EventParam.AuRecording;
                     case ShootModeParam.Loop:
-                        return Device.Status.RecordingTimeSec >= 0 && Device.Status.Status == EventParam.LoopRecording;
+                        return Device.Status.RecordingTimeSec > 0 && Device.Status.Status == EventParam.LoopRecording;
                     case ShootModeParam.Interval:
-                        return Device.Status.NumberOfShots >= 0 && Device.Status.Status == EventParam.ItvRecording;
+                        return Device.Status.NumberOfShots > 0 && Device.Status.Status == EventParam.ItvRecording;
                 }
                 return false;
             }
