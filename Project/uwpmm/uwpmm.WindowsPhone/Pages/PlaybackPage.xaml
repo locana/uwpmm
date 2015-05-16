@@ -267,7 +267,10 @@
                     <StackPanel x:Name="TrialMessagePanel" VerticalAlignment="Center" HorizontalAlignment="Center" Visibility="Collapsed">
                         <TextBlock Text="{Binding [TrialMessage], Source={StaticResource LocalizedStrings}}"
                                TextWrapping="Wrap" Margin="36,0,36,36"
-                               Style="{StaticResource BaseTextBlockStyle}"/>
+                               Style="{StaticResource BaseTextBlockStyle}" HorizontalAlignment="Center"/>
+                        <TextBlock Text="{Binding [FullVersion_before], Source={StaticResource LocalizedStrings}}"
+                               TextWrapping="Wrap" Margin="36,0,36,4"
+                               Style="{StaticResource BaseTextBlockStyle}" HorizontalAlignment="Center"/>
                         <Button x:Name="TrialButton" BorderThickness="1"
                                 Content="{Binding [FullVersion], Source={StaticResource LocalizedStrings}}"
                                 Click="TrialButton_Click" HorizontalAlignment="Center" />

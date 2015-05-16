@@ -159,6 +159,11 @@ namespace Kazyx.Uwpmm.Pages
                 var task = InitializeRemote();
             });
 
+            CommandBarManager.SetEvent(AppBarItem.WifiSetting, async (s, args) =>
+            {
+                await Launcher.LaunchUriAsync(new Uri("ms-settings-wifi:"));
+            });
+
             var storage_access_settings = new SettingSection(SystemUtil.GetStringResource("SettingSection_ContentsSync"));
             AppSettings.Children.Add(storage_access_settings);
             storage_access_settings.Add(new ToggleSetting(
@@ -566,16 +571,25 @@ namespace Kazyx.Uwpmm.Pages
                     case ViewerState.RemoteSingle:
                         UpdateRemoteSelectionMode(SelectivityFactor.None);
                         {
-                            var tmp = CommandBarManager.Clear()
-                                .NoIcon(AppBarItem.AppSetting);
-
-                            if (RemoteGridSource != null && RemoteGridSource.Count != 0)
+                            if ((App.Current as App).IsFunctionLimited)
                             {
-                                tmp.Icon(AppBarItem.Refresh)
-                                .Icon(AppBarItem.DownloadMultiple)
-                                .Icon(AppBarItem.DeleteMultiple);
+                                BottomAppBar = CommandBarManager.Clear()
+                                    .Icon(AppBarItem.WifiSetting)
+                                    .CreateNew(0.5);
                             }
-                            BottomAppBar = tmp.CreateNew(0.5);
+                            else
+                            {
+                                var tmp = CommandBarManager.Clear()
+                                    .NoIcon(AppBarItem.AppSetting);
+
+                                if (RemoteGridSource != null && RemoteGridSource.Count != 0)
+                                {
+                                    tmp.Icon(AppBarItem.Refresh)
+                                    .Icon(AppBarItem.DownloadMultiple)
+                                    .Icon(AppBarItem.DeleteMultiple);
+                                }
+                                BottomAppBar = tmp.CreateNew(0.5);
+                            }
                         }
                         break;
                     case ViewerState.AppSettings:
@@ -901,7 +915,6 @@ namespace Kazyx.Uwpmm.Pages
                 {
                     TrialMessagePanel.Visibility = Visibility.Visible;
                 });
-                // TODO trial message
                 return;
             }
 
