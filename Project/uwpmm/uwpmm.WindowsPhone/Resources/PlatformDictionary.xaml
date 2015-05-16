@@ -13,6 +13,7 @@
                 <Setter Property="FontSize" Value="16" />
             </Style>
             <BitmapImage x:Key="ApertureIcon" UriSource="/Assets/LiveviewScreen/aperture.png" />
+            <SolidColorBrush x:Key="SemiTransparentBackgroundColorBrush" Color="{ThemeResource PhoneBackgroundColor}" Opacity="0.8" />
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
 
