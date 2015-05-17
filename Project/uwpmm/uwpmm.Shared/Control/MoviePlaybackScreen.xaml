@@ -23,7 +23,7 @@
 
                 <Grid x:Name="HeaderForeground" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="Visible">
                     <TextBlock TextAlignment="Left" Text="{Binding FileName}"  Name="FileNameText" HorizontalAlignment="Stretch" VerticalAlignment="Center"
-                       Foreground="{StaticResource ApplicationForegroundThemeBrush}" FontSize="26" Margin="8,0,0,0"/>
+                       Foreground="{StaticResource ApplicationForegroundThemeBrush}" FontSize="26" Margin="8,0" TextTrimming="CharacterEllipsis"/>
                 </Grid>
             </Grid>
 

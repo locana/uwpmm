@@ -7,10 +7,8 @@ using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Media.Imaging;
 
 // The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
@@ -129,7 +127,7 @@ namespace Kazyx.Uwpmm.Control
         {
             if (duration.TotalMilliseconds <= 0)
             {
-                DetailInfoSurface.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                DetailInfoSurface.Visibility = Visibility.Collapsed;
                 return;
             }
             double value = current.TotalMilliseconds / duration.TotalMilliseconds * 1000;
@@ -137,7 +135,7 @@ namespace Kazyx.Uwpmm.Control
             this.SeekBar.Value = value;
             this.ProgressBar.Value = value;
             PositionText.Text = ToString(current);
-            DetailInfoSurface.Visibility = Windows.UI.Xaml.Visibility.Visible;
+            DetailInfoSurface.Visibility = Visibility.Visible;
         }
 
         public TimeSpan Duration
@@ -180,12 +178,12 @@ namespace Kazyx.Uwpmm.Control
             if (time.TotalMilliseconds < 0) { return "--:--:--"; }
             if (time.Hours > 0)
             {
-                sb.Append(String.Format("{0:D2}", time.Hours));
+                sb.Append(string.Format("{0:D2}", time.Hours));
                 sb.Append(":");
             }
-            sb.Append(String.Format("{0:D2}", time.Minutes));
+            sb.Append(string.Format("{0:D2}", time.Minutes));
             sb.Append(":");
-            sb.Append(String.Format("{0:D2}", time.Seconds));
+            sb.Append(string.Format("{0:D2}", time.Seconds));
             return sb.ToString();
         }
 
@@ -215,13 +213,13 @@ namespace Kazyx.Uwpmm.Control
         {
             if (SeekAvailable)
             {
-                this.ProgressBar.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-                this.SeekBar.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                this.ProgressBar.Visibility = Visibility.Collapsed;
+                this.SeekBar.Visibility = Visibility.Visible;
             }
             else
             {
-                this.ProgressBar.Visibility = Windows.UI.Xaml.Visibility.Visible;
-                this.SeekBar.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                this.ProgressBar.Visibility = Visibility.Visible;
+                this.SeekBar.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -260,6 +258,11 @@ namespace Kazyx.Uwpmm.Control
                     break;
             }
             StartPauseButtonImage.Source = image;
+
+            if (!DetailInfoDisplayed)
+            {
+                StartToShowInfo();
+            }
         }
 
         public static readonly DependencyProperty MovieTypeProperty = DependencyProperty.Register(
