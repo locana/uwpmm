@@ -43,9 +43,20 @@ namespace Kazyx.Uwpmm.Utility
         {
             get
             {
-                var now = DateTimeOffset.Now.ToString();
-                var date = GetProperty(init_launched_datetime, now);
-                return DateTimeOffset.Parse(date);
+                var now = DateTimeOffset.Now;
+                var date = GetProperty(init_launched_datetime, now.ToString());
+
+                DateTimeOffset loaded;
+                if (DateTimeOffset.TryParse(date, out loaded))
+                {
+                    return loaded;
+                }
+                else
+                {
+                    // Fallback to current datetime
+                    SetProperty(init_launched_datetime, now.ToString());
+                    return now;
+                }
             }
         }
 
