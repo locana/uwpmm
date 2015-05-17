@@ -1079,4 +1079,13 @@ PlayMemories Camera Appsストアで最新版にアップデートしてくだ�
   <data name="FullVersion_before" xml:space="preserve">
     <value>Wi-Fi をインターネットに切り替えて、</value>
   </data>
+  <data name="ContentsSet_Movie" xml:space="preserve">
+    <value>動画</value>
+  </data>
+  <data name="ContentsSet_Picture" xml:space="preserve">
+    <value>静止画</value>
+  </data>
+  <data name="ContentsSet_PictureMovie" xml:space="preserve">
+    <value>静止画と動画</value>
+  </data>
 </root>

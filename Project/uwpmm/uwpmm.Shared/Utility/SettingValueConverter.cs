@@ -727,11 +727,11 @@ namespace Kazyx.Uwpmm.Utility
                 switch (type)
                 {
                     case ContentsSet.ImagesAndMovies:
-                        return "Images and movies";
+                        return SystemUtil.GetStringResource("ContentsSet_PictureMovie");
                     case ContentsSet.Images:
-                        return "Images";
+                        return SystemUtil.GetStringResource("ContentsSet_Picture");
                     case ContentsSet.Movies:
-                        return "Movies";
+                        return SystemUtil.GetStringResource("ContentsSet_Movie");
                     default:
                         throw new NotImplementedException();
                 }

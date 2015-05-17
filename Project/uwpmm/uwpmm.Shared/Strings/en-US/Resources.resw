@@ -165,16 +165,16 @@ Hint: Access point name of Sony camera devices starts from "DIRECT-".</value>
     <value>Failed to save the picture.</value>
   </data>
   <data name="ErrorMessage_ImageDL_OtherOriginal" xml:space="preserve">
-    <value>Unexpected error has occured. Please try again with smaller image size to transfer.</value>
+    <value>Unexpected error has occured. Please try again with smaller picture size setting.</value>
   </data>
   <data name="ErrorMessage_ImageDL_SavingOriginal" xml:space="preserve">
-    <value>Failed to save the picture. Please try again with smaller image size to transfer.</value>
+    <value>Failed to save the picture. Please try again with smaller picture size setting.</value>
   </data>
   <data name="Message_ImageDL_Succeed" xml:space="preserve">
     <value>Saved successfully!</value>
   </data>
   <data name="Setting_PostViewImageSize" xml:space="preserve">
-    <value>Image size to receive</value>
+    <value>Picture size to receive</value>
   </data>
   <data name="Guide_StartLiveView" xml:space="preserve">
     <value>A camera device has been detected on &lt;ssid&gt;.
@@ -242,7 +242,7 @@ Swipe left or right to start remote control.</value>
     <value>Interval</value>
   </data>
   <data name="Guide_NFC" xml:space="preserve">
-    <value>You can touch your NFC enabled camera to find password.</value>
+    <value>You can touch your NFC enabled camera to find Wi-Fi password.</value>
   </data>
   <data name="ErrorMessage_cameraNotReady" xml:space="preserve">
     <value>Camera is under processing. Try again after a while.</value>
@@ -315,7 +315,7 @@ Please check internet connection status.</value>
     <value>OK</value>
   </data>
   <data name="Guide_ReceiveCapturedImage" xml:space="preserve">
-    <value>Download fresh pictures to Pictures folder. This option is inactive while interval recording is going on.</value>
+    <value>Download fresh pictures to "Pictures" folder. This option is inactive while interval rec is going on.</value>
   </data>
   <data name="AppBar_ControlPanel" xml:space="preserve">
     <value>Ctrl Panel</value>
@@ -462,7 +462,7 @@ Please check internet connection status.</value>
     <value>Focal length</value>
   </data>
   <data name="MetaDataName_ImageSize" xml:space="preserve">
-    <value>Image size</value>
+    <value>Picture size</value>
   </data>
   <data name="MetaDataName_Iso" xml:space="preserve">
     <value>ISO</value>
@@ -528,7 +528,7 @@ Please check internet connection status.</value>
     <value>Red</value>
   </data>
   <data name="StillQuality" xml:space="preserve">
-    <value>Still image quality</value>
+    <value>Picture quality</value>
   </data>
   <data name="StillQuality_Fine" xml:space="preserve">
     <value>Fine</value>
@@ -612,7 +612,7 @@ Please check internet connection status.</value>
     <value>Enable geotagging</value>
   </data>
   <data name="AddGeotag_guide" xml:space="preserve">
-    <value>Add geotag to the received fresh photos.
+    <value>Add geotag to received fresh pictures.
 On some devices, cellular network is additionally required to obtain location info.﻿</value>
   </data>
   <data name="AppBar_Delete" xml:space="preserve">
@@ -698,13 +698,13 @@ Please update to the latest at PlayMemories Camera Apps store.</value>
     <value>Failed to get location info. Original file has been saved.</value>
   </data>
   <data name="ErrorMessage_ImageDL_DuplicatedGeotag" xml:space="preserve">
-    <value>Original geotag is prior to that of this app. Original file has been saved.</value>
+    <value>Original geotag is preferred. Original file has been saved.</value>
   </data>
   <data name="ErrorMessage_ImageDL_Geotagging" xml:space="preserve">
     <value>Failed to add geotag. Original file has been saved.</value>
   </data>
   <data name="ErrorMessage_ImageDL_Gone" xml:space="preserve">
-    <value>Failed to fetch some images by limitation of continuous shooting.</value>
+    <value>Failed to fetch some pictures by limitation of continuous shooting.</value>
   </data>
   <data name="ErrorMessage_LocationAccessUnauthorized" xml:space="preserve">
     <value>Please turn on location service at system settings for geotagging feature.</value>
@@ -1046,7 +1046,7 @@ Please update to the latest at PlayMemories Camera Apps store.</value>
     <value>Jump to group</value>
   </data>
   <data name="PeriodicalShooting_SkipLimitExceed" xml:space="preserve">
-    <value>Something wrong. It seems the device is not ready to shoot for long time. Stopped interval shooting.</value>
+    <value>Something wrong. It seems the device is not ready to shoot for long time. Stopped interval rec.</value>
   </data>
   <data name="PeriodicalShooting_Skipped" xml:space="preserve">
     <value>Camera is under processing. Skipped.</value>
@@ -1159,5 +1159,14 @@ Open gallary to browse contents in your camera device.</value>
   </data>
   <data name="FullVersion_before" xml:space="preserve">
     <value>Switch Wi-Fi to the Internet to</value>
+  </data>
+  <data name="ContentsSet_Movie" xml:space="preserve">
+    <value>Movies</value>
+  </data>
+  <data name="ContentsSet_Picture" xml:space="preserve">
+    <value>Pictures</value>
+  </data>
+  <data name="ContentsSet_PictureMovie" xml:space="preserve">
+    <value>Pictures and Movies</value>
   </data>
 </root>
