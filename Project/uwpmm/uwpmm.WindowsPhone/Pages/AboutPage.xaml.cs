@@ -26,6 +26,11 @@ namespace Kazyx.Uwpmm.Pages
             this.navigationHelper = new NavigationHelper(this);
             this.navigationHelper.LoadState += this.NavigationHelper_LoadState;
             this.navigationHelper.SaveState += this.NavigationHelper_SaveState;
+
+            CommandBarManager.SetEvent(AppBarItem.WifiSetting, async (s, args) =>
+            {
+                await Launcher.LaunchUriAsync(new Uri("ms-settings-wifi:"));
+            });
         }
 
         /// <summary>
@@ -103,6 +108,8 @@ namespace Kazyx.Uwpmm.Pages
                 Limited.Visibility = Visibility.Collapsed;
                 TrialButton.Visibility = Visibility.Collapsed;
             }
+
+            BottomAppBar = CommandBarManager.Clear().Icon(AppBarItem.WifiSetting).CreateNew(0.6);
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
@@ -117,6 +124,8 @@ namespace Kazyx.Uwpmm.Pages
         private static string license = "";
         private static string copyright = "";
         private const string developer = "kazyx and naotaco (@naotaco_dev)";
+
+        CommandBarManager CommandBarManager = new CommandBarManager();
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
