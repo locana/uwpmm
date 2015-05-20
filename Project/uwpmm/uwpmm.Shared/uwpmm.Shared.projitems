@@ -181,6 +181,7 @@
     <Content Include="$(MSBuildThisFileDirectory)Assets\LiveviewScreen\memory_card.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\LiveviewScreen\mode_audio.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\LiveviewScreen\mode_interval.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\LiveviewScreen\mode_loop.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\LiveviewScreen\mode_movie.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\LiveviewScreen\mode_photo.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\LiveviewScreen\Music.png" />
@@ -219,7 +220,6 @@
     <Content Include="$(MSBuildThisFileDirectory)Assets\Screen\memory_card.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\Screen\mode_audio.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\Screen\mode_interval.png" />
-    <Content Include="$(MSBuildThisFileDirectory)Assets\Screen\mode_loop.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\Screen\mode_movie.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\Screen\mode_photo.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\Screen\no_memory_card.png" />
