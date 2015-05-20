@@ -356,11 +356,39 @@ namespace Kazyx.Uwpmm.Pages
 
         private async void PictureFetched(Windows.Storage.StorageFolder folder, StorageFile file, GeotaggingResult tagResult)
         {
-            var thumb = await file.GetThumbnailAsync(ThumbnailMode.ListView, 100);
+            bool retry = false;
+            StorageItemThumbnail thumb = null;
+            try
+            {
+                thumb = await file.GetThumbnailAsync(ThumbnailMode.ListView, 100);
+            }
+            catch
+            {
+                DebugUtil.Log("GetThumbnailAsync Exception.");
+                retry = true;
+            }
+            if (retry)
+            {
+                await Task.Delay(500);
+                try
+                {
+                    thumb = await file.GetThumbnailAsync(ThumbnailMode.ListView, 100);
+                }
+                catch
+                {
+                    DebugUtil.Log("GetThumbnailAsync Exception.");
+                    thumb = null;
+                }
+            }
+
             await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
-                var image = new BitmapImage();
-                image.SetSource(thumb);
+                BitmapImage image = null;
+                if (thumb != null)
+                {
+                    image = new BitmapImage();
+                    image.SetSource(thumb);
+                }
                 var path = file.Path.Split('\\');
                 var name = "\r\n" + path[path.Length - 1];
                 var text = SystemUtil.GetStringResource("Message_ImageDL_Succeed");
@@ -377,7 +405,10 @@ namespace Kazyx.Uwpmm.Pages
                         break;
                 }
                 Toast.PushToast(new Control.ToastContent() { Text = text + name, Icon = image });
-                thumb.Dispose();
+                if (thumb != null)
+                {
+                    thumb.Dispose();
+                }
             });
         }
 
