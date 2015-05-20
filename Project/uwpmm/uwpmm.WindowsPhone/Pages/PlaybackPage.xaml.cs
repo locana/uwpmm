@@ -1305,7 +1305,17 @@ namespace Kazyx.Uwpmm.Pages
         {
             if (source.IsMovie)
             {
-                MediaDownloader.Instance.EnqueueVideo(new Uri(source.Source.OriginalUrl), source.Source.Name);
+                string ext;
+                switch (source.Source.MimeType)
+                {
+                    case Playback.MimeType.Mp4:
+                        ext = ".mp4";
+                        break;
+                    default:
+                        ext = null;
+                        break;
+                }
+                MediaDownloader.Instance.EnqueueVideo(new Uri(source.Source.OriginalUrl), source.Source.Name, ext);
             }
             else if (ApplicationSettings.GetInstance().PrioritizeOriginalSizeContents && source.Source.OriginalUrl != null)
             {

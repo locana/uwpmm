@@ -258,8 +258,7 @@ namespace Kazyx.Uwpmm.Playback
                 case ContentKind.MovieMp4:
                     return MimeType.Mp4;
                 case ContentKind.MovieXavcS:
-                    // TODO check Mime type of XAVCS
-                    return MimeType.VideoUnknown;
+                    return MimeType.XavcS;
                 default:
                     return MimeType.Unknown;
             }
