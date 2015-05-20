@@ -119,14 +119,18 @@ namespace Kazyx.Uwpmm.Pages
 
         private async void OnFetchdImage(StorageFolder folder, StorageFile file, GeotaggingResult geotaggingResult)
         {
-            var stream = await file.OpenReadAsync();
-            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            try
             {
-                var image = new BitmapImage();
-                image.SetSource(stream);
-                PostviewImage.Source = image;
-                stream.Dispose();
-            });
+                var stream = await file.OpenReadAsync();
+                await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                {
+                    var image = new BitmapImage();
+                    image.SetSource(stream);
+                    PostviewImage.Source = image;
+                    stream.Dispose();
+                });
+            }
+            catch { DebugUtil.Log("OpenReadAsync Exception."); }
         }
 
         private TargetDevice target;
