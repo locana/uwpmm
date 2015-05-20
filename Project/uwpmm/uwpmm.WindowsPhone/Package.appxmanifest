@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/2010/manifest" xmlns:m2="http://schemas.microsoft.com/appx/2013/manifest" xmlns:m3="http://schemas.microsoft.com/appx/2014/manifest" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest">
-  <Identity Name="48664kazyx.Locanabeta" Publisher="CN=07E94545-B63F-456B-BEC5-4E79C8C81C55" Version="1.1.2.0" />
+  <Identity Name="Locana" Publisher="CN=00000000-0000-0000-0000-000000000000" Version="1.0.2.0" />
   <mp:PhoneIdentity PhoneProductId="e17c0725-a58e-4356-b6da-a49a29a99a36" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
-    <DisplayName>Locana beta</DisplayName>
+    <DisplayName>Locana</DisplayName>
     <PublisherDisplayName>kazyx</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
