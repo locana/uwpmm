@@ -71,7 +71,7 @@ namespace Kazyx.Uwpmm
             if (IsTrialVersion)
             {
                 var diff = DateTimeOffset.Now.Subtract(init);
-                IsFunctionLimited = diff.Days > 14;
+                IsFunctionLimited = diff.Days > 90;
             }
             else
             {
