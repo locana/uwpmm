@@ -1088,4 +1088,10 @@ PlayMemories Camera Appsストアで最新版にアップデートしてくだ�
   <data name="ContentsSet_PictureMovie" xml:space="preserve">
     <value>静止画と動画</value>
   </data>
+  <data name="ContentTypes" xml:space="preserve">
+    <value>コンテンツのフィルタリング</value>
+  </data>
+  <data name="ContentTypesGuide" xml:space="preserve">
+    <value>グリッドに表示するコンテンツの種類</value>
+  </data>
 </root>

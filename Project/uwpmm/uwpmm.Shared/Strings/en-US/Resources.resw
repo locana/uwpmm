@@ -1116,10 +1116,10 @@ Open gallary to browse contents in your camera device.</value>
     <value>Open gallary to browse contents in your camera device!</value>
   </data>
   <data name="ContentTypes" xml:space="preserve">
-    <value>Content types</value>
+    <value>Filter by</value>
   </data>
   <data name="ContentTypesGuide" xml:space="preserve">
-    <value>Content types to be displayed.</value>
+    <value>Contents to be displayed.</value>
   </data>
   <data name="FullVersion" xml:space="preserve">
     <value>Upgrade to Full version</value>
