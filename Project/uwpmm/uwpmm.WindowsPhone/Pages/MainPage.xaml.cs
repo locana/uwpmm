@@ -1455,6 +1455,8 @@ namespace Kazyx.Uwpmm.Pages
 
         private void InitializeAppSettingPanel()
         {
+            var limited = (App.Current as App).IsFunctionLimited;
+
             var image_settings = new SettingSection(SystemUtil.GetStringResource("SettingSection_Image"));
 
             AppSettings.Children.Add(image_settings);
@@ -1464,15 +1466,27 @@ namespace Kazyx.Uwpmm.Pages
                 () => { return ApplicationSettings.GetInstance().IsPostviewTransferEnabled; },
                 enabled => { ApplicationSettings.GetInstance().IsPostviewTransferEnabled = enabled; })));
 
-            geoSetting = new AppSettingData<bool>(SystemUtil.GetStringResource("AddGeotag"), SystemUtil.GetStringResource("AddGeotag_guide"),
-                () => { return ApplicationSettings.GetInstance().GeotagEnabled; },
+            var geoGuide = limited ? "TrialMessage" : "AddGeotag_guide";
+            geoSetting = new AppSettingData<bool>(SystemUtil.GetStringResource("AddGeotag"), SystemUtil.GetStringResource(geoGuide),
+                () =>
+                {
+                    if (limited) { return false; }
+                    else { return ApplicationSettings.GetInstance().GeotagEnabled; }
+                },
                 enabled =>
                 {
                     ApplicationSettings.GetInstance().GeotagEnabled = enabled;
                     if (enabled) { EnableGeolocator(); }
                     else { DisableGeolocator(); }
                 });
-            image_settings.Add(new ToggleSetting(geoSetting));
+            var geoToggle = new ToggleSetting(geoSetting);
+
+            if (limited)
+            {
+                ApplicationSettings.GetInstance().GeotagEnabled = false;
+                geoSetting.IsActive = false;
+            }
+            image_settings.Add(geoToggle);
 
             var display_settings = new SettingSection(SystemUtil.GetStringResource("SettingSection_Display"));
 
