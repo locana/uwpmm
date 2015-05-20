@@ -1140,7 +1140,7 @@ namespace Kazyx.Uwpmm.Pages
 
         bool IsContinuousShootingMode()
         {
-            return target != null && target.Status != null &&
+            return target != null && target.Status != null && target.Status.ShootMode != null &&
                 target.Status.ShootMode.Current == ShootModeParam.Still &&
                 target.Status.ContShootingMode != null &&
                 (target.Status.ContShootingMode.Current == ContinuousShootMode.Cont ||
