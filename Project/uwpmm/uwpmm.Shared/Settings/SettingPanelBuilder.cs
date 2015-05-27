@@ -49,7 +49,7 @@ namespace Kazyx.Uwpmm.Settings
             Panels.Add("setColorSetting", BuildComboBoxPanel("ColorSetting", "ColorSetting", OnColorSettingChanged));
             Panels.Add("setSceneSelection", BuildComboBoxPanel("SceneSelection", "SceneSelection", OnSceneSelectionChanged));
 
-            Panels.Add("setMovieFormat", BuildComboBoxPanel("MovieFormat", "MovieFormat", OnMovieFormatChanged));
+            Panels.Add("setMovieFileFormat", BuildComboBoxPanel("MovieFileFormat", "MovieFileFormat", OnMovieFormatChanged));
             Panels.Add("setMovieQuality", BuildComboBoxPanel("MovieQuality", "MovieQuality", OnMovieQualityChanged));
             Panels.Add("setStillSize", BuildComboBoxPanel("StillImageSize", "StillImageSize", OnStillImageSizeChanged));
             Panels.Add("setStillQuality", BuildComboBoxPanel("StillQuality", "StillQuality", OnStillQualityChanged));
@@ -204,7 +204,7 @@ namespace Kazyx.Uwpmm.Settings
 
         private async void OnMovieFormatChanged(object sender, object e)
         {
-            await OnSelectionChanged(sender, Status.MovieFormat,
+            await OnSelectionChanged(sender, Status.MovieFileFormat,
                 async (mode) => { await Api.Camera.SetMovieFileFormatAsync(new MovieFormat() { Mode = mode }); });
         }
 

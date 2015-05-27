@@ -485,7 +485,7 @@ Please check internet connection status.</value>
   <data name="Minute_Unit" xml:space="preserve">
     <value>min.</value>
   </data>
-  <data name="MovieFormat" xml:space="preserve">
+  <data name="MovieFileFormat" xml:space="preserve">
     <value>Movie format</value>
   </data>
   <data name="MovieFormatMode_MP4" xml:space="preserve">

@@ -128,7 +128,7 @@ namespace Kazyx.Uwpmm.CameraControl
             TrySetNotNull(@event.SceneSelection, val => status.SceneSelection = val);
             TrySetNotNull(@event.TrackingFocusMode, val => status.TrackingFocus = val);
             TrySetNotNull(@event.TrackingFocusStatus, val => status.TrackingFocusStatus = val);
-            TrySetNotNull(@event.MovieFormat, val => status.MovieFormat = val);
+            TrySetNotNull(@event.MovieFormat, val => status.MovieFileFormat = val);
             TrySetNotNull(@event.FlipMode, val => status.FlipMode = val);
             TrySetNotNull(@event.IntervalTime, val => status.IntervalTime = val);
             TrySetNotNull(@event.ColorSetting, val => status.ColorSetting = val);

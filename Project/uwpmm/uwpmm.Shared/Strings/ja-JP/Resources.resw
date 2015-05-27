@@ -698,7 +698,7 @@ PlayMemories Camera Appsストアで最新版にアップデートしてくだ�
   <data name="Minute_Unit" xml:space="preserve">
     <value>分</value>
   </data>
-  <data name="MovieFormat" xml:space="preserve">
+  <data name="MovieFileFormat" xml:space="preserve">
     <value>動画フォーマット</value>
   </data>
   <data name="MovieFormatMode_MP4" xml:space="preserve">

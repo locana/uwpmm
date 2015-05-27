@@ -515,12 +515,12 @@ namespace Kazyx.Uwpmm.Utility
             return val;
         }
 
-        internal static Capability<string> FromMovieFormat(Capability<string> info)
+        internal static Capability<string> FromMovieFileFormat(Capability<string> info)
         {
-            return AsDisplayNames<string>(info, FromMovieFormat);
+            return AsDisplayNames<string>(info, FromMovieFileFormat);
         }
 
-        private static string FromMovieFormat(string val)
+        private static string FromMovieFileFormat(string val)
         {
             switch (val)
             {

@@ -474,15 +474,15 @@ namespace Kazyx.Uwpmm.DataModel
             get { return _ColorSetting; }
         }
 
-        private Capability<string> _MovieFormat;
-        public Capability<string> MovieFormat
+        private Capability<string> _MovieFileFormat;
+        public Capability<string> MovieFileFormat
         {
             set
             {
-                _MovieFormat = value;
-                NotifyChangedOnUI("MovieFormat");
+                _MovieFileFormat = value;
+                NotifyChangedOnUI("MovieFileFormat");
             }
-            get { return _MovieFormat; }
+            get { return _MovieFileFormat; }
         }
 
         private Capability<string> _InfraredRemoteControl;

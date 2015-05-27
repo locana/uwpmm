@@ -47,7 +47,7 @@ namespace Kazyx.Uwpmm.DataModel
                 NotifyChangedOnUI("IsAvailableSceneSelection");
                 NotifyChangedOnUI("IsAvailableTrackingFocus");
                 NotifyChangedOnUI("IsAvailableStillQuality");
-                NotifyChangedOnUI("IsAvailableMovieFormat");
+                NotifyChangedOnUI("IsAvailableMovieFileFormat");
                 NotifyChangedOnUI("IsAvailableFlipMode");
                 NotifyChangedOnUI("IsAvailableIntervalTime");
                 NotifyChangedOnUI("IsAvailableColorSetting");
@@ -608,31 +608,31 @@ namespace Kazyx.Uwpmm.DataModel
             }
         }
 
-        public int SelectedIndexMovieFormat
+        public int SelectedIndexMovieFileFormat
         {
             get
             {
-                return SettingValueConverter.GetSelectedIndex(Device.Status.MovieFormat);
+                return SettingValueConverter.GetSelectedIndex(Device.Status.MovieFileFormat);
             }
             set
             {
-                ParameterUtil.SetSelectedAsCurrent(Device.Status.MovieFormat, value);
+                ParameterUtil.SetSelectedAsCurrent(Device.Status.MovieFileFormat, value);
             }
         }
 
-        public List<string> CandidatesMovieFormat
+        public List<string> CandidatesMovieFileFormat
         {
             get
             {
-                return SettingValueConverter.FromMovieFormat(Device.Status.MovieFormat).Candidates;
+                return SettingValueConverter.FromMovieFileFormat(Device.Status.MovieFileFormat).Candidates;
             }
         }
 
-        public bool IsAvailableMovieFormat
+        public bool IsAvailableMovieFileFormat
         {
             get
             {
-                return Device.Api.Capability.IsAvailable("setMovieFormat") && Device.Status.MovieFormat != null;
+                return Device.Api.Capability.IsAvailable("setMovieFileFormat") && Device.Status.MovieFileFormat != null;
             }
         }
 
