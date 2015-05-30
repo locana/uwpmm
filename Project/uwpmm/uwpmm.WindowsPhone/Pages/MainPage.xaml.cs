@@ -26,6 +26,7 @@ using Windows.Phone.UI.Input;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
 using Windows.System;
+using Windows.System.Display;
 using Windows.UI.Core;
 using Windows.UI.Popups;
 using Windows.UI.ViewManagement;
@@ -52,6 +53,7 @@ namespace Kazyx.Uwpmm.Pages
         private OptionalElementsViewData optionalElementsViewData;
         private HistogramCreator HistogramCreator;
         private StatusBar statusBar = StatusBar.GetForCurrentView();
+        private DisplayRequest displayRequest = new DisplayRequest();
 
         public MainPage()
         {
@@ -605,6 +607,8 @@ namespace Kazyx.Uwpmm.Pages
                 EmptyAppBar();
                 NetworkObserver.INSTANCE.ForceRestart();
             }
+
+            displayRequest.RequestActive();
         }
 
         private async Task LockRootPivotASync()
@@ -621,6 +625,8 @@ namespace Kazyx.Uwpmm.Pages
             DebugUtil.Log("LiveviewPage Unloaded");
             Ready = false;
             TearDownCurrentTarget();
+
+            displayRequest.RequestRelease();
         }
 
         private void Entrance_Loaded(object sender, RoutedEventArgs e)

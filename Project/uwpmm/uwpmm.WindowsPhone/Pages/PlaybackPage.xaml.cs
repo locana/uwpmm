@@ -24,6 +24,7 @@ using Windows.ApplicationModel.Store;
 using Windows.Phone.UI.Input;
 using Windows.Storage;
 using Windows.System;
+using Windows.System.Display;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
@@ -47,6 +48,8 @@ namespace Kazyx.Uwpmm.Pages
         public const string AUTO_JUMP_TO_DLNA_FLAG = "auto_jump_to_dlna";
 
         private HttpClient HttpClient = new HttpClient();
+
+        private DisplayRequest displayRequest = new DisplayRequest();
 
         public PlaybackPage()
         {
@@ -361,6 +364,8 @@ namespace Kazyx.Uwpmm.Pages
             {
                 MoveToRemotePivot();
             }
+
+            displayRequest.RequestActive();
         }
 
         void NetworkObserver_DevicesCleared(object sender, EventArgs e)
@@ -456,6 +461,8 @@ namespace Kazyx.Uwpmm.Pages
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
+            displayRequest.RequestRelease();
+
             NetworkObserver.INSTANCE.DevicesCleared -= NetworkObserver_DevicesCleared;
 
             MovieStreamHelper.INSTANCE.StreamClosed -= MovieStreamHelper_StreamClosed;
