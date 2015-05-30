@@ -144,6 +144,12 @@ namespace Kazyx.Uwpmm.Pages
         protected override async void OnNavigatedFrom(NavigationEventArgs e)
         {
             PivotRoot.IsLocked = false;
+
+            if (PeriodicalShootingTask != null && PeriodicalShootingTask.IsRunning)
+            {
+                PeriodicalShootingTask.Stop();
+            }
+
             if (target != null)
             {
                 await SequentialOperation.CleanupShootingMode(target);
