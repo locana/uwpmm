@@ -1169,4 +1169,7 @@ Open gallary to browse contents in your camera device.</value>
   <data name="ContentsSet_PictureMovie" xml:space="preserve">
     <value>Pictures and Movies</value>
   </data>
+  <data name="Disabled_word" xml:space="preserve">
+    <value>Disabled</value>
+  </data>
 </root>
