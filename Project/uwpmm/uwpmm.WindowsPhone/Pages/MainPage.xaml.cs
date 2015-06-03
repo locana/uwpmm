@@ -239,12 +239,8 @@ namespace Kazyx.Uwpmm.Pages
             });
             _CommandBarManager.SetEvent(AppBarItem.AboutPage, (s, args) =>
             {
-                Frame.Navigate(typeof(AboutPage));
+                OpenAboutPage();
             });
-            //            _CommandBarManager.SetEvent(AppBarItem.LoggerPage, (s, args) =>
-            //            {
-            //                Frame.Navigate(typeof(LogViewerPage));
-            //            });
             _CommandBarManager.SetEvent(AppBarItem.PlaybackPage, (s, args) =>
             {
                 Frame.Navigate(typeof(PlaybackPage));
@@ -347,6 +343,11 @@ namespace Kazyx.Uwpmm.Pages
 
             await NetworkObserver.INSTANCE.Initialize();
             UpdateMainDescription();
+        }
+
+        private void OpenAboutPage()
+        {
+            Frame.Navigate(typeof(AboutPage));
         }
 
         void NetworkInformation_NetworkStatusChanged(object sender)
@@ -1669,5 +1670,9 @@ namespace Kazyx.Uwpmm.Pages
             });
         }
 
+        private void AboutButton_Click(object sender, RoutedEventArgs e)
+        {
+            OpenAboutPage();
+        }
     }
 }

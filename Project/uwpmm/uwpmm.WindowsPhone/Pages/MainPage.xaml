@@ -34,37 +34,50 @@
                 <PivotItem Name="Entrance" Loaded="Entrance_Loaded">
                     <Grid Name="EntrancePage">
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="5*" />
-                            <RowDefinition Height="auto" />
-                            <RowDefinition Height="3*" />
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="auto"/>
                         </Grid.RowDefinitions>
-                        <StackPanel Margin="6,0">
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="{Binding [ApplicationTitle], Source={StaticResource LocalizedStrings}}"
+                        <ScrollViewer Grid.Row="0">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="5*" />
+                                    <RowDefinition Height="auto" />
+                                    <RowDefinition Height="3*" />
+                                </Grid.RowDefinitions>
+                                <StackPanel Margin="6,0">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="{Binding [ApplicationTitle], Source={StaticResource LocalizedStrings}}"
                                        Style="{StaticResource SubheaderTextBlockStyle}" Margin="0,0,0,30" FontWeight="Bold" />
-                                <TextBlock x:Name="TrialSuffix"
+                                        <TextBlock x:Name="TrialSuffix"
                                        Text="{Binding [TrialVersion], Source={StaticResource LocalizedStrings}}"
                                        Style="{StaticResource SubheaderTextBlockStyle}" Margin="15,7,0,0" FontWeight="Bold"
                                        FontSize="24" VerticalAlignment="Top" Visibility="Collapsed" />
-                            </StackPanel>
-                            <TextBlock Text="{Binding [WifiConnectionGuide], Source={StaticResource LocalizedStrings}}" TextWrapping="WrapWholeWords" 
+                                    </StackPanel>
+                                    <TextBlock Text="{Binding [WifiConnectionGuide], Source={StaticResource LocalizedStrings}}" TextWrapping="WrapWholeWords" 
                                        Style="{StaticResource BaseTextBlockStyle}" x:Name="MainDescription" Margin="0,6"/>
-                        </StackPanel>
-                        <Grid Grid.Row="1" Name="NfcAvailable" Margin="0,0,0,15">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="auto" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <Image Source="ms-appx:///Assets/NFC_mark.png" Margin="15" Height="30" />
-                            <TextBlock Grid.Column="1"
+                                </StackPanel>
+                                <Grid Grid.Row="1" Name="NfcAvailable" Margin="0,0,0,15">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Image Source="ms-appx:///Assets/NFC_mark.png" Margin="15" Height="30" />
+                                    <TextBlock Grid.Column="1"
                                 Text="{Binding [Guide_NFC], Source={StaticResource LocalizedStrings}}" HorizontalAlignment="Stretch" VerticalAlignment="Center"
                                 Style="{ThemeResource BaseTextBlockStyle}" TextWrapping="WrapWholeWords" Margin="0" />
-                        </Grid>
-                        <StackPanel x:Name="NfcDataGrid" VerticalAlignment="Top" Grid.Row="2" Margin="0">
-                            <TextBlock Text="{Binding [Nfc_Result], Source={StaticResource LocalizedStrings}}"
+                                </Grid>
+                                <StackPanel x:Name="NfcDataGrid" VerticalAlignment="Top" Grid.Row="2" Margin="0">
+                                    <TextBlock Text="{Binding [Nfc_Result], Source={StaticResource LocalizedStrings}}"
                                        Style="{ThemeResource BaseTextBlockStyle}" Margin="40,0"/>
-                            <TextBox x:Name="WifiPassword" Margin="60,10,60,20" TextAlignment="Center"
+                                    <TextBox x:Name="WifiPassword" Margin="60,10,60,20" TextAlignment="Center"
                                      BorderThickness="1" IsReadOnly="True" />
+                                </StackPanel>
+                            </Grid>
+                        </ScrollViewer>
+                        <StackPanel Grid.Row="1" Margin="4,8">
+                            <TextBlock Text="{Binding [GiveUsFeedback], Source={StaticResource LocalizedStrings}}" Style="{ThemeResource BaseTextBlockStyle}" 
+                                       TextAlignment="Center"/>
+                            <Button HorizontalAlignment="Center" x:Name="AboutButton"  Content="{Binding [About], Source={StaticResource LocalizedStrings}}" Click="AboutButton_Click"/>
                         </StackPanel>
                     </Grid>
                 </PivotItem>
