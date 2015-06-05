@@ -18,6 +18,7 @@ namespace Kazyx.Uwpmm.DataModel
             IsShootButtonDisplayed = Preference.ShootButtonVisible;
             IsHistogramDisplayed = Preference.HistogramVisible;
             GeotagEnabled = Preference.GeoTaggingEnabled;
+            FramingGridEnabled = Preference.FramingGridEnabled;
             GridType = Preference.FramingGridType;
             GridColor = Preference.FramingGridColor;
             FibonacciLineOrigin = Preference.FibonacciOrigin;
@@ -187,6 +188,22 @@ namespace Kazyx.Uwpmm.DataModel
             }
         }
 
+        private bool _FramingGridEnabled = false;
+        public bool FramingGridEnabled
+        {
+            set
+            {
+                if (_FramingGridEnabled != value)
+                {
+                    Preference.FocusFrameEnabled = value;
+                    _FramingGridEnabled = value;
+                    NotifyChangedOnUI("FramingGridEnabled");
+                    NotifyChangedOnUI("IsFibonacciSpiralEnabled");
+                }
+            }
+            get { return _FramingGridEnabled; }
+        }
+
         private FramingGridTypes _GridType = FramingGridTypes.Off;
         public FramingGridTypes GridType
         {
@@ -198,9 +215,15 @@ namespace Kazyx.Uwpmm.DataModel
                     Preference.FramingGridType = value;
                     _GridType = value;
                     NotifyChangedOnUI("GridType");
+                    NotifyChangedOnUI("IsFibonacciSpiralEnabled");
                 }
             }
             get { return _GridType; }
+        }
+
+        public bool IsFibonacciSpiralEnabled
+        {
+            get { return FramingGridEnabled && GridType == FramingGridTypes.Fibonacci; }
         }
 
         private FramingGridColors _GridColor = FramingGridColors.White;

@@ -98,8 +98,6 @@ namespace Kazyx.Uwpmm.DataModel
         private static readonly BitmapImage AvailableMediaImage = new BitmapImage(new Uri("ms-appx:///Assets/LiveviewScreen/memory_card.png", UriKind.Absolute));
         private static readonly BitmapImage NoMediaImage = new BitmapImage(new Uri("ms-appx:///Assets/LiveviewScreen/no_memory_card.png", UriKind.Absolute));
 
-
-
         public BitmapImage ShutterButtonImage
         {
             get
@@ -233,7 +231,7 @@ namespace Kazyx.Uwpmm.DataModel
                     case ShootModeParam.Movie:
                         return Device.Status.Status == EventParam.Idle || Device.Status.Status == EventParam.MvRecording;
                     case ShootModeParam.Audio:
-                        return Device.Status.Status == EventParam.Idle || Device.Status.Status == EventParam.AuRecording ;
+                        return Device.Status.Status == EventParam.Idle || Device.Status.Status == EventParam.AuRecording;
                     case ShootModeParam.Interval:
                         return Device.Status.Status == EventParam.Idle || Device.Status.Status == EventParam.ItvRecording;
                     case ShootModeParam.Loop:

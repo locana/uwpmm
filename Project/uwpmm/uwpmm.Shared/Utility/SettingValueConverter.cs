@@ -658,7 +658,7 @@ namespace Kazyx.Uwpmm.Utility
                 switch (key)
                 {
                     case FramingGridTypes.Off:
-                        return SystemUtil.GetStringResource("Off");
+                        return null;
                     case FramingGridTypes.RuleOfThirds:
                         return SystemUtil.GetStringResource("Grid_RuleOfThirds");
                     case FramingGridTypes.Diagonal:
@@ -672,9 +672,9 @@ namespace Kazyx.Uwpmm.Utility
                     case FramingGridTypes.GoldenRatio:
                         return SystemUtil.GetStringResource("Grid_GoldenRatio");
                     default:
-                        throw new NotImplementedException();
+                        return null;
                 }
-            }).ToArray();
+            }).Where(val => val != null).ToArray();
         }
 
         internal static string[] FromFramingGridColor(IEnumerable<FramingGridColors> keys)

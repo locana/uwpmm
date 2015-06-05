@@ -1094,4 +1094,7 @@ PlayMemories Camera Appsストアで最新版にアップデートしてくだ�
   <data name="Disabled_word" xml:space="preserve">
     <value>無効</value>
   </data>
+  <data name="AssistPattern" xml:space="preserve">
+    <value>アシストパターン</value>
+  </data>
 </root>
