@@ -700,9 +700,9 @@ namespace Kazyx.Uwpmm.Pages
         }
 
         private TargetDevice target;
-        private StreamProcessor liveview = new StreamProcessor();
-        private ImageDataSource liveview_data = new ImageDataSource();
-        private ImageDataSource postview_data = new ImageDataSource();
+        private readonly StreamProcessor liveview = new StreamProcessor();
+        private readonly ImageDataSource liveview_data = new ImageDataSource();
+        private readonly ImageDataSource postview_data = new ImageDataSource();
 
         private async void NetworkObserver_CdsDiscovered(object sender, CdServiceEventArgs e)
         {
@@ -1023,6 +1023,8 @@ namespace Kazyx.Uwpmm.Pages
 
         async void liveview_JpegRetrieved(object sender, JpegEventArgs e)
         {
+            if (screen_view_data == null) { return; }
+            if (e == null || e.Packet == null || e.Packet.ImageData == null) { return; }
             if (!screen_view_data.FramingGridDisplayed) { screen_view_data.FramingGridDisplayed = true; }
 
             if (IsRendering) { return; }
