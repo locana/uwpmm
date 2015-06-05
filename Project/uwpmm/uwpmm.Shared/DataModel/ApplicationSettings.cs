@@ -75,6 +75,7 @@ namespace Kazyx.Uwpmm.DataModel
                     _IsIntervalShootingEnabled = value;
 
                     NotifyChangedOnUI("IsIntervalShootingEnabled");
+                    NotifyChangedOnUI("IntervalTimeDisplayString");
                 }
             }
             get
@@ -106,7 +107,17 @@ namespace Kazyx.Uwpmm.DataModel
 
         public string IntervalTimeDisplayString
         {
-            get { return _IntervalTime + SystemUtil.GetStringResource("Seconds"); }
+            get
+            {
+                if (IsIntervalShootingEnabled)
+                {
+                    return _IntervalTime + SystemUtil.GetStringResource("Seconds");
+                }
+                else
+                {
+                    return SystemUtil.GetStringResource("Disabled_word");
+                }
+            }
         }
 
         private bool _IsShootButtonDisplayed = true;

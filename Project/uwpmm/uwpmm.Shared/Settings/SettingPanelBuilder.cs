@@ -404,6 +404,13 @@ namespace Kazyx.Uwpmm.Settings
                 Path = new PropertyPath("IsPeriodicalShootingAvailable"),
                 Mode = BindingMode.OneWay,
             });
+            slider.SetBinding(Slider.VisibilityProperty, new Binding()
+            {
+                Source = checkbox,
+                Path = new PropertyPath("IsChecked"),
+                Mode = BindingMode.OneWay,
+                Converter = new BoolToVisibilityConverter(),
+            });
 
             var parent = BuildBasicPanel(SystemUtil.GetStringResource("IntervalSetting"));
             parent.Children.Add(firstPanel);
