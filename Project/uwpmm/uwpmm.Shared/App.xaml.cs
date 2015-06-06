@@ -201,7 +201,14 @@ namespace Kazyx.Uwpmm
         {
             DebugUtil.Log("OnResuming");
 #if WINDOWS_PHONE_APP
+            var rootFrame = Window.Current.Content as Frame;
             NetworkObserver.INSTANCE.Start();
+            if (rootFrame.Content is MainPage)
+            {
+                var page = rootFrame.Content as MainPage;
+                page.OnResuming();
+                return;
+            }
 #endif
         }
     }

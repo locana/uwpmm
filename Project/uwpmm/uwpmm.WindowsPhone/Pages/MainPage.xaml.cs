@@ -175,7 +175,7 @@ namespace Kazyx.Uwpmm.Pages
         /// <summary>
         /// Called from App.xaml.cs on suspending.
         /// </summary>
-        public void OnSuspending()
+        internal void OnSuspending()
         {
             if (PeriodicalShootingTask != null && PeriodicalShootingTask.IsRunning)
             {
@@ -188,6 +188,14 @@ namespace Kazyx.Uwpmm.Pages
             PivotRoot.IsLocked = false;
             PivotRoot.SelectedIndex = 0;
             stayEntrance = false;
+        }
+
+        /// <summary>
+        /// Called from App.xaml.cs on resuming.
+        /// </summary>
+        internal void OnResuming()
+        {
+            InitializeProximityDevice();
         }
 
         private void RemoveEventHandlers()
