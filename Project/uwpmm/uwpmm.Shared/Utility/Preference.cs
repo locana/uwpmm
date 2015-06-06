@@ -14,6 +14,7 @@ namespace Kazyx.Uwpmm.Utility
         private const string display_take_image_button = "display_take_image_button";
         private const string display_histogram = "display_histogram";
         private const string add_geotag = "add_geotag";
+        private const string framing_grid_enabled = "framing_grid_enabled";
         private const string fraiming_grids = "fraiming_grids";
         private const string framing_grids_color = "framing_grids_color";
         private const string fibonacci_origin = "fibonacci_origin";
@@ -88,6 +89,12 @@ namespace Kazyx.Uwpmm.Utility
         {
             get { return GetProperty(add_geotag, false); }
             set { SetProperty(add_geotag, value); }
+        }
+
+        public static bool FramingGridEnabled
+        {
+            get { return GetProperty(framing_grid_enabled, false); }
+            set { SetProperty(framing_grid_enabled, value); }
         }
 
         public static FramingGridTypes FramingGridType

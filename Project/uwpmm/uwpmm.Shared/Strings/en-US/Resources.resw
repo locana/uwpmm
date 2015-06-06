@@ -1172,4 +1172,7 @@ Open gallary to browse contents in your camera device.</value>
   <data name="Disabled_word" xml:space="preserve">
     <value>Disabled</value>
   </data>
+  <data name="AssistPattern" xml:space="preserve">
+    <value>Assist pattern</value>
+  </data>
 </root>

@@ -32,6 +32,7 @@ using Windows.UI.Popups;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
@@ -1480,9 +1481,6 @@ namespace Kazyx.Uwpmm.Pages
             }
         }
 
-        private AppSettingData<bool> geoSetting;
-        private AppSettingData<int> gridColorSetting;
-        private AppSettingData<int> fibonacciOriginSetting;
         private AppSettingData<bool> FocusFrameSetting;
 
         private void OpenAppSettingPanel()
@@ -1513,7 +1511,7 @@ namespace Kazyx.Uwpmm.Pages
                 enabled => { ApplicationSettings.GetInstance().IsPostviewTransferEnabled = enabled; })));
 
             var geoGuide = limited ? "TrialMessage" : "AddGeotag_guide";
-            geoSetting = new AppSettingData<bool>(SystemUtil.GetStringResource("AddGeotag"), SystemUtil.GetStringResource(geoGuide),
+            var geoSetting = new AppSettingData<bool>(SystemUtil.GetStringResource("AddGeotag"), SystemUtil.GetStringResource(geoGuide),
                 () =>
                 {
                     if (limited) { return false; }
@@ -1558,55 +1556,68 @@ namespace Kazyx.Uwpmm.Pages
                 });
             display_settings.Add(new ToggleSetting(FocusFrameSetting));
 
-            display_settings.Add(new ComboBoxSetting(
-                new AppSettingData<int>(SystemUtil.GetStringResource("FramingGrids"), SystemUtil.GetStringResource("Guide_FramingGrids"),
-                    () => { return (int)ApplicationSettings.GetInstance().GridType; },
+            display_settings.Add(new ToggleSetting(
+                new AppSettingData<bool>(SystemUtil.GetStringResource("FramingGrids"), SystemUtil.GetStringResource("Guide_FramingGrids"),
+                    () => { return ApplicationSettings.GetInstance().FramingGridEnabled; },
+                    enabled =>
+                    {
+                        ApplicationSettings.GetInstance().FramingGridEnabled = enabled;
+                        screen_view_data.FramingGridDisplayed = enabled;
+                    })));
+
+            var gridTypePanel = new ComboBoxSetting(
+                new AppSettingData<int>("Pattern", null,
+                    () => { return (int)ApplicationSettings.GetInstance().GridType - 1; },
                     setting =>
                     {
                         if (setting < 0) { return; }
-                        ApplicationSettings.GetInstance().GridType = (FramingGridTypes)setting;
-                        DisplayGridColorSetting(ApplicationSettings.GetInstance().GridType != FramingGridTypes.Off);
-                        DisplayFibonacciOriginSetting(ApplicationSettings.GetInstance().GridType == FramingGridTypes.Fibonacci);
+                        ApplicationSettings.GetInstance().GridType = (FramingGridTypes)(setting + 1);
                     },
-                    SettingValueConverter.FromFramingGrid(EnumUtil<FramingGridTypes>.GetValueEnumerable()))));
+                    SettingValueConverter.FromFramingGrid(EnumUtil<FramingGridTypes>.GetValueEnumerable())));
+            gridTypePanel.SetBinding(ComboBoxSetting.VisibilityProperty, new Binding
+            {
+                Source = ApplicationSettings.GetInstance(),
+                Path = new PropertyPath("FramingGridEnabled"),
+                Mode = BindingMode.OneWay,
+                Converter = new BoolToVisibilityConverter(),
+            });
+            display_settings.Add(gridTypePanel);
 
-            gridColorSetting = new AppSettingData<int>(SystemUtil.GetStringResource("FramingGridColor"), null,
+            var gridColorPanel = new ComboBoxSetting(new AppSettingData<int>(SystemUtil.GetStringResource("FramingGridColor"), null,
                     () => { return (int)ApplicationSettings.GetInstance().GridColor; },
                     setting =>
                     {
                         if (setting < 0) { return; }
                         ApplicationSettings.GetInstance().GridColor = (FramingGridColors)setting;
                     },
-                    SettingValueConverter.FromFramingGridColor(EnumUtil<FramingGridColors>.GetValueEnumerable()));
-            display_settings.Add(new ComboBoxSetting(gridColorSetting));
+                    SettingValueConverter.FromFramingGridColor(EnumUtil<FramingGridColors>.GetValueEnumerable())));
+            gridColorPanel.SetBinding(ComboBoxSetting.VisibilityProperty, new Binding
+            {
+                Source = ApplicationSettings.GetInstance(),
+                Path = new PropertyPath("FramingGridEnabled"),
+                Mode = BindingMode.OneWay,
+                Converter = new BoolToVisibilityConverter(),
+            });
+            display_settings.Add(gridColorPanel);
 
-            fibonacciOriginSetting = new AppSettingData<int>(SystemUtil.GetStringResource("FibonacciSpiralOrigin"), null,
+            var fibonacciOriginPanel = new ComboBoxSetting(new AppSettingData<int>(SystemUtil.GetStringResource("FibonacciSpiralOrigin"), null,
                 () => { return (int)ApplicationSettings.GetInstance().FibonacciLineOrigin; },
                 setting =>
                 {
                     if (setting < 0) { return; }
                     ApplicationSettings.GetInstance().FibonacciLineOrigin = (FibonacciLineOrigins)setting;
                 },
-                SettingValueConverter.FromFibonacciLineOrigin(EnumUtil<FibonacciLineOrigins>.GetValueEnumerable()));
-            display_settings.Add(new ComboBoxSetting(fibonacciOriginSetting));
+                SettingValueConverter.FromFibonacciLineOrigin(EnumUtil<FibonacciLineOrigins>.GetValueEnumerable())));
+            fibonacciOriginPanel.SetBinding(ComboBoxSetting.VisibilityProperty, new Binding
+            {
+                Source = ApplicationSettings.GetInstance(),
+                Path = new PropertyPath("IsFibonacciSpiralEnabled"),
+                Mode = BindingMode.OneWay,
+                Converter = new BoolToVisibilityConverter(),
+            });
+            display_settings.Add(fibonacciOriginPanel);
 
             HideSettingAnimation.Completed += HideSettingAnimation_Completed;
-        }
-
-        private void DisplayGridColorSetting(bool displayed)
-        {
-            if (gridColorSetting != null)
-            {
-                gridColorSetting.IsActive = displayed;
-            }
-        }
-
-        private void DisplayFibonacciOriginSetting(bool displayed)
-        {
-            if (fibonacciOriginSetting != null)
-            {
-                fibonacciOriginSetting.IsActive = displayed;
-            }
         }
 
         private void HideSettingAnimation_Completed(object sender, object e)

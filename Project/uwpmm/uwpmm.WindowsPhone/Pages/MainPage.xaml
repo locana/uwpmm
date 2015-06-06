@@ -97,7 +97,7 @@
                                Visibility="{Binding IsAudioMode, FallbackValue=Collapsed, Converter={StaticResource B2VConverter}}"/>
                             <controls:FramingGridsSurface x:Name="FramingGuideSurface" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                                                           Type="{Binding Path=AppSetting.GridType, Mode=OneWay}"
-                                                          Visibility="{Binding Path=Liveview.FramingGridDisplayed, FallbackValue=Collapsed, Converter={StaticResource B2VConverter}}"
+                                                          Visibility="{Binding Path=AppSetting.FramingGridEnabled, FallbackValue=Collapsed, Converter={StaticResource B2VConverter}}"
                                                           Stroke="{Binding Path=AppSetting.GridColorBrush,Mode=OneWay}" 
                                                           FibonacciOrigin="{Binding Path=AppSetting.FibonacciLineOrigin, Mode=OneWay}"
                                                           />
