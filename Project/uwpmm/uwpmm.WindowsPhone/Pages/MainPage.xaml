@@ -77,7 +77,8 @@
                         <StackPanel Grid.Row="1" Margin="4,8">
                             <TextBlock Text="{Binding [GiveUsFeedback], Source={StaticResource LocalizedStrings}}" Style="{ThemeResource BaseTextBlockStyle}" 
                                        TextAlignment="Center"/>
-                            <Button HorizontalAlignment="Center" x:Name="AboutButton"  Content="{Binding [About], Source={StaticResource LocalizedStrings}}" Click="AboutButton_Click"/>
+                            <Button HorizontalAlignment="Center" x:Name="AboutButton"  Content="{Binding [About], Source={StaticResource LocalizedStrings}}"
+                                    Click="AboutButton_Click" BorderThickness="1"/>
                         </StackPanel>
                     </Grid>
                 </PivotItem>
