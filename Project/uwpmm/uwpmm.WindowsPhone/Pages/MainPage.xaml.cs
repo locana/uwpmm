@@ -148,6 +148,8 @@ namespace Kazyx.Uwpmm.Pages
         {
             PivotRoot.IsLocked = false;
 
+            cancel.CancelIfNotNull();
+
             if (PeriodicalShootingTask != null && PeriodicalShootingTask.IsRunning)
             {
                 PeriodicalShootingTask.Stop();
