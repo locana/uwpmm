@@ -195,7 +195,7 @@ namespace Kazyx.Uwpmm.DataModel
             {
                 if (_FramingGridEnabled != value)
                 {
-                    Preference.FocusFrameEnabled = value;
+                    Preference.FramingGridEnabled = value;
                     _FramingGridEnabled = value;
                     NotifyChangedOnUI("FramingGridEnabled");
                     NotifyChangedOnUI("IsFibonacciSpiralEnabled");
