@@ -1242,9 +1242,6 @@ namespace Kazyx.Uwpmm.Pages
 
         private void ShutterButton_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            target.Status.TestRotate();
-            return;
-
             if (IsContinuousShootingMode()) { ShowToast(SystemUtil.GetStringResource("Message_ContinuousShootingGuide")); }
             else { ShutterButtonPressed(); }
         }
