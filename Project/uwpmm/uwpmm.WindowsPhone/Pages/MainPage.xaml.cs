@@ -20,6 +20,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Windows.Devices.Geolocation;
 using Windows.Foundation;
+using Windows.Graphics.Display;
 using Windows.Networking.Connectivity;
 using Windows.Networking.Proximity;
 using Windows.Phone.UI.Input;
@@ -945,9 +946,60 @@ namespace Kazyx.Uwpmm.Pages
                 case "ShootMode":
                     UpdateShootMode(status.ShootMode);
                     break;
+                case "LiveviewOrientation":
+                    RotateLiveviewImage(status.LiveviewOrientation);
+                    break;
                 default:
                     break;
             }
+        }
+
+        private void RotateLiveviewImage(string _orientation)
+        {
+            int angle = 0;
+
+            switch (_orientation)
+            {
+                case RemoteApi.Camera.Orientation.Straight:
+                    angle = 0;
+                    break;
+                case RemoteApi.Camera.Orientation.Right:
+                    angle = 90;
+                    break;
+                case RemoteApi.Camera.Orientation.Left:
+                    angle = 270;
+                    break;
+                case RemoteApi.Camera.Orientation.Opposite:
+                    angle = 180;
+                    break;
+            }
+
+            double scale_h = 1.0;
+            double scale_v = 1.0;
+            var screen_w = LiveviewScreenWrapper.ActualWidth;
+            var screen_h = LiveviewScreenWrapper.ActualHeight;
+
+            if (angle % 180 == 0)
+            {
+                scale_h = screen_w / LiveviewImage.RenderSize.Width;
+                scale_v = screen_h / LiveviewImage.RenderSize.Height;
+            }
+            else
+            {
+                scale_h = screen_w / LiveviewImage.RenderSize.Height;
+                scale_v = screen_h / LiveviewImage.RenderSize.Width;
+            }
+
+            var scale = Math.Min(scale_h, scale_v);
+
+            LiveviewImage.RenderTransform = new CompositeTransform()
+            {
+                CenterX = LiveviewImage.ActualWidth * 0.5,
+                CenterY = LiveviewImage.ActualHeight * 0.5,
+                ScaleX = scale,
+                ScaleY = scale,
+                Rotation = angle
+            };
         }
 
         private void UpdateShootMode(Capability<string> ShootMode)
@@ -1395,10 +1447,32 @@ namespace Kazyx.Uwpmm.Pages
         {
             var rh = (sender as Image).RenderSize.Height;
             var rw = (sender as Image).RenderSize.Width;
+
+            // To fit focus frames and grids to liveview image
             this._FocusFrameSurface.Height = rh;
             this._FocusFrameSurface.Width = rw;
             this.FramingGuideSurface.Height = rh;
             this.FramingGuideSurface.Width = rw;
+        }
+
+        private void LiveviewScreenWrapper_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            // expect to be called after orientation changed.
+            FitLiveviewImage((sender as Grid).ActualHeight, (sender as Grid).ActualWidth);
+        }
+
+        private void FitLiveviewImage(double h, double w)
+        {
+            if (LiveviewImage == null || LiveviewImage.RenderSize.Width == 0 || LiveviewImage.RenderSize.Height == 0) { return; }
+
+            double scale_h = w / LiveviewImage.RenderSize.Width;
+            double scale_v = h / LiveviewImage.RenderSize.Height;
+
+            LiveviewImage.RenderTransform = new CompositeTransform()
+            {
+                ScaleX = Math.Min(scale_h, scale_v),
+                ScaleY = Math.Min(scale_h, scale_v),
+            };
         }
 
         private void ShowToast(string s)

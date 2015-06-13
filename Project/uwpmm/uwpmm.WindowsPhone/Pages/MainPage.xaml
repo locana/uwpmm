@@ -9,7 +9,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     RequestedTheme="Dark"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Loaded="Page_Loaded" Unloaded="Page_Unloaded">
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Loaded="Page_Loaded" Unloaded="Page_Unloaded" >
 
     <Page.Resources>
         <util:BoolToVisibilityConverter x:Key="B2VConverter" />
@@ -84,7 +84,7 @@
                 </PivotItem>
 
                 <PivotItem Name="Liveview" Margin="0">
-                    <Grid Name="LiveviewScreenWrapper">
+                    <Grid Name="LiveviewScreenWrapper" SizeChanged="LiveviewScreenWrapper_SizeChanged">
                         <!-- Dummy processing screen; displayed before connected. -->
                         <Grid HorizontalAlignment="Stretch" VerticalAlignment="Center" Height="80" >
                             <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Opacity="0.5"

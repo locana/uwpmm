@@ -258,6 +258,27 @@ namespace Kazyx.Uwpmm.DataModel
             get { return _Storages; }
         }
 
+#if DEBUG
+        public void TestRotate()
+        {
+            switch (_LiveviewOrientation)
+            {
+                case RemoteApi.Camera.Orientation.Straight:
+                    LiveviewOrientation = "90";
+                    break;
+                case RemoteApi.Camera.Orientation.Right:
+                    LiveviewOrientation = "180";
+                    break;
+                case RemoteApi.Camera.Orientation.Left:
+                    LiveviewOrientation = "0";
+                    break;
+                case RemoteApi.Camera.Orientation.Opposite:
+                    LiveviewOrientation = "270";
+                    break;
+            }
+        }
+#endif
+
         private string _LiveviewOrientation;
         public string LiveviewOrientation
         {
