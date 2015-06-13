@@ -924,42 +924,16 @@ namespace Kazyx.Uwpmm.Pages
             switch (e.PropertyName)
             {
                 case "FocusStatus":
-                    DebugUtil.Log("Focus status changed: " + status.FocusStatus);
-                    if (status.FocusStatus == Kazyx.RemoteApi.Camera.FocusState.Focused)
-                    {
-                        ShowCancelTouchAFButton();
-                        _FocusFrameSurface.Focused = true;
-                    }
-                    else
-                    {
-                        HideCancelTouchAFButton();
-                        _FocusFrameSurface.Focused = false;
-                    }
+                    UpdateFocusStatus(status.FocusStatus);
                     break;
                 case "TouchFocusStatus":
-                    DebugUtil.Log("TouchFocusStatus changed: " + status.TouchFocusStatus.Focused);
-                    if (status.TouchFocusStatus.Focused)
-                    {
-                        ShowCancelTouchAFButton();
-                        _FocusFrameSurface.Focused = true;
-                    }
-                    else
-                    {
-                        HideCancelTouchAFButton();
-                        _FocusFrameSurface.Focused = false;
-                    }
+                    UpdateTouchFocus(status.TouchFocusStatus);
                     break;
                 case "BatteryInfo":
                     BatteryStatusDisplay.BatteryInfo = status.BatteryInfo;
                     break;
                 case "ContShootingResult":
-                    if (ApplicationSettings.GetInstance().IsPostviewTransferEnabled)
-                    {
-                        foreach (var result in status.ContShootingResult)
-                        {
-                            MediaDownloader.Instance.EnqueuePostViewImage(new Uri(result.PostviewUrl, UriKind.Absolute), GeopositionManager.INSTANCE.LatestPosition);
-                        }
-                    }
+                    EnqueueContshootingResult(status.ContShootingResult);
                     break;
                 case "Status":
                     if (status.Status == EventParam.Idle)
@@ -969,12 +943,59 @@ namespace Kazyx.Uwpmm.Pages
                     }
                     break;
                 case "ShootMode":
-                    DebugUtil.Log("Shootmode updated: " + status.ShootMode.Current);
-                    if (status.ShootMode.Current == ShootModeParam.Audio) { ToAudioMode(); }
-                    else { FromAudioMode(); }
+                    UpdateShootMode(status.ShootMode);
                     break;
                 default:
                     break;
+            }
+        }
+
+        private void UpdateShootMode(Capability<string> ShootMode)
+        {
+            DebugUtil.Log("Shootmode updated: " + ShootMode.Current);
+            if (ShootMode.Current == ShootModeParam.Audio) { ToAudioMode(); }
+            else { FromAudioMode(); }
+        }
+
+        private static void EnqueueContshootingResult(List<ContShootingResult> ContShootingResult)
+        {
+            if (ApplicationSettings.GetInstance().IsPostviewTransferEnabled)
+            {
+                foreach (var result in ContShootingResult)
+                {
+                    MediaDownloader.Instance.EnqueuePostViewImage(new Uri(result.PostviewUrl, UriKind.Absolute), GeopositionManager.INSTANCE.LatestPosition);
+                }
+            }
+        }
+
+        private void UpdateFocusStatus(string FocusStatus)
+        {
+            DebugUtil.Log("Focus status changed: " + FocusStatus);
+            if (FocusStatus == Kazyx.RemoteApi.Camera.FocusState.Focused)
+            {
+                ShowCancelTouchAFButton();
+                _FocusFrameSurface.Focused = true;
+            }
+            else
+            {
+                HideCancelTouchAFButton();
+                _FocusFrameSurface.Focused = false;
+            }
+        }
+
+        private void UpdateTouchFocus(TouchFocusStatus status)
+        {
+            if (status == null) { return; }
+            DebugUtil.Log("TouchFocusStatus changed: " + status.Focused);
+            if (status.Focused)
+            {
+                ShowCancelTouchAFButton();
+                _FocusFrameSurface.Focused = true;
+            }
+            else
+            {
+                HideCancelTouchAFButton();
+                _FocusFrameSurface.Focused = false;
             }
         }
 
