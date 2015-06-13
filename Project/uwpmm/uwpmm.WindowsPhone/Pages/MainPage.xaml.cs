@@ -956,7 +956,7 @@ namespace Kazyx.Uwpmm.Pages
 
         private void RotateLiveviewImage(string _orientation)
         {
-            int angle = 0;
+            double angle = 0;
 
             switch (_orientation)
             {
@@ -992,14 +992,27 @@ namespace Kazyx.Uwpmm.Pages
 
             var scale = Math.Min(scale_h, scale_v);
 
-            LiveviewImage.RenderTransform = new CompositeTransform()
+            // get relative angle
+            if (LiveviewImage.RenderTransform != null)
             {
-                CenterX = LiveviewImage.ActualWidth * 0.5,
-                CenterY = LiveviewImage.ActualHeight * 0.5,
-                ScaleX = scale,
-                ScaleY = scale,
-                Rotation = angle
-            };
+                var t = LiveviewImage.RenderTransform as CompositeTransform;
+                if (t != null) { 
+                    angle = angle - t.Rotation;
+                    if (angle > 180)
+                    {
+                        angle = angle - ((int)(angle / 360) + 1) * 360;
+                    }
+                    else if (angle < -180)
+                    {
+                        angle = angle + ((int)(-angle / 360) + 1) * 360;
+                    }
+                }
+            }
+
+            AnimationHelper.CreateSmoothRotateScaleAnimation(new AnimationRequest()
+            {
+                Target = LiveviewImage,
+            }, angle, scale).Begin();
         }
 
         private void UpdateShootMode(Capability<string> ShootMode)
@@ -1229,6 +1242,9 @@ namespace Kazyx.Uwpmm.Pages
 
         private void ShutterButton_Tapped(object sender, TappedRoutedEventArgs e)
         {
+            target.Status.TestRotate();
+            return;
+
             if (IsContinuousShootingMode()) { ShowToast(SystemUtil.GetStringResource("Message_ContinuousShootingGuide")); }
             else { ShutterButtonPressed(); }
         }
