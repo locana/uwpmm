@@ -996,7 +996,8 @@ namespace Kazyx.Uwpmm.Pages
             if (LiveviewImage.RenderTransform != null)
             {
                 var t = LiveviewImage.RenderTransform as CompositeTransform;
-                if (t != null) { 
+                if (t != null)
+                {
                     angle = angle - t.Rotation;
                     if (angle > 180)
                     {
@@ -1242,6 +1243,7 @@ namespace Kazyx.Uwpmm.Pages
 
         private void ShutterButton_Tapped(object sender, TappedRoutedEventArgs e)
         {
+
             if (IsContinuousShootingMode()) { ShowToast(SystemUtil.GetStringResource("Message_ContinuousShootingGuide")); }
             else { ShutterButtonPressed(); }
         }
@@ -1458,14 +1460,31 @@ namespace Kazyx.Uwpmm.Pages
 
         private void LiveviewImage_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            var rh = (sender as Image).RenderSize.Height;
-            var rw = (sender as Image).RenderSize.Width;
+            var height = (sender as Image).RenderSize.Height;
+            var width = (sender as Image).RenderSize.Width;
+
+            if ((sender as Image).RenderTransform != null)
+            {
+                var t = (sender as Image).RenderTransform as CompositeTransform;
+                if (t != null)
+                {
+                    if (t.Rotation % 180 != 0)
+                    {
+                        // in case portrait
+                        var tmp = height;
+                        height = width;
+                        width = tmp;
+                    }
+                    width *= t.ScaleX;
+                    height *= t.ScaleY;
+                }
+            }
 
             // To fit focus frames and grids to liveview image
-            this._FocusFrameSurface.Height = rh;
-            this._FocusFrameSurface.Width = rw;
-            this.FramingGuideSurface.Height = rh;
-            this.FramingGuideSurface.Width = rw;
+            this._FocusFrameSurface.Height = height;
+            this._FocusFrameSurface.Width = width;
+            this.FramingGuideSurface.Height = height;
+            this.FramingGuideSurface.Width = width;
         }
 
         private void LiveviewScreenWrapper_SizeChanged(object sender, SizeChangedEventArgs e)
