@@ -974,6 +974,8 @@ namespace Kazyx.Uwpmm.Pages
                     break;
             }
 
+            // FramingGuideSurface.LiveviewOrientation = angle;
+
             double scale_h = 1.0;
             double scale_v = 1.0;
             var screen_w = LiveviewScreenWrapper.ActualWidth;
@@ -1013,6 +1015,16 @@ namespace Kazyx.Uwpmm.Pages
             AnimationHelper.CreateSmoothRotateScaleAnimation(new AnimationRequest()
             {
                 Target = LiveviewImage,
+            }, angle, scale).Begin();
+
+            AnimationHelper.CreateSmoothRotateScaleAnimation(new AnimationRequest()
+            {
+                Target = FramingGuideSurface,
+            }, angle, scale).Begin();
+
+            AnimationHelper.CreateSmoothRotateScaleAnimation(new AnimationRequest()
+            {
+                Target = _FocusFrameSurface,
             }, angle, scale).Begin();
         }
 
@@ -1241,8 +1253,33 @@ namespace Kazyx.Uwpmm.Pages
             else { ShutterButtonPressed(); }
         }
 
+        int rotateCount = 0;
+
         private void ShutterButton_Tapped(object sender, TappedRoutedEventArgs e)
         {
+            //switch (rotateCount)
+            //{
+            //    case 0:
+            //        RotateLiveviewImage("90");
+            //        break;
+            //    case 1:
+            //        RotateLiveviewImage("180");
+            //        break;
+            //    case 2:
+            //        RotateLiveviewImage("270");
+            //        break;
+            //    case 3:
+            //        RotateLiveviewImage("0");
+            //        break;
+
+            //}
+            //rotateCount++;
+            //if (rotateCount == 3)
+            //{
+            //    rotateCount = 0;
+            //}
+
+            //return;
 
             if (IsContinuousShootingMode()) { ShowToast(SystemUtil.GetStringResource("Message_ContinuousShootingGuide")); }
             else { ShutterButtonPressed(); }
@@ -1462,23 +1499,6 @@ namespace Kazyx.Uwpmm.Pages
         {
             var height = (sender as Image).RenderSize.Height;
             var width = (sender as Image).RenderSize.Width;
-
-            if ((sender as Image).RenderTransform != null)
-            {
-                var t = (sender as Image).RenderTransform as CompositeTransform;
-                if (t != null)
-                {
-                    if (t.Rotation % 180 != 0)
-                    {
-                        // in case portrait
-                        var tmp = height;
-                        height = width;
-                        width = tmp;
-                    }
-                    width *= t.ScaleX;
-                    height *= t.ScaleY;
-                }
-            }
 
             // To fit focus frames and grids to liveview image
             this._FocusFrameSurface.Height = height;
