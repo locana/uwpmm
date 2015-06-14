@@ -1491,7 +1491,11 @@ namespace Kazyx.Uwpmm.Pages
             var task = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
             {
                 var dialog = new MessageDialog(error);
-                await dialog.ShowAsync();
+                try
+                {
+                    await dialog.ShowAsync();
+                }
+                catch (UnauthorizedAccessException) {/* Duplicated message dialog */}
             });
         }
 
@@ -1629,7 +1633,11 @@ namespace Kazyx.Uwpmm.Pages
                             sb.Append(System.Environment.NewLine);
                             sb.Append(System.Environment.NewLine);
                             var dialog = new MessageDialog(sb.ToString());
-                            await dialog.ShowAsync();
+                            try
+                            {
+                                await dialog.ShowAsync();
+                            }
+                            catch (UnauthorizedAccessException) {/* Duplicated message dialog */}
                         });
                         break;
                     }
