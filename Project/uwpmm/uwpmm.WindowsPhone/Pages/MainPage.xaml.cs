@@ -1298,35 +1298,8 @@ namespace Kazyx.Uwpmm.Pages
             else { ShutterButtonPressed(); }
         }
 
-        int rotateCount = 0;
-
         private void ShutterButton_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            //switch (rotateCount)
-            //{
-            //    case 0:
-            //        RotateLiveviewImage("90");
-            //        break;
-            //    case 1:
-            //        RotateLiveviewImage("180");
-            //        break;
-            //    case 2:
-            //        RotateLiveviewImage("270");
-            //        break;
-            //    case 3:
-            //        RotateLiveviewImage("0");
-            //        break;
-
-            //}
-            //rotateCount++;
-            //if (rotateCount == 3)
-            //{
-            //    rotateCount = 0;
-            //}
-
-            target.Status.TestRotate();
-            return;
-
             if (IsContinuousShootingMode()) { ShowToast(SystemUtil.GetStringResource("Message_ContinuousShootingGuide")); }
             else { ShutterButtonPressed(); }
         }
