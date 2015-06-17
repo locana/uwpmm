@@ -995,12 +995,14 @@ namespace Kazyx.Uwpmm.Pages
             var scale = Math.Min(scale_h, scale_v);
 
             // get relative angle
+
             if (LiveviewImage.RenderTransform != null)
             {
                 var t = LiveviewImage.RenderTransform as CompositeTransform;
                 if (t != null)
                 {
                     angle = angle - t.Rotation;
+
                     if (angle > 180)
                     {
                         angle = angle - ((int)(angle / 360) + 1) * 360;
@@ -1011,6 +1013,8 @@ namespace Kazyx.Uwpmm.Pages
                     }
                 }
             }
+
+            FollowLiveviewDisplay();
 
             AnimationHelper.CreateSmoothRotateScaleAnimation(new AnimationRequest()
             {
@@ -1026,6 +1030,47 @@ namespace Kazyx.Uwpmm.Pages
             {
                 Target = _FocusFrameSurface,
             }, angle, scale).Begin();
+        }
+
+        /// <summary>
+        /// Keep some elements' orientation and scale as same as Liveview's
+        /// </summary>
+        private void FollowLiveviewDisplay()
+        {
+            double liveviewAbsoluteAngle = 0;
+            double liveviewAbsoluteScale = 1;
+            if (LiveviewImage.RenderTransform != null)
+            {
+                var rt = LiveviewImage.RenderTransform as CompositeTransform;
+                if (rt != null)
+                {
+                    liveviewAbsoluteAngle = rt.Rotation;
+                    liveviewAbsoluteScale = rt.ScaleX;
+                }
+            }
+
+            // keep same orientation forcibly
+            if (FramingGuideSurface.RenderTransform != null)
+            {
+                var rt = FramingGuideSurface.RenderTransform as CompositeTransform;
+                if (rt != null)
+                {
+                    rt.Rotation = liveviewAbsoluteAngle;
+                    rt.ScaleX = liveviewAbsoluteScale;
+                    rt.ScaleY = liveviewAbsoluteScale;
+                }
+            }
+
+            if (_FocusFrameSurface.RenderTransform != null)
+            {
+                var rt = _FocusFrameSurface.RenderTransform as CompositeTransform;
+                if (rt != null)
+                {
+                    rt.Rotation = liveviewAbsoluteAngle;
+                    rt.ScaleX = liveviewAbsoluteScale;
+                    rt.ScaleY = liveviewAbsoluteScale;
+                }
+            }
         }
 
         private void UpdateShootMode(Capability<string> ShootMode)
@@ -1279,7 +1324,8 @@ namespace Kazyx.Uwpmm.Pages
             //    rotateCount = 0;
             //}
 
-            //return;
+            target.Status.TestRotate();
+            return;
 
             if (IsContinuousShootingMode()) { ShowToast(SystemUtil.GetStringResource("Message_ContinuousShootingGuide")); }
             else { ShutterButtonPressed(); }
@@ -1509,6 +1555,8 @@ namespace Kazyx.Uwpmm.Pages
             this._FocusFrameSurface.Width = width;
             this.FramingGuideSurface.Height = height;
             this.FramingGuideSurface.Width = width;
+
+            FollowLiveviewDisplay();
         }
 
         private void LiveviewScreenWrapper_SizeChanged(object sender, SizeChangedEventArgs e)
