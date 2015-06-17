@@ -947,72 +947,18 @@ namespace Kazyx.Uwpmm.Pages
                     UpdateShootMode(status.ShootMode);
                     break;
                 case "LiveviewOrientation":
-                    RotateLiveviewImage(status.LiveviewOrientation);
+                    RotateLiveviewImage(status.LiveviewOrientationAsDouble);
                     break;
                 default:
                     break;
             }
         }
 
-        private void RotateLiveviewImage(string _orientation)
+        private void RotateLiveviewImage(double angle)
         {
-            double angle = 0;
+            var scale = CalcRotatedLiveviewImageScale(angle);
 
-            switch (_orientation)
-            {
-                case RemoteApi.Camera.Orientation.Straight:
-                    angle = 0;
-                    break;
-                case RemoteApi.Camera.Orientation.Right:
-                    angle = 90;
-                    break;
-                case RemoteApi.Camera.Orientation.Left:
-                    angle = 270;
-                    break;
-                case RemoteApi.Camera.Orientation.Opposite:
-                    angle = 180;
-                    break;
-            }
-
-            // FramingGuideSurface.LiveviewOrientation = angle;
-
-            double scale_h = 1.0;
-            double scale_v = 1.0;
-            var screen_w = LiveviewScreenWrapper.ActualWidth;
-            var screen_h = LiveviewScreenWrapper.ActualHeight;
-
-            if (angle % 180 == 0)
-            {
-                scale_h = screen_w / LiveviewImage.RenderSize.Width;
-                scale_v = screen_h / LiveviewImage.RenderSize.Height;
-            }
-            else
-            {
-                scale_h = screen_w / LiveviewImage.RenderSize.Height;
-                scale_v = screen_h / LiveviewImage.RenderSize.Width;
-            }
-
-            var scale = Math.Min(scale_h, scale_v);
-
-            // get relative angle
-
-            if (LiveviewImage.RenderTransform != null)
-            {
-                var t = LiveviewImage.RenderTransform as CompositeTransform;
-                if (t != null)
-                {
-                    angle = angle - t.Rotation;
-
-                    if (angle > 180)
-                    {
-                        angle = angle - ((int)(angle / 360) + 1) * 360;
-                    }
-                    else if (angle < -180)
-                    {
-                        angle = angle + ((int)(-angle / 360) + 1) * 360;
-                    }
-                }
-            }
+            angle = ToRelativeLiveviewAngle(angle);
 
             FollowLiveviewDisplay();
 
@@ -1030,6 +976,51 @@ namespace Kazyx.Uwpmm.Pages
             {
                 Target = _FocusFrameSurface,
             }, angle, scale).Begin();
+        }
+
+        private double CalcRotatedLiveviewImageScale(double angle)
+        {
+            double scale_h = 1.0;
+            double scale_v = 1.0;
+            if (LiveviewImage == null || LiveviewScreenWrapper == null) { return 1.0; }
+
+            var screen_w = LiveviewScreenWrapper.ActualWidth;
+            var screen_h = LiveviewScreenWrapper.ActualHeight;
+
+            if (angle % 180 == 0)
+            {
+                scale_h = screen_w / LiveviewImage.RenderSize.Width;
+                scale_v = screen_h / LiveviewImage.RenderSize.Height;
+            }
+            else
+            {
+                scale_h = screen_w / LiveviewImage.RenderSize.Height;
+                scale_v = screen_h / LiveviewImage.RenderSize.Width;
+            }
+
+            return Math.Min(scale_h, scale_v);
+        }
+
+        private double ToRelativeLiveviewAngle(double angle)
+        {
+            if (LiveviewImage.RenderTransform != null)
+            {
+                var t = LiveviewImage.RenderTransform as CompositeTransform;
+                if (t != null)
+                {
+                    angle = angle - t.Rotation;
+
+                    if (angle > 180)
+                    {
+                        angle = angle - ((int)(angle / 360) + 1) * 360;
+                    }
+                    else if (angle < -180)
+                    {
+                        angle = angle + ((int)(-angle / 360) + 1) * 360;
+                    }
+                }
+            }
+            return angle;
         }
 
         /// <summary>
@@ -1055,9 +1046,11 @@ namespace Kazyx.Uwpmm.Pages
                 var rt = FramingGuideSurface.RenderTransform as CompositeTransform;
                 if (rt != null)
                 {
-                    rt.Rotation = liveviewAbsoluteAngle;
                     rt.ScaleX = liveviewAbsoluteScale;
                     rt.ScaleY = liveviewAbsoluteScale;
+                    rt.CenterX = FramingGuideSurface.RenderSize.Width / 2;
+                    rt.CenterY = FramingGuideSurface.RenderSize.Height / 2;
+                    rt.Rotation = liveviewAbsoluteAngle;
                 }
             }
 
@@ -1066,9 +1059,11 @@ namespace Kazyx.Uwpmm.Pages
                 var rt = _FocusFrameSurface.RenderTransform as CompositeTransform;
                 if (rt != null)
                 {
-                    rt.Rotation = liveviewAbsoluteAngle;
                     rt.ScaleX = liveviewAbsoluteScale;
                     rt.ScaleY = liveviewAbsoluteScale;
+                    rt.CenterX = _FocusFrameSurface.RenderSize.Width / 2;
+                    rt.CenterY = _FocusFrameSurface.RenderSize.Height / 2;
+                    rt.Rotation = liveviewAbsoluteAngle;
                 }
             }
         }
@@ -1545,11 +1540,20 @@ namespace Kazyx.Uwpmm.Pages
             double scale_h = w / LiveviewImage.RenderSize.Width;
             double scale_v = h / LiveviewImage.RenderSize.Height;
 
-            LiveviewImage.RenderTransform = new CompositeTransform()
+            if (LiveviewImage.RenderTransform != null)
             {
-                ScaleX = Math.Min(scale_h, scale_v),
-                ScaleY = Math.Min(scale_h, scale_v),
-            };
+                var rt = LiveviewImage.RenderTransform as CompositeTransform;
+                if (rt != null && target != null && target.Status != null)
+                {
+                    var angle = target.Status.LiveviewOrientationAsDouble;
+                    var scale = CalcRotatedLiveviewImageScale(angle);
+                    rt.ScaleX = scale;
+                    rt.ScaleY = scale;
+                    rt.CenterX = LiveviewImage.RenderSize.Width / 2;
+                    rt.CenterY = LiveviewImage.RenderSize.Height / 2;
+                    rt.Rotation = angle;
+                }
+            }
         }
 
         private void ShowToast(string s)

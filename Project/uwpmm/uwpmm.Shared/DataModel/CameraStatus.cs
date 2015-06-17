@@ -279,7 +279,7 @@ namespace Kazyx.Uwpmm.DataModel
         }
 #endif
 
-        private string _LiveviewOrientation;
+        private string _LiveviewOrientation = "";
         public string LiveviewOrientation
         {
             set
@@ -291,6 +291,25 @@ namespace Kazyx.Uwpmm.DataModel
                 }
             }
             get { return _LiveviewOrientation == null ? Orientation.Straight : _LiveviewOrientation; }
+        }
+
+        public double LiveviewOrientationAsDouble
+        {
+            get
+            {
+               switch (_LiveviewOrientation)
+                {
+                    case RemoteApi.Camera.Orientation.Straight:
+                        return 0;
+                    case RemoteApi.Camera.Orientation.Right:
+                        return 90;
+                    case RemoteApi.Camera.Orientation.Left:
+                        return 270;
+                    case RemoteApi.Camera.Orientation.Opposite:
+                        return 180;
+                }
+                return 0;
+            }
         }
 
         private List<string> _PictureUrls;

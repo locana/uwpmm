@@ -93,7 +93,8 @@
                         </Grid>
                         <Grid Name="LiveviewScreen" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Visibility="Collapsed">
                             <Image x:Name="LiveviewImage" Source="{Binding Image, Mode=OneWay}" Loaded="LiveviewImage_Loaded" Unloaded="LiveviewImage_Unloaded" SizeChanged="LiveviewImage_SizeChanged" 
-                               Visibility="{Binding Path=ScreenViewData.LiveviewImageDisplayed, FallbackValue=Collapsed, Converter={StaticResource B2VConverter}}"/>
+                               Visibility="{Binding Path=ScreenViewData.LiveviewImageDisplayed, FallbackValue=Collapsed, Converter={StaticResource B2VConverter}}"
+                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
                             <Image x:Name="AudioDummyScreen" Source="/Assets/Screen/audio_locana.png" Margin="30" 
                                Visibility="{Binding IsAudioMode, FallbackValue=Collapsed, Converter={StaticResource B2VConverter}}"/>
                             <controls:FramingGridsSurface x:Name="FramingGuideSurface" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
