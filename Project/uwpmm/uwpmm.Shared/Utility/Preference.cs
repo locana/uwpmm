@@ -65,7 +65,20 @@ namespace Kazyx.Uwpmm.Utility
 
         public static string LastLaunchedVersion
         {
-            get { return GetProperty(last_version, (App.Current as App).AppVersion); }
+            get
+            {
+                var values = ApplicationData.Current.LocalSettings.Values;
+                if (values.ContainsKey(last_version))
+                {
+                    return (string)values[last_version];
+                }
+                else
+                {
+                    // Initial launch or -1.3.0 users.
+                    InitialLaunchedDateTime = DateTimeOffset.Now;
+                    return GetProperty(last_version, (App.Current as App).AppVersion);
+                }
+            }
             set { SetProperty(last_version, value); }
         }
 
