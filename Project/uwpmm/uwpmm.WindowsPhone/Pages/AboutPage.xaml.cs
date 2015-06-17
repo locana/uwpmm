@@ -120,7 +120,6 @@ namespace Kazyx.Uwpmm.Pages
         #endregion
 
         private static bool IsManifestLoaded = false;
-        private static string version = "";
         private static string license = "";
         private static string copyright = "";
         private const string developer = "kazyx and naotaco (@naotaco_dev)";
@@ -133,7 +132,7 @@ namespace Kazyx.Uwpmm.Pages
             {
                 LoadAssemblyInformation();
             }
-            VERSION_STR.Text = version;
+            VERSION_STR.Text = (App.Current as App).AppVersion;
 
             COPYRIGHT.Text = copyright;
 
@@ -145,7 +144,6 @@ namespace Kazyx.Uwpmm.Pages
         private static void LoadAssemblyInformation()
         {
             var assembly = (typeof(App)).GetTypeInfo().Assembly;
-            version = assembly.GetName().Version.ToString();
             foreach (var attr in assembly.CustomAttributes)
             {
                 if (attr.AttributeType == typeof(AssemblyCopyrightAttribute))

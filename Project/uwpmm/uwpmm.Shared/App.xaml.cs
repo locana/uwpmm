@@ -2,6 +2,7 @@
 using Kazyx.Uwpmm.Pages;
 using Kazyx.Uwpmm.Utility;
 using System;
+using System.Reflection;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.UI.Xaml;
@@ -45,6 +46,12 @@ namespace Kazyx.Uwpmm
             get;
         }
 
+        public string AppVersion
+        {
+            private set;
+            get;
+        }
+
         /// <summary>
         /// Invoked when the application is launched normally by the end user.  Other entry points
         /// will be used when the application is launched to open a specific file, to display
@@ -60,6 +67,16 @@ namespace Kazyx.Uwpmm
                 this.DebugSettings.EnableFrameRateCounter = true;
             }
 #endif
+            var assembly = (typeof(App)).GetTypeInfo().Assembly;
+            AppVersion = assembly.GetName().Version.ToString();
+
+            var lastVersion = Preference.LastLaunchedVersion;
+            if (lastVersion != AppVersion)
+            {
+                DebugUtil.Log("Update detected!! from: " + lastVersion);
+                Preference.LastLaunchedVersion = AppVersion;
+                Preference.InitialLaunchedDateTime = DateTimeOffset.Now;
+            }
 
             var init = Preference.InitialLaunchedDateTime;
             DebugUtil.Log("Initial launched datetime: " + init.ToString());
@@ -71,7 +88,7 @@ namespace Kazyx.Uwpmm
             if (IsTrialVersion)
             {
                 var diff = DateTimeOffset.Now.Subtract(init);
-                IsFunctionLimited = diff.Days > 90;
+                IsFunctionLimited = diff.Days > 30;
             }
             else
             {

@@ -23,6 +23,7 @@ namespace Kazyx.Uwpmm.Utility
         private const string remote_contents_set = "remote_contents_set";
 
         private const string init_launched_datetime = "init_datetime";
+        private const string last_version = "last_version";
 
         public static T GetProperty<T>(string key, T defaultValue)
         {
@@ -59,6 +60,13 @@ namespace Kazyx.Uwpmm.Utility
                     return now;
                 }
             }
+            set { SetProperty(init_launched_datetime, value.ToString()); }
+        }
+
+        public static string LastLaunchedVersion
+        {
+            get { return GetProperty(last_version, (App.Current as App).AppVersion); }
+            set { SetProperty(last_version, value); }
         }
 
         public static bool PostviewSyncEnabled
