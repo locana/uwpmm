@@ -25,6 +25,7 @@ namespace Kazyx.Uwpmm.DataModel
             RequestFocusFrameInfo = Preference.FocusFrameEnabled;
             PrioritizeOriginalSizeContents = Preference.OriginalSizeContentsPrioritized;
             RemoteContentsSet = Preference.RemoteContentsSet;
+            LiveviewRotationEnabled = Preference.LiveviewRotationEnabled;
         }
 
         public static ApplicationSettings GetInstance()
@@ -328,6 +329,20 @@ namespace Kazyx.Uwpmm.DataModel
                     Preference.RemoteContentsSet = value;
                     _RemoteContentsType = value;
                     NotifyChangedOnUI("RemoteContentsSet");
+                }
+            }
+        }
+
+        private bool _LiveviewRotationEnabled = false;
+        public bool LiveviewRotationEnabled
+        {
+            get { return _LiveviewRotationEnabled; }
+            set
+            {
+                if (value != _LiveviewRotationEnabled)
+                {
+                    _LiveviewRotationEnabled = value;
+                    NotifyChangedOnUI("LiveviewRotationEnabled");
                 }
             }
         }

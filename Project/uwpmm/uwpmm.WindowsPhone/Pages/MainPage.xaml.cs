@@ -947,7 +947,10 @@ namespace Kazyx.Uwpmm.Pages
                     UpdateShootMode(status.ShootMode);
                     break;
                 case "LiveviewOrientation":
-                    RotateLiveviewImage(status.LiveviewOrientationAsDouble);
+                    if (ApplicationSettings.GetInstance().LiveviewRotationEnabled)
+                    {
+                        RotateLiveviewImage(status.LiveviewOrientationAsDouble);
+                    }
                     break;
                 default:
                     break;
@@ -1744,6 +1747,22 @@ namespace Kazyx.Uwpmm.Pages
                     if (!enabled) { _FocusFrameSurface.ClearFrames(); }
                 });
             display_settings.Add(new ToggleSetting(FocusFrameSetting));
+
+            display_settings.Add(new ToggleSetting(
+                new AppSettingData<bool>(SystemUtil.GetStringResource("LiveviewRotation"), SystemUtil.GetStringResource("LiveviewRotation_guide"),
+                    () => { return ApplicationSettings.GetInstance().LiveviewRotationEnabled; },
+                    enabled =>
+                    {
+                        ApplicationSettings.GetInstance().LiveviewRotationEnabled = enabled;
+                        if (enabled && target != null && target.Status != null)
+                        {
+                            RotateLiveviewImage(target.Status.LiveviewOrientationAsDouble);
+                        }
+                        else
+                        {
+                            RotateLiveviewImage(0);
+                        }
+                    })));
 
             display_settings.Add(new ToggleSetting(
                 new AppSettingData<bool>(SystemUtil.GetStringResource("FramingGrids"), SystemUtil.GetStringResource("Guide_FramingGrids"),

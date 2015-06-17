@@ -1097,4 +1097,10 @@ PlayMemories Camera Appsストアで最新版にアップデートしてくだ�
   <data name="AssistPattern" xml:space="preserve">
     <value>アシストパターン</value>
   </data>
+  <data name="LiveviewRotation" xml:space="preserve">
+    <value>カメラ回転検知</value>
+  </data>
+  <data name="LiveviewRotation_guide" xml:space="preserve">
+    <value>一部の機種では、カメラ本体の回転をライブビュー映像に反映できます</value>
+  </data>
 </root>
