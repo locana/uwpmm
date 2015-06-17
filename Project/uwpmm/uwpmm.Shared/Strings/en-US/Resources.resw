@@ -1175,4 +1175,10 @@ Open gallary to browse contents in your camera device.</value>
   <data name="AssistPattern" xml:space="preserve">
     <value>Assist pattern</value>
   </data>
+  <data name="LiveviewRotation" xml:space="preserve">
+    <value>Detect camera rotation</value>
+  </data>
+  <data name="LiveviewRotation_guide" xml:space="preserve">
+    <value>Synchronize camera and liveview orientation. Note that this feature is supported only on some models.</value>
+  </data>
 </root>
