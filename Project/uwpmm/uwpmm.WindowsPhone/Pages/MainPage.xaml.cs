@@ -888,6 +888,10 @@ namespace Kazyx.Uwpmm.Pages
         {
             await SetupFocusFrame(ApplicationSettings.GetInstance().RequestFocusFrameInfo);
 
+            if (target == null)
+            {
+                return;
+            }
             if (target.Api.Capability.IsAvailable("setLiveviewFrameInfo"))
             {
                 FocusFrameSetting.SettingVisibility = Visibility.Visible;
