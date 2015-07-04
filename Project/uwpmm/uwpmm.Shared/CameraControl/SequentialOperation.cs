@@ -5,6 +5,7 @@ using Kazyx.Uwpmm.DataModel;
 using Kazyx.Uwpmm.Playback;
 using Kazyx.Uwpmm.Utility;
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.Devices.Geolocation;
@@ -205,6 +206,110 @@ namespace Kazyx.Uwpmm.CameraControl
                     try { await device.Api.Camera.StopIntervalStillRecAsync(); }
                     catch (RemoteApiException) { }
                     break;
+            }
+        }
+
+        private delegate Task RemoteRequestTask();
+        private static async void TryToStart(RemoteRequestTask task, Action<ShootingResult> Finished)
+        {
+            try
+            {
+                await task();
+                if (Finished != null) { Finished.Invoke(ShootingResult.StartSucceed); }
+            }
+            catch (RemoteApiException ex)
+            {
+                DebugUtil.Log(ex.StackTrace);
+                if (Finished != null) { Finished.Invoke(ShootingResult.StartFailed); }
+            }
+        }
+
+        private static async void TryToStop(RemoteRequestTask task, Action<ShootingResult> Finished)
+        {
+            try
+            {
+                await task();
+                if (Finished != null) { Finished.Invoke(ShootingResult.StopSucceed); }
+            }
+            catch (RemoteApiException ex)
+            {
+                DebugUtil.Log(ex.StackTrace);
+                if (Finished != null) { Finished.Invoke(ShootingResult.StopFailed); }
+
+            }
+        }
+
+        internal enum ShootingResult
+        {
+            StillSucceed,
+            StillFailed,
+            StartSucceed,
+            StartFailed,
+            StopSucceed,
+            StopFailed,
+        };
+
+        internal static async Task StartStopRecording(List<TargetDevice> devices, Action<ShootingResult> Finished)
+        {
+            foreach (var target in devices)
+            {
+                if (target == null || target.Status == null || target.Status.ShootMode == null) { return; }
+
+                switch (target.Status.ShootMode.Current)
+                {
+                    case ShootModeParam.Still:
+                        try
+                        {
+                            await TakePicture(target.Api, GeopositionManager.INSTANCE.LatestPosition);
+                            if (Finished != null) { Finished.Invoke(ShootingResult.StillSucceed); }
+                        }
+                        catch (RemoteApiException e)
+                        {
+                            DebugUtil.Log(e.StackTrace);
+                            if (Finished != null) { Finished.Invoke(ShootingResult.StillFailed); }
+                        }
+                        break;
+                    case ShootModeParam.Movie:
+                        if (target.Status.Status == EventParam.Idle)
+                        {
+                            TryToStart(target.Api.Camera.StartMovieRecAsync, Finished);
+                        }
+                        else if (target.Status.Status == EventParam.MvRecording)
+                        {
+                            TryToStop(target.Api.Camera.StopMovieRecAsync, Finished);
+                        }
+                        break;
+                    case ShootModeParam.Audio:
+                        if (target.Status.Status == EventParam.Idle)
+                        {
+                            TryToStart(target.Api.Camera.StartAudioRecAsync, Finished);
+                        }
+                        else if (target.Status.Status == EventParam.AuRecording)
+                        {
+                            TryToStop(target.Api.Camera.StopAudioRecAsync, Finished);
+                        }
+                        break;
+                    case ShootModeParam.Interval:
+                        if (target.Status.Status == EventParam.Idle)
+                        {
+                            TryToStart(target.Api.Camera.StartIntervalStillRecAsync, Finished);
+                        }
+                        else if (target.Status.Status == EventParam.ItvRecording)
+                        {
+                            TryToStop(target.Api.Camera.StopIntervalStillRecAsync, Finished);
+                        }
+                        break;
+                    case ShootModeParam.Loop:
+                        if (target.Status.Status == EventParam.Idle)
+                        {
+                            TryToStart(target.Api.Camera.StartLoopRecAsync, Finished);
+                        }
+                        else if (target.Status.Status == EventParam.LoopRecording)
+                        {
+                            TryToStop(target.Api.Camera.StopLoopRecAsync, Finished);
+                        }
+                        break;
+                }
             }
         }
     }

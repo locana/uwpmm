@@ -15,7 +15,7 @@ namespace Kazyx.Uwpmm.Utility
         private const int SKIP_LIMIT = 5;
         private int Count = 0;
 
-        public Action<ShootingResult> Tick;
+        public Action<PeriodicalShootingResult> Tick;
         public Action<StopReason> Stopped;
         public Action<PeriodicalShootingStatus> StatusUpdated;
 
@@ -88,12 +88,12 @@ namespace Kazyx.Uwpmm.Utility
                 }
                 else
                 {
-                    if (Tick != null) { Tick(ShootingResult.Skipped); }
+                    if (Tick != null) { Tick(PeriodicalShootingResult.Skipped); }
                 }
             }
             else
             {
-                if (Tick != null) { Tick(ShootingResult.Succeed); }
+                if (Tick != null) { Tick(PeriodicalShootingResult.Succeed); }
                 Count++;
             }
 
@@ -108,7 +108,7 @@ namespace Kazyx.Uwpmm.Utility
             }
         }
 
-        public enum ShootingResult
+        public enum PeriodicalShootingResult
         {
             Succeed,
             Skipped,
