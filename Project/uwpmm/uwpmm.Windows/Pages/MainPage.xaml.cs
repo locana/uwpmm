@@ -187,9 +187,9 @@ namespace Kazyx.Uwpmm.Pages
                 case "BatteryInfo":
                     BatteryStatusDisplay.BatteryInfo = status.BatteryInfo;
                     break;
-                //case "ContShootingResult":
-                //    EnqueueContshootingResult(status.ContShootingResult);
-                //    break;
+                case "ContShootingResult":
+                    EnqueueContshootingResult(status.ContShootingResult);
+                    break;
                 case "Status":
                     if (status.Status == EventParam.Idle)
                     {
@@ -208,6 +208,17 @@ namespace Kazyx.Uwpmm.Pages
                 //    break;
                 default:
                     break;
+            }
+        }
+
+        private static void EnqueueContshootingResult(List<ContShootingResult> ContShootingResult)
+        {
+            if (ApplicationSettings.GetInstance().IsPostviewTransferEnabled)
+            {
+                foreach (var result in ContShootingResult)
+                {
+                    MediaDownloader.Instance.EnqueuePostViewImage(new Uri(result.PostviewUrl, UriKind.Absolute), GeopositionManager.INSTANCE.LatestPosition);
+                }
             }
         }
 
