@@ -527,5 +527,15 @@ namespace Kazyx.Uwpmm.DataModel
                 }
             }
         }
+
+        public string FriendlyName
+        {
+            get { return "Connected: " + Device.FriendlyName; }
+        }
+
+        public void NotifyFriendlyNameUpdated()
+        {
+            NotifyChangedOnUI("FriendlyName");
+        }
     }
 }

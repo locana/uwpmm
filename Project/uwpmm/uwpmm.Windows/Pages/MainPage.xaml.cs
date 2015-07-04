@@ -140,6 +140,8 @@ namespace Kazyx.Uwpmm.Pages
         private ImageDataSource liveview_data = new ImageDataSource();
         private ImageDataSource postview_data = new ImageDataSource();
 
+        LiveviewScreenViewData ScreenViewData;
+
         async void NetworkObserver_Discovered(object sender, CameraDeviceEventArgs e)
         {
             var target = e.CameraDevice;
@@ -155,7 +157,11 @@ namespace Kazyx.Uwpmm.Pages
 
             this.target = target;
             await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-            {
+            {        
+                ScreenViewData = new LiveviewScreenViewData(target);
+                ScreenViewData.NotifyFriendlyNameUpdated();
+                Header.DataContext = ScreenViewData;
+                ApplicationArea.DataContext = ScreenViewData;
                 var panels = SettingPanelBuilder.CreateNew(target);
                 var pn = panels.GetPanelsToShow();
                 foreach (var panel in pn)
@@ -163,6 +169,12 @@ namespace Kazyx.Uwpmm.Pages
                     ControlPanel.Children.Add(panel);
                 }
             });
+        }
+
+        private void TearDownCurrentTarget()
+        {
+            Header.DataContext = null;
+            ApplicationArea.DataContext = null;
         }
 
         private bool IsRendering = false;
@@ -195,9 +207,10 @@ namespace Kazyx.Uwpmm.Pages
             image.DataContext = null;
             liveview.JpegRetrieved -= liveview_JpegRetrieved;
             liveview.Closed -= liveview_Closed;
+            TearDownCurrentTarget();
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void ShutterButton_Click(object sender, RoutedEventArgs e)
         {
             ShutterButtonPressed();
         }

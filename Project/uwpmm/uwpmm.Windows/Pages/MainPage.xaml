@@ -30,7 +30,7 @@
         </Grid.RowDefinitions>
 
         <!-- Back button and page title -->
-        <Grid>
+        <Grid x:Name="Header">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="120"/>
                 <ColumnDefinition Width="*"/>
@@ -41,26 +41,30 @@
                         AutomationProperties.Name="Back"
                         AutomationProperties.AutomationId="BackButton"
                         AutomationProperties.ItemType="Navigation Button"/>
-            <TextBlock x:Name="pageTitle" Text="{Binding [ApplicationTitle], Source={StaticResource LocalizedStrings}}"
-                       Style="{StaticResource HeaderTextBlockStyle}" Grid.Column="1" Foreground="{ThemeResource AccentColorBrush}"
-                        IsHitTestVisible="false" TextWrapping="NoWrap" VerticalAlignment="Bottom" Margin="0,0,30,40"/>
+            <StackPanel Grid.Column="1" Margin="30,20" VerticalAlignment="Center">
+                <TextBlock x:Name="pageTitle" Text="{Binding [ApplicationTitle], Source={StaticResource LocalizedStrings}}"
+                       Style="{StaticResource HeaderTextBlockStyle}"  Foreground="{ThemeResource AccentColorBrush}"
+                        IsHitTestVisible="false" TextWrapping="NoWrap" VerticalAlignment="Center" Margin="10" />
+                <TextBlock x:Name="ConnectedDeviceName" Text="{Binding FriendlyName}" Style="{StaticResource SubheaderTextBlockStyle}"/>
+            </StackPanel>
         </Grid>
-        <Grid Grid.Row="1" Margin="24,0,0,0">
+        <Grid Grid.Row="1" Margin="24,0,0,0" Name="ApplicationArea">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="880" />
+                <ColumnDefinition Width="3*" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <StackPanel x:Name="InformationPanel" Grid.Column="0" HorizontalAlignment="Left" Margin="0,0,0,0" Grid.Row="1" VerticalAlignment="Center"/>
             <Grid Grid.Column="1" Margin="0,-90,0,16">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*" />
-                    <RowDefinition Height="495" />
+                    <RowDefinition Height="3*" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
-                <Border Background="Black" Grid.Row="1" Grid.Column="1" />
-                <Image x:Name="LiveviewImage" Source="{Binding Image, Mode=OneWay}" Loaded="LiveviewImage_Loaded" Unloaded="LiveviewImage_Unloaded" Grid.Column="1" Grid.Row="1" />
-                <Grid Grid.Row="2" Grid.Column="1">
+                <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Grid.Row="1" Grid.Column="1" />
+                <Image x:Name="LiveviewImage" Source="{Binding Image, Mode=OneWay}" Loaded="LiveviewImage_Loaded" Unloaded="LiveviewImage_Unloaded" 
+                       Grid.Column="1" Grid.Row="1" />
+                <Grid Grid.Row="2" Grid.Column="1" MaxHeight="120">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="240" />
                         <ColumnDefinition Width="*" />
@@ -74,27 +78,29 @@
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="48" />
                             </Grid.ColumnDefinitions>
-                            <Button x:Name="ZoomOut" Grid.Column="0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Padding="12,16" 
-                                    VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch" 
+                            <Button x:Name="ZoomOut" Grid.Column="0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Padding="6" 
+                                    VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch" BorderThickness="1"
                                     Click="ZoomOutButton_Click" Tapped="ZoomOutButton_Tapped" Holding="ZoomOutButton_Holding">
                                 <Image Source="/Assets/LiveviewScreen/ZoomOut.png" Margin="0" />
                             </Button>
-                            <Button x:Name="ZoomIn" Grid.Column="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Padding="12,16"
-                                    VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch" 
+                            <Button x:Name="ZoomIn" Grid.Column="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Padding="6"
+                                    VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch" BorderThickness="1"
                                     Click="ZoomInButton_Click" Tapped="ZoomInButton_Tapped" Holding="ZoomInButton_Holding">
                                 <Image Source="/Assets/LiveviewScreen/ZoomIn.png" Margin="0" />
                             </Button>
                         </Grid>
-                        <Image x:Name="PostviewImage"></Image>
+                        <Image x:Name="PostviewImage"/>
                     </StackPanel>
-                    <Button Grid.Column="2" VerticalAlignment="Top" HorizontalAlignment="Stretch" Padding="12" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch" Height="96" Click="Button_Click" Grid.Row="1" Margin="0,16,0,0" >
-                        <Button.Background>
-                            <ImageBrush ImageSource="Assets/Camera.png" Stretch="Uniform" />
-                        </Button.Background>
+                    <Button Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Padding="12" 
+                            VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch"
+                            Click="ShutterButton_Click" Grid.Row="1" Margin="0,16,0,0" BorderThickness="1" >
+                        <Image Source="{Binding ShutterButtonImage, Mode=OneWay}" Margin="0"/>
                     </Button>
                 </Grid>
             </Grid>
-            <StackPanel x:Name="ControlPanel" Grid.Column="2" HorizontalAlignment="Left" Margin="28,0,8,0" Grid.Row="1" VerticalAlignment="Center"/>
+            <ScrollViewer Grid.Column="2" HorizontalAlignment="Stretch" MinWidth="250">
+                <StackPanel x:Name="ControlPanel" Margin="0" Grid.Row="1" VerticalAlignment="Center"/>
+            </ScrollViewer>
         </Grid>
     </Grid>
 
