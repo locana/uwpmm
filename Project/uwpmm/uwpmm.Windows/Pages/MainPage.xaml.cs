@@ -7,9 +7,11 @@ using Kazyx.Uwpmm.DataModel;
 using Kazyx.Uwpmm.Settings;
 using Kazyx.Uwpmm.Utility;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using Windows.Storage;
 using Windows.UI.Core;
+using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
@@ -195,10 +197,37 @@ namespace Kazyx.Uwpmm.Pages
             liveview.Closed -= liveview_Closed;
         }
 
-        private async void Button_Click(object sender, RoutedEventArgs e)
+        private void Button_Click(object sender, RoutedEventArgs e)
         {
-            if (target == null) return;
-            await SequentialOperation.TakePicture(target.Api, null);
+            ShutterButtonPressed();
+        }
+
+        async void ShutterButtonPressed()
+        {
+            await SequentialOperation.StartStopRecording(
+                new List<TargetDevice> { target },
+                (result) =>
+                {
+                    switch (result)
+                    {
+                        case SequentialOperation.ShootingResult.StillSucceed:
+                            // todo: show message like toast
+                            // ShowToast(SystemUtil.GetStringResource("Message_ImageCapture_Succeed"));                            
+                            break;
+                        case SequentialOperation.ShootingResult.StartSucceed:
+                        case SequentialOperation.ShootingResult.StopSucceed:
+                            break;
+                        case SequentialOperation.ShootingResult.StillFailed:
+                        case SequentialOperation.ShootingResult.StartFailed:
+                            ShowError(SystemUtil.GetStringResource("ErrorMessage_shootingFailure"));
+                            break;
+                        case SequentialOperation.ShootingResult.StopFailed:
+                            ShowError(SystemUtil.GetStringResource("ErrorMessage_fatal"));
+                            break;
+                        default:
+                            break;
+                    }
+                });
         }
 
         private async void ZoomOut_Tapped(object sender, TappedRoutedEventArgs e)
@@ -255,6 +284,19 @@ namespace Kazyx.Uwpmm.Pages
         private async void ZoomIn_PointerExited(object sender, PointerRoutedEventArgs e)
         {
             // await ZoomOperation.StopZoomIn(target.Api.Camera);
+        }
+
+        private void ShowError(string error)
+        {
+            var task = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+            {
+                var dialog = new MessageDialog(error);
+                try
+                {
+                    await dialog.ShowAsync();
+                }
+                catch (UnauthorizedAccessException) {/* Duplicated message dialog */}
+            });
         }
     }
 }
