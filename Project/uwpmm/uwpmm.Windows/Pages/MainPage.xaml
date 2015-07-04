@@ -100,7 +100,9 @@
                                        Visibility="{Binding GeopositionEnabled, FallbackValue=Collapsed, Converter={StaticResource B2VConverter}}"/>
                 </Grid>
             </Grid>
-            <StackPanel x:Name="InformationPanel" Grid.Column="0" HorizontalAlignment="Left" Margin="0,0,0,0" Grid.Row="1" VerticalAlignment="Center"/>
+            <StackPanel x:Name="InformationPanel" Grid.Column="0" HorizontalAlignment="Stretch" Margin="0,0,0,0" Grid.Row="1" VerticalAlignment="Stretch">
+                <controls:Histogram Margin="12" HorizontalAlignment="Stretch" VerticalAlignment="Top" x:Name="HistogramControl" Height="180" />
+            </StackPanel>
             <Grid Grid.Column="1" Margin="0,-90,0,16">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*" />

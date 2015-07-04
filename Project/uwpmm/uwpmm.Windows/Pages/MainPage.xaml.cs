@@ -3,9 +3,11 @@ using Kazyx.RemoteApi;
 using Kazyx.RemoteApi.Camera;
 using Kazyx.Uwpmm.CameraControl;
 using Kazyx.Uwpmm.Common;
+using Kazyx.Uwpmm.Control;
 using Kazyx.Uwpmm.DataModel;
 using Kazyx.Uwpmm.Settings;
 using Kazyx.Uwpmm.Utility;
+using NtImageProcessor;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -112,6 +114,23 @@ namespace Kazyx.Uwpmm.Pages
             NetworkObserver.INSTANCE.CameraDiscovered += NetworkObserver_Discovered;
             NetworkObserver.INSTANCE.ForceRestart();
             MediaDownloader.Instance.Fetched += OnFetchdImage;
+
+            InitializeUI();
+        }
+
+        private void InitializeUI()
+        {
+            HistogramControl.Init(Histogram.ColorType.White, 800);
+
+            HistogramCreator = null;
+            HistogramCreator = new HistogramCreator(HistogramCreator.HistogramResolution.Resolution_256);
+            HistogramCreator.OnHistogramCreated += async (r, g, b) =>
+            {
+                await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                {
+                    HistogramControl.SetHistogramValue(r, g, b);
+                });
+            };
         }
 
         private void pageRoot_Unloaded(object sender, RoutedEventArgs e)
@@ -229,12 +248,14 @@ namespace Kazyx.Uwpmm.Pages
 
         private bool IsRendering = false;
 
+        private HistogramCreator HistogramCreator;
+
         async void liveview_JpegRetrieved(object sender, JpegEventArgs e)
         {
             if (IsRendering) { return; }
 
             IsRendering = true;
-            await LiveviewUtil.SetAsBitmap(e.Packet.ImageData, liveview_data, null, Dispatcher);
+            await LiveviewUtil.SetAsBitmap(e.Packet.ImageData, liveview_data, HistogramCreator, Dispatcher);
             IsRendering = false;
         }
 
