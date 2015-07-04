@@ -156,12 +156,14 @@ namespace Kazyx.Uwpmm.Pages
             }
 
             this.target = target;
+            target.Status.PropertyChanged += Status_PropertyChanged;
+
             await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-            {        
+            {
                 ScreenViewData = new LiveviewScreenViewData(target);
                 ScreenViewData.NotifyFriendlyNameUpdated();
-                Header.DataContext = ScreenViewData;
-                ApplicationArea.DataContext = ScreenViewData;
+                BatteryStatusDisplay.BatteryInfo = target.Status.BatteryInfo;
+                LayoutRoot.DataContext = ScreenViewData;
                 var panels = SettingPanelBuilder.CreateNew(target);
                 var pn = panels.GetPanelsToShow();
                 foreach (var panel in pn)
@@ -171,10 +173,47 @@ namespace Kazyx.Uwpmm.Pages
             });
         }
 
+        void Status_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            var status = sender as CameraStatus;
+            switch (e.PropertyName)
+            {
+                //case "FocusStatus":
+                //    UpdateFocusStatus(status.FocusStatus);
+                //    break;
+                //case "TouchFocusStatus":
+                //    UpdateTouchFocus(status.TouchFocusStatus);
+                //    break;
+                case "BatteryInfo":
+                    BatteryStatusDisplay.BatteryInfo = status.BatteryInfo;
+                    break;
+                //case "ContShootingResult":
+                //    EnqueueContshootingResult(status.ContShootingResult);
+                //    break;
+                case "Status":
+                    if (status.Status == EventParam.Idle)
+                    {
+                        // When recording is stopped, clear recording time.
+                        status.RecordingTimeSec = 0;
+                    }
+                    break;
+                //case "ShootMode":
+                //    UpdateShootMode(status.ShootMode);
+                //    break;
+                //case "LiveviewOrientation":
+                //    if (ApplicationSettings.GetInstance().LiveviewRotationEnabled)
+                //    {
+                //        RotateLiveviewImage(status.LiveviewOrientationAsDouble);
+                //    }
+                //    break;
+                default:
+                    break;
+            }
+        }
+
         private void TearDownCurrentTarget()
         {
-            Header.DataContext = null;
-            ApplicationArea.DataContext = null;
+            LayoutRoot.DataContext = null;
         }
 
         private bool IsRendering = false;
