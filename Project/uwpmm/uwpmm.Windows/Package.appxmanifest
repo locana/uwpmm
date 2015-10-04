@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/2010/manifest" xmlns:m2="http://schemas.microsoft.com/appx/2013/manifest">
-  <Identity Name="d58d1164-97e7-4cfc-a71f-bd1141d0ace3" Publisher="CN=Kazunori" Version="1.0.0.0" />
+  <Identity Name="Locana" Publisher="CN=Locana" Version="1.0.0.0" />
   <Properties>
-    <DisplayName>Kazyx.Uwpmm.Windows</DisplayName>
+    <DisplayName>Locana</DisplayName>
     <PublisherDisplayName>kazyx</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
