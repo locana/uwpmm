@@ -1181,4 +1181,10 @@ Open gallary to browse contents in your camera device.</value>
   <data name="LiveviewRotation_guide" xml:space="preserve">
     <value>Synchronize camera and liveview orientation. Note that this feature is supported only on some models.</value>
   </data>
+  <data name="ZoomMode_Digital" xml:space="preserve">
+    <value>Digital zoom</value>
+  </data>
+  <data name="ZoomMode_SmartZoom" xml:space="preserve">
+    <value>Smart zoom</value>
+  </data>
 </root>

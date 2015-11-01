@@ -1103,4 +1103,10 @@ PlayMemories Camera Appsストアで最新版にアップデートしてくだ�
   <data name="LiveviewRotation_guide" xml:space="preserve">
     <value>一部の機種では、カメラ本体の回転をライブビュー映像に反映できます</value>
   </data>
+  <data name="ZoomMode_Digital" xml:space="preserve">
+    <value>デジタルズーム</value>
+  </data>
+  <data name="ZoomMode_SmartZoom" xml:space="preserve">
+    <value>スマートズーム</value>
+  </data>
 </root>

@@ -12,7 +12,6 @@
                 <ResourceDictionary Source="Resources/PlatformDictionary.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
-
             <local:LocalizedStrings x:Key="LocalizedStrings" />
 
             <!--For PhotoPlaybackScreem.xaml-->
@@ -25,3 +24,4 @@
 
     </Application.Resources>
 </Application>
+    

@@ -383,10 +383,14 @@ namespace Kazyx.Uwpmm.Utility
             {
                 case ZoomMode.ClearImageDigital:
                     return SystemUtil.GetStringResource("ZoomMode_ClearImageDigital");
-                case ZoomMode.Optical:
+                case ZoomMode.OpticalOnly:
                     return SystemUtil.GetStringResource("ZoomMode_Optical");
+                case ZoomMode.SmartOnly:
+                    return SystemUtil.GetStringResource("ZoomMode_SmartZoom");
+                case ZoomMode.Digital:
+                    return SystemUtil.GetStringResource("ZoomMode_Digital");
             }
-            return val;
+            return val + "_";
         }
 
         internal static Capability<string> FromStillQuality(Capability<string> info)
