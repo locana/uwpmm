@@ -65,6 +65,7 @@ namespace Kazyx.Uwpmm.DataModel
                 NotifyChangedOnUI("IsShootingParamAvailable");
                 NotifyChangedOnUI("IsShootingParamSettingAvailable");
                 NotifyChangedOnUI("IsProgramShiftAvailable");
+                NotifyChangedOnUI("IsShootingParamDisplayAvailable");
             };
 
             ApplicationSettings.GetInstance().PropertyChanged += (sender, args) =>
