@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "uwpmm", "uwpmm", "{60AFF534-9139-491F-9ADA-D7F1CECAAC12}"
 EndProject
@@ -12,8 +12,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "uwpmm.WindowsPhone", "uwpmm\uwpmm.WindowsPhone\uwpmm.WindowsPhone.csproj", "{5A7FF0E5-6025-43F2-B4CA-5F699FC591DB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KzImageStreamUniversal", "..\modules\kz-image-stream\Project\KzImageStreamUniversal.csproj", "{8DD38A89-02AA-4009-A476-FE4F7E1C2344}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KzRemoteApiUniversal", "..\modules\kz-remote-api\Project\KzRemoteApiUniversal.csproj", "{415BAFEB-DFD7-4AF9-974C-EEC2E9EFD930}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KzSoDiscoveryUniversal", "..\modules\kz-ssdp-discovery\Project\KzSoDiscoveryUniversal.csproj", "{A1246C04-298D-4189-8AC8-2105288D2EC6}"
 EndProject
@@ -27,6 +25,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NtNfcLibUniversal", "..\modules\NtNfcLib\NtNfcLib\NtNfcLibUniversal.csproj", "{8EB425CC-DA01-4016-916A-31CF5BF11835}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NtImageProcessorUniversal", "..\modules\NtImageLib\NtImageProcessor\NtImageProcessorUniversal.csproj", "{81167EAF-409D-457E-A8C6-77C830340773}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KzRemoteApiUniversal", "..\modules\kz-remote-api\Project\KzRemoteApiUniversal.csproj", "{415BAFEB-DFD7-4AF9-974C-EEC2E9EFD930}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
@@ -99,16 +99,6 @@ Global
 		{8DD38A89-02AA-4009-A476-FE4F7E1C2344}.Release|ARM.ActiveCfg = Release|Any CPU
 		{8DD38A89-02AA-4009-A476-FE4F7E1C2344}.Release|x64.ActiveCfg = Release|Any CPU
 		{8DD38A89-02AA-4009-A476-FE4F7E1C2344}.Release|x86.ActiveCfg = Release|Any CPU
-		{415BAFEB-DFD7-4AF9-974C-EEC2E9EFD930}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{415BAFEB-DFD7-4AF9-974C-EEC2E9EFD930}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{415BAFEB-DFD7-4AF9-974C-EEC2E9EFD930}.Debug|ARM.ActiveCfg = Debug|Any CPU
-		{415BAFEB-DFD7-4AF9-974C-EEC2E9EFD930}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{415BAFEB-DFD7-4AF9-974C-EEC2E9EFD930}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{415BAFEB-DFD7-4AF9-974C-EEC2E9EFD930}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{415BAFEB-DFD7-4AF9-974C-EEC2E9EFD930}.Release|Any CPU.Build.0 = Release|Any CPU
-		{415BAFEB-DFD7-4AF9-974C-EEC2E9EFD930}.Release|ARM.ActiveCfg = Release|Any CPU
-		{415BAFEB-DFD7-4AF9-974C-EEC2E9EFD930}.Release|x64.ActiveCfg = Release|Any CPU
-		{415BAFEB-DFD7-4AF9-974C-EEC2E9EFD930}.Release|x86.ActiveCfg = Release|Any CPU
 		{A1246C04-298D-4189-8AC8-2105288D2EC6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A1246C04-298D-4189-8AC8-2105288D2EC6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A1246C04-298D-4189-8AC8-2105288D2EC6}.Debug|ARM.ActiveCfg = Debug|Any CPU
@@ -139,6 +129,22 @@ Global
 		{81167EAF-409D-457E-A8C6-77C830340773}.Release|ARM.ActiveCfg = Release|Any CPU
 		{81167EAF-409D-457E-A8C6-77C830340773}.Release|x64.ActiveCfg = Release|Any CPU
 		{81167EAF-409D-457E-A8C6-77C830340773}.Release|x86.ActiveCfg = Release|Any CPU
+		{415BAFEB-DFD7-4AF9-974C-EEC2E9EFD930}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{415BAFEB-DFD7-4AF9-974C-EEC2E9EFD930}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{415BAFEB-DFD7-4AF9-974C-EEC2E9EFD930}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{415BAFEB-DFD7-4AF9-974C-EEC2E9EFD930}.Debug|ARM.Build.0 = Debug|Any CPU
+		{415BAFEB-DFD7-4AF9-974C-EEC2E9EFD930}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{415BAFEB-DFD7-4AF9-974C-EEC2E9EFD930}.Debug|x64.Build.0 = Debug|Any CPU
+		{415BAFEB-DFD7-4AF9-974C-EEC2E9EFD930}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{415BAFEB-DFD7-4AF9-974C-EEC2E9EFD930}.Debug|x86.Build.0 = Debug|Any CPU
+		{415BAFEB-DFD7-4AF9-974C-EEC2E9EFD930}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{415BAFEB-DFD7-4AF9-974C-EEC2E9EFD930}.Release|Any CPU.Build.0 = Release|Any CPU
+		{415BAFEB-DFD7-4AF9-974C-EEC2E9EFD930}.Release|ARM.ActiveCfg = Release|Any CPU
+		{415BAFEB-DFD7-4AF9-974C-EEC2E9EFD930}.Release|ARM.Build.0 = Release|Any CPU
+		{415BAFEB-DFD7-4AF9-974C-EEC2E9EFD930}.Release|x64.ActiveCfg = Release|Any CPU
+		{415BAFEB-DFD7-4AF9-974C-EEC2E9EFD930}.Release|x64.Build.0 = Release|Any CPU
+		{415BAFEB-DFD7-4AF9-974C-EEC2E9EFD930}.Release|x86.ActiveCfg = Release|Any CPU
+		{415BAFEB-DFD7-4AF9-974C-EEC2E9EFD930}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
